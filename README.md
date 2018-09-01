@@ -1,1 +1,4 @@
-# repo made only for practicing purpose, for learning how various APIs works, and learning syntax used inside .md files
+# repo made only for practicing and learning purpose
+## for learning how various APIs works 
+## for learning syntax used inside .md files
+## for practicing command line
