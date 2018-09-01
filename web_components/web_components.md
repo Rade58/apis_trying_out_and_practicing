@@ -1,6 +1,7 @@
 # Web Components
 
-##TRI KONCEPTA
-* Custom elementi
-* Shadow DOM
+## TRI KONCEPTA
+* Custom elementi (prilagođeni elementi)
+* Shadow DOM 
 * HTML Templates
+
