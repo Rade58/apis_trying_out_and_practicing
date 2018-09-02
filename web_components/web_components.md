@@ -1,4 +1,4 @@
-# Web Components
+# Web Components (Prevedeno dela sledećeg članka: https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
 ## TRI KONCEPTA
 * Custom elementi (elementi prilagođeni mojim potrebama)  
@@ -15,4 +15,8 @@
     
     ```
     CustomElementRegistry.define()
+    ```
+    Ovoj metodi prilikom pozivanja dodaju se ime elementa, koji se treba definisati, klasa ili funkcija u kojoj se specificira funkcionalnost, i opciono se može specificirati, odakle element nasleđuje
+1. Ako je potrebno, može se zakačiti shadow DOM na prilagođeni element, uz korišćenje                       ```
+    Element.attachShadow()
     ```
