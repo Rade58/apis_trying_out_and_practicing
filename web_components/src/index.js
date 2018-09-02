@@ -52,6 +52,7 @@ class BrojacReci extends HTMLParagraphElement {
 }
 
 /////////////////////////////   PRAVILA PRILIKOM KREIRANJE CUSTOM ELEMNATA          ///////////////////
+
 //                              1)  IME CUSTOM ELEMENTA, KAO STO SAM REKAO MORA SE SASTOJATI I OD
 //                                   DASH (CRTICA) KARAKTERA; DAKLE TO MORA BITI DASH, I TO NE SME BITI
 //                                                                                 OVO (_)("DONJI" DASH)
@@ -67,4 +68,8 @@ class BrojacReci extends HTMLParagraphElement {
 //                              3)  CUSTOM ELEMENT NE SME BITI SELF-CLOSING
 //                                  DAKLE U OBZIR DOLAZE SAMO DVOSTRUKI TAGOVI
 //                                  (MORA SE SASTOJATI IZ OPENING I IZ CLOSING TAGA)
+//
+//PRIMERI:
+//
+//app-drawer
 //
