@@ -1,4 +1,5 @@
-# Web Components (Prevedeno dela sledećeg članka: https://developer.mozilla.org/en-US/docs/Web/Web_Components)
+# Web Components  
+(Prevod dela sledećeg članka: https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
 ## TRI KONCEPTA
 * Custom elementi (elementi prilagođeni mojim potrebama)  
