@@ -114,7 +114,7 @@ class AppDrawer extends HTMLElement {
                                                 //UKLANJA IZ TAGA
         }
 
-        this.toggleDarawer();                   
+        this.toggleDrawer();                   
     }
 
     //POSTO SAM ZA open PROPERTI ILI ATRIBUT DAO GORE, MOZDA I, SUPERFLUOUS OBJASNJENJE NECU TO RADITI
@@ -138,15 +138,20 @@ class AppDrawer extends HTMLElement {
                     //REC JE O OBJEKTU, ODNOSNO INSTANCI HTMLElement KLASE KOJU, AppDrawer, USTVARI extends
                     //A TA INSTANCA JE I __proto__ SVAKOJ AppDrawer INSTANCI
 
-        this.addEventListener('click', e => {
+        this.addEventListener('click', e => {       //KACENJE LISTENERA U SLUCAJU, KOJI CE BITI 
+                                                    //INVOKE KADA SE TRIGGERUJE KLIKE EVENT NA
+                                                    //CUSTOM ELEMENTU
+                                                    //A ON OSTO SAM DEFINISAO, JESTE DA TIME BUDE POZVANA I
+                                                    //toggleDrawer METODA, ALI AKO ELEMENT NEMA disabled
+                                                    //ATRIBUT
             if(this.disabled){
                 return;
             }
-            this.toggleDarawer();
+            this.toggleDrawer();
         });
     }
 
-    toggleDarawer(){
+    toggleDrawer(){
         const display = window.getComputedStyle(this).display;
         let displayVal;
         displayVal = (display === 'none'||'')?'block':'none';
@@ -156,11 +161,29 @@ class AppDrawer extends HTMLElement {
 }
 
 
-window.customElements.define('app-drawer', AppDrawer);
-/*console.log(document.getElementsByTagName('app-drawer')[0]);
-console.log(document.getElementsByTagName('app-drawer')[0].__proto__);
-console.log(document.getElementsByTagName('app-drawer')[0] instanceof HTMLParagraphElement);*/
-//let foo = document.registerElement('app-drawer');
+window.customElements.define('app-drawer', AppDrawer);      //REGISTRUJEM CUSTOM ELEMENTA
+
+const appDrawerOb = document.createElement('app-drawer');     //AppDrawer INSTANCA
+
+console.log(1,      appDrawerOb instanceof AppDrawer                    );   //-->  1 true
+console.log(2,      appDrawerOb.__proto__ instanceof HTMLElement        );   //-->  2 true
+console.log(3,      appDrawerOb instanceof AppDrawer                    );   //-->  3 true
+console.log(4,      HTMLElement.prototype.isPrototypeOf(appDrawerOb)    );   //-->  4 true
+console.log(5,      AppDrawer.prototype === appDrawerOb.__proto__       );   //-->  5 true
+
+console.log("A",    HTMLElement.prototype !== appDrawerOb.__proto__     );   //-->   A  true 
+console.log("B",    HTMLElement.prototype.constructor                   );   //-->   B  f HTMLElement
+console.log("C",    appDrawerOb.__proto__.constructor                   );   //-->   C  class AppDrawer   
+
+console.log("*",     HTMLElement.prototype.isPrototypeOf(AppDrawer.prototype ));     //-->   * true
+
+/*console.log(2, HTMLElement.prototype.isPrototypeOf(appDrawerOb));
+console.log(appDrawerOb.__proto__);
+console.log(3, HTMLElement.prototype !== appDrawerOb.__proto__);
+console.log(4, appDrawerOb.constructor !== HTMLElement);
+
+console.log(5, appDrawerOb.constructor === AppDrawer);*/
+/*
 document.getElementById('root').appendChild(document.createElement('app-drawer'));
 document.getElementsByTagName('app-drawer')[0].innerHTML = "Neki tekst";
 console.log(1, document.getElementsByTagName('app-drawer')[0] instanceof AppDrawer);
@@ -170,7 +193,7 @@ console.log(4, document.getElementsByTagName('app-drawer')[0].open);
 
 document.getElementsByTagName('app-drawer')[0].setAttribute("open", "");
 console.log(document.getElementsByTagName('app-drawer')[0].open);
-
+*/
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
