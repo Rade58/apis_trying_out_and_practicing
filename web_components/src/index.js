@@ -177,23 +177,7 @@ console.log("C",    appDrawerOb.__proto__.constructor                   );   //-
 
 console.log("*",     HTMLElement.prototype.isPrototypeOf(AppDrawer.prototype ));     //-->   * true
 
-/*console.log(2, HTMLElement.prototype.isPrototypeOf(appDrawerOb));
-console.log(appDrawerOb.__proto__);
-console.log(3, HTMLElement.prototype !== appDrawerOb.__proto__);
-console.log(4, appDrawerOb.constructor !== HTMLElement);
 
-console.log(5, appDrawerOb.constructor === AppDrawer);*/
-/*
-document.getElementById('root').appendChild(document.createElement('app-drawer'));
-document.getElementsByTagName('app-drawer')[0].innerHTML = "Neki tekst";
-console.log(1, document.getElementsByTagName('app-drawer')[0] instanceof AppDrawer);
-console.log(2, HTMLElement.prototype.isPrototypeOf(document.getElementsByTagName('app-drawer')[0]))
-console.log(3, document.getElementsByTagName('app-drawer')[0]);
-console.log(4, document.getElementsByTagName('app-drawer')[0].open);
-
-document.getElementsByTagName('app-drawer')[0].setAttribute("open", "");
-console.log(document.getElementsByTagName('app-drawer')[0].open);
-*/
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
