@@ -199,14 +199,20 @@ appDrawerOb.innerHTML = "Neki tekst";       //I SADA MOGU VIDETI, DEFINISANI TEK
 console.log(appDrawerOb.openProp)           //U KONZOLI BI TREBALO DA SE STAMPA false
                                             //KAD POGLEDAM DEFINICIJU POMENUTOG openProp GETTER-A
                                             //BICE MI JASNO ZASTO
-                                                    
 
+//SADA CU KORISTITI JEDAN OD SETTER-A
 
-
-
-//TREBALO BI DA MOJ ZAKACENI CUSTOM ELEMENT DOBIJE SLEDECI STIL:
+appDrawerOb.openProp = "ovo nije falsy vrednost";
+                                    //TREBALO BI DA MOJ ZAKACENI CUSTOM ELEMENT DOBIJE SLEDECI STIL:
                                                                         //      display: none
-                                    //STO ZNACI DA NECE BITI PRIKAZAN
+                                    //ZASTO JE TAKO, MOGU SHVATITI KAD POGLEDAM DEFINICIJU GETTER-A
+                                    //ZNACI, CUSTOM ELEMENT, NIJE VISE PRIKAZAN NA STRANICI
+
+//A AKO POGLEDAM Elements SEKCIJU CHROME-A, VIDECU DA ZAKACENI <app-drawer></app-drawer> TAG IMA 
+//BOOLEAN ATRIBUT       open        , A ZASTO GA IMA MOGU SHAVATITI, KADA OPET POGLEDAM CODE
+//openProp SETTER-A, AppDrawr KLASE
+//NARAVNO IMA POMENUTI open BOOLEAN ATRIBUT, PORED style ATRIBUTA, SA ODGOVARAJUCOM VREDNOSCU (KAO 
+                                                //POSLEDICA IZVRSENJA   toggleDrawer      METODE)
 
 
 
