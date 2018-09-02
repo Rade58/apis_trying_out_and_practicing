@@ -30,13 +30,9 @@ console.log(        customElements.define                           );
 //             POMENUTI extends PROPERTI, MORA SPECIFICIRATI BUILT-IN ELEMENT, IZ KOJEG CUSTOM ELEMENT
 //              TREBA DA NASLEDJUJE
 
-//JEDNOSTAVAN PRIMER DEFINISANJA CUSTOM ELEMENTA, KOJI BI NASLEDJIVAO OD HTMLParagraphElement
-//INSTANCE, ODNOSNO CIJI BI PROTOTIP OBJEKAT BILA HTMLParagraphElement INSTANCA, BI IZGLEDAO OVAKO
 
-customElements.define('brojac-reci', BrojacReci, {extends: 'p'});
 
-//A OVAKO BI IZGLEDALA class-A KOJA BI DEFINISALA PONASANJE, POMENUTOG CUSTOM ELEMENTA KOJI EXTENDS
-//PARAGRAF
+
 
 
 class BrojacReci extends HTMLParagraphElement {
@@ -50,6 +46,18 @@ class BrojacReci extends HTMLParagraphElement {
         //CUSTOM ELEMENT
     }
 }
+
+//JEDNOSTAVAN PRIMER DEFINISANJA CUSTOM ELEMENTA, KOJI BI NASLEDJIVAO OD HTMLParagraphElement
+//INSTANCE, ODNOSNO CIJI BI PROTOTIP OBJEKAT BILA HTMLParagraphElement INSTANCA, BI IZGLEDAO OVAKO
+
+customElements.define('brojac-reci', BrojacReci, {extends: 'p'});
+
+//A OVAKO BI IZGLEDALA class-A KOJA BI DEFINISALA PONASANJE, POMENUTOG CUSTOM ELEMENTA KOJI EXTENDS
+//PARAGRAF
+
+
+
+
 
 /////////////////////////////   PRAVILA PRILIKOM KREIRANJE CUSTOM ELEMNATA          ///////////////////
 
@@ -69,7 +77,95 @@ class BrojacReci extends HTMLParagraphElement {
 //                                  DAKLE U OBZIR DOLAZE SAMO DVOSTRUKI TAGOVI
 //                                  (MORA SE SASTOJATI IZ OPENING I IZ CLOSING TAGA)
 //
-//PRIMERI:
+////////////////////////////////////PRIMERI////////////////////////////////////////////////////////////
 //
-//app-drawer
+//////////////////////////app-drawer///////////////////////////////////////////////////////////////////
 //
+
+
+class AppDrawer extends HTMLParagraphElement {
+    get open(){
+        return this.hasAttribute('open');
+    }
+
+    set open(vrednost){
+        if(vrednost){
+            this.setAttribute('open', '');
+        }else{
+            this.removeAttribute('open');
+        }
+
+        this.toggleDarawer();
+    }
+
+    get disabled(){
+        return this.hasAttribute('disabled');
+    }
+
+    set disabled(val){
+        if(val){
+            this.setAttribute('disabled', '');
+        }else{
+            this.removeAttribute('disabled');
+        }
+    }
+
+    constructor(){
+        super();
+
+        this.addEventListener('click', e => {
+            if(this.disabled){
+                return;
+            }
+            this.toggleDarawer();
+        });
+    }
+
+    toggleDarawer(){
+        const display = window.getComputedStyle(this).display;
+        let displayVal;
+        displayVal = (display === 'none'||'')?'block':'none';
+        this.style.display = displayVal;
+    }
+
+}
+
+
+customElements.define('app-drawer', AppDrawer, {extends: "p"});
+/*console.log(document.getElementsByTagName('app-drawer')[0]);
+console.log(document.getElementsByTagName('app-drawer')[0].__proto__);
+console.log(document.getElementsByTagName('app-drawer')[0] instanceof HTMLParagraphElement);*/
+
+document.getElementById('root').appendChild(document.createElement('app-drawer'));
+document.getElementsByTagName('app-drawer')[0].innerHTML = "Neki tekst";
+console.log(document.getElementsByTagName('app-drawer')[0] instanceof HTMLParagraphElement);
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//NE OBRACAJ PAZNJU NA OVO, OVO JE PODSECANJE NA GETTER I SETTER
+const objekat = {
+    properti1: 8,
+    properti2: "neki string",
+
+    get prop1(){
+        return this.properti1;
+    },
+
+    set prop1(val){
+        this.properti1 = val;
+    }
+};
+
+
+console.log(objekat.prop1);
+
+objekat.prop1 = 10;
+
+console.log(objekat.prop1);
+
+console.log(objekat.properti1, objekat.properti2);
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
