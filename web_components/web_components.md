@@ -8,3 +8,10 @@
 * HTML Templates  
     - Sledeći elementi: `<template>` i `<slot>` omogućavaju pisanje markup obrazaca koji nisu prikazani u render-ovanoj stranici. Ovakvi elementi, mogu se, iznova koristiti, više puta, predstavljajući osnovu prilagođene strukture elemenata .
 
+
+## OSNOVNI PRISTUP
+1. a) Kreirasnje klase ili funkcije u kojoj specificiram funkcionalnost web komponente
+1. b) Registracija mog prilagođenog elementa uz korišćenje sledeće metode  
+```
+CustomElementRegistry.define()
+```
