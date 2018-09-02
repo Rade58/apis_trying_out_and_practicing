@@ -10,9 +10,9 @@
 
 
 ## OSNOVNI PRISTUP
-1. a) Kreirasnje klase ili funkcije u kojoj specificiram funkcionalnost web komponente
-1. b) Registracija mog prilagođenog elementa uz korišćenje sledeće metode  
-    - 
+1.  Kreirasnje klase ili funkcije u kojoj specificiram funkcionalnost web komponente
+1.  Registracija mog prilagođenog elementa uz korišćenje sledeće metode  
+    
     ```
     CustomElementRegistry.define()
     ```
