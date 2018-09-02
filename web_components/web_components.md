@@ -1,5 +1,5 @@
 # Web Components  
-(Prevod dela sledećeg članka: https://developer.mozilla.org/en-US/docs/Web/Web_Components)
+(Prevod, jednog dela, sledećeg članka: https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
 ## TRI KONCEPTA
 * Custom elementi (elementi prilagođeni mojim potrebama)  
@@ -18,6 +18,12 @@
     CustomElementRegistry.define()
     ```
     Ovoj metodi prilikom pozivanja dodaju se ime elementa, koji se treba definisati, klasa ili funkcija u kojoj se specificira funkcionalnost, i opciono se može specificirati, odakle element nasleđuje
-1. Ako je potrebno, može se zakačiti shadow DOM na prilagođeni element, uz korišćenje                       ```
+1.  Ako je potrebno, može se zakačiti shadow DOM na prilagođeni element, uz korišćenje sledeće metode:
+    ```
     Element.attachShadow()
     ```
+    Child elementi, event handleri itd., mogu se dodavati shadow DOM, korisćenjem uobičajenih DOM metoda.
+1.  Ako je to neophodno, može se definisati obrazac, korišćenjem `<template>` i `<slot>` tagova. 
+    I isto tako se mogu koristiti uobičajene DOM metode za kloniranje obrazca i njegovo kačenje na shadow DOM.
+1.  Koristi prilagođene elemente (custom elements) kako želiš na svojoj stranici, kao što bi to radio       sa regularnim HTML elemntima.
+___
