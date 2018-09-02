@@ -77,27 +77,48 @@ customElements.define('brojac-reci', BrojacReci, {extends: 'p'});
 //                                  DAKLE U OBZIR DOLAZE SAMO DVOSTRUKI TAGOVI
 //                                  (MORA SE SASTOJATI IZ OPENING I IZ CLOSING TAGA)
 //
+
+
+
 ////////////////////////////////////PRIMERI////////////////////////////////////////////////////////////
 //
 //////////////////////////app-drawer///////////////////////////////////////////////////////////////////
 //
 
 
-class AppDrawer extends HTMLParagraphElement {
-    get open(){
+class AppDrawer extends HTMLElement {
+
+    //OBJASNICU OPET I GETTERE I SETTERE, IAKO TO NIJE TEMA OVIH BELESKI 
+    //GETTER ZA open PROPERTI
+    //AKO JE PROPERTI DEFINISAN return-OVACE BOOLEAN true
+    get openProp(){
         return this.hasAttribute('open');
     }
 
-    set open(vrednost){
+    //SETTER ZA open PROPERTI
+    //BILO KOJA VREDNOST SE DODELI SETTER-U (JER U SLUCAJU GETTER-A, IAKO SINTAKSA IZGLEDA KAO ASSIGNMENT
+    //GETTER-U, A USTVARI SE VREDNOST PROSLEDJUJE SETTER FUNKCIJI, KOJA S NJOM RADI ONO STO SAM DEFINISAO) 
+    //U OVOM SLUCAJU SETTER DEFINISE ATRIBUT CUSTOM ELEMENTA, I U ODNOSU NA TO toggle-UJE ELEMENT
+    //TO toggle-OVANJE SE VEROVATNO ODNOSI NA DEFINISANJE CSS display PROPERTIJA
+    //NAIME, AKO JE VREDNOST DATA SETTERU, USTVARI VREDNOST KOJA JE TRUTHY, ONDA CE CUSTOM ELEMENTU
+    //BITI DODAT ATRIBUT, SA IMENOM open
+    set openProp(vrednost){    //ime setter-a ali i gornjeg getter-a, trebalo je da bude ----open   ali ja sam ga tako zadao iz razloga da lakse citam, odnosno lakse review-ujem ovaj code  
         if(vrednost){
-            this.setAttribute('open', '');
+            this.setAttribute('open', '');      //ZADAO SAM DA JE VREDNOST ATRIBUTA, USTVARI PRAZAN STRING
+                                                //KADA SE OVAKO DEFINISE ATRIBUT, REC JE O BOOLEAN
+                                                //ATRIBUTU, CIJE PRISUSTVO U TAGU, USTVARI ZNACI DA JE
+                                                //open USTVARI true
         }else{
-            this.removeAttribute('open');
+            this.removeAttribute('open');       //AKO SE SETTER-U NE DODELI VREDNOST, ODNOSNO AKO MU SE
+                                                //DAJE VREDNOST, KOJA JE FALSY, ONDA SE open ATRIBUT
+                                                //UKLANJA IZ TAGA
         }
 
-        this.toggleDarawer();
+        this.toggleDarawer();                   
     }
 
+    //POSTO SAM ZA open PROPERTI ILI ATRIBUT DAO GORE, MOZDA I, SUPERFLUOUS OBJASNJENJE NECU TO RADITI
+    //U SLUCAJU GETTER-A I SETTER-A, disabled PROPERTIJA, ODNOSNO ATRIBUTA
     get disabled(){
         return this.hasAttribute('disabled');
     }
@@ -111,7 +132,11 @@ class AppDrawer extends HTMLParagraphElement {
     }
 
     constructor(){
-        super();
+        super();    //POZIVANJE KONSTRUKTORA KLASE IZ KOJE CUSTOM ELEMENT INHERITS ILI EXTENDS
+                    //TO DAJE INSTANCI CUSTOM ELEMENTA, UPRAVO PROPERTIJE, KOJE IMA OBJEKAT, KOJI JE
+                    //PROTOTIP OBJEKAT, INSTANCE AppDrawer
+                    //REC JE O OBJEKTU, ODNOSNO INSTANCI HTMLElement KLASE KOJU, AppDrawer, USTVARI extends
+                    //A TA INSTANCA JE I __proto__ SVAKOJ AppDrawer INSTANCI
 
         this.addEventListener('click', e => {
             if(this.disabled){
@@ -131,17 +156,26 @@ class AppDrawer extends HTMLParagraphElement {
 }
 
 
-customElements.define('app-drawer', AppDrawer, {extends: "p"});
+window.customElements.define('app-drawer', AppDrawer);
 /*console.log(document.getElementsByTagName('app-drawer')[0]);
 console.log(document.getElementsByTagName('app-drawer')[0].__proto__);
 console.log(document.getElementsByTagName('app-drawer')[0] instanceof HTMLParagraphElement);*/
-
+//let foo = document.registerElement('app-drawer');
 document.getElementById('root').appendChild(document.createElement('app-drawer'));
 document.getElementsByTagName('app-drawer')[0].innerHTML = "Neki tekst";
-console.log(document.getElementsByTagName('app-drawer')[0] instanceof HTMLParagraphElement);
+console.log(1, document.getElementsByTagName('app-drawer')[0] instanceof AppDrawer);
+console.log(2, HTMLElement.prototype.isPrototypeOf(document.getElementsByTagName('app-drawer')[0]))
+console.log(3, document.getElementsByTagName('app-drawer')[0]);
+console.log(4, document.getElementsByTagName('app-drawer')[0].open);
+
+document.getElementsByTagName('app-drawer')[0].setAttribute("open", "");
+console.log(document.getElementsByTagName('app-drawer')[0].open);
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //NE OBRACAJ PAZNJU NA OVO, OVO JE PODSECANJE NA GETTER I SETTER
-const objekat = {
+/*const objekat = {
     properti1: 8,
     properti2: "neki string",
 
@@ -161,9 +195,18 @@ objekat.prop1 = 10;
 
 console.log(objekat.prop1);
 
-console.log(objekat.properti1, objekat.properti2);
+console.log(objekat.properti1, objekat.properti2);*/
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 
 
 
