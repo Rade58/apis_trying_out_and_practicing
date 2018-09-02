@@ -165,17 +165,50 @@ window.customElements.define('app-drawer', AppDrawer);      //REGISTRUJEM CUSTOM
 
 const appDrawerOb = document.createElement('app-drawer');     //AppDrawer INSTANCA
 
+
+//NEKE PROVERE  //////////////////////////////////////////////////////////////////////////////////////
+
 console.log(1,      appDrawerOb instanceof AppDrawer                    );   //-->  1 true
 console.log(2,      appDrawerOb.__proto__ instanceof HTMLElement        );   //-->  2 true
-console.log(3,      appDrawerOb instanceof AppDrawer                    );   //-->  3 true
-console.log(4,      HTMLElement.prototype.isPrototypeOf(appDrawerOb)    );   //-->  4 true
+console.log(3,      HTMLElement.prototype.isPrototypeOf(appDrawerOb)    );   //-->  3 true
+console.log(4,      AppDrawer.prototype.isPrototypeOf(appDrawerOb)      );   //-->  4 true
 console.log(5,      AppDrawer.prototype === appDrawerOb.__proto__       );   //-->  5 true
 
-console.log("A",    HTMLElement.prototype !== appDrawerOb.__proto__     );   //-->   A  true 
-console.log("B",    HTMLElement.prototype.constructor                   );   //-->   B  f HTMLElement
-console.log("C",    appDrawerOb.__proto__.constructor                   );   //-->   C  class AppDrawer   
+console.log("A",    HTMLElement.prototype !== appDrawerOb.__proto__     );          //-->   A  true (ALI)
+console.log("B",    HTMLElement.prototype.isPrototypeOf(AppDrawer.prototype ));     //-->   B true
+console.log("Љ",    HTMLElement.prototype !== AppDrawer.prototype       );      //-->   Љ  true
+console.log("a",    HTMLElement.prototype.constructor                   );   //-->   a  f HTMLElement
+console.log("b",    appDrawerOb.__proto__.constructor                   );   //-->   b  class AppDrawer   
 
-console.log("*",     HTMLElement.prototype.isPrototypeOf(AppDrawer.prototype ));     //-->   * true
+
+console.log(    HTMLElement.prototype.__proto__ === Element.prototype   );     //-->  true
+
+console.log(        AppDrawer.prototype instanceof HTMLElement      );         //-->  true 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////NAKON OVIH PROVERA, ZAKACICU, MOJ CUSTOM ELEMENT NA DOM TREE
+
+const koren = document.getElementById("root");
+
+koren.appendChild(appDrawerOb);
+appDrawerOb.innerHTML = "Neki tekst";       //I SADA MOGU VIDETI, DEFINISANI TEKST NA WEB STRANICI
+
+//SADA CU KORISTITI SETTER-E I GETTER-E 
+//A IZMEDJU NJIHOVE UPOTREBE POSMATRACU STA SE DOGADJA NA STRANICI, ALI I U 'Elements' SEKCIJI CHROME-A
+
+console.log(appDrawerOb.openProp)           //U KONZOLI BI TREBALO DA SE STAMPA false
+                                            //KAD POGLEDAM DEFINICIJU POMENUTOG openProp GETTER-A
+                                            //BICE MI JASNO ZASTO
+                                                    
+
+
+
+
+//TREBALO BI DA MOJ ZAKACENI CUSTOM ELEMENT DOBIJE SLEDECI STIL:
+                                                                        //      display: none
+                                    //STO ZNACI DA NECE BITI PRIKAZAN
+
+
 
 
 
