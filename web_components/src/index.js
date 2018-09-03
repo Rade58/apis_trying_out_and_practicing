@@ -256,13 +256,81 @@ appDrawerOb.disabled = false;
 //KAKO BI KREIRAO OVE, MORAM DA SPECIFICIRAM, KOJE TO ELEMENTE, ONI USTVARI extend , KAO STO SAM
 //I PRIKAZAO U PRIMERU (AppDrawer)
 //ONI SE KORISTE TAKO STO SE ISPISE OSNOVNI ELEMENT, ALI SE SPECIFICIRA IME CUSTOM ELEMENTA
-//A SPECIFICIRA SE KAO VREDNOST             is      PROPERTIJA, ARGUMENT OBJEKTA document.createElement
+//A SPECIFICIRA SE KAO VREDNOST       is      PROPERTIJA, ARGUMENT OBJEKTA document.createElement
 //METODE, NA SLEDECI NACIN
 
 document.createElement('p', {is: "word-count"});
-//A MOZE DIREKTNO U HTML-U (STO SAMI URADIO, U HTML FAJLU)
+//A MOZE DIREKTNO U HTML-U (STO SAM I URADIO, U HTML FAJLU)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////CUSTOM ELEMENT REACTION (REAKCIJE)////////////////////////
+//////////////////////////MOGU IH TAKODJE ZVATI I LIFECYCLE HOOKS, KAO STO SU ONE U REACT-U/////////
+/////////////////////////ILI KAO STO IH ZOVU NA MDN-U, ----->  LIFECYCLE CALLBACKS ////////////
+//NABROJACU SADA KOJI SU TO LIFECYCLE HOOK-OVI /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////      1)     constructor       INVOCIRA SE KADA SE KREIRA INSTANCA ELEMENTA, ILI KADA SE       
+////////                                INSTANCA ELEMENTA UPGRADE-UJE
+////////                 KORISNO ZA:    a)  INICIJALIZACIJU state-A (STANJA)
+////////                                b)  KACENJE EVENT LISTENERA
+////////                                c)  KREIRANJE shadow dom-A
+////////                               
+////////       2)     connectedCallback     POZIVA SE SVAKI PUT KADA SE ELEMENT INSERTUJE U DOM                       
+////////                                
+////////                 KORISNO ZA:    a)  FETCHING RESURSA ZA RENDER-OVANJE
+////////                                b)  I OSTALI SETT UP CODE
+////////                                
+////////       3)     disconnectedCallback   POZIVA SE SVAKI PUT NAKON UKLANJANJA ELEMENTA IZ DOM-A                  
+////////                 
+////////                 KORISNO:       ZA POKRETANJE CLENUP CODE-A               
+////////
+////////       4)     attributeChangedCallback(imeAtributa, staraVrednost, novaVrednost)
+////////
+////////              OVAJ CALLBACK SE INVOCIRA, KADA SE DOGADJA NESTO SA OBSERVED (ONAJ KOJI SE POSMATRA)
+////////              ATRIBUTOM (DA BIH OVO ZNAO MORAM SE PODSETITI STATICKIH METODA JEDNE KLASE, STO CU
+////////              I URADITI VRLO USKORO)
+////////              A STA SE TO MIZE DOGADJATI SA OBSERVED ATRIBUTOM:  
+////////                    ON SE MOZE dodati, ukloniti, update-ovati, ili zameniti
+////////              OVA METODA SE TAKODJE POZIVA ZA INICIJALNE VREDNOSTI, KADA SE CUSTOM ELEMENT
+////////              KREIRA OD STRANE parser-A, ILIO KADA SE UPGRADE-UJE
+////////              (MNOGO SPOMINJEM UPGRADE-OVANJE LEMENATA, TAKO DA CU SE TIME POSEBNO POZABAVITI, VRLO USKORO)
+////////        
+////////        5)    addoptedCallback      INVOCIRA SE KADA CUSTOM ELEMENT BIVA POMEREN U NOVI
+////////                                      document  
+////////               ZA OVO JE NEOPHODNO DA POGLEDAM JEDNU METODU SA KOJOM SE RANIJE NISAM BAVIO
+////////               TO JE        document.adoptNode      METODA
+////////                https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptNode
+////////            
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
+////////
 
 
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////NASTAVICU S PRIMERIMA ///////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //NE OBRACAJ PAZNJU NA OVO, OVO JE PODSECANJE NA GETTER I SETTER
 /*const objekat = {
