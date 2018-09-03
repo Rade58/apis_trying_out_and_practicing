@@ -262,6 +262,82 @@ appDrawerOb.disabled = false;
 document.createElement('p', {is: "word-count"});
 //A MOZE DIREKTNO U HTML-U (STO SAM I URADIO, U HTML FAJLU)
 
+///////////////////////////////////PRIMERI VEZANI ZA OVA DVA TIPA ELEMENATA
+
+////////////////PRIMER ZA       AUTONOMNI CUSTOM ELEMENT 
+//
+//CUSTOM ELEMENT KOJI CU DEFINISATI ZVACE SE popup-info-box
+//ONO OD CEGA CE SE SASTOJATI JESTE IMAGE ICON I TEKSTUALNI STRING
+//KADA IKONA BUDE FOCUSED, TREBA DA SE DISPALAY-UJE POMENUTI TEKST U POP-UP INFORMATION BOX-U
+//KAKO BI SE PRUZILE DODATNE INFORMACIJE, KORISNIKU U ZAVISNOSTI OD KONTEKSTA
+
+class PopUpInfo extends HTMLElement {
+    constructor(){
+        super();
+        //DALJE U KONSTRUKTORU DEFINISEM FUNKCIONALNOST
+        //PRVO ZELIM DA BUDUCA INSTANCA IMA ZAKACEN, ODNOSNO NESTED shadow root
+        //A ZELIM I DA IMAM REFERENCU NA TU     shadowDOM   INSTANCU
+        
+        const senka = this.attachShadow({mode: "open"});
+        //mode ZADAJEM DA JE open, DA BIH MOGAO KASNIJE PRISTUPITI POMENUTOJ shadowDOM INSTANCI
+    }
+}
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////CUSTOM ELEMENT REACTION (REAKCIJE)////////////////////////
 //////////////////////////MOGU IH TAKODJE ZVATI I LIFECYCLE HOOKS, KAO STO SU ONE U REACT-U/////////
@@ -311,7 +387,7 @@ document.createElement('p', {is: "word-count"});
 ////////    AKO NEKO POZOVE         el.setAtribute()    NA MOM CUSTOM ELEMENTU, BROWSER CE ODMAH ZVATI
 ////////    POMENUTI    attributeChangedCallback    
 ////////    ISTO TAKO ODMAH NAKON SE MOJ ELEMENT UKLONI IZ DOM-A (POZIVANJEM NA PRIMER el.remove()) 
-////////    BROWSER  CE POZVATI disconnectedCallback    
+////////    BROWSER  CE POZVATI disconnectedCallback 
 ////////
 ////////        
 ////////
