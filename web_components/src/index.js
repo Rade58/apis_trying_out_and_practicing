@@ -294,16 +294,32 @@ document.createElement('p', {is: "word-count"});
 ////////              KREIRA OD STRANE parser-A, ILIO KADA SE UPGRADE-UJE
 ////////              (MNOGO SPOMINJEM UPGRADE-OVANJE LEMENATA, TAKO DA CU SE TIME POSEBNO POZABAVITI, VRLO USKORO)
 ////////        
+////////              BROWSER POZIVA POMENUTI CALLBACK ZA SVAKI ATRIBUT, KOJI JE whitelisted U SLEDECEM       
+////////              NIZU:         observedAttributes
+////////                (JA CU SE USKORI POZABAVITI POMENUTIM CALLBACK-OM, I POMENUTIM NIZOM)
+////////              U SUSTINI, OVO JE PERFORMANCE OPTIMIZATION
+////////              KADA KORISNIK PROMENI NEKI COMMON ATRIBUT, KAO STO JE TO style ILI class,
+////////              NE BI TREBAL ODA SE DOGODI SPAMMOVANJE, KOJE SE OGLEDA U INVOKACIJI TONE
+////////              CALLBACK-OVA
 ////////        5)    addoptedCallback      INVOCIRA SE KADA CUSTOM ELEMENT BIVA POMEREN U NOVI
-////////                                      document  
+////////                                                                                    document  
 ////////               ZA OVO JE NEOPHODNO DA POGLEDAM JEDNU METODU SA KOJOM SE RANIJE NISAM BAVIO
 ////////               TO JE        document.adoptNode      METODA
 ////////                https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptNode
-////////            
+////////
+////////    REACTION CALLBACKOVI, ILI KAKO IH DRUGI ZOVU LIFECYCLE CALLBACK-OVI, JESU SINHRONI
+////////    AKO NEKO POZOVE         el.setAtribute()    NA MOM CUSTOM ELEMENTU, BROWSER CE ODMAH ZVATI
+////////    POMENUTI    attributeChangedCallback    
+////////    ISTO TAKO ODMAH NAKON SE MOJ ELEMENT UKLONI IZ DOM-A (POZIVANJEM NA PRIMER el.remove()) 
+////////    BROWSER  CE POZVATI disconnectedCallback    
+////////
+////////        
+////////
+////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////
-////////
+////////        
 ////////
 ////////
 ////////
