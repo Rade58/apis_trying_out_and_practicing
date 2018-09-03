@@ -280,7 +280,27 @@ class PopUpInfo extends HTMLElement {
         
         const senka = this.attachShadow({mode: "open"});
         //mode ZADAJEM DA JE open, DA BIH MOGAO KASNIJE PRISTUPITI POMENUTOJ shadowDOM INSTANCI
-    }
+        
+        //ZELIM DA BUDU KREIRANA TRI span ELEMENTA
+        const omotac = document.createElement('span');
+        const ikona = document.createElement('span');
+        const info = document.createElement('span');
+
+        //DEFINISACU DODAVANJE NEKIH ATRIBUTA, TIM ELEMENTIMA
+        info.setAttribute('class', 'info');
+        omotac.setAttribute('class', 'wrapper');
+        ikona.setAttribute('class', 'icon');
+        ikona.setAttribute('tabindex', 0);          //OVIM ATRIBUTOM SE MORAM POZABAVITI POSEBNO
+                                                    //NAIME OVO DEFINISE DA, KADA SE PRITISNE TAB NA TASTATURI
+                                                    //BUDE FOKUSIRAN ELEMENT, A U ZAVISNOSTO OD DOELJENOG BROJA ATRIBUTU
+                                                    //DEFINISAN JE I REDOSLED FOKUSIRANJA, TAKO DA PRVIM PRITISKOM TABA                                                    
+                                                    //U SLUCAJU OVOG PRIMERA PRVI CE BITI FOKUSIRAN UPRAVO OVAJ
+                                                    //ELEMENT;  DA SAM DEFINISAO ZA NEKI ELEMENT tabindex
+                                                    //KOJI BI IMAO VREDNOST 1, ONDA BI SLEDECIM PRITISKOM TABA, BIO FOKUSIRAN UPRAVO TAJ ELEMENT
+                                                    
+                                        
+                                        
+    }               
 }
 
 //
