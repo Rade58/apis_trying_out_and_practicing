@@ -302,10 +302,11 @@ class PopUpInfo extends HTMLElement {
                                                     //DEFINISAN JE I REDOSLED FOKUSIRANJA, TAKO DA PRVIM PRITISKOM TABA                                                    
                                                     //U SLUCAJU OVOG PRIMERA PRVI CE BITI FOKUSIRAN UPRAVO OVAJ
                                                     //ELEMENT;  DA SAM DEFINISAO ZA NEKI ELEMENT tabindex
-                                                    //KOJI BI IMAO VREDNOST 1, ONDA BI SLEDECIM PRITISKOM TABA, BIO FOKUSIRAN UPRAVO TAJ ELEMENT
+                                                    //KOJI BI IMAO VREDNOST 1, ONDA BI SLEDECIM PRITISKOM TABA, 
+                                                    //BIO FOKUSIRAN UPRAVO TAJ ELEMENT
         
-        //DEFINISATI DA SE MOGUCEM      text       ATRIBUTU CUSTOM ELEMENTA (CIJE KREIRANJE GORE, KAO STO SE I VIDI
-                                                                            //          NISAM DEFINISAO) 
+        //DEFINISATI DA SE MOGUCEM      data-text       ATRIBUTU CUSTOM ELEMENTA 
+        //                          (CIJE DEFINISANJE GORE, KAO STO SE I VIDI NISAM DEFINISAO) 
         //PRISTUPI VREDNOSTI, I DA TU VREDNOST DOBIJE       textContent     PROPERTI    span    ELEMENTA
         //KOJEG SKLADISTI GORE DEKLARISANA info VARIJABLA
         //UPAMTI DA OVDE NECU KLORISTITI    Node.innerHTML  JER MI NE TREBA HTML (SAMO IME PROPERTIJA 
@@ -313,11 +314,11 @@ class PopUpInfo extends HTMLElement {
         //KORISTICU PROPERTI SA KOJIM SE DO SADA NISAM SUSRETAO, A TO JE:
                    //             textContent
         
-        info.textContent = this.getAttribute("text");
+        info.textContent = this.getAttribute("data-text");
 
         //AKO MOJ CUSTOM ELEMENT IMA ATRIBUT    img     POTREBNO JE PRISTUPITI NJEGOVOJ VREDNOSTI
-        //I TU VREDNOST TREBA DODELITI  imgUrl  VARIJABLI, JER BI TREBASLO DA img ATRIBUT SKLADISTI
-        //URL SLIKE
+        //I TU VREDNOST TREBA DODELITI  imgUrl  VARIJABLI, JER BI TREBALO DA img ATRIBUT SKLADISTI
+        //URL NEKE SLIKE (ZELJENA IKONICA)
         //U SUPROTNOM,      imgUrl  TREBA DA SKLADISTI ADRESU DEFAULT SLIKE
 
         if(this.hasAttribute('img')){
@@ -338,6 +339,43 @@ class PopUpInfo extends HTMLElement {
         //KREIRACU I JEDAN style ELEMENT
         //ZASTO?    PA ZATO STO ZELIM DA DEFINISEM NEKE STILOVE, KOJI CE BITI APLICIRANI NA ELEMENTIMA SHADOW DOM-A
 
+        const stilovi = document.createElement('style');
+        //SADA MOGU DEFINISATI      textContent     PROPERTI, OVOG style ELEMENTA, ODNOSNO style TAGA,
+                                                                            //ODNOSNO Node ELEMENTA
+        //DAKLE, ZELIM DA DEFINISEM STILOVE I ZA .wrapper, I ZA .icon , I ZA .info KLASE
+        //KORISTICU TEMPLATE STRING, ODNOSNO    textContext     PROPERTIJU CU ASSIGN-OVATI TEMPLATE
+        //STRING KAO VREDNOST, DA BIH MOGAO DA DEFINISEM STILOVE (CSS SELECTORE) U VISE REDOVA, ZATO DA
+        //NE BIH MORAO DA KORISTIM OBICAN STRING, JER TADA AKO ZELIM CODE U VISE REDOVA, MORAM TO
+        //PRATITI SA CONCATENATION-OM
+        stilovi.textContent = `
+            .wrapper {
+                position: relative;
+            }
+
+            .info {
+                font-size: 0.8rem;
+                width: 80vw;
+                display: inline-block;
+                padding: 8px;
+                background-color: seashell;
+                border: pink solid 2px;
+                border-radius: 8px;
+                opacity: 0;
+                transition: 0.6s all;
+                position: absolute;
+                bottom: 20px;
+                left: 10px;
+                z-index: 3; 
+            }
+
+            img {
+                width: 1.2rem;
+            }
+
+            .icon:hover + .info, .icon:focus + .info {
+                opacity: 1;
+            }
+        `;
     }
 }
 
