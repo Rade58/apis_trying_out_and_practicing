@@ -286,7 +286,13 @@ class PopUpInfo extends HTMLElement {
         const ikona = document.createElement('span');
         const info = document.createElement('span');
 
-        //DEFINISACU DODAVANJE NEKIH ATRIBUTA, TIM ELEMENTIMA
+        //ZELIM DA BUDE KREIRANA I JEDAN    img     ELEMENT
+        const image = document.createElement('img');
+
+        //KREIRACU I JEDNU VARIJABLU, KOJOJ BI TREBALO DA SE KASNIJE DODELI URL SLIKE
+        let imgUrl;
+
+        //DEFINISACU DODAVANJE NEKIH ATRIBUTA, POMENUTIM span ELEMENTIMA, VECINOM   class   ATRIBUTA
         info.setAttribute('class', 'info');
         omotac.setAttribute('class', 'wrapper');
         ikona.setAttribute('class', 'icon');
@@ -297,10 +303,42 @@ class PopUpInfo extends HTMLElement {
                                                     //U SLUCAJU OVOG PRIMERA PRVI CE BITI FOKUSIRAN UPRAVO OVAJ
                                                     //ELEMENT;  DA SAM DEFINISAO ZA NEKI ELEMENT tabindex
                                                     //KOJI BI IMAO VREDNOST 1, ONDA BI SLEDECIM PRITISKOM TABA, BIO FOKUSIRAN UPRAVO TAJ ELEMENT
-                                                    
-                                        
-                                        
-    }               
+        
+        //DEFINISATI DA SE MOGUCEM      text       ATRIBUTU CUSTOM ELEMENTA (CIJE KREIRANJE GORE, KAO STO SE I VIDI
+                                                                            //          NISAM DEFINISAO) 
+        //PRISTUPI VREDNOSTI, I DA TU VREDNOST DOBIJE       textContent     PROPERTI    span    ELEMENTA
+        //KOJEG SKLADISTI GORE DEKLARISANA info VARIJABLA
+        //UPAMTI DA OVDE NECU KLORISTITI    Node.innerHTML  JER MI NE TREBA HTML (SAMO IME PROPERTIJA 
+                                                                            //NAZNACAVA DA JE REC O HTML-U)
+        //KORISTICU PROPERTI SA KOJIM SE DO SADA NISAM SUSRETAO, A TO JE:
+                   //             textContent
+        
+        info.textContent = this.getAttribute("text");
+
+        //AKO MOJ CUSTOM ELEMENT IMA ATRIBUT    img     POTREBNO JE PRISTUPITI NJEGOVOJ VREDNOSTI
+        //I TU VREDNOST TREBA DODELITI  imgUrl  VARIJABLI, JER BI TREBASLO DA img ATRIBUT SKLADISTI
+        //URL SLIKE
+        //U SUPROTNOM,      imgUrl  TREBA DA SKLADISTI ADRESU DEFAULT SLIKE
+
+        if(this.hasAttribute('img')){
+            imgUrl = this.getAttribute('img')
+        }else{
+            imgUrl = 'img/default.png';
+        }
+
+        //SADA MOGU DEFINISATI DA SLIKA (KOJU SKLADISTI image VARIJABLA), DOBIJA ADRESU, UZ POMOC, NJENOG
+        //src ATRIBUTA, ODNOSNO PROPERTIJA
+
+        image.src = imgUrl;
+
+        //span ELEMENT, KOJEG SKLADISTI ikona VARIJABLA TREBA DA DOBIJE SLIKU, KAO NJEN NESTED ELEMENT
+
+        ikona.appendChild(image);
+
+        //KREIRACU I JEDAN style ELEMENT
+        //ZASTO?    PA ZATO STO ZELIM DA DEFINISEM NEKE STILOVE, KOJI CE BITI APLICIRANI NA ELEMENTIMA SHADOW DOM-A
+
+    }
 }
 
 //
