@@ -139,7 +139,7 @@ class AppDrawer extends HTMLElement {
                     //A TA INSTANCA JE I __proto__ SVAKOJ AppDrawer INSTANCI
 
         this.addEventListener('click', e => {       //KACENJE LISTENERA U SLUCAJU, KOJI CE BITI 
-                                                    //INVOKE KADA SE TRIGGERUJE KLIKE EVENT NA
+                                                    //INVOKE KADA SE TRIGGERUJE KLIK EVENT NA
                                                     //CUSTOM ELEMENTU
                                                     //A ON OSTO SAM DEFINISAO, JESTE DA TIME BUDE POZVANA I
                                                     //toggleDrawer METODA, ALI AKO ELEMENT NEMA disabled
@@ -148,6 +148,8 @@ class AppDrawer extends HTMLElement {
                 return;
             }
             this.toggleDrawer();
+
+            console.log("AppDrawer instantiated");
         });
     }
 
@@ -164,10 +166,14 @@ class AppDrawer extends HTMLElement {
 window.customElements.define('app-drawer', AppDrawer);      //REGISTRUJEM CUSTOM ELEMENTA
 
 const appDrawerOb = document.createElement('app-drawer');     //AppDrawer INSTANCA
+/////////////////////"POGRESNO" KREIRANJE INSTANCE (KONSTRUKTOR CE BITI POZVAN JEDINO DEFINSANJEM
+////////////////////CUSTOM ELEMENTA DIREKTNO U HTML FAJLU), OVO MORAM DODATNO ISPITATI
+////////////////////MISLIM DA ODGOVOR TREBA POTRAZITI U KORISCENJU LIFECYCLE CALLBACK-OVA
 
 
 //NEKE PROVERE  //////////////////////////////////////////////////////////////////////////////////////
 
+console.log(appDrawerOb);
 console.log(1,      appDrawerOb instanceof AppDrawer                    );   //-->  1 true
 console.log(2,      appDrawerOb.__proto__ instanceof HTMLElement        );   //-->  2 true
 console.log(3,      HTMLElement.prototype.isPrototypeOf(appDrawerOb)    );   //-->  3 true
@@ -277,7 +283,7 @@ class PopUpInfo extends HTMLElement {
         //DALJE U KONSTRUKTORU DEFINISEM FUNKCIONALNOST
         //PRVO ZELIM DA BUDUCA INSTANCA IMA ZAKACEN, ODNOSNO NESTED shadow root
         //A ZELIM I DA IMAM REFERENCU NA TU     shadowDOM   INSTANCU
-        
+
         const senka = this.attachShadow({mode: "open"});
         //mode ZADAJEM DA JE open, DA BIH MOGAO KASNIJE PRISTUPITI POMENUTOJ shadowDOM INSTANCI
         
@@ -313,7 +319,10 @@ class PopUpInfo extends HTMLElement {
                                                                             //NAZNACAVA DA JE REC O HTML-U)
         //KORISTICU PROPERTI SA KOJIM SE DO SADA NISAM SUSRETAO, A TO JE:
                    //             textContent
-        
+
+
+        console.log(this.getAttribute("data-text"));
+
         info.textContent = this.getAttribute("data-text");
 
         //AKO MOJ CUSTOM ELEMENT IMA ATRIBUT    img     POTREBNO JE PRISTUPITI NJEGOVOJ VREDNOSTI
@@ -322,7 +331,7 @@ class PopUpInfo extends HTMLElement {
         //U SUPROTNOM,      imgUrl  TREBA DA SKLADISTI ADRESU DEFAULT SLIKE
 
         if(this.hasAttribute('img')){
-            imgUrl = this.getAttribute('img')
+            imgUrl = this.getAttribute('img');
         }else{
             imgUrl = './img/default.ico';
         }
@@ -331,6 +340,9 @@ class PopUpInfo extends HTMLElement {
         //src ATRIBUTA, ODNOSNO PROPERTIJA
 
         image.src = imgUrl;
+
+
+        //if(this.hasAttribute('img') && )
 
         //span ELEMENT, KOJEG SKLADISTI ikona VARIJABLA TREBA DA DOBIJE SLIKU, KAO NJEN NESTED ELEMENT
 
@@ -387,12 +399,31 @@ class PopUpInfo extends HTMLElement {
         omotac.appendChild(info);
         //PA CU OMOTAC APPEND-OVATI U SHADOW DOM
         senka.appendChild(omotac);
+        
 
+        console.log('****KONSTRUKTOR INVOCIRAN****');
+    }
+
+    //NEKE MOJE PROVER, ZA SADA NE OBRACAJ PAZNJU NA OVE SETTER-E I GETTER-E
+    /*get text(){
+        return this.hasAttribute('data-text');
+    }
+
+    get adresa(){
+        return this.hasAttribute('img');
     }
     
-    attributeChangedCallback(ime, vrednost, nova){
-        console.log(ime, vrednost, nova);
+    set text(vrednost){
+        if(this.hasAttribute('data-text')){
+            this.setAttribute('data-text', vrednost);
+        }
     }
+
+    set adresa(vrednost){
+        if(this.hasAttribute('img')){
+            this.setAttribute('img', vrednost);
+        }
+    }*/
 }
 
 //SADA CU DEFINISATI, NOVI CUSTOM ELEMENT
@@ -401,65 +432,39 @@ window.customElements.define('pop-up-info', PopUpInfo);
 //POSTO SAM, PONOVO PROSTUDIRAO CODE PopUpInfo KLASE, KONKRETNO data-text ATRIBUT, MOGU ZAKLJUCITI
 //DA SE OVIM ATRIBUTOM POSTIZE, UPRAVO NESTO STO ME PODSECA NA PROPS IZ React-A 
 const popUpInfoElement = document.createElement("pop-up-info");
-popUpInfoElement.setAttribute("data-text", "React je biblioteka, a ne framework, i tako dalje bla bla...");
-popUpInfoElement.setAttribute("img","./icon.png");
+
+popUpInfoElement.setAttribute("data-text", "bla bla bla");
+popUpInfoElement.setAttribute("img", './icon.png');
+
+
+document.getElementById('root').appendChild(popUpInfoElement);
+
 console.log(popUpInfoElement);
-document.getElementById('root').appendChild(popUpInfoElement); 
 
+document.getElementsByTagName('pop-up-info')[0].setAttribute('data-text', "ovaj tekst tekst tekst");
+////POSLEDNJI RED CODE-A, UOPSTE NEMA EFEKTA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//      CODE SA SLIKE GORE, ODNOSNO OVAKVO ('NAKNADNO') DEFINISANJE ATRIBUTA NECE DATI NIKAKAVOG EFEKTA,
+//      MISLIM NA NAKNADNO DEFINISANJE ATRIBUTA, KAO STO SAM TO URADIO
+//      (A ONO STA SAM OTKRIO JESTE DA define METODA,
+//      KONSTRUKTORA CUSTOM ELEMENTA, USTVARI POZIVA PRILIKOM KREIRANJA INSTANCE ILI NJENOG UPDATE-A), 
+//      A ZNAM DA SE, U SLUCAJU OVOG PRIMERA KONSTRUKTOR IZVRSAVA
+//      SAMO ONDA KADA SE KREIRA    PopUpInfo   INSTANCA
+//      JER NEMA NIKAKVOG UPDATE-A
+//          
+//      ODNOSNO AKO SE PROUCI KADA SVE TO PARSER POZIVA constructor (KAO ONO STO SE DOGADJA KAO
+//      POSLEDICA KAKO SU, USTVARI KREATORI WEB KOMPONENTI DEFINISALI define METODU)
+//      JA U SLUCAJU MOG PRIMERA, MOGU SHVATITI DA SE KONSTRUKTOR POZIVA SAMO JEDNOM
+//      A U TOM SLUCAJU 
+//              data-text ATRIBUT NE POSTOJI, KAO ATRIBUT CUSTOM ELEMENTA
+//              (AKO BUDEM DEFINISAO NJEGOVO STAMPANJE, VIDECU DA JE NJEGOVA VREDNOST null)
 //
+//              img ATRIBUT IMA VREDNOST, KOJA JE USTVARI RELATIVNA ADRESSA DO DEFAULT SLIKE
 //
+//ZATO, MOGU DODELITI ZELJENE VREDNOSTI ATRIBUTA DIREKTNO U HTML-U, A NE MOGU JAVASCRIPT-OM
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                  ODGOVOR NA OVO CU POTRAZITI U KORISCENJU LIFECYCLE CALLBACK-OVA
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////CUSTOM ELEMENT REACTION (REAKCIJE)////////////////////////
@@ -487,7 +492,7 @@ document.getElementById('root').appendChild(popUpInfoElement);
 ////////              OVAJ CALLBACK SE INVOCIRA, KADA SE DOGADJA NESTO SA OBSERVED (ONAJ KOJI SE POSMATRA)
 ////////              ATRIBUTOM (DA BIH OVO ZNAO MORAM SE PODSETITI STATICKIH METODA JEDNE KLASE, STO CU
 ////////              I URADITI VRLO USKORO)
-////////              A STA SE TO MIZE DOGADJATI SA OBSERVED ATRIBUTOM:  
+////////              A STA SE TO MOZE DOGADJATI SA OBSERVED ATRIBUTOM:  
 ////////                    ON SE MOZE dodati, ukloniti, update-ovati, ili zameniti
 ////////              OVA METODA SE TAKODJE POZIVA ZA INICIJALNE VREDNOSTI, KADA SE CUSTOM ELEMENT
 ////////              KREIRA OD STRANE parser-A, ILI KADA SE UPGRADE-UJE
@@ -508,37 +513,160 @@ document.getElementById('root').appendChild(popUpInfoElement);
 ////////
 ////////    REACTION CALLBACKOVI, ILI KAKO IH DRUGI ZOVU LIFECYCLE CALLBACK-OVI, JESU SINHRONI
 ////////    AKO NEKO POZOVE         el.setAtribute()    NA MOM CUSTOM ELEMENTU, BROWSER CE ODMAH ZVATI
-////////    POMENUTI    attributeChangedCallback    
+////////    POMENUTI        attributeChangedCallback    (AKO JE ATRIBUT OBSERVED)
 ////////    ISTO TAKO ODMAH NAKON SE MOJ ELEMENT UKLONI IZ DOM-A (POZIVANJEM NA PRIMER el.remove()) 
 ////////    BROWSER  CE POZVATI disconnectedCallback 
 ////////
-////////        
-////////
-////////
+////////        MISLIM DA JE OVA POSLEDNJA RECENICA, KOJA SE TICE   attributeChangedCallback    -A
+////////        JESTE KRUCIJALNA ZA MOJ NEUSPEH U PREDHODNOM PRIMERU, GDE SU PRILIKON INSTANTIATION-A
+////////        ODNOSNO KREIRANJA INSTANCE, JESU SAMO PROSLEDILE ONE DEFAULT VREDNOSTI ATRIBUTA, DO ONIH 
+////////        ELEMENATA U SHADOW DOM-U
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////
-////////        
+////////        PONOVO CU PREKOPIRATI CELU MOJU KLASU KOJU SAM DEFINISAO, DAKLE SASTOJACE SE OD ISTOG CODE-A
+////////        ALI OVOG PUTA CE IMATI DRUGO IME
 ////////
+////////    OVO RADIM ZBOG FRESH STARTA, JER SAM FLOOD-OVAO CEO OVAJ DOKUMENT SA COMMENTED OUT TEKSTOM
+////////    TAKO DA MI JE MALO TESKO DA SE ORGANIZUJEM
 ////////
-////////
-////////
-////////
-////////
-////////
-////////
-////////
-////////
-////////
+console.log("**************************************************************************************************************************************************************************");
+////DAKLE, NOVA KLAS SA ISTIM CODE-OM, KAOI I PREDHODNA CE NOSITI IME       DescriptionImage
+/////////////////////////////////I ONO STO MORAM POZNAVATI A STO SAM U MEDJUVREMENU I POGLEDAO JESTE
+//                                    shadowDom 
+//          ODNOSNO POGLEDAO SAM NJEGOV __proto__ OBJEKAT I METODE I VODEO DA MOGU PRISTUPATI NJEGOVIM ELEMENTIMA
+//          TO SAM U OVOM PRIMERU I URADIO
+//          NAIME, JA SAM DEFINISAO DA SE POSMATRA PROMENA DVA ATRIBUTA CUSTOM ELEMENATA
+//      DA VIDIS KOJE ATRIBUTE SAM "OZNACIO" ZA OBSERVED, POGLEDAJ  STATICNI GETTER, KOJI SAM DEFINISAO
+//      KAO METODU KLASE, A REC JE O METODI
+
+//                      static get observedAttributes
+// ONO STO SE MORA DEFINISATI KAO POVRATNA VREDNOST OVE METODE JESTE NIZ, CIJE SU VREDNOSTI CELIJA, UPRAVO
+// ATRINGOVI IMENA, ONIH ATRIBUTA, ZA KOJE ZELIM DA SE POSMATRAJU, ODNOSNO BUDU OBSERVED
+//          SVAKI PUT KADA SE PROMENI NEKI OD OBSERVED ATRIBUTA POZIVA SE
+//     
+//                                  attributeChangedCallback                  
+// 
+//      KAO STO SE MO0ZE VIDETI U NJEGOVOM OBIMU (U CODE-U DOLE) JA SAM PRISTUPIO shadowRoot-U
+//      I MENJAO KARAKTERISTIKE, NJEGOVIH ELEMENATA, U ODNOSU NA VREDNOST OBSERVED ATRIBUTA
+//
+class DescriptionImage extends HTMLElement {
+    constructor(){
+        super();
+
+        const senka = this.attachShadow({mode: "open"});
+
+        const omotac = document.createElement('span');
+        const ikona = document.createElement('span');
+        const info = document.createElement('span');
+        const image = document.createElement('img');
+        
+        let imgUrl;
+        
+        imgUrl = './img/default.ico';
+
+        info.setAttribute('class', 'info');
+        omotac.setAttribute('class', 'wrapper');
+        ikona.setAttribute('class', 'icon');
+        ikona.setAttribute('tabindex', 0);
+
+        info.textContent = this.getAttribute("data-text");
+
+        if(this.hasAttribute('img')){
+            imgUrl = this.getAttribute('img');
+        }
+        
+        image.src = imgUrl;
+        
+        ikona.appendChild(image);
+
+        const stilovi = document.createElement('style');
+        
+        stilovi.textContent = `
+            .wrapper {
+                position: relative;
+            }
+
+            .info {
+                font-size: 0.8rem;
+                width: 80vw;
+                display: inline-block;
+                padding: 8px;
+                background-color: seashell;
+                border: pink solid 2px;
+                border-radius: 8px;
+                opacity: 0;         
+                transition: 0.6s all;
+                position: absolute;   
+                bottom: 20px;         
+                left: 10px;           
+                z-index: 3;           
+            }                    
+
+            img {
+                width: 1.2rem;
+            }
+
+            .icon:hover + .info, .icon:focus + .info {      
+                opacity: 1;
+            }
+        `;
+        
+        senka.appendChild(stilovi);
+
+        console.log(stilovi.isConnected);
+
+        omotac.appendChild(ikona);
+        omotac.appendChild(info);
+        senka.appendChild(omotac)
+        
+        console.log('KONSTRUKTOR    DescriptionImage    KLASE   INVOCIRAN');
+    }
+
+    attributeChangedCallback(ime, svre, nvre){
+
+        const shadowRoot = this.shadowRoot;
+
+        const wrapper = shadowRoot.children[1];
+        const icon = wrapper.firstChild.firstChild;
+        const info = wrapper.lastChild;
+        
+        console.log(ime, svre, nvre);
+        console.log(icon, info);
+        console.log(shadowRoot);
+        
+        if(ime === 'img'){
+            icon.src = nvre;
+        }
+        if(ime === 'data-text'){
+            info.textContent = nvre;
+        }
 
 
+        console.log("pokusaj pristupa elementu u shadow root-u");
+    }
 
+    static get observedAttributes(){
+        return ["img", "data-text"];
+    }
+}
 
+window.customElements.define('description-image', DescriptionImage);
 
+const opisnaSlika = document.createElement('description-image');
+//console.log(opisnaSlika);
+const korenElement = document.querySelector('.koren');
+korenElement.appendChild(opisnaSlika);
+opisnaSlika.setAttribute('img', './icon.png');
+opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze da je polimer biblioteka a react framework i tako")
 
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+            //////POSTO NE VIDIM DA IMAM BILO KAKVIH MOGUCNOSTI DA TRIGGER-UJEM PONOVNU INVOKACIJU 
+            ////// KONSTRUKTORA, KOJA BI PROMENILA ATRIBUT CUSTOM ELEMENTA, I TIME PROMENILA
+            ////// NEKE FEATURE ELEMENATA shadow DOM-A, KOJI ZAVISE OD ATRIBUTA CUSTOM ELEMENA
+            //////      JA ODLAZIM DA SE BOLJE UPOZNAM SA SHADOW DOM-OM
+//////////////////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -575,13 +703,25 @@ console.log(objekat.properti1, objekat.properti2);*/
 
 
 
+///////////////VEZBANJE Web KOMONENTI///////////////////
 
+class NekiElement extends HTMLElement {
+    constructor(){
+        super();
+        const element = document.createElement('div');
+        element.innerHTML = "********neki********** tekst************";
+        const senka = this.attachShadow({mode: 'open'});
+        senka.appendChild(element);
+        console.log("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||INSTANCA ZA NEKI ELEMENT NAPRAVLJENA*****IGNORE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+    }
+}
 
+window.customElements.define('neki-element', NekiElement);
+const nekiElement = document.createElement('neki-element');
 
+document.querySelector('body').appendChild(nekiElement);
+/*
+console.log(nekiElement instanceof NekiElement);
 
-
-
-
-
-
-
+console.log(customElements.__proto__);
+*/
