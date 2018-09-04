@@ -404,7 +404,7 @@ const popUpInfoElement = document.createElement("pop-up-info");
 popUpInfoElement.setAttribute("data-text", "React je biblioteka, a ne framework, i tako dalje bla bla...");
 popUpInfoElement.setAttribute("img","./icon.png");
 console.log(popUpInfoElement);
-document.getElementById('root').appendChild(popUpInfoElement);
+document.getElementById('root').appendChild(popUpInfoElement); 
 
 //
 //
