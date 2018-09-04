@@ -360,24 +360,41 @@ class PopUpInfo extends HTMLElement {
                 background-color: seashell;
                 border: pink solid 2px;
                 border-radius: 8px;
-                opacity: 0;
+                opacity: 0;            /*POTPUNO PROZIRAN*/
                 transition: 0.6s all;
-                position: absolute;
-                bottom: 20px;
-                left: 10px;
-                z-index: 3; 
-            }
+                position: absolute;   /*APSOLUTNO POZICIONIRAN*/
+                bottom: 20px;         /*NALAZICE SE, ZA DUZINU 20px OD DONJE IVICE SVOG PARENTA, KA GORE; ODNOSNO DO SVOJE DONJE IVICE DO PARENDOVE DONJE IVICE DUZINA CE BITI 20px*/
+                left: 10px;           /*10 PIKSELA CE BITI POMEREN U DESNO; OD LEVE IVICE PARENTA DO SVOJE LEVE IVICE BICE RAZMAK OD 10px*/
+                z-index: 3;           /*OSIGURANJE DA NECE BITI PREKLOPLJEN DRUGIM ELEMENTIMA*/
+            }                          /*DA BI ON BIO POZICIONIRAN NA POMENUTI NACIN, NJEGOV PARENT MORA DA BUDE POZICIONIRAN ABSOLUTNO ILI RELATIVNO (I JESTE)*/
 
             img {
                 width: 1.2rem;
             }
 
-            .icon:hover + .info, .icon:focus + .info {
+            .icon:hover + .info, .icon:focus + .info {      /*HOVER-OM ILI FOCUS-OM PREKO IKONICE NJEN SIBLING, KOJI SLEDI NAKON IKONICE, I KOJI IMA KLASU .info; POSTACE NEPROZIRAN*/
                 opacity: 1;
             }
         `;
+
+        //SADA style TAG, ODNOSNO HTMLElement, KOJI OBUHVATA STILOVE KOJA SAM DEFINISAO, MOGU DA APPEND-UJEM, U SHADOW DOM
+        senka.appendChild(stilovi);
+        //DA BIH DEFINISAO PROVERU DA JE POMENUTI ELEMENT ZAISTA ZAKACEN U SHADOW DOM, KORISTICU  Node.isConnected PROPERTI
+        //POMENUTI PROPERTI CE return-OVATI true AKO JE ELEMENT ZAKACEN NA SHADOW DOM (STO CE OVDE BITI SLUCAJ), ILI ZAKACEN NA document
+        console.log(stilovi.isConnected);
+        //SADA CU APPENDOVATI, PRVO IKONICU ELEMENT PA INFO ELEMENT, U WRAPPER ELEMENT
+        omotac.appendChild(ikona);
+        omotac.appendChild(info);
+        //PA CU OMOTAC APPEND-OVATI U SHADOW DOM
+        senka.appendChild(omotac);
+
     }
 }
+
+//SADA CU DEFINISATI, NOVI CUSTOM ELEMENT
+window.customElements.define('pop-up-info', PopUpInfo);
+
+
 
 //
 //
