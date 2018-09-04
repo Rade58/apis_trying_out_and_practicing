@@ -324,7 +324,7 @@ class PopUpInfo extends HTMLElement {
         if(this.hasAttribute('img')){
             imgUrl = this.getAttribute('img')
         }else{
-            imgUrl = 'img/default.png';
+            imgUrl = './img/default.ico';
         }
 
         //SADA MOGU DEFINISATI DA SLIKA (KOJU SKLADISTI image VARIJABLA), DOBIJA ADRESU, UZ POMOC, NJENOG
@@ -389,12 +389,22 @@ class PopUpInfo extends HTMLElement {
         senka.appendChild(omotac);
 
     }
+    
+    attributeChangedCallback(ime, vrednost, nova){
+        console.log(ime, vrednost, nova);
+    }
 }
 
 //SADA CU DEFINISATI, NOVI CUSTOM ELEMENT
 window.customElements.define('pop-up-info', PopUpInfo);
 
-
+//POSTO SAM, PONOVO PROSTUDIRAO CODE PopUpInfo KLASE, KONKRETNO data-text ATRIBUT, MOGU ZAKLJUCITI
+//DA SE OVIM ATRIBUTOM POSTIZE, UPRAVO NESTO STO ME PODSECA NA PROPS IZ React-A 
+const popUpInfoElement = document.createElement("pop-up-info");
+popUpInfoElement.setAttribute("data-text", "React je biblioteka, a ne framework, i tako dalje bla bla...");
+popUpInfoElement.setAttribute("img","./icon.png");
+console.log(popUpInfoElement);
+document.getElementById('root').appendChild(popUpInfoElement);
 
 //
 //
@@ -480,8 +490,8 @@ window.customElements.define('pop-up-info', PopUpInfo);
 ////////              A STA SE TO MIZE DOGADJATI SA OBSERVED ATRIBUTOM:  
 ////////                    ON SE MOZE dodati, ukloniti, update-ovati, ili zameniti
 ////////              OVA METODA SE TAKODJE POZIVA ZA INICIJALNE VREDNOSTI, KADA SE CUSTOM ELEMENT
-////////              KREIRA OD STRANE parser-A, ILIO KADA SE UPGRADE-UJE
-////////              (MNOGO SPOMINJEM UPGRADE-OVANJE LEMENATA, TAKO DA CU SE TIME POSEBNO POZABAVITI, VRLO USKORO)
+////////              KREIRA OD STRANE parser-A, ILI KADA SE UPGRADE-UJE
+////////              (MNOGO SPOMINJEM UPGRADE-OVANJE ELEMENATA, TAKO DA CU SE TIME POSEBNO POZABAVITI, VRLO USKORO)
 ////////        
 ////////              BROWSER POZIVA POMENUTI CALLBACK ZA SVAKI ATRIBUT, KOJI JE whitelisted U SLEDECEM       
 ////////              NIZU:         observedAttributes
