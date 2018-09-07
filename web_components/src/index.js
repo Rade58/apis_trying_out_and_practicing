@@ -688,19 +688,51 @@ opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze 
 /////////////////////////////PRIMER ZA CUSTOMIZED BUILT-IN CUSTOM ELEMENT
 
 
-/////KOD OVIH ELEMENATA DEFINISE SE KLASA, KOJA PROSIRUJE, NE HTMLElement, VEC NERKU DRUGIU
-///SPECIFICNU KLASU ZA HTML ELEMENT
+/////KOD OVIH ELEMENATA DEFINISE SE KLASA, KOJA PROSIRUJE, NE HTMLElement, IZ KOJE SVI POSEBNI BUILT-IN 
+//, VEC NEKU DRUGU
+///SPECIFICNU KLASU ZA SPECIFICNI BUILT-IN HTML ELEMENT, KAO STO JE     HTMLUListElement
+//TO CE UPRAVO MOJU KLASU ELEMNATA ODLIKOVATI KAO KLASU CUSTOMIZED BUILT IN ELEMENATA
+//JER ELEMENT CE IMATI KARAKTERISTIKE               HTMLUListElement-A      SA FUNKCIONALNOSCU KOJU
+//JA DEFINISEM, SAGRADJENOM NA VRHU, ZA RAZLIK UOD AUTONOMNOG STANDALONE ELEMENTA
+
+//REGISTRACIJA:
+// POZIVANJU define METODE SE, PORED STRINGA ZELJENOG IMENA I REFERECE KLASE, DODAJE I OBJEKAT, KOJI IMA extends PROPERTI
+//CIJA VREDNSOT TREBA DA BUDE STRING IMENA NATIVE HTML ELEMENTA KOJEG MOJ CUSTOM ELEMENT PROSIRUJE
+
+//KREIRANJE ELEMENTA:
+//A KADA SE KREIRA ELEMENT document.createElement  METODI SE DODAJE IME BUILT IN ELEMENTA, ALI PORED NJEGA SE DODAJE
+//I DRUGI ARGUMNT, A TO JE OBJEKAT SA PROPERTIJEM is, CIJA VREDNOST ,JESTE IMENOVANJE, MOG CUSTOMIZED ELEMENTA
+//A AKO TO RADIM DIREKTNO U HTML-U, ZADAJE SE ATRIBUT       is      SA ISTOM VREDNOSCU
+
+//U SLEDECEM PRIMERU, DEFINISACU KLASU ZA FENSI DUGME KOJE CE EXTEND-OVATI OBICNO DUGME
+//ALI CE IMATI UGRADJENO  USEBI DA KLIKOM IZAZOVE TLASASTI EFEKAT NA EKRANU
+
+//PRVO CU DEFINISATI CSS
 
 
+class FancyButton extends HTMLButtonElement {
+    constructor(){
+        super();
+        this.addEventListener('click', ev => this.drawRipple(ev.offsetX, ev.offsetY));
+    }
 
+    drawRipple(x, y){
+        const div = document.createElement('div');
+        div.classList.add('ripple');
+        this.appendChild(div);
+        div.style.top = `${y-div.clientHeight/2}px`;
+        div.style.left = `${x - div.clientWidth/2}px`;
+        div.style.backgroundColor = 'currentcolor';
+        div.classList.add('run');
+        div.addEventListener('transitioned', e => div.remove());
+    }
 
+}
 
+customElements.define('fancy-button', FancyButton, {extends: 'button'});
 
-
-
-
-
-
+const fensiDugme = document.createElement('button', {is: 'fancy-button'});
+document.getElementById("koren-2").appendChild(fensiDugme);
 
 
 
