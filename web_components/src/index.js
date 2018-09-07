@@ -662,11 +662,18 @@ opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-            //////POSTO NE VIDIM DA IMAM BILO KAKVIH MOGUCNOSTI DA TRIGGER-UJEM PONOVNU INVOKACIJU 
-            ////// KONSTRUKTORA, KOJA BI PROMENILA ATRIBUT CUSTOM ELEMENTA, I TIME PROMENILA
-            ////// NEKE FEATURE ELEMENATA shadow DOM-A, KOJI ZAVISE OD ATRIBUTA CUSTOM ELEMENA
-            //////      JA ODLAZIM DA SE BOLJE UPOZNAM SA SHADOW DOM-OM
-//////////////////////////////////////////////////////////////////////////////////////////
+        ///DAKLE GORE SAM DEFINISAO KOJI ATRIBUTI SE POSMATRAJU (UZ POMOC static get observedAttributes), ODNOSNO CIJA PROMENA SE POSMATRA
+        ////I KADA SU DEFINISANI ATRIBUTI PROMENJENI, PKRECE SE 
+
+
+////                attributeChangedCallback            ZA SVAKI OD PROMENJENIH ATRIBUTA
+
+//Definišite reakcije ako / I kada TO IMA SMISLA
+// Ako je vaš element dovoljno složen i otvara vezu sa INDEKSOVANOM BAZOM PODATAKA 
+//u connectedCallback-U , uradite neophodnu funkciju čišćenja u   disconectedCallback-U
+//Ali budite oprezni! Ne možete se osloniti na uklanjanje vašeg elementa iz DOM u svim okolnostima
+//Na primer, disconnectedCallback, nikada neće biti pozvan ako korisnik zatvori TAB (KARTICU) WEB STRANICE
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -675,6 +682,45 @@ opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////PRIMER ZA CUSTOMIZED BUILT-IN CUSTOM ELEMENT
+
+
+/////KOD OVIH ELEMENATA DEFINISE SE KLASA, KOJA PROSIRUJE, NE HTMLElement, VEC NERKU DRUGIU
+///SPECIFICNU KLASU ZA HTML ELEMENT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //NE OBRACAJ PAZNJU NA OVO, OVO JE PODSECANJE NA GETTER I SETTER
 /*const objekat = {
     properti1: 8,
@@ -703,7 +749,7 @@ console.log(objekat.properti1, objekat.properti2);*/
 
 
 
-///////////////VEZBANJE Web KOMONENTI///////////////////
+///////////////VEZBANJE Web KOMONENTI; NE OBRACAJ PAZNJU NA OVO///////////////////
 
 class NekiElement extends HTMLElement {
     constructor(){
@@ -725,3 +771,6 @@ console.log(nekiElement instanceof NekiElement);
 
 console.log(customElements.__proto__);
 */
+
+
+
