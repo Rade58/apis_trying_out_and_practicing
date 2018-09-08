@@ -713,18 +713,28 @@ opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze 
 class FancyButton extends HTMLButtonElement {
     constructor(){
         super();
-        this.addEventListener('click', ev => this.drawRipple(ev.offsetX, ev.offsetY));
+        this.addEventListener('click', ev => {
+            
+            this.drawRipple(ev.offsetX, ev.offsetY);
+            console.log(ev.offsetX, ev.offsetY);
+        });
+        
+        this.style.width = "400px";
+        this.style.height = "120px";
+        this.style.backgroundColor = "pink"
+        this.classList.add('ripple');
+    
     }
 
     drawRipple(x, y){
         const div = document.createElement('div');
-        div.classList.add('ripple');
+        
         this.appendChild(div);
         div.style.top = `${y-div.clientHeight/2}px`;
         div.style.left = `${x - div.clientWidth/2}px`;
         div.style.backgroundColor = 'currentcolor';
         div.classList.add('run');
-        div.addEventListener('transitioned', e => div.remove());
+        div.addEventListener('transitioned', ev => div.remove());
     }
 
 }
@@ -732,11 +742,12 @@ class FancyButton extends HTMLButtonElement {
 customElements.define('fancy-button', FancyButton, {extends: 'button'});
 
 const fensiDugme = document.createElement('button', {is: 'fancy-button'});
+console.log(fensiDugme instanceof FancyButton);
 document.getElementById("koren-2").appendChild(fensiDugme);
 
-
-
-
+/*fensiDugme.style.width = "400px";
+fensiDugme.style.height = "120px";*/
+console.log(fensiDugme.classList)
 
 
 
@@ -803,6 +814,209 @@ console.log(nekiElement instanceof NekiElement);
 
 console.log(customElements.__proto__);
 */
+
+////////////////////////VEZBANJE RADIALNOG GRADIENT-A, NE OBRACAJ PAZNJU NA OVO
+//(OVO SE SAMO TICE POZADINE ELEMENT-A)
+////////ELEMENT NAPRAVLJEN U HTML-U, KLASA .neki_el
+
+///ONO STO MOGU POSTICI RADIJALNIM GRADIENT-OM, JESTE DA IMAM NACRTAN KRUZNI OBLIK
+///ODNOSNO PRSTENASTE OBLASTI BOJA
+///SVAKA BOJA SE NASTAVLJA JEDNA NA DRUGU
+////izmedju njih nejasna granica, odnosno MOGU SE PRELIVATI JEDNA U DRUGU 
+////U MOM SLUCAJU TO CE BITI, KONKRETNO KRUGOVI (circle) BOJA, JEDNI OKO DRUGIH
+////I ONO STO JE TQKODJE VAZNO, JESTE DA ODREDJENE OBLASTI (ILI SVE), NE MORAJU BITI BOJA, 
+///VEC TRANSPARENTNOST, ODNOSNO PROZIRNOST
+///SADA CU POCETI SA STILIZOVANJEM .neki_el U CSS-U
+///A ZA DEFINISANJE GRADIOJENTA, ODGOVORAN JE PROPERTI background-image
+///
+///DAKLE KRIRAO SAM JEDAN ELEMENT, TO CE UPRAVO BITI ONAJ .neki_el, I INLINE DEFINISAO SAM MU GRANICU, 
+//SIRINU I VISINU (DA BI GA IMAO SPREMNOG) (STILOVE MOGU DEFINISATI I OVAKO U JAVASCRIPT-U)
+
+const nekiEl = document.querySelector('.neki_el');
+
+const stilElement = document.createElement('style');
+const stiloviZaNeki = `
+        .neki_el {
+            background-image: radial-gradient(circle at top, green, purple 10%, transparent 28%, orange 100%);
+        }
+
+        /*INTERPRETIRACU GORNJE POZIVANJE   radial-gradient     FUNKCIJE*/
+        /*NAIME, ONA KAZE DA SE POZADINA ELEMENT, OBOJI NA SLEDECI NACIN*/
+        /*   NEKA BOJENJE BUDE KRUZNO, ODNOSNO U OBLIKU PRSTENOVA BOJE
+            I NEKA KRENE OD CENTRA KOJI CE SE NALAZITI
+            NA CENTRU GORNJE GRANICE ELEMENTA
+            POCINJE SE OD ZELENE BOJE U CENTRU
+            NA 10% SIRINE ELEMENTA KRECE LJUBICASTA
+            NA 28% SIRINE ELEMNTA, KRECE TRANSPARENTNOST
+            NA 100% SIRINE ELEMENTA, KRECE NARANDZASTA
+
+            ONO STO SE DOGADJA IZMEDJU OVIH BOJA JESTE GRADIJENTNOST, ODNOSNO, POSTEPENO PRELIVANJE
+            JEDNE U DRUGU
+        */
+`;
+
+stilElement.textContent = stiloviZaNeki;
+
+nekiEl.appendChild(stilElement);
+
+console.log(nekiEl);
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+
+
+
+
+
+
+
+
+
 
 
 
