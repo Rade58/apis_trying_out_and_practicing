@@ -5,7 +5,7 @@
 
 
 
-.ripple {
+/*.ripple {
     position: relative;
     overflow: hidden;
     transform: translate3d(0, 0, 0);
@@ -33,7 +33,7 @@
     transform: scale(0, 0);
     opacity: .3;
     transition: 0s;
-}
+}*/
 
 
 

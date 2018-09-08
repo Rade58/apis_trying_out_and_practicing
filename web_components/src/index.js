@@ -705,36 +705,90 @@ opisnaSlika.setAttribute('data-text', "react jste framework ili nije, neko kaze 
 //A AKO TO RADIM DIREKTNO U HTML-U, ZADAJE SE ATRIBUT       is      SA ISTOM VREDNOSCU
 
 //U SLEDECEM PRIMERU, DEFINISACU KLASU ZA FENSI DUGME KOJE CE EXTEND-OVATI OBICNO DUGME
-//ALI CE IMATI UGRADJENO  USEBI DA KLIKOM IZAZOVE TLASASTI EFEKAT NA EKRANU
+//ALI CE IMATI UGRADJENO  U SEBI DA KLIKOM IZAZOVE TLASASTI EFEKAT NA EKRANU
 
-//PRVO CU DEFINISATI CSS
+//IDEJA JE DA KORISTIM PSEUDO ELEMENT (TO MOZE BITI I ::after, ALI I ::before)
+//POKUSACU DA SAV CODE DEFINISEM, DIREKTNO U OVOM JAVASCRIPT FAJLU
 
 
 class FancyButton extends HTMLButtonElement {
     constructor(){
         super();
-        this.addEventListener('click', ev => {
-            
-            this.drawRipple(ev.offsetX, ev.offsetY);
-            console.log(ev.offsetX, ev.offsetY);
-        });
+    //ZA POCETAK DA DEFINISEM VELICINU DUGMETA
+
+        if(this.hasAttribute("sirina")){
+            this.style.width = this.sirina;
+        }
+        if(this.hasAttribute("visina")){      
+            this.style.height = this.visina;
+        }
         
-        this.style.width = "400px";
-        this.style.height = "120px";
-        this.style.backgroundColor = "pink"
         this.classList.add('ripple');
-    
+
+        const stilElement = document.createElement('style');
+        const stilovi = `
+
+            .ripple {
+                background-color: pink;
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple::before {
+                //content: "neki tekst";
+                content: "";
+                border: orange solid 0px;
+                display: block;
+                position: relative;
+                width: 80%;
+                height: 80%;
+                margin: auto auto;
+                background-repeat: no-repeat;
+                background-image: radial-gradient(circle at center, transparent, lightgray 28%, transparent 28.2%);
+                transform: scale(0,0);
+                opacity: 1;
+                transition: transform 0.4s, opacity 1.6s;
+            }
+
+            .ripple:active::before {
+                transform: scale(10,10);
+                opacity: 0;
+            }
+        `;
+        
+        stilElement.textContent = stilovi;
+
+        this.appendChild(stilElement);
+
+        
     }
 
-    drawRipple(x, y){
-        const div = document.createElement('div');
-        
-        this.appendChild(div);
-        div.style.top = `${y-div.clientHeight/2}px`;
-        div.style.left = `${x - div.clientWidth/2}px`;
-        div.style.backgroundColor = 'currentcolor';
-        div.classList.add('run');
-        div.addEventListener('transitioned', ev => div.remove());
+    //DEFINISACU SETTERE I GETTERE ZA SIRINU I VISINU
+    set sirina(novaSirina){
+        this.setAttribute('sirina', novaSirina);
+    }
+    set visina(novaVisina){
+        this.setAttribute('sirina', novaVisina);
+    }
+    get sirina(){
+        return this.getAttribute('sirina'); 
+    }
+    get visina(){    
+        this.getAttribute('visina');
+    }
+
+    static get observedAttributes(){
+        return ["sirina", "visina"];
+    }
+
+    attributeChangedCallback(attributeName, newValue, oldValue){
+        console.log("atribut se promenio", attributeName, oldValue, newValue);
+        this.style.width = (attributeName === "sirina")?oldValue:this.sirina;
+        this.style.height = (attributeName === "visina")?oldValue:this.visina;
+    }
+
+    connectedCallback(){
+        console.log(window.getComputedStyle(this, "::before").position);
+        //this.parentNode.style.overflow = "hidden";
     }
 
 }
@@ -742,12 +796,11 @@ class FancyButton extends HTMLButtonElement {
 customElements.define('fancy-button', FancyButton, {extends: 'button'});
 
 const fensiDugme = document.createElement('button', {is: 'fancy-button'});
-console.log(fensiDugme instanceof FancyButton);
+//console.log(fensiDugme instanceof FancyButton);
 document.getElementById("koren-2").appendChild(fensiDugme);
-
-/*fensiDugme.style.width = "400px";
-fensiDugme.style.height = "120px";*/
-console.log(fensiDugme.classList)
+fensiDugme.setAttribute("sirina", "180px");
+fensiDugme.setAttribute("visina", "120px");
+console.log(fensiDugme);
 
 
 
@@ -801,7 +854,7 @@ class NekiElement extends HTMLElement {
         element.innerHTML = "********neki********** tekst************";
         const senka = this.attachShadow({mode: 'open'});
         senka.appendChild(element);
-        console.log("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||INSTANCA ZA NEKI ELEMENT NAPRAVLJENA*****IGNORE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        //console.log("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||INSTANCA ZA NEKI ELEMENT NAPRAVLJENA*****IGNORE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
     }
 }
 
@@ -859,7 +912,7 @@ stilElement.textContent = stiloviZaNeki;
 
 nekiEl.appendChild(stilElement);
 
-console.log(nekiEl);
+//console.log(nekiEl);
 ///
 ///
 ///
