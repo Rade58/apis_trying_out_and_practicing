@@ -723,11 +723,56 @@ class FancyButton extends HTMLButtonElement {
             this.style.height = this.visina;
         }
         this.style.backgroundColor = "pink";
-        this.classList.add('ripple');
-        this.setAttribute('data-top', "28px");
-        this.setAttribute('data-left', "0px");
+        
+        //this.classList.add('ripple');
+
+        /*this.setAttribute('data-top', "0px");
+        this.setAttribute('data-left', "0px");*/
+        
         const stilElement = document.createElement('style');
-        const stilovi = `
+    
+        
+        /*stilElement.textContent = this.stiloviF(
+            this.getAttribute('data-top'), 
+            this.getAttribute('data-left')
+        );*/
+
+        this.appendChild(stilElement);
+
+
+        this.addEventListener("click", ev => {
+            this.onClickRipple(ev.offsetX, ev.offsetY);
+        });
+
+        //this.addEventListener("");
+
+        //this.onClickRipple = this.onClickRipple.bind(this);
+
+    }
+
+    onClickRipple(offsetx, offsety){
+        const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
+        const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
+        //this.setAttrinute('data-top', );
+        console.log(polaSirine);
+        const koordX = (offsetx - polaSirine) + "px";
+        const koordY = (offsety - polaVisine) + "px";
+        /*this.setAttribute('data-left', koordX + "px");
+        this.setAttribute('data-top', koordY + "px");*/
+        this.classList.add('ripple');
+        const stilovi = this.stiloviF(
+            koordY, koordX
+        );
+        this.getElementsByTagName('style')[0].textContent = stilovi;
+        
+        
+        /*console.log(koordX, koordY);
+        console.log(this);
+        console.log(window.getComputedStyle(this, "::before").top);*/
+    }
+
+    stiloviF(top, left){
+        return `
             .ripple {
                 //background-color: pink;
                 position: relative; /*KAD PODESIM absolute, POMERI SE NADOLE*/
@@ -740,15 +785,15 @@ class FancyButton extends HTMLButtonElement {
                 content: "";
                 border: orange solid 4px;
                 display: block;
-                position: relative;
+                position: absolute;
                 width: 100%;
                 height: 100%;
-                top: attr("data-top");      /*NE RADI OVA FUNKCIJA OVAKO*/
-                left: attr("data-left");
+                top: ${top};      
+                left: ${left};
                 margin: auto auto;
                 background-repeat: no-repeat;
                 background-image: radial-gradient(circle at center, #51db913b 28%, #88ddb0a4 28.1%, transparent 29.2%);
-                transform: scale(1,1);
+                transform: scale(0,0);
                 opacity: 1;
                 /*transition: transform 4s, opacity 4s;*/
 
@@ -773,35 +818,8 @@ class FancyButton extends HTMLButtonElement {
                 38% {opacity: 0.78%}
                 100% {transform: scale(10, 10); opacity: 0;}
             }
-
         `;
-        
-        stilElement.textContent = stilovi;
-
-        this.appendChild(stilElement);
-
-
-        this.addEventListener("click", ev => {
-            this.onClickRipple(ev.offsetX, ev.offsetY);
-        });
-
-        //this.onClickRipple = this.onClickRipple.bind(this);
-
     }
-
-   /* onClickRipple(offsetx, offsety){
-        const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
-        const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
-        //this.setAttrinute('data-top', );
-        const koordX = -(polaSirine - offsetx);
-        const koordY = (polaVisine - offsety);
-        this.setAttribute('data-left', koordX + "px");
-        this.setAttribute('data-top', koordY + "px");
-        this.classList.add('ripple');
-        
-        console.log(koordX, koordY);
-        console.log(this);
-}*/
 
     //DEFINISACU SETTERE I GETTERE ZA SIRINU I VISINU
     set sirina(novaSirina){
@@ -829,7 +847,7 @@ class FancyButton extends HTMLButtonElement {
     }
 
     connectedCallback(){
-        console.log(window.getComputedStyle(this, "::before").position);
+        console.log(window.getComputedStyle(this, "::before").top);
         //this.parentNode.style.overflow = "hidden";
     }
 
