@@ -3,7 +3,9 @@
     
 }*/
 
-
+* {
+    box-sizing: border-box;
+}
 
 /*.ripple {
     position: relative;
@@ -39,6 +41,8 @@
 
 .neki_el {
     background-image: radial-gradient(circle, transparent 5%, green 20%, yellow 28%, purple 98%);
+    color: #88ddb0a4;
 }
+
 
 

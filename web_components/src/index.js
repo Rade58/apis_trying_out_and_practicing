@@ -722,45 +722,86 @@ class FancyButton extends HTMLButtonElement {
         if(this.hasAttribute("visina")){      
             this.style.height = this.visina;
         }
-        
+        this.style.backgroundColor = "pink";
         this.classList.add('ripple');
-
+        this.setAttribute('data-top', "28px");
+        this.setAttribute('data-left', "0px");
         const stilElement = document.createElement('style');
         const stilovi = `
-
             .ripple {
-                background-color: pink;
-                position: relative;
+                //background-color: pink;
+                position: relative; /*KAD PODESIM absolute, POMERI SE NADOLE*/
                 overflow: hidden;
             }
             .ripple::before {
                 //content: "neki tekst";
+
+                
                 content: "";
-                border: orange solid 0px;
+                border: orange solid 4px;
                 display: block;
                 position: relative;
-                width: 80%;
-                height: 80%;
+                width: 100%;
+                height: 100%;
+                top: attr("data-top");      /*NE RADI OVA FUNKCIJA OVAKO*/
+                left: attr("data-left");
                 margin: auto auto;
                 background-repeat: no-repeat;
-                background-image: radial-gradient(circle at center, transparent, lightgray 28%, transparent 28.2%);
-                transform: scale(0,0);
+                background-image: radial-gradient(circle at center, #51db913b 28%, #88ddb0a4 28.1%, transparent 29.2%);
+                transform: scale(1,1);
                 opacity: 1;
-                transition: transform 0.4s, opacity 1.6s;
+                /*transition: transform 4s, opacity 4s;*/
+
+
+                animation-name: gradprogress;
+                animation-iteration-count: 1;
+                animation-duration: 2.1s;
+
             }
 
-            .ripple:active::before {
+            /*.ripple:focus::before {
                 transform: scale(10,10);
                 opacity: 0;
             }
+            .ripple:visited::before {
+                opacity: 0;
+            }*/
+            /*MOGAO SAM I DVE ANIMACIJE, JEDNU DUZU ZA opacity I JEDNU KRACU ZA scale*/
+            @keyframes gradprogress {
+                0% {transform: scale(0,0); opacity: 1;}
+                50% {opacity: 0.8}
+                38% {opacity: 0.78%}
+                100% {transform: scale(10, 10); opacity: 0;}
+            }
+
         `;
         
         stilElement.textContent = stilovi;
 
         this.appendChild(stilElement);
 
-        
+
+        this.addEventListener("click", ev => {
+            this.onClickRipple(ev.offsetX, ev.offsetY);
+        });
+
+        //this.onClickRipple = this.onClickRipple.bind(this);
+
     }
+
+   /* onClickRipple(offsetx, offsety){
+        const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
+        const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
+        //this.setAttrinute('data-top', );
+        const koordX = -(polaSirine - offsetx);
+        const koordY = (polaVisine - offsety);
+        this.setAttribute('data-left', koordX + "px");
+        this.setAttribute('data-top', koordY + "px");
+        this.classList.add('ripple');
+        
+        console.log(koordX, koordY);
+        console.log(this);
+}*/
 
     //DEFINISACU SETTERE I GETTERE ZA SIRINU I VISINU
     set sirina(novaSirina){
@@ -777,13 +818,14 @@ class FancyButton extends HTMLButtonElement {
     }
 
     static get observedAttributes(){
-        return ["sirina", "visina"];
+        return ["sirina", "visina", "data-left", "data-top"];
     }
 
     attributeChangedCallback(attributeName, newValue, oldValue){
         console.log("atribut se promenio", attributeName, oldValue, newValue);
         this.style.width = (attributeName === "sirina")?oldValue:this.sirina;
         this.style.height = (attributeName === "visina")?oldValue:this.visina;
+
     }
 
     connectedCallback(){
