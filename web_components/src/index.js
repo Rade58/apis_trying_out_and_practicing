@@ -744,7 +744,9 @@ class FancyButton extends HTMLButtonElement {
             this.onClickRipple(ev.offsetX, ev.offsetY);
         });
 
-        //this.addEventListener("");
+        this.addEventListener("animationend", ev => {
+            ev.target.classList.remove("ripple");
+        });
 
         //this.onClickRipple = this.onClickRipple.bind(this);
 
@@ -764,7 +766,6 @@ class FancyButton extends HTMLButtonElement {
             koordY, koordX
         );
         this.getElementsByTagName('style')[0].textContent = stilovi;
-        
         
         /*console.log(koordX, koordY);
         console.log(this);
