@@ -784,7 +784,7 @@ class FancyButton extends HTMLButtonElement {
 
                 
                 content: "";
-                border: orange solid 4px;
+                border: orange solid 0px;
                 display: block;
                 position: absolute;
                 width: 100%;
@@ -801,7 +801,7 @@ class FancyButton extends HTMLButtonElement {
 
                 animation-name: gradprogress;
                 animation-iteration-count: 1;
-                animation-duration: 2.1s;
+                animation-duration: 0.8s;
 
             }
 
@@ -864,13 +864,247 @@ fensiDugme.setAttribute("visina", "120px");
 console.log(fensiDugme);
 
 
+//Napomena: Produžavanje HTMLButtonElement obogaćuje moj fancy button sa svim
+// osobinama / metodama DOM-a <button>. To proverava gomilu stvari koje ne moramo
+// da implementiramo: disabled property, click() metod, keydown listeners,
+// upravljanje tabIndex-om. Umesto toga, moj fokus može biti progresivno povećavanje
+// <button> -  A pomoću prilagođene funkcionalnosti, odnosno metode onClickRipple 
+// Manje koda, više reuse-A
+
+fensiDugme.setAttribute('disabled', 'disabled');    //BOOLEAN ATRIBUT SE MOZE I OVAKO PODESITI
+//A MOZE I OVAKO
+fensiDugme.disabled = false;
+
+//JOS JEDNA BITNA STVAR JESTE NA SE INSTANCE, I AUTONOMNIH CUSTOM ELEMENATA, AI CUSTOMIZED BUILT-IN 
+//ELEMENATA MOGU KREIRATI POZIVANJEM KONSTRUKTORA, UMESTO METODOM     document,createElement
+
+const drugoFensiDugme = new FancyButton();
+const descIm = new DescriptionImage();
+console.log(drugoFensiDugme, descIm);
 
 
 
+////////////
+////////////        NOVI PRIMER CUSTOMIZED BUILT-IN ELEMENTA
+//////////// 
+////////////    SLIKA KOJA RENDER-UJE VECU SLIKU NOEGO BUILT-IN KLASICNI img ELEMENT
+////////////
+
+//////////////PRE NEGO STO POCNEM DEFINISANJE, NAPOMENUCU, JEDNU STVAR O KOJOJ RANIJE NISAM RAZMISLJAO
+///////A TO JE DA I KLASA MOZE BITI ANONIMNA
+
+/////ZATIM SE MOGU PODSETITI I DEFAULT PARAMETARA NEKE FUNKCIJE, ODNOSNO KAKO NJIHOVA SINTAKSA IZGLEDA
 
 
+/////POSTO SAM TO URADIO DEFINISACU CUSTOMIZED BUILT-IN ELEMENT
+/////ZELIM CUSTOMIZED ELEMENT, KOJI RENDER-UJE DESET PUTA VECU SLIKU OD NORMALNE, A AKO SLICI NISU 
+////NI PODESENI ATRIBUTI width I height, POSTOJACE I DEFAULT VREDNOSTI, KOJE BI SE ONDA
+////MNOZILE SA DESET DA BI SE DOBILA SLIKA VELIKIH DIMENZIJA
+
+//OVDE CU ISKORISTITI       Image       KONSTRUKTOR CIJIM IZVRSENJEM SE KREIRA  HTMLImageElement
+//KADA SE POZIVA, POMENUTI KONSTRUKTOR, DODAJU MU SE SIRINA I VISINA KAO ARGUMENTI
+
+///PRE NEGO STO POCNEM, MORAM RECI SLEDECE
+//OVAKO SE MOZE KREIRATI    HTMLImageElement INSTANCA
+
+const nekaSl = new Image(200, 120);
+
+// ALI OVAKO NE MOZE
+//                      new HTMLImageElement();        //DALO BI OVKAV TypeError: Illegal constructor
+//
+//DO HTMLImageElement INSTANCE MOGU DOCI I NA SLEDECI, VEC POZNAT NACIN
+
+const nekaDrugaSl = document.createElement('img');
+
+console.log(nekaSl instanceof HTMLImageElement, nekaDrugaSl instanceof HTMLImageElement);   // true true
+
+//POGLEDACU JOS MALO STRUKTURU PROTOTIPOVA, KLASA, KAO STO SU HTMLElement, HTMLImageElement, Image
+console.log(HTMLElement.prototype);
+console.log(HTMLImageElement.prototype);                //      HTMLImageElement   
+console.log(Image.prototype);                           //      HTMLImageElement 
+
+//NAKON GORNJE PROVERE VIDEO SAM DA OBE KLASE DELE ISTI PROTOTIP
+console.log(HTMLImageElement.prototype === Image.prototype);    //      true      
+
+////////
+
+/////DAKLE      Image       FUNKCIJA           PROSIRUJE       HTMLIMageElement    KLASU   
+/////ON OSTO ZNAM JESTE DA JE PROSIRUJE ZA MOGUCNOST DIREKTNOG, U JAVASCRIPTU DEFINISANJA SIRINE I VISINE
+///<img> ELEMENTA, KOJI JE INSTANCIZIRAN POZIVANJEM, POMENUTOG KONSTRUKTORA
+///POSTO SE         NJEGOVIM      DIREKTNIM POZIVANJEM (Image-KONSTRUKTORA), KRIRA INSTANCA
+////    HTMLImageElementKlase
+///VERUJEM DA SE IZA KULISA SLEDECEG POZIVANJA      new Image(20, 80)       KRIJE POZIVANJE
+
+////            document.createElement('img', {is: neki string koji "ukazuje" na Image})   
+////
+///OVO ME NAVODI DA KAZEM DA JE Image FUNKCIJA, UPRAVO FUNKCIJA, KOJOM SE KREIRA CUSTOMIZED
+//BUILT-IN img ELEMENT
+//ALI SAM SAZNAO DA JE ONA TAKODJE HOST ELEMENT (MORAM DODATNO ISPITATI, HOST SU TAKODJE window, document i console)
+
+class SpecialImage extends Image {
+    constructor(width = 280, height = 140){     //AKO SE NE DODA ARGUMENT PRILIKOM POZIVANJA KONSTRUKTORA, OBEZBEDJENE SU DEFAULT VREDNOSTI
+        super(width * 10, height * 10);     //SIRINA I VISINA NOVOG CUSTOMIZED IMAGE ELEMENTA, CE UVEK BITI 10
+    }                                       //PUTA VECE, OD ONIH VREDNOSTI SIRINE I VISINE DODATIH KAO ARGUMENTI KONSTRUKTORU
+}
+
+///MEDJUTIM, NISAM JOS REGISTROVAO, NOVI CUSTOMIZED BUILT-IN HTMLImageElement
+
+window.customElements.define('special-image', SpecialImage, {extends: 'img'});
 
 
+//POVRATNA VREDNOST customelements.get METODE JESTE KONSTRUKTOR, ZA PREDHODNO DEFINISANI CUSTOM ELEMENT
+
+const SpecialImageConstructor = window.customElements.get('special-image');
+
+console.log(SpecialImageConstructor);
+
+//KREIRANJE INSTANCE Customized HTMLImageElement-A
+const specialSlikaEl = new SpecialImageConstructor(58, 58);
+
+document.getElementById('some_koren').appendChild(specialSlikaEl);
+
+specialSlikaEl.src = './img/default.ico';
+
+console.log(document.getElementsByTagName('img'));
+
+/////////////       OSTAJE MI DA PROBAM OVAKAV PRINCIP, U SLUCAJU EXTENDINGA KONSTRUKTORA, KOJI NE 
+//////              REPREZENTUJE HOST OBJEKTE KAO STO SU 
+
+                            ////        Image           Form        Element
+
+//////MEDJUTIM, MISLIM, USTVARI ZNAM DA NECU MOCI POZIVATI DIREKTNO KONSTRUKTOR
+//////KORISTICU document.createElement METODU, I MISLIM DA MI TU NE BI KORISTILA POVRATNA VREDNOST
+//////      customElements.get      METODE
+
+
+//MORACU USTVARI DA SUMIRAM SITUACIJU
+
+////OVAKVO KREIRANJE    img     ELEMENTA, ODNOSNO KREIRANJE     HTMLImageElement    INSTANCE
+////   new HTMLImageElement()        JESTE ZABRANJENO, ODNOSNO DOCI CE DO TypeError-A, SA 
+////PORUKOM DA JE REC O ILEGALNOM KONSTRUKTORU
+
+//KREIRACU JEDNU KLASU CUSTOMIZED BUILD IN ELEMENTA, ALI OVOG PUTA, NOVA KLASA NECE EXTEND-OVATI HOST
+//ELEMENT
+
+class OtherImage extends HTMLImageElement {
+    constructor(width=200, height=200){
+        super();
+        console.log(this.style.width);
+        this.style.width = width  + "px";
+        this.style.height = height + "px";
+
+    }
+}
+
+//   NI OVO NE BI BILO MOGUCE          new OtherImage(100, 100)     ODNOSNO KREIRANJE ELEMENTA, 
+//                                                                  PRE REGISTRACIJE
+
+window.customElements.define('other-image', OtherImage, {extends: 'img'});      //REGISTRACIJA 
+//                                                                              CUSTOMIZED ELEMENTA
+
+const nekiElement1 = new OtherImage(100, 100);           //OVDE SAM ZADAO VREDNOSTI ZA SIRINU I VISINU
+
+//  KAO STO VIDIM IZ GORNJEG REDA, KREIRAO SAM INSTANCU, I OVO JE DOZVOLJENO
+
+const nekiElement2 = document.createElement('img', {is: 'other-image'});    //OVDE NISAM ZADAO VREDNOSTI
+//                                                                        ZA SIRINU I VISINU
+nekiElement1.src = './icon.png';              //DOVODIM FAJLOVE SLIKA DO
+nekiElement2.src = './img/default.ico';       //OBA img ELEMENTA
+
+const fragment = document.createDocumentFragment();         //STAVLJAM OBA img ELEMENTA U FRAGMENT
+fragment.appendChild(nekiElement1);
+fragment.appendChild(nekiElement2);
+
+document.getElementById('drugi_koren').appendChild(fragment);       //KACIM FRAGMENT U DOM
+
+
+//AKO POGLEDAM WEB STRANICU TREBALO BI DA IMAM JEDNU SLIKU PORED DRUGE
+//PRVA TREBA DA IMA SIRINU I VISINU OD 100 PIKSELA
+//DRUGA TREBA DA IMA SIRINU I VISINU, KOJU SAM DEFINISAO DEFAULT PARAMETRIMA KONSTRUKTORA
+
+//IZ SVEGA OVOGA MOGU DA SHVATIM DA         Image           KONSTRUKTOR PREDSTAVLJA I VEC DEFINISANU
+//KLASU CUSTOMIZED BUILT IN img ELEMENTA, PORED TOGA STO NJENE INSTANCE NAZIVAJU HOST OBJEKTIMA
+//ZNAM DA SU NJENE INSTANCE         HTMLImageElement-I   , KOJI SE KAO STO ZNAM, NE MOGU INSTANCIZIRATI
+//SAMIM POZIVANJEM HTMLImageElement KONSTRUKTORA
+
+//UPRAVO POSTO SAM U PREDPOSLEDNJEM PRIMERU         extend-OVAO         Image  KLASU
+//ISTO TAKO MOGU    extend-OVATI I SAMU KLASU CUSTOMIZED ELEMENTA   KAO STO JE      OtherImage
+
+//STO CU URADITI I SLEDECIM PRIMEROM
+
+
+class SomeImage extends OtherImage {
+    constructor(width, height, src){
+        super(width, height);
+        this.src = src; 
+    }
+}
+
+window.customElements.define('some-image', SomeImage, {extends: 'img'});    //  ZAPAMTI OVO JE BITNO
+                                                                            //  ZA REGISTRACIJU
+                                                                            //  SomeImage     PROSIRUJE
+                                                                            // 'img'    ELEMENT
+                                                                            //  U INSTANCI 
+                                                                //  CustomElementRegistry           
+                                                            //  NE MOZE extend-OVATI
+                                                        //  VEC REGISTROVANI, NA PRIMER  'other-image'
+                                                        //      IAKO SomeImage KLASA EXTEND-UJE
+                                                        //      OtherImage  KLASU
+
+                                                        //  IAKO SomeImage KLASA PROSIRUJE OtherImage
+                                                        //  KLASU, KOJA PROSIRUJE   HTMLImageElement
+                                                        //  KLASU, MORA SE POZNAVATI SLEDECA CINJENICA
+                                                        //  OBE KLASE (SomeImage i OtherImage) 
+                                                        //  REPREZENTUJU CUSTOMIZED BUILT IN 'img' ELEMENT
+                                                        //  I ZATO SE PRILIKOM I REGISTRACIJE I JEDNE I DRUGE KLASE
+                                                //MORA DODATI DA SE TOM PRILIKOM PROSIRUJE
+                                                // 'img'    ELEMENT     ----->      {extends: 'img'}
+
+                //  UPRAVO ZBOG TOGA SE CUSTOMIZED ELEMENTIMA, PRILIKOM, DIREKTNOG POSTAVLJANJA U
+                //  HTML, DODAJE        {is: 'some-image'}
+                //  A TAG KOJI SE POSTAVLJA JESTE BUILT IN      <img>   TAG
+                //  DAKLE HTML IZGLEDA OVAKO
+
+        //      <img is="some-image" />
+        
+//U JAVASCRIPTU CUSTOMIZED ELEMENT MOGU DEFINISATI, PREKO KLASE, ODNOSNO KONSTRUKTORA
+
+const nekiImage = new SomeImage(280, 180, './img/default.ico')
+
+//I ONDA GA INSERTOVATI
+
+document.getElementById('treci_koren').appendChild(nekiImage);
+
+//DA SAM KORISTIO       document.createElement('img', {is: 'some-image})
+// NE BIH IMAO MOGUCNOS, KAO KAD SAM KORISTIO KONSTRUKTOR, DEFINISEM I SIRINU, I VISINU, I SOURCE FAJLA (src)
+
+//SADA CU KREIRATI, NOVU KLASU, KOJA EXTEND-UJE, SomeImage KLASU, ALI OVOG PUTA, TA NOVA KLASA CE BITI
+//ANONIMNA KLASA
+
+window.customElements.define('default-image', class extends SomeImage {
+    constructor(width, height, src="./img/synthwave.jpg"){                  //AKO SE NE OBEZBEDI ADRESA SLIKE
+        super(width, height, src);                                      //BICE ISKORISCENA DEFAULT SLIKA
+    }
+}, {extends: 'img'});
+
+//KAKO DA DODJEM DO KONSTRUKTORA, KAKO BI UZ POMOC NJEGA KREIRAO CUSTOMIZED HTMLImageElement INSTANCU
+//TO SAD MOGU URADITI UZ POMOC      get     METODE   CustomElementRegistry-JEVOG PROTOTIPA
+//                                                                  KAO STO ZNAM, customElements JESTE
+                                                                //  INSTANCA CustomElementRegstry KLASE
+
+const DefaultImageConstructor = window.customElements.get('default-image');
+
+//KREIRACU, JEDAN CUSTOMIZED img    ELEMENT, UZ POMOC, POMENUTOG KONSTRUKTORA,
+//ALIO NECU ZADAVATI TRECI ARGUMENT, KOJI BI TREBAO DA BUDE ADRESA DO SLIKE
+
+const defaultSlika = new DefaultImageConstructor(420, 268);
+
+//U TOM SLUCAJU, KADA SE NAKACI, POMENUTI CUSTOMIZED img, NA DOM DRVO, TREBALO
+//BI DA PRIKAZUJE SYNTWAVE DEFAULT SLIKU
+
+document.getElementById('cetvrti_koren').appendChild(defaultSlika);
+
+//KADA POGLEDAM WEB STRANICU, VIDECU SLIKU, KOJA JE DAFAULT
 
 
 
@@ -902,8 +1136,6 @@ console.log(objekat.prop1);
 console.log(objekat.properti1, objekat.properti2);*/
 
 ////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 ///////////////VEZBANJE Web KOMONENTI; NE OBRACAJ PAZNJU NA OVO///////////////////
@@ -980,7 +1212,58 @@ nekiEl.appendChild(stilElement);
 ///
 ///
 ///
-///
+///NE OBRACAJ PAZNJU NA OVO; OVO JE PODSECANJE NA super KEYWORD
+
+class BoljiZivot {
+    constructor(stan, posao, playstation = true){
+        this.stan = stan;
+        this.posao = posao;
+        this.playstation = playstation;
+
+        super.kornjaca = "neke nidze kornace bla";
+
+        this.naivno = "veoma naivno";
+    }
+
+    odigrajSkyrim(){
+        let stanje;
+        const igram = "tandrlakača tandrlakača";
+        const neIgram = "zgembo zgemb jooooooj zgemb";
+        stanje = this.playstation?igram:neIgram;
+        //console.log(stanje);
+        //console.log(this.naivno);
+        
+        //console.log(super.valueOf());
+        
+    }
+}
+
+const zivotarenje = new BoljiZivot('beo na vodi', 'u guglju', false);
+zivotarenje.odigrajSkyrim();
+//console.log(zivotarenje);
+
+class JosBoljiZivot extends BoljiZivot {
+    constructor(){
+        super("novogradnja", "u upravi");
+        this.posao = "u na turizmu";
+        super.kornjaca = "neka kornjaca";
+        this.naivno = "pa ovo su pocetne faze naivnosti";
+    }
+
+
+}
+
+const zivotarenjePlus = new JosBoljiZivot();
+
+zivotarenjePlus.odigrajSkyrim();
+//console.log(zivotarenjePlus);
+//console.log(zivotarenjePlus.__proto__);
+
+const novaSlika = new Image();
+const drugaSlika = new Image(100, 200);
+novaSlika.width = 280;
+//console.log(novaSlika.width, drugaSlika.width);
+
 ///
 ///
 ///
