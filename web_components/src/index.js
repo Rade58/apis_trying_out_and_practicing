@@ -989,10 +989,9 @@ console.log(document.getElementsByTagName('img'));
 class OtherImage extends HTMLImageElement {
     constructor(width=200, height=200){
         super();
-        console.log(this.style.width);
         this.style.width = width  + "px";
         this.style.height = height + "px";
-
+        console.log(this.style.width);
     }
 }
 
@@ -1105,6 +1104,247 @@ const defaultSlika = new DefaultImageConstructor(420, 268);
 document.getElementById('cetvrti_koren').appendChild(defaultSlika);
 
 //KADA POGLEDAM WEB STRANICU, VIDECU SLIKU, KOJA JE DAFAULT
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//  SADA CU SE VRATITI NA PRIMER CUSTOMIZED BUILT IN BUTTON ELEMENTA, KOJEM SAM DODAO RIPPLE EFFECT
+//  NAIME, JA SAM PROSIRIO DUGME, TAKO DA ONO IMA RIPPLING EFFECT, PRILIKOM KLIKA, ODNOSNO, TADA SE
+//  TRIGGER-UJE, POMENUTA RIPPLING ANIMACIJA
+//  KOPIRACU CELOKUPNI CODE TE KLASE, CISTO DA BI OVDE BIO VIDLJIV NA DOHVAT RUKE, A KLASI CU DEFINISTI
+//  NOVO IME
+//  OVO NAIME SAMO RADIM ZBOG PREGLEDNOSTI, I DA BI ISPOD OVOG TEKSTA IMAO DEFINICIJU KLASE
+
+class HypsterDugme extends HTMLButtonElement {
+    constructor(){                                  //MOZDA ZELIM MOGUCNOST DA DEFINISEM VISINU
+        super();                                    //I SIRINU ELEMENT, PRI INSTANCITIZIRANJU
+
+        if(this.hasAttribute("sirina")){
+            this.style.width = this.sirina;         //PORED OVAKVOG ATRIBUTSKOG DEFINISANJA SIRINE I VISINE
+        }                                           //MOZDA BI BILO DOBRO DA DEFINISEM I DA SE
+        if(this.hasAttribute("visina")){            //KONSTRUKTORU DODAVAJU ARGUMENTI SIRINE I VISINE
+            this.style.height = this.visina;        //MORAM JOS DA RAZMISLIM KAKO BIH U TOM POGLEDU
+        }                                           //DEFINISAO I DEFAULT PARAMETRE KONSTRUKTORA
+       
+        this.style.backgroundColor = "pink";        //ONO STO MI SE NE SVIDJA U POGLEDU OVOG DUGMETA
+                                                    //JESTE, STO CE OVO BITI BACKGROUND COLOR SVAKE
+                                                                                    //INSTANCE 
+        const stilElement = document.createElement('style');    
+
+        this.appendChild(stilElement);
+
+        this.addEventListener("click", ev => {
+            console.log(ev.target);
+            this.onClickRipple(ev.offsetX, ev.offsetY);
+            console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
+        });
+
+        this.addEventListener("animationend", ev => {
+            console.log(ev.target);
+            ev.target.classList.remove("ripple");
+            console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
+        });
+
+    }
+
+    onClickRipple(offsetx, offsety){
+        const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
+        const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
+        const koordX = (offsetx - polaSirine) + "px"; 
+        const koordY = (offsety - polaVisine) + "px";
+        console.log(koordX, koordY);
+        this.classList.add('ripple');
+        const stilovi = this.stiloviF(
+            koordY, koordX                                              //MISLIM DA JE OVDE GRESKA
+        );                                                              //MISLIM DA NE SMEM DODAVATI
+        this.getElementsByTagName('style')[0].textContent = stilovi;    //SVAKI PUT NOVI style TAG
+    }                                                                   //MISLIM DA SVAKI SLEDECI style
+                                                                        //TAG DODAT, OVERRIDUJE STILOVE
+                                                                        //PREDHODNO DEFINISANOG
+                                                                        //BOLJE BI BILO DA SAM 
+                                                                        //CSS DEFINISAO NA JEDNOM MESTU
+                                                                        //I DA SAM ONDA DODAVAO KLASU
+                                                                        //A DA SAM      top    i  left
+                                                                        //ATRIBUTE, ODNOSNO NJIHOVE
+                                                                        //VREDNOSTI DAVAO style ATRIBUTU
+                                                                        //this-A
+                                                                        //ISTO TAKO MISLIM DA JE
+                                                                        //PRINCIP DODAVANJA style TAGA
+                                                                        //JEDINO DOBRA IDEJA ZA SLUCAJ
+                                                                        //shadow DOM-A
+    stiloviF(top, left){                                                
+        return `                                                        
+            .ripple {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple::before {
+                content: "";
+                border: orange solid 2px;
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: ${top};      
+                left: ${left};
+                margin: auto auto;
+                background-repeat: no-repeat;
+                background-image: radial-gradient(circle at center, #51db913b 28%, #88ddb0a4 28.1%, transparent 29.2%);
+                transform: scale(0,0);
+                opacity: 1;
+
+                animation-name: gradprogress;
+                animation-iteration-count: 1;
+                animation-duration: 0.8s;
+            }
+            @keyframes gradprogress {
+                0% {transform: scale(0,0); opacity: 1;}
+                50% {opacity: 0.8;}
+                38% {opacity: 0.78%;}
+                100% {transform: scale(10, 10); opacity: 0;}
+            }
+        `;
+    }
+
+    set sirina(novaSirina){
+        this.setAttribute('sirina', novaSirina);
+    }
+    set visina(novaVisina){
+        this.setAttribute('sirina', novaVisina);
+    }
+    get sirina(){
+        return this.getAttribute('sirina'); 
+    }
+    get visina(){    
+        this.getAttribute('visina');
+    }
+
+    static get observedAttributes(){
+        return ["sirina", "visina", "data-left", "data-top"];
+    }
+
+    attributeChangedCallback(attributeName, newValue, oldValue){
+        console.log("atribut se promenio", attributeName, oldValue, newValue);
+        this.style.width = (attributeName === "sirina")?oldValue:this.sirina;
+        this.style.height = (attributeName === "visina")?oldValue:this.visina;
+
+    }
+
+}
+
+window.customElements.define('hypster-dugme', HypsterDugme, {extends: 'button'});
+
+//POSTO SAM GORE POGLEDAO STA MI SE TO NE SVIDJA, ODNOSNO STA ZELIM DA SVE IMA, MOJ NOVI CUSTOMIZED
+//BUTTON ELEMENT, MOGU EXTEND-OVATI, GORNJU KLASU
+
+
+class SminkerDugme extends HypsterDugme {
+    constructor(boja="#be88dda4", sirina="180px", visina="80px"){     //KAD KAZEM BOJA MISLIM NA POZADINSKU BOJU
+
+        super();                                    //SVE STO JE DEFINISANO POSLE POZIVANJA super-A
+                                                    //MOZE POTENCIJALNO DA OVERRIDE-UJE ONO STO JE 
+                                                    //super     "DONEO"  (NEKI ASSIGNMENTI, VARIAJBLE
+                                                    // (STO MISLIM I DA TESTIRAM), ALI MISLIM DA SE TU 
+                                                    //PRVENSTVENO MOGU OVERRIDE-OVATI DEFINICIJE BUDUCIH
+                                                    //PROPERTIJA INSTANCE, DAKLE this.property = nekaVrednost)
+        
+        this.style.backgroundColor = boja;          //PROMENA BOJE, KOJA IMA I DEFAULT VREDNOST 
+                                                    //(DEFAULT PARAMETAR)
+        
+
+        //ALI IPAK, AKO POSTOJI ATRIBUT SA IMENOM       boja        ZELIM DA NJEGOVA VREDNOST
+        //TAKODJE BUDE DODATA, KAO BOJA
+
+        if(this.hasAttribute('boja')){
+            this.style.backgroundColor = this.getAttribute('boja');
+        }
+
+        /*if(sirina){ this.style.width = sirina; }*/    //OVO ZNACI DA U SLUCAJU AKO POZIVANJU KONSTRUKTORA
+        /*if(visina){ this.style.height = visina; }*/   //NE PROSLEDIM ARGUMENTE SIRINE ILI VISINE
+                                                    //OSTACE ONO STO JE DEFINISAO KONSTRUKTOR PROTOTIPA (super)
+                                                    //ODNOSNO KONSTRUKTOR KLASE IZ KOJE NOVA KLASA 
+                                                    //EXTENDS, A CIJI PROPERTIJI, POZIVANJEM super-A
+                                                    //POSTAJU PROPERTIJI NOVE KLASE
+                                                //(OVA RECENICA JE VAZILA KADA NISAM IMAO DEFINISANE
+                                                  //  DEFAULT PARAMETRE ZA sirina I visin U KONSTRUKTORU) 
+
+    ///ONO STO SAM ZABORAVIO DA PODESIM U GORNJIM USLOVNIM IZJAVAMA
+    ///JESTE DA VREDNOSTI SIRINE I VISINE, TREBA DA BUDU I VREDNOSTI ATRIBUTA KOJE NOSE IMENA
+    ///sirina I visina
+    ///TO JE ZATO STO METODA, KOJA DONOSI RIPPLING EFFECT, UPRAVO KORISTI VREDNOSTI ATRIBUTA
+    /// sirina      I       visina
+    ///OVDE CU DEFINISATI NOVE DVE USLOVNE IZJAVE, IAKO BI BILO BOLJE DA SAM CODE DEFINISAO U
+    ///OBIMIMA GORNJIH USLOVNIH IZJAVA (ALI STEDIM VREME I PISEM DALJE)
+    /// ALI KAD RAZMISLIM, NISU MI POTREBNE USLOVNE IZJAVE, VEC BI BILO BOLJE DA DEFINISEM
+    ///DEFAULT PARAMETRE ZA PARAMETRE VISINE I SIRINE U KONSTRUKTORU, JER ZNAM DA SE MORAJU DEFINISATI
+    ///visina       I    sirina  ATRIBUTI, BEZ OBZIRA NA BILO STA, JER ONI MORAJU DA BUDU PROCITANI OD
+    ///POMENUTE METODE KOJA DONOSI RIPPLING EFFECT
+    ////A KADA DEFINISEM DEFAULT PARAMETRE U KONSTRUKTORU, I ZA SIRINU I ZA VISINU, NECE MI TREBATI
+    /// NI VEC GORE DEFINISANE USLOVNE IZJAVE U CIJIM OBIMIMA SAM APLICIRAO STIL
+    
+    ///TAKO DA NAKON STO SAM SE VRATIO NA PARAMETRE KONSTRUKTORA, KAKO BIH DEFINISAO DEFAULT PARAMETRE
+    ////U NASTAVKU CU PODESITI I ATRIBUTE I DEFINISATI APLICIRANJE STILA
+    
+        this.style.width = sirina;
+        this.style.height = visina;
+
+        this.setAttribute('sirina', sirina);
+        this.setAttribute('visina', visina);
+
+    }
+}
+
+/////////NISAM DEFINISAO NEKE METODE SminkerDugme-TOVOG PROTOTIPA, JER MISLIM DA MI JE
+/// SASVIM DOVOLJNA ONA METODA,
+///////KOJA KLIKOM DOVODI RIPPLING EFFECT, I DRUGA METODA, KOJA POZ ZAVRSETKU ANIMACIJE ODUZIMA CSS KLASU (DA NE PRICAM O TOME, U GLAVNOM BEZ TE KLASE RIPPLING EFFECAT NIJE MOGUC, I JA PO ZAVRSETKU ANIMACIJE ODUZIMAM KLASU DA BIH JE POSLE, OPET KLIKOM NA DUGME DODAO) 
+////// OBE METODE KOJE SAM SPOMENUO JESU METODE HypsterDugme-TOVOG PROTOTIPA, KOJE NASLEDJUJE I 
+////// SminkerDugme
+
+//DA REGISTRUJEM NOVO DUGME
+
+window.customElements.define('sminker-dugme', SminkerDugme, {extends: 'button'});
+
+//DEFINISACU SADA NEKOLIKO ROOT ELEMENATA U HTML-U, NA KOJE CU KACITI, INSTANCE NOVOG CUSTOMIZED button-A 
+
+const rootElementi = document.getElementsByClassName('domacin_dugmeta');
+
+//KREIRACU PRVO JEDAN CUSTOMIZED BUTTON, NA PRVI NACIN
+
+const sminker1 = document.createElement('button', {is: 'sminker-dugme'});
+
+//PA JOS JEDAN NA DRUGI NACIN
+
+const sminker2 = new SminkerDugme();
+
+//PA JOS JEDAN NA CETVRTI NACIN
+
+const sminker3 = new SminkerDugme("#eb6cc0f6");
+
+//PA JOS JEDAN NA CETVRTI NACIN
+
+const sminker4 = new SminkerDugme("#6781d4", "402px"); 
+
+//PA JOS JEDAN NA CETVRTI NACIN
+
+const sminker5 = new SminkerDugme("#ec9358", "206px", "126px"); 
+
+//ZATIM CU IH NAKACITI U DOM TREE
+
+rootElementi[0].appendChild(sminker1);
+rootElementi[1].appendChild(sminker2);
+rootElementi[2].appendChild(sminker3);
+rootElementi[3].appendChild(sminker4);
+rootElementi[4].appendChild(sminker5);
+
+
+
+
+
+
+
+
 
 
 
