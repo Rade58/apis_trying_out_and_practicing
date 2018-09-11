@@ -9,11 +9,11 @@
 
 
 
-.ripple {
+.waving {
     position: relative;
     overflow: hidden;
 }
-.ripple::before {
+.waving::before {
     content: "";
     border: orange solid 2px;
     display: block;

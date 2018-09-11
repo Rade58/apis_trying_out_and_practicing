@@ -1307,6 +1307,27 @@ class SminkerDugme extends HypsterDugme {
         //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
 
         this.querySelector('style').remove();
+
+        //NAKON MODIFIKACIJA, KONKRETNO NAKON PREMESTSNJA CELOKUMPNOG CSS-A U ODVOJENI CSS FAJL
+        //MOGU U OBIMA KONSTRUKTORA, DODELITI SLEDECU CSS KLASU (IME .ripple SAM IZBACIO, JER MI NE ODGOVARA
+        //ONO STO JE NASLEDJENO IZ HypsterDugme KONSTRUKTORA, A TO JE ODUZIMANJE .ripple
+        //CSS KLASE PO ZAVRSETKU ANIMACIJE; NAIME TREBALO BI DA SE ODUZME SAMO KLASA ANIMACIJE)
+        this.classList.add('waving');
+
+        this.addEventListener('animationend', (ev) => {
+            ev.target.classList.remove('for_animation');
+            ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+        });
+
+        /*const shadowRoot = this.attachShadow({mode: "open"});*/   //ZAKLJUCIO SAM DA CE MI TREBATI SHADOW DOM 
+                                                                //SAMO DA BIH MOGAO, NJEMU
+                                    //ZAKACITI STYLE ELEMENT, U OKVIRU KOJEG BI DEFINISAO STILOVE, KOJI
+                                    //SAMO POZICIONIRAJU PSEUDO ELEMENT
+        //OVDE KACIM style  ATRIBUT DOM-U, A U OKVIRU onClickRipple HANDLERA, DAJEM textContent
+        //POMENUTOM style TAGU
+
+        /*shadowRoot.appendChild(document.createElement('style'));*/
+        //DODAVANJE SHADOW DOM-A CUSTOMIZED BUILT IN ELEMNTIMA NIJE MOGUCE (PROPAO POKUSAJ U POGLEDU SHADOW DOM-A)
     }
 
     //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVAS KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
@@ -1348,16 +1369,33 @@ class SminkerDugme extends HypsterDugme {
         const koordX = (offsetx - polaSirine) + "px"; 
         const koordY = (offsety - polaVisine) + "px";
         console.log(koordX, koordY);
-        this.classList.add('ripple');           //OVA CSS KLASA I NJEN PSEUDO ELEMENT SU DEFINISANI U 
-                                                //  index.css    FAJLU
-            
-                                                                    
-        const beforePseudo = this.querySelector;
-        console.log(beforePseudo);
-        /*beforePseudo.style.left = koordX;
-        beforePseudo.style.top = koordY;*/
+        //  OVDE MOGU PSEUDO ELEMENTU DODATI VREDNOSTI ZA      top      I       left    PROPERTI
 
+        //  OVDE SASDA MOGU DODATI CSS KLASU, KOJOM SE TRIGGER-UJE ANIMACIJA
+        this.classList.add('for_animation');        //OVA KLASA CE BITI ODUZETA NAKON ZAVRSETKA ANIAMCIJE
+                                                    //JER SAM TAKO DEFINISAO U HANDLER-U, KOJI SE INVOCIRA                
+                                                    //on animation end
+        
+        //shadow dom se ne moze kaciti na customized built in elemente
+        // MOGU IPAK DEFINISATI DODAVANJE style TAGA, POD USLOVOM DA GA UKLONIM onanimationend
+
+        const stilPozicioniranja = `
+            .waving::before {
+                left: ${koordX};
+                top: ${koordY};
+            }
+        `;
+        
+        const stilElement = document.createElement('style');
+        stilElement.textContent = stilPozicioniranja;
+        this.appendChild(stilElement);
     }
+
+    //MORAM I OVERRIDE-OVATI ONO STO SE DESAVA U HANDLERU, KOJI SE POZIVA PO ZAVRSETKU ANIMACIJE
+    //U POMENUTO MHANDLERU, KOJI JE PROSLEDJEN KAO ANONIMAN FUNKCIJE ODUZIMA SE .ripple KLASA 
+    //this-U
+    //ZATO JE BOLJE IZBACITI KORISCENJE KLASE .ripple I DEFINISATI NESTO DRUGO, NA PRIMER DA SE KLASA
+    //ZOVE .waving
 
 }
 
