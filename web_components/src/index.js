@@ -1174,6 +1174,15 @@ class HypsterDugme extends HTMLButtonElement {
                                                                         //PRINCIP DODAVANJA style TAGA
                                                                         //JEDINO DOBRA IDEJA ZA SLUCAJ
                                                                         //shadow DOM-A
+
+                                    //DAKLE, NEOPHODNO JE DA REDEFINISEM onClickRipple METODU
+                                    //OVAJ CODE NECU VISE DIRATI, JER JE TO CODE HypsterDugme    KLASE
+                                    //DAKLE, SAMO CU OVERRIDE-OVATI onClickRipple METODU
+                                    //U ONOJ KLASI KOJA PROSIRUJE OVU (TO JE SminkerDugme KLASA, I UPRAVO
+                                    //DEFINISAJUCI CODE TE KLASE, ODNOSNO KORISTECI INSTANCU 
+                                    //CUSTOMIZED BUILT IN ELEMENTA, KOJU OVA KLASA KONSTRUKTUJE, OTKRIO
+                                    //SAM GRESKU IZ OVE KLASE, KOJU KAO STO KAZEM MOGU DA POPRAVIM U 
+                                    //SminkerDugme KLASI, OVERRIDE-UJUCI METODU KOJU NASLEDJUJE)
     stiloviF(top, left){                                                
         return `                                                        
             .ripple {
@@ -1293,7 +1302,63 @@ class SminkerDugme extends HypsterDugme {
         this.setAttribute('sirina', sirina);
         this.setAttribute('visina', visina);
 
+        //U KONSTRUKTORU HypsterDugme KLASE, POSTOJALO JE DEFINISANJE KREIRANJA style TAGA, I NJEGOVO 
+        //APPENDOVANJE DUGMETU (this-U)    
+        //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
+
+        this.querySelector('style').remove();
     }
+
+    //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVAS KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
+    //OVA KLASA
+    //EXTENDS, NIJE DOBRA, JER SVAKOJ INSTANCI, NESTUJE, PO JEDAN style TAG, ZBOG KOJE SE DOGADJA, 
+    //POGRESNI OVERWRITING STILOVA, JER AKO IMAM VISE DUGMADI DA STRANICI, IMAM TOLIKO I style TAGOVA, 
+    //A SVAKI ONAJ SLEDECI OVERWRITE-UJE PREDHODNI, CIME IMAM POGRESNE VREDNOSTI STILOVA KADA
+    //SE VRATIM NA NEKO PREDHODNO NESTOVANO DUGME, KOJE ZRLIM DA KLIKNEM (ELEMENTU SE TADA DAJU POGRESNE 
+    //VREDNOSTI ZA POZICIONIRANJE (top I bottom))
+    //NAIME, ZATO JE BOLJE DA SVI STILOVI BIUDU DODATI DIRKTNO this-OVOM style ATRIBUTU (DAKLE, PORED
+    //top-A I bottom-A SVI STILOVI TREBA DA BUDU DATI this-U)
+    //ALI DODAVANJE SILNIH STILOVA JAVASCRIPTOM MOZE UCINITI CODE OVE METODE, VEOMA EXTENZIVNIM
+    //NE ZNAM DA LI CE TO UTICATI NA PERFORMANSE, ODNOSNO FLUIDNOST ANIMACIJE
+    //ZATO SAM IPAK ODLUCIO DA U EXTERNAL CSS-U, DEFINISEM KLASU, I PSEUDO ELEMENT, I ONDA DA
+    //DEFINISEM DA SE KLIKOM DODAJE KLASA, CIME BI SE TRIGGEROVALA ANIMACIJA, A DA DA JAVASCRIPTOM
+    //DEFINISEM POZICIONIRANJE PSEUDO ELEMENTA, ODNOSNO NJEGOVIH top       I        left    PROPERTIJA
+    //OTKRIO SAM DA MI ZA OVO MOZE KORISTITI querySelector
+
+
+    //NAKON TESTIRANJA, UTVRDIO SAM DA IMAM POGRESAN PRISTUP U CSS, NAJBOLJE BI BILO
+    //OVAKO DEFINISATI CSS, ODNOSNO PODELITI NA SLEDECE DELOVE
+
+    //JEDNA CSS KLASA DEFINISE STILOVE SAMOG DUGMETA
+    //ONA MOZE DA OSTANE DA SE ZOVE                     .ripple
+    
+    //SLEDECI MSE DEFINISE PSEUDO ELEMENT       TO JE NARAVNO ODREDJEDO         .ripple::before
+
+    //OVI STILOVI KOJE SAM GORE POMENUO, MOGU SE DODATI U OBIMU KONSTRUKTORA (ODNOSNO this-U CU DODATI
+    // .ripple SELEKTOR, U KONSTRUKTORU)
+
+    //PROPERTIJI, KOJI SU VEZANI ZA ANIMACIJU TREBAJU DA BUDU U ODVOJENOJ CSS KLASI, ODNOSNO U NJENOM
+    //PSEUDO ELEMENTU
+    //NEKA SE ONA ZOVE      .for_animation
+    //ODNOSNO NEKA PROPERTIJI ZA ANIMACIJU BUDU         U       .for_animation::before      SELEKTORU
+
+    onClickRipple(offsetx, offsety){
+        const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
+        const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
+        const koordX = (offsetx - polaSirine) + "px"; 
+        const koordY = (offsety - polaVisine) + "px";
+        console.log(koordX, koordY);
+        this.classList.add('ripple');           //OVA CSS KLASA I NJEN PSEUDO ELEMENT SU DEFINISANI U 
+                                                //  index.css    FAJLU
+            
+                                                                    
+        const beforePseudo = this.querySelector;
+        console.log(beforePseudo);
+        /*beforePseudo.style.left = koordX;
+        beforePseudo.style.top = koordY;*/
+
+    }
+
 }
 
 /////////NISAM DEFINISAO NEKE METODE SminkerDugme-TOVOG PROTOTIPA, JER MISLIM DA MI JE
@@ -1337,6 +1402,18 @@ rootElementi[1].appendChild(sminker2);
 rootElementi[2].appendChild(sminker3);
 rootElementi[3].appendChild(sminker4);
 rootElementi[4].appendChild(sminker5);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
