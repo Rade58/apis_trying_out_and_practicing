@@ -15,7 +15,7 @@
 }
 .waving::before {
     content: "";
-    border: orange solid 2px;
+    border: orange solid 0px;
     display: block;
     position: absolute;
     width: 100%;
