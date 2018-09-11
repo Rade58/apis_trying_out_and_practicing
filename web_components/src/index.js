@@ -1136,15 +1136,15 @@ class HypsterDugme extends HTMLButtonElement {
         this.appendChild(stilElement);
 
         this.addEventListener("click", ev => {
-            console.log(ev.target);
+           // console.log(ev.target);
             this.onClickRipple(ev.offsetX, ev.offsetY);
-            console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
+            //console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
         });
 
         this.addEventListener("animationend", ev => {
-            console.log(ev.target);
+            //console.log(ev.target);
             ev.target.classList.remove("ripple");
-            console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
+            //console.log(window.getComputedStyle(ev.target).top, window.getComputedStyle(ev.target).left);
         });
 
     }
@@ -1154,7 +1154,7 @@ class HypsterDugme extends HTMLButtonElement {
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
         const koordX = (offsetx - polaSirine) + "px"; 
         const koordY = (offsety - polaVisine) + "px";
-        console.log(koordX, koordY);
+        //console.log(koordX, koordY);
         this.classList.add('ripple');
         const stilovi = this.stiloviF(
             koordY, koordX                                              //MISLIM DA JE OVDE GRESKA
@@ -1235,7 +1235,7 @@ class HypsterDugme extends HTMLButtonElement {
     }
 
     attributeChangedCallback(attributeName, newValue, oldValue){
-        console.log("atribut se promenio", attributeName, oldValue, newValue);
+        //console.log("atribut se promenio", attributeName, oldValue, newValue);
         this.style.width = (attributeName === "sirina")?oldValue:this.sirina;
         this.style.height = (attributeName === "visina")?oldValue:this.visina;
 
@@ -1252,7 +1252,19 @@ window.customElements.define('hypster-dugme', HypsterDugme, {extends: 'button'})
 class SminkerDugme extends HypsterDugme {
     constructor(boja="#be88dda4", sirina="180px", visina="80px"){     //KAD KAZEM BOJA MISLIM NA POZADINSKU BOJU
 
-        super();                                    //SVE STO JE DEFINISANO POSLE POZIVANJA super-A
+        super();    
+        
+        
+        //U KONSTRUKTORU HypsterDugme KLASE, POSTOJALO JE DEFINISANJE KREIRANJA style TAGA, I NJEGOVO 
+        //APPENDOVANJE DUGMETU (this-U)    
+        //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
+        console.log(this.querySelector('style'));
+        this.querySelector('style').remove();
+
+        console.log(this.querySelector('style'));
+        
+        
+                                                    //SVE STO JE DEFINISANO POSLE POZIVANJA super-A
                                                     //MOZE POTENCIJALNO DA OVERRIDE-UJE ONO STO JE 
                                                     //super     "DONEO"  (NEKI ASSIGNMENTI, VARIAJBLE
                                                     // (STO MISLIM I DA TESTIRAM), ALI MISLIM DA SE TU 
@@ -1295,18 +1307,29 @@ class SminkerDugme extends HypsterDugme {
     
     ///TAKO DA NAKON STO SAM SE VRATIO NA PARAMETRE KONSTRUKTORA, KAKO BIH DEFINISAO DEFAULT PARAMETRE
     ////U NASTAVKU CU PODESITI I ATRIBUTE I DEFINISATI APLICIRANJE STILA
-    
-        this.style.width = sirina;
-        this.style.height = visina;
+        
+        
+        //this.style.width = sirina;       // OVO CU PREMESTITI U DONJU USLOVNU IZJAVU                                               
+        //this.style.height = visina;      // JER OVO OVERRIDE-UJE 
+                                        // VREDNOSTI, KOJE TREBA DA STIGNU OD ATRIBUTA
 
-        this.setAttribute('sirina', sirina);
-        this.setAttribute('visina', visina);
+        /*this.setAttribute('sirina', sirina);        //POGRESNO, UKLONICU I STAVITI U
+        this.setAttribute('visina', visina);*/        //DONJU USLOVNU IOZJAVU, 
+        if(this.hasAttribute('sirina')){
+            this.style.width = this.getAttribute('sirina'); 
+        }else{
+            this.setAttribute('sirina', sirina);
+            this.style.width = this.getAttribute('sirina');
+        }
 
-        //U KONSTRUKTORU HypsterDugme KLASE, POSTOJALO JE DEFINISANJE KREIRANJA style TAGA, I NJEGOVO 
-        //APPENDOVANJE DUGMETU (this-U)    
-        //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
+        if(this.hasAttribute('visina')){
+            this.style.height = this.getAttribute('visina');
+        }else{
+            this.setAttribute('visina', visina);
+            this.style.height = this.getAttribute('visina');
+        }
 
-        this.querySelector('style').remove();
+        
 
         //NAKON MODIFIKACIJA, KONKRETNO NAKON PREMESTSNJA CELOKUMPNOG CSS-A U ODVOJENI CSS FAJL
         //MOGU U OBIMA KONSTRUKTORA, DODELITI SLEDECU CSS KLASU (IME .ripple SAM IZBACIO, JER MI NE ODGOVARA
@@ -1316,7 +1339,9 @@ class SminkerDugme extends HypsterDugme {
 
         this.addEventListener('animationend', (ev) => {
             ev.target.classList.remove('for_animation');
+            console.log(ev.target.getElementsByTagName('style')[0]);
             ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            console.log(ev.target.getElementsByTagName('style')[0]);
         });
 
         /*const shadowRoot = this.attachShadow({mode: "open"});*/   //ZAKLJUCIO SAM DA CE MI TREBATI SHADOW DOM 
@@ -1368,6 +1393,7 @@ class SminkerDugme extends HypsterDugme {
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
         const koordX = (offsetx - polaSirine) + "px"; 
         const koordY = (offsety - polaVisine) + "px";
+        console.log(polaSirine, polaVisine);
         console.log(koordX, koordY);
         //  OVDE MOGU PSEUDO ELEMENTU DODATI VREDNOSTI ZA      top      I       left    PROPERTI
 
@@ -1421,7 +1447,7 @@ const sminker1 = document.createElement('button', {is: 'sminker-dugme'});
 
 const sminker2 = new SminkerDugme();
 
-//PA JOS JEDAN NA CETVRTI NACIN
+//PA JOS JEDAN NA TRECI NACIN
 
 const sminker3 = new SminkerDugme("#eb6cc0f6");
 
@@ -1429,7 +1455,7 @@ const sminker3 = new SminkerDugme("#eb6cc0f6");
 
 const sminker4 = new SminkerDugme("#6781d4", "402px"); 
 
-//PA JOS JEDAN NA CETVRTI NACIN
+//PA JOS JEDAN NA PETI NACIN
 
 const sminker5 = new SminkerDugme("#ec9358", "206px", "126px"); 
 
@@ -1441,6 +1467,24 @@ rootElementi[2].appendChild(sminker3);
 rootElementi[3].appendChild(sminker4);
 rootElementi[4].appendChild(sminker5);
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///OVAJ PRIMER VISE NECU DODATNO KOMENTARISATI////////////////////////////////////////////////////
+///////////////////////////////////////////
+
+//MOGAO SAM JEDINO JOS, NESTOVATI, NOVI CUSTOMIZED BULT IN BUTTON, DIREKTNO U HTML, UZ DIREKTNO DODAVANJE
+//SVIH, KARAKTERISTICNIH ATRIBUTA
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
