@@ -1336,22 +1336,33 @@ class SminkerDugme extends HypsterDugme {
         //ONO STO JE NASLEDJENO IZ HypsterDugme KONSTRUKTORA, A TO JE ODUZIMANJE .ripple
         //CSS KLASE PO ZAVRSETKU ANIMACIJE; NAIME TREBALO BI DA SE ODUZME SAMO KLASA ANIMACIJE)
         this.classList.add('waving');
+        
 
         this.addEventListener('animationend', (ev) => {
-            ev.target.classList.remove('for_animation');
+            const duzina = this.getElementsByTagName('style').length;
+            console.log(duzina);
+            for(let i = 0; i < duzina; i++){
+                ev.target.removeChild(ev.target.getElementsByTagName('style')[i]);
+            }
+            //ev.target.classList.remove('for_animation');
             console.log(ev.target.getElementsByTagName('style')[0]);
-            ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
-            console.log(ev.target.getElementsByTagName('style')[0]);
+            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            //console.log(ev.target.getElementsByTagName('style')[0]);
         });
 
-        this.addEventListener('blur', (ev) => {
+        /*this.addEventListener('blur', (ev) => {
             
-            if(ev.target.getElementsByTagName('style')[0]){
-                console.log(ev.target.getElementsByTagName('style')[0]);
-                //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            const duzina = this.getElementsByTagName('style').length;
+            console.log(duzina);
+            for(let i = 0; i < duzina; i++){
+                ev.target.removeChild(ev.target.getElementsByTagName('style')[i]);
             }
+            //ev.target.classList.remove('for_animation');
+            console.log(ev.target.getElementsByTagName('style')[0]);
+            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            //console.log(ev.target.getElementsByTagName('style')[0]);
             
-        });
+        });*/
 
         /*const shadowRoot = this.attachShadow({mode: "open"});*/   //ZAKLJUCIO SAM DA CE MI TREBATI SHADOW DOM 
                                                                 //SAMO DA BIH MOGAO, NJEMU
@@ -1362,6 +1373,7 @@ class SminkerDugme extends HypsterDugme {
 
         /*shadowRoot.appendChild(document.createElement('style'));*/
         //DODAVANJE SHADOW DOM-A CUSTOMIZED BUILT IN ELEMNTIMA NIJE MOGUCE (PROPAO POKUSAJ U POGLEDU SHADOW DOM-A)
+        this.onClickRipple = this.onClickRipple.bind(this);
     }
 
     //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVAS KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
@@ -1398,6 +1410,18 @@ class SminkerDugme extends HypsterDugme {
     //ODNOSNO NEKA PROPERTIJI ZA ANIMACIJU BUDU         U       .for_animation::before      SELEKTORU
 
     onClickRipple(offsetx, offsety){
+
+
+       /* const duzina = this.getElementsByTagName('style').length;
+        const stilTagovi = this.getElementsByTagName('style');
+        for(let i = 0; i < duzina; i++){
+            this.getElementsByTagName('style')[i].remove();
+        }
+            //ev.target.classList.remove('for_animation');
+            console.log(this.getElementsByTagName('style')[0]);
+            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+        */
+
         console.log(offsetx, offsety);
         const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
