@@ -1259,7 +1259,7 @@ class SminkerDugme extends HypsterDugme {
         //APPENDOVANJE DUGMETU (this-U)    
         //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
         console.log(this.querySelector('style'));
-        this.querySelector('style').remove();
+        this.removeChild(this.querySelector('style'));
 
         console.log(this.querySelector('style'));
         
@@ -1344,6 +1344,15 @@ class SminkerDugme extends HypsterDugme {
             console.log(ev.target.getElementsByTagName('style')[0]);
         });
 
+        this.addEventListener('blur', (ev) => {
+            
+            if(ev.target.getElementsByTagName('style')[0]){
+                console.log(ev.target.getElementsByTagName('style')[0]);
+                //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            }
+            
+        });
+
         /*const shadowRoot = this.attachShadow({mode: "open"});*/   //ZAKLJUCIO SAM DA CE MI TREBATI SHADOW DOM 
                                                                 //SAMO DA BIH MOGAO, NJEMU
                                     //ZAKACITI STYLE ELEMENT, U OKVIRU KOJEG BI DEFINISAO STILOVE, KOJI
@@ -1389,6 +1398,7 @@ class SminkerDugme extends HypsterDugme {
     //ODNOSNO NEKA PROPERTIJI ZA ANIMACIJU BUDU         U       .for_animation::before      SELEKTORU
 
     onClickRipple(offsetx, offsety){
+        console.log(offsetx, offsety);
         const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
         const koordX = (offsetx - polaSirine) + "px"; 
@@ -1396,11 +1406,6 @@ class SminkerDugme extends HypsterDugme {
         console.log(polaSirine, polaVisine);
         console.log(koordX, koordY);
         //  OVDE MOGU PSEUDO ELEMENTU DODATI VREDNOSTI ZA      top      I       left    PROPERTI
-
-        //  OVDE SASDA MOGU DODATI CSS KLASU, KOJOM SE TRIGGER-UJE ANIMACIJA
-        this.classList.add('for_animation');        //OVA KLASA CE BITI ODUZETA NAKON ZAVRSETKA ANIAMCIJE
-                                                    //JER SAM TAKO DEFINISAO U HANDLER-U, KOJI SE INVOCIRA                
-                                                    //on animation end
         
         //shadow dom se ne moze kaciti na customized built in elemente
         // MOGU IPAK DEFINISATI DODAVANJE style TAGA, POD USLOVOM DA GA UKLONIM onanimationend
@@ -1415,6 +1420,19 @@ class SminkerDugme extends HypsterDugme {
         const stilElement = document.createElement('style');
         stilElement.textContent = stilPozicioniranja;
         this.appendChild(stilElement);
+
+
+
+        //  OVDE SASDA MOGU DODATI CSS KLASU, KOJOM SE TRIGGER-UJE ANIMACIJA
+        this.classList.add('for_animation');        //OVA KLASA CE BITI ODUZETA NAKON ZAVRSETKA ANIAMCIJE
+                                                    //JER SAM TAKO DEFINISAO U HANDLER-U, KOJI SE INVOCIRA                
+                                                    //on animation end
+        
+        
+        
+        
+
+        console.log(this.children);
     }
 
     //MORAM I OVERRIDE-OVATI ONO STO SE DESAVA U HANDLERU, KOJI SE POZIVA PO ZAVRSETKU ANIMACIJE
