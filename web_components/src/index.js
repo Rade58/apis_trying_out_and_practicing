@@ -1316,7 +1316,13 @@ class SminkerDugme extends HypsterDugme {
 
         this.addEventListener('animationend', (ev) => {
             ev.target.classList.remove('for_animation');
-            ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            const stilovi = ev.target.getElementsByTagName('style');
+            const duzina = stilovi.length;
+            console.log(duzina);
+            for(let i = 0; i < duzina; i++){
+                ev.target.getElementsByTagName('style')[i].remove();
+            }
         });
 
         /*const shadowRoot = this.attachShadow({mode: "open"});*/   //ZAKLJUCIO SAM DA CE MI TREBATI SHADOW DOM 
@@ -1328,6 +1334,17 @@ class SminkerDugme extends HypsterDugme {
 
         /*shadowRoot.appendChild(document.createElement('style'));*/
         //DODAVANJE SHADOW DOM-A CUSTOMIZED BUILT IN ELEMNTIMA NIJE MOGUCE (PROPAO POKUSAJ U POGLEDU SHADOW DOM-A)
+    
+        this.addEventListener('mouseleave', ev => {
+            if(ev.target.classList.contains('for_animation')){ev.target.classList.remove('for_animation');}
+            const stilovi = ev.target.getElementsByTagName('style');
+            const duzina = stilovi.length;
+            console.log(duzina);
+            for(let i = 0; i < duzina; i++){
+                ev.target.getElementsByTagName('style')[i].remove();
+            }
+        });
+    
     }
 
     //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVAS KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
@@ -1364,6 +1381,9 @@ class SminkerDugme extends HypsterDugme {
     //ODNOSNO NEKA PROPERTIJI ZA ANIMACIJU BUDU         U       .for_animation::before      SELEKTORU
 
     onClickRipple(offsetx, offsety){
+
+        console.log(this.getElementsByTagName('style'));
+
         const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
         const koordX = (offsetx - polaSirine) + "px"; 
