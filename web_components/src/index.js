@@ -1434,7 +1434,7 @@ class SminkerDugme extends HypsterDugme {
         // MOGU IPAK DEFINISATI DODAVANJE style TAGA, POD USLOVOM DA GA UKLONIM onanimationend
 
         const stilPozicioniranja = `
-            .waving::before {
+            .for_animation::before {
                 left: ${koordX};
                 top: ${koordY};
             }
