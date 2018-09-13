@@ -42,7 +42,7 @@
 .for_animation::before {
     animation-name: gradprogress;
     animation-iteration-count: 1;
-    animation-duration: 0.8s;
+    animation-duration: 1.8s;
 }
 
 @keyframes gradprogress {

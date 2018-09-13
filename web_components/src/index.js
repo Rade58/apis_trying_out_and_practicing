@@ -1339,15 +1339,14 @@ class SminkerDugme extends HypsterDugme {
         
 
         this.addEventListener('animationend', (ev) => {
-            const duzina = this.getElementsByTagName('style').length;
+            ev.target.classList.remove('for_animation');
+            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
+            const stilovi = ev.target.getElementsByTagName('style');
+            const duzina = stilovi.length;
             console.log(duzina);
             for(let i = 0; i < duzina; i++){
-                ev.target.removeChild(ev.target.getElementsByTagName('style')[i]);
+                ev.target.getElementsByTagName('style')[i].remove();
             }
-            //ev.target.classList.remove('for_animation');
-            console.log(ev.target.getElementsByTagName('style')[0]);
-            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
-            //console.log(ev.target.getElementsByTagName('style')[0]);
         });
 
         /*this.addEventListener('blur', (ev) => {
@@ -1373,10 +1372,20 @@ class SminkerDugme extends HypsterDugme {
 
         /*shadowRoot.appendChild(document.createElement('style'));*/
         //DODAVANJE SHADOW DOM-A CUSTOMIZED BUILT IN ELEMNTIMA NIJE MOGUCE (PROPAO POKUSAJ U POGLEDU SHADOW DOM-A)
-        this.onClickRipple = this.onClickRipple.bind(this);
+    
+        this.addEventListener('mouseleave', ev => {
+            if(ev.target.classList.contains('for_animation')){ev.target.classList.remove('for_animation');}
+            const stilovi = ev.target.getElementsByTagName('style');
+            const duzina = stilovi.length;
+            console.log(duzina);
+            for(let i = 0; i < duzina; i++){
+                ev.target.getElementsByTagName('style')[i].remove();
+            }
+        });
+    
     }
 
-    //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVAS KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
+    //TOKOM TESTIRANJA DUGMETA, KOJU PROIZVODI OVA KLASA, OTKRIO SAM DA METODA KLASE, IZ KOJE, 
     //OVA KLASA
     //EXTENDS, NIJE DOBRA, JER SVAKOJ INSTANCI, NESTUJE, PO JEDAN style TAG, ZBOG KOJE SE DOGADJA, 
     //POGRESNI OVERWRITING STILOVA, JER AKO IMAM VISE DUGMADI DA STRANICI, IMAM TOLIKO I style TAGOVA, 
@@ -1411,18 +1420,8 @@ class SminkerDugme extends HypsterDugme {
 
     onClickRipple(offsetx, offsety){
 
+        console.log(this.getElementsByTagName('style'));
 
-       /* const duzina = this.getElementsByTagName('style').length;
-        const stilTagovi = this.getElementsByTagName('style');
-        for(let i = 0; i < duzina; i++){
-            this.getElementsByTagName('style')[i].remove();
-        }
-            //ev.target.classList.remove('for_animation');
-            console.log(this.getElementsByTagName('style')[0]);
-            //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
-        */
-
-        console.log(offsetx, offsety);
         const polaSirine = parseInt((/\d+/gi).exec(this.getAttribute('sirina')))/2;
         const polaVisine = parseInt((/\d+/gi).exec(this.getAttribute('visina')))/2;
         const koordX = (offsetx - polaSirine) + "px"; 
