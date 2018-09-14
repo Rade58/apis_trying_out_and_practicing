@@ -1546,10 +1546,14 @@ class ClassyButton extends SminkerDugme {
 
         this.style.position = "relative";
         this.style.overflow = "hidden";
+        this.style.padding = "0px";
+        this.style.margin = "0px"
+        this.style.outlineWidth = "0px"
         //this.style.zIndex = 8;
 
         this.addEventListener('mousedown', function(ev){
             
+<<<<<<< HEAD
             let mouseX;
             let mouseY;
 
@@ -1632,14 +1636,59 @@ class ClassyButton extends SminkerDugme {
             const buttCoordY = ev.target.offsetTop;
             const targetCoordX = ev.offsetX;
             const targetCoordY = ev.offsetY;
-            
-            const bigCoordX = buttCoordX + targetCoordX;
-            const bigCoordY = buttCoordY + targetCoordY;
-            
-            console.log(buttCoordX, buttCoordY);
-            console.log(targetCoordX, targetCoordY);
-            console.log(halfWidthTarget, halfHeightTarget);
+=======
+            let x;
+            let y;
 
+            const buttonWidth = this.getAttribute('sirina');
+            const buttonHeight = this.getAttribute('visina');
+
+            const halfWidth = parseInt((/\d+/ig).exec(buttonWidth))/2;      //POLA SIRINE I VISINE
+            const halfHeight = parseInt((/\d+/ig).exec(buttonHeight))/2;    //BUTTON-A
+
+
+            console.log(halfWidth, halfHeight);
+
+
+                                                                //  KOORDINATE
+            const fromKontToItemX = ev.target.offsetLeft;       //  MOZE DA BUDE PARENT ILI ITEM
+            const fromKontToItemY = ev.target.offsetTop;        //  (AKO JE ON TARGET)
+            console.log("mogu da budu negativne", fromKontToItemX, fromKontToItemY);
+            const justForButtonX = this.offsetLeft;             //  KORRDINATE, SAMO BUTTON-A
+            const justForButtonY = this.offsetTop;
+            console.log("samo za dugme", justForButtonX, justForButtonY);
+            const mouseCoordX = ev.offsetX;                 //  KOORDINATE OD KONTEJNERA
+            const mouseCoordY = ev.offsetY;                 //  DO TAMO GDE JE KLIKNUTO
+                                                            //  MOZE DA BUDE BUTTON, ALI SAMO JEDNOM
+                                                            //  OSTALO CE BITI KORDINATE KLIKA U NESTED 
+                                                            //  ITEMIMA
+            console.log("klik coords", mouseCoordX, mouseCoordY);
+
+            x = mouseCoordX;      // U SLUCAJU KADA NI JEDAN div NIJE NESTOVAN (PRVI KLIK)
+            y = mouseCoordY;
+
+            if(fromKontToItemX !== justForButtonX){               //   SVAKI SLEDECI KLIK, KADA POSTOJI 
+                x = fromKontToItemX + mouseCoordX;
+                y = fromKontToItemY + mouseCoordY;
+            }
+
+            /*let i;
+            let j;
+
+            i = mouseCoordX - halfWidth;    //ZA PRVI PUT KADA NEMA div ITEM-A
+            j = mouseCoordY - halfHeight;
+
+            if(this.hasChildNodes() && this.getElementsByTagName('div')){
+                
+            }*/
+>>>>>>> offset_fix
+            
+            console.log("X: ", x, " Y: ", y);
+            
+            let i;
+            let j;
+
+<<<<<<< HEAD
             console.log(ev.relatedTarget);*/
 
             this.onClickRippleNew(
@@ -1654,7 +1703,32 @@ class ClassyButton extends SminkerDugme {
             console.log(divoviObjekat);
             const divObLength = divoviObjekat.length;
             divoviObjekat[divObLength-1].classList.add('transit');
+=======
+            i = (mouseCoordX - halfWidth) + "px";   //ZA PRVI POKUSAJ BEZ DIVOVA
+            j = (mouseCoordY - halfHeight) + "px";
+
+            if(fromKontToItemX !== justForButtonX){   
+                i = (x - halfWidth) + "px";   
+                j = (y - halfHeight) + "px";
+            }
+
+            this.onClickRippleNew(i, j);                        
+
+        });
+
+        this.onmouseup = function(ev){
+            //const divoviObjekat = this.getElementsByTagName('div');
+            //console.log(divoviObjekat.length)
             
+            //this.getElementsByTagName('div')[divoviObjekat.length-1].classList.add('transit');
+>>>>>>> offset_fix
+            
+            if(this.hasChildNodes() && this.getElementsByTagName('div')){
+                const length = this.getElementsByTagName('div').length;
+                this.getElementsByTagName('div')[length - 1].classList.add('transit');
+            }
+
+
         };
         
     }
@@ -1663,7 +1737,7 @@ class ClassyButton extends SminkerDugme {
         //console.log("do nothing")
     }
 
-    onClickRippleNew(offsetx, offsety){
+    onClickRippleNew(koordX, koordY){
         //SADA MORAM DEFINISATI NOVI CSS, U KOJEM NECE FIGURISATI PSEUDO ELEMENT, VEC OBICNI DIV
         //ABSOLUTNO POZICIONIRAN
         //console.log(offsetx, offsety);
@@ -1676,7 +1750,7 @@ class ClassyButton extends SminkerDugme {
             ["position", "absolute"],
             ["margin", "0px"],
             ["padding", "0px"],
-            ["border", "5px solid orange"]
+            ["border", "0px solid orange"]
         ]);
 
         for(let par of styleMap.entries()){
@@ -1686,6 +1760,10 @@ class ClassyButton extends SminkerDugme {
         }
         
         this.appendChild(divel);
+<<<<<<< HEAD
+=======
+        //divel.setAttribute("disabled", "disabled");
+>>>>>>> offset_fix
 
         divel.classList.add('wave_styles');
         //divel.setAttribute("disabled", "disabled");
@@ -1695,15 +1773,31 @@ class ClassyButton extends SminkerDugme {
         };*/
 
         /*const halfWidth = buttWidth/2;
+<<<<<<< HEAD
         const halfHeight = buttHeight/2;
         const koordX = (offsetx - halfWidth) + "px"; 
         const koordY = (offsety - halfHeight) + "px";
+=======
+        const halfHeight = buttHeight/2;*/
+        /*const koordX = (offsetx - halfWidth) + "px"; 
+        const koordY = (offsety - halfHeight) + "px";*/
         
-        divel.classList.add('wave_styles');
+>>>>>>> offset_fix
+        
         divel.style.left = koordX;
+<<<<<<< HEAD
         divel.style.top = koordY;*/
         //console.log(this.zindex);
         //divel.style.zIndex = this.zindex--;
+=======
+        divel.style.top = koordY;
+
+        divel.classList.add('wave_styles');
+
+        //console.log(this.zindex);
+        //divel.style.zIndex = this.zindex--;
+        
+>>>>>>> offset_fix
         
         divel.style.left = offsetx;
         divel.style.top = offsety;        
