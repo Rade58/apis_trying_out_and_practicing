@@ -92,7 +92,7 @@
     margin: 0px;
     padding: 0px;
     border: 1px solid orange;*/
-    display: table-cell;
+    display: block;
     top: 0px;
     left: 0px;
 
