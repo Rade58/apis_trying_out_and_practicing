@@ -96,6 +96,8 @@
     top: 0px;
     left: 0px;
 
+    z-index: -1;
+
     background-repeat: no-repeat;
     background-image: radial-gradient(circle at center, #51db913b 28%, #88ddb0a4 28.1%, transparent 29.2%);
     opacity: 1;
@@ -113,7 +115,7 @@
 }
 
 .transit {
-    transform: scale(4,4);
+    transform: scale(10,10);
     opacity: 0;
 }
 
@@ -126,28 +128,35 @@
     border: pink solid 2px;
     width: 620px;
     height: 358px;
+    z-index: 2;
 }
 
 .vezba_poz_kon > * {
     position: absolute;
+    z-index: -1;
 }
 
 .vezba_poz_kon > div:nth-child(1){
     left: 120px;
+    z-index: -1;
 }
 
 .vezba_poz_kon > div:nth-child(2){
     left: 300px;
+    z-index: -1;
 }
 
 .vezba_poz_kon > div:nth-child(3){
     left: 200px;
+    z-index: -1;
 }
 
 .vezba_poz_kon > div:nth-child(4){
     bottom: 100px;
+    z-index: -1;
 }
 
 .vezba_poz_kon > div:nth-child(5){
     bottom: 5px;
+    z-index: -1;
 }

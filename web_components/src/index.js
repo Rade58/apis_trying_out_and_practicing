@@ -1537,8 +1537,9 @@ class ClassyButton extends SminkerDugme {
         //POTREBNO JE OTKACITI POMENUTI HANDLER (JER KONSTRUKTOROM SminkerDugme-TA, ON JE ZAKACEN)
         //MEDDJUTIM, TO SE NE MOZE U RADITI, ALI NA SRECU, U POMENUTOM HANDLER-U, RANIJE JE SAMO DEFINISANO
         //POZIVANJE   onclickRipple METODE, TAK ODA JE SAMO POTREBNO OVERRIDE-OVATI POMENUTU METODU
+        
         this.zindex = 0;
-        //this.style.zIndex = 200;
+        this.style.zIndex = 1;
         //this.style.position = "absolute";
 
         //DODAVANJE NEKIH STILOVA DUGMETU
@@ -1549,10 +1550,10 @@ class ClassyButton extends SminkerDugme {
 
         this.addEventListener('mousedown', function(ev){
             
-            //console.log(ev.__proto__);
-            console.log(ev.stopImmediatePropagation);
+            console.log(ev.__proto__);
+            //console.log(ev.stopImmediatePropagation);
             //console.log(`||||||${ev.bubbles}||||||||`);
-            //console.log(this.getElementsByTagName('div'))
+            //console.log(this.getElementsByTagName('div'));
             
             /*console.log(ev.target.offsetX,
                 ev.target.offsetY);*/
@@ -1560,10 +1561,26 @@ class ClassyButton extends SminkerDugme {
             ////DAKLE, POMENUTA VREDNOST SE CITA DIREKTNO OD Event INSTANCE
 
             //console.log(ev.target);
+            let coordParentButtX = 0;
+            let coordParentButtY = 0;
+            
+            //KORISTI REGEXP, KAKO BI NASAO I SIRINU I VISINU I DUGMETA, A I DIVOVA U NJEMU
+            const halfWidthTarget = window.getComputedStyle(ev.target).width;
+            const halfHeightTarget = window.getComputedStyle(ev.target).height;
 
-            console.log(this.offsetLeft, this.offsetTop);
-            console.log(ev.offsetX, ev.offsetY);
+            const buttCoordX = ev.target.offsetLeft;
+            const buttCoordY = ev.target.offsetTop;
+            const targetCoordX = ev.offsetX;
+            const targetCoordY = ev.offsetY;
+            
+            const bigCoordX = buttCoordX + targetCoordX;
+            const bigCoordY = buttCoordY + targetCoordY;
+            
+            console.log(buttCoordX, buttCoordY);
+            console.log(targetCoordX, targetCoordY);
+            console.log(halfWidthTarget, halfHeightTarget);
 
+            console.log(ev.relatedTarget);
 
             this.onClickRippleNew(
                 ev.offsetX,
@@ -1571,7 +1588,7 @@ class ClassyButton extends SminkerDugme {
             );
 
             return false;
-        });
+        }, true);
 
         this.onmouseup = function(ev){
             const divoviObjekat = this.getElementsByTagName('div');
@@ -1608,7 +1625,14 @@ class ClassyButton extends SminkerDugme {
             divel.style[par[0]] = par[1];
             //console.log(divel);
         }
+        
         this.appendChild(divel);
+        divel.setAttribute("disabled", "disabled");
+
+        divel.onclick = function(ev){
+            console.log("klik event prosao");
+        };
+
         const halfWidth = buttWidth/2;
         const halfHeight = buttHeight/2;
         const koordX = (offsetx - halfWidth) + "px"; 
@@ -1617,7 +1641,8 @@ class ClassyButton extends SminkerDugme {
         divel.classList.add('wave_styles');
         divel.style.left = koordX;
         divel.style.top = koordY;
-        divel.style.zindex = this.zIndex--;
+        console.log(this.zindex);
+        divel.style.zIndex = this.zindex--;
         
         
 
@@ -1653,6 +1678,12 @@ const klasiDugme = new ClassyButton("#6781d4", "402px", "208px");
 
 rootElementi[9].appendChild(klasiDugme);
 //test
+
+
+
+
+
+
 
 
 
@@ -1980,5 +2011,9 @@ for(let i = 0; i<5; i++){
 
 }
 
+const konti = document.getElementsByClassName('vezba_poz_kon')[0];
+konti.addEventListener('click', function(ev){
+    console.log(ev.target);
+});
 
 
