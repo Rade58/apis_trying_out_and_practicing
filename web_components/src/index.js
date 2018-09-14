@@ -1258,10 +1258,10 @@ class SminkerDugme extends HypsterDugme {
         //U KONSTRUKTORU HypsterDugme KLASE, POSTOJALO JE DEFINISANJE KREIRANJA style TAGA, I NJEGOVO 
         //APPENDOVANJE DUGMETU (this-U)    
         //ZELI MDA UKLONIM TU OPCIJU, JER MI style TAG VISE NECE BITI POTREBAN
-        console.log(this.querySelector('style'));
+        //console.log(this.querySelector('style'));
         this.removeChild(this.querySelector('style'));
 
-        console.log(this.querySelector('style'));
+        //console.log(this.querySelector('style'));
         
         
                                                     //SVE STO JE DEFINISANO POSLE POZIVANJA super-A
@@ -1343,7 +1343,7 @@ class SminkerDugme extends HypsterDugme {
             //ev.target.removeChild(ev.target.getElementsByTagName('style')[0]);
             const stilovi = ev.target.getElementsByTagName('style');
             const duzina = stilovi.length;
-            console.log(duzina);
+            //console.log(duzina);
             for(let i = 0; i < duzina; i++){
                 ev.target.getElementsByTagName('style')[i].remove();
             }
@@ -1377,7 +1377,7 @@ class SminkerDugme extends HypsterDugme {
             if(ev.target.classList.contains('for_animation')){ev.target.classList.remove('for_animation');}
             const stilovi = ev.target.getElementsByTagName('style');
             const duzina = stilovi.length;
-            console.log(duzina);
+           // console.log(duzina);
             for(let i = 0; i < duzina; i++){
                 ev.target.getElementsByTagName('style')[i].remove();
             }
@@ -1517,8 +1517,127 @@ rootElementi[4].appendChild(sminker5);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////
+//////////MEDJUTIM, NE SVIDJA MI SE ZATO STO MOJA ANIMACIJA KORISTI, ODNOSNO SCALE-IRA PSEUDO ELEMENT
+/////JER PSEUDO ELEMENTU NE MOGU PRISTUPITI, U JAVASCRIPT-U, NITI GA DIREKTNO MOGU MENJATI INLINE
+////STILOM U HTML-U
+////ZATO CU OPET KREIRATI NOVU KLASU, U KOJOJ CU DEFINISATI OVEERIDING, SVEGA NEOPHODNOG IZ SminkerDugme
+///KLASE
+
+class ClassyButton extends SminkerDugme {
+    constructor(boja, sirina, visina){
+        super(boja, sirina, visina);
+        //DAKLE, NISTA NECU MENJATI STO JE DONEO KONSTRUKTOR SminkerDugme KLASE
+        //TU PRIPADAJU PODESAVANJA ATRIBUTA, ZATIM CITANJE OD TIH ATRIBUTA I DODELJIVANJE
+        //NJIHOVIH VREDNOSTI, STYLE PROPERTIJIMA
+
+        //ONO STO MORAM OVERRIDE-OVATI, JESTE, METODA, KOJA SE POZIVA U OBIMU HANDLERA,
+        //KOJI SE SALJE U QUEUE, NA KORINIKOV KLIK 
+        //REC JE O onClickRipple FUNKCIJI
+
+        //POTREBNO JE OTKACITI POMENUTI HANDLER (JER KONSTRUKTOROM SminkerDugme-TA, ON JE ZAKACEN)
+        //MEDDJUTIM, TO SE NE MOZE U RADITI, ALI NA SRECU, U POMENUTOM HANDLER-U, RANIJE JE SAMO DEFINISANO
+        //POZIVANJE   onclickRipple METODE, TAK ODA JE SAMO POTREBNO OVERRIDE-OVATI POMENUTU METODU
+        this.zindex = 0;
+        //this.style.zIndex = 200;
+        //this.style.position = "absolute";
+
+        //DODAVANJE NEKIH STILOVA DUGMETU
+
+        this.style.position = "relative";
+        this.style.overflow = "hidden";
+        //this.style.zIndex = 8;
+
+        this.addEventListener('mousedown', function(ev){
+            
+            //console.log(ev.__proto__);
+            console.log(ev.stopImmediatePropagation);
+            //console.log(`||||||${ev.bubbles}||||||||`);
+            //console.log(this.getElementsByTagName('div'))
+            
+            /*console.log(ev.target.offsetX,
+                ev.target.offsetY);*/
+            ////ZAPAMTI DA JE event.offsetX    A NE     event.target.offsetX
+            ////DAKLE, POMENUTA VREDNOST SE CITA DIREKTNO OD Event INSTANCE
+
+            //console.log(ev.target);
+
+            console.log(this.offsetLeft, this.offsetTop);
+            console.log(ev.offsetX, ev.offsetY);
 
 
+            this.onClickRippleNew(
+                ev.offsetX,
+                ev.offsetY
+            );
+
+            return false;
+        });
+
+        this.onmouseup = function(ev){
+            const divoviObjekat = this.getElementsByTagName('div');
+            //console.log(divoviObjekat.length)
+            
+            this.getElementsByTagName('div')[divoviObjekat.length-1].classList.add('transit');
+            
+        };
+        
+    }
+
+    onClickRipple(){
+        //console.log("do nothing")
+    }
+
+    onClickRippleNew(offsetx, offsety){
+        //SADA MORAM DEFINISATI NOVI CSS, U KOJEM NECE FIGURISATI PSEUDO ELEMENT, VEC OBICNI DIV
+        //ABSOLUTNO POZICIONIRAN
+        //console.log(offsetx, offsety);
+        const buttWidth = parseInt((/\d+/gi).exec(this.getAttribute('sirina')));
+        const buttHeight = parseInt((/\d+/gi).exec(this.getAttribute('visina')));
+        const divel = document.createElement('div');
+        const styleMap = new Map([
+            ["width", buttWidth + "px"],
+            ["height", buttHeight + "px"],
+            ["position", "absolute"],
+            ["margin", "0px"],
+            ["padding", "0px"],
+            ["border", "5px solid orange"]
+        ]);
+
+        for(let par of styleMap.entries()){
+            //console.log(par);
+            divel.style[par[0]] = par[1];
+            //console.log(divel);
+        }
+        this.appendChild(divel);
+        const halfWidth = buttWidth/2;
+        const halfHeight = buttHeight/2;
+        const koordX = (offsetx - halfWidth) + "px"; 
+        const koordY = (offsety - halfHeight) + "px";
+        
+        divel.classList.add('wave_styles');
+        divel.style.left = koordX;
+        divel.style.top = koordY;
+        divel.style.zindex = this.zIndex--;
+        
+        
+
+        
+        /*divel.classList.add('transit');*/
+        //ANIMACIJU I GRADIJENT JE NAJBOLJE DEFINISATI U ODVOJENOM CSS FAJLU
+        //console.log(styleMap);
+        //JUST PRACTICING IF THIS CAN BE DONE WITH Map
+        
+
+        //CITANJE KARAKTERISTIKA ELEMENTA CE OSTATI ISTO KAO I RANIJE
+
+        
+
+        
+
+        //console.log(this);
+        
+    }
+}
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1528,8 +1647,11 @@ rootElementi[4].appendChild(sminker5);
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+window.customElements.define('classy-button', ClassyButton, {extends: 'button'});
 
+const klasiDugme = new ClassyButton("#6781d4", "402px", "208px");
 
+rootElementi[9].appendChild(klasiDugme);
 //test
 
 
@@ -1847,13 +1969,16 @@ novaSlika.width = 280;
 ///
 
 
+const borderArr = ["yellow", "green", "purple", "olive", "orange"];
 
+for(let i = 0; i<5; i++){
+    let item = document.createElement('div');
+    item.style.height = "200px";
+    item.style.width = "100px";
+    item.style.border = `${borderArr[i]} solid 4px`;
+    document.getElementsByClassName('vezba_poz_kon')[0].appendChild(item);
 
-
-
-
-
-
+}
 
 
 
