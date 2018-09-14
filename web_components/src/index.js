@@ -1553,90 +1553,6 @@ class ClassyButton extends SminkerDugme {
 
         this.addEventListener('mousedown', function(ev){
             
-<<<<<<< HEAD
-            let mouseX;
-            let mouseY;
-
-            let k = 0;
-            let j = 0;
-
-            const coordXpar = this.offsetLeft;      //KORDINATE PARENTA  (U ODNOSNU NA CLI DOKUMENT)
-            const coordYpar = this.offsetTop;
-            //console.log(coordXpar, coordYpar);
-            const targetX = ev.target.offsetLeft;   //MOGU BIT KOORDINATE PARENTA ILI ITEM-A  (U ODNOSU NA CELI DOKUMENT)
-            const targetY = ev.target.offsetTop;
-            //console.log(targetX, targetY);
-            const innerOffsetX = ev.offsetX;     //MOGU BITI KOORDINATE KLIKA ZA PARENT ILI ZA ITEM
-            const innerOffsetY = ev.offsetY;     //OVO SU KOORDINATE KLIKA OD GORNJE GRANICE ELEMENTA
-                                                //I OD LEVE GRANICE KLIKA
-            //console.log(innerOffsetX, innerOffsetY);
-            //console.log(this.visina);
-            const parentWidth = parseInt((/\d+/gi).exec(this.getAttribute("sirina")));          
-            const parentHeight = parseInt((/\d+/gi).exec(this.getAttribute("visina")));         
-                                                                                
-            
-            //console.log(parentWidth, parentHeight);
-            const halfParentWidth = parentWidth/2;
-            const halfParentHeight = parentHeight/2;
-            //console.log(halfParentWidth, halfParentHeight);
-            const koordCenterXparent = coordXpar + halfParentWidth;        //KOORDINATE CENTRA PARENTA
-            const koordCenterYparent = coordYpar + halfParentHeight;
-            //console.log(koordCenterXparent, koordCenterYparent);
-            if(coordXpar !== targetX){
-                //console.log(this.getElementsByTagName('div')[0]);
-                k = targetX;
-                j = targetY;
-            }
-            //console.log(k, j);
-
-            console.log(innerOffsetX, halfParentWidth);
-            console.log(innerOffsetY, halfParentHeight);
-
-
-            /*let unutrasnjeX;
-            let unutrasnjeY;
-
-            if(innerOffsetX > halfParentWidth){
-                unutrasnjeX = innerOffsetX - halfParentWidth;
-            }else{
-                unutrasnjeX = halfParentWidth - innerOffsetX;
-            }
-            if(innerOffsetY > halfParentHeight){
-                unutrasnjeY = innerOffsetY - halfParentHeight;
-            }else{
-                unutrasnjeY = halfParentHeight - innerOffsetY;
-            }*/
-
-
-            const realCoordX = `${innerOffsetX - halfParentWidth + Math.abs(k)}px`;
-            const realCoordY = `${innerOffsetY - halfParentHeight + Math.abs(j)}px`;
-
-            //console.log(realCoordX, realCoordY);
-            
-            
-            //console.log(ev.__proto__);
-            //console.log(ev.stopImmediatePropagation);
-            //console.log(`||||||${ev.bubbles}||||||||`);
-            //console.log(this.getElementsByTagName('div'));
-            
-            /*console.log(ev.target.offsetX,
-                ev.target.offsetY);*/
-            ////ZAPAMTI DA JE event.offsetX    A NE     event.target.offsetX
-            ////DAKLE, POMENUTA VREDNOST SE CITA DIREKTNO OD Event INSTANCE
-
-            //console.log(ev.target);
-            //let coordParentButtX = 0;
-            //let coordParentButtY = 0;
-            
-            //KORISTI REGEXP, KAKO BI NASAO I SIRINU I VISINU I DUGMETA, A I DIVOVA U NJEMU
-            /*const halfWidthTarget = window.getComputedStyle(ev.target).width;
-            const halfHeightTarget = window.getComputedStyle(ev.target).height;
-
-            const buttCoordX = ev.target.offsetLeft;
-            const buttCoordY = ev.target.offsetTop;
-            const targetCoordX = ev.offsetX;
-            const targetCoordY = ev.offsetY;
-=======
             let x;
             let y;
 
@@ -1681,29 +1597,12 @@ class ClassyButton extends SminkerDugme {
             if(this.hasChildNodes() && this.getElementsByTagName('div')){
                 
             }*/
->>>>>>> offset_fix
             
             console.log("X: ", x, " Y: ", y);
             
             let i;
             let j;
 
-<<<<<<< HEAD
-            console.log(ev.relatedTarget);*/
-
-            this.onClickRippleNew(
-                realCoordX,
-                realCoordY
-            );
-
-        });
-
-        this.onmouseup = function(ev){
-            const divoviObjekat = this.getElementsByTagName('div');
-            console.log(divoviObjekat);
-            const divObLength = divoviObjekat.length;
-            divoviObjekat[divObLength-1].classList.add('transit');
-=======
             i = (mouseCoordX - halfWidth) + "px";   //ZA PRVI POKUSAJ BEZ DIVOVA
             j = (mouseCoordY - halfHeight) + "px";
 
@@ -1721,7 +1620,6 @@ class ClassyButton extends SminkerDugme {
             //console.log(divoviObjekat.length)
             
             //this.getElementsByTagName('div')[divoviObjekat.length-1].classList.add('transit');
->>>>>>> offset_fix
             
             if(this.hasChildNodes() && this.getElementsByTagName('div')){
                 const length = this.getElementsByTagName('div').length;
@@ -1760,10 +1658,7 @@ class ClassyButton extends SminkerDugme {
         }
         
         this.appendChild(divel);
-<<<<<<< HEAD
-=======
         //divel.setAttribute("disabled", "disabled");
->>>>>>> offset_fix
 
         divel.classList.add('wave_styles');
         //divel.setAttribute("disabled", "disabled");
@@ -1773,23 +1668,12 @@ class ClassyButton extends SminkerDugme {
         };*/
 
         /*const halfWidth = buttWidth/2;
-<<<<<<< HEAD
-        const halfHeight = buttHeight/2;
-        const koordX = (offsetx - halfWidth) + "px"; 
-        const koordY = (offsety - halfHeight) + "px";
-=======
         const halfHeight = buttHeight/2;*/
         /*const koordX = (offsetx - halfWidth) + "px"; 
         const koordY = (offsety - halfHeight) + "px";*/
         
->>>>>>> offset_fix
         
         divel.style.left = koordX;
-<<<<<<< HEAD
-        divel.style.top = koordY;*/
-        //console.log(this.zindex);
-        //divel.style.zIndex = this.zindex--;
-=======
         divel.style.top = koordY;
 
         divel.classList.add('wave_styles');
@@ -1797,7 +1681,6 @@ class ClassyButton extends SminkerDugme {
         //console.log(this.zindex);
         //divel.style.zIndex = this.zindex--;
         
->>>>>>> offset_fix
         
         divel.style.left = offsetx;
         divel.style.top = offsety;        
