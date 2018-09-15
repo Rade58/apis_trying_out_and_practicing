@@ -2032,7 +2032,7 @@ konti.addEventListener('click', function(ev){
 
 
 class RipplingDiv extends HTMLDivElement {
-    constructor(width=200, height=100, backgroundColor="#9de758"){
+    constructor(width=200, height=100, backgroundColor="#f08fdb"){
         super();
         this.style.width = `${width}px`;
         this.style.height = `${height}px`;
