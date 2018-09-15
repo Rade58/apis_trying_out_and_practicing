@@ -2086,20 +2086,23 @@ class RipplingDiv extends HTMLDivElement {
         //console.log(ev);
     }
     nestNewElements(ev){
-
-        console.log(ev.target);
-
         const divEl = document.createElement('div');
         divEl.classList.add('rippling_item');
         this.appendChild(divEl);
         
         this.appendChild(this.coverEl);
-        
+        console.log(this);
+        const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
+        const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
+        console.log(halfWidth, halfHeight);
+        const x = ev.offsetX;
+        const y = ev.offsetY;
+        console.log(x, y);
+
+        divEl.style.left = `${x - halfWidth}px`;
+        divEl.style.top = `${y - halfHeight}px`;
     }
     ripplingHandlerUp(ev){
-
-        console.log(ev.target);
-
         const divElArr = this.querySelectorAll('.rippling_item');
         const length = divElArr.length;
         divElArr[length-1].classList.add('rippling_effect');
