@@ -2026,5 +2026,133 @@ konti.addEventListener('click', function(ev){
 
     console.log(ev.target.offsetLeft, ev.target.offsetTop)
 });
+konti.querySelectorAll('div')[4].style.width = "100%";
 
+
+
+
+class RipplingDiv extends HTMLDivElement {
+    constructor(width=200, height=100, backgroundColor="#f08fdb"){
+        super();
+        this.style.width = `${width}px`;
+        this.style.height = `${height}px`;
+        this.style.backgroundColor = `${backgroundColor}`;
+        if(this.hasAttribute('width')){
+            this.style.width = this.getAttribute('width');
+        }
+        if(this.hasAttribute('height')){
+            this.style.height = this.getAttribute('width');
+        }
+        if(this.hasAttribute('background-color')){
+            this.style.backgroundColor = this.getAttribute('background-color');
+        }
+        if(this.hasAttribute('hidden')){
+            this.style.visibility = 'hidden';
+        }
+        this.style.position = 'relative';
+        this.style.margin = "auto auto";
+        this.style.overflow = "hidden";
+    }
+    //GETTERS
+    get width(){
+        return this.style.width;
+    }
+    get height(){
+        return this.style.height;
+    }
+    get backgroundColor(){
+        return this.style.backgroundColor;
+    }
+    //SETTERS
+    set width(width){
+        this.style.width = `${width}px`;
+        this.setAttribute('width', width);
+    }
+    set height(height){
+        this.style.height = `${height}px`;
+        this.setAttribute('height', height);
+    }
+    set backgroundColor(backgroundColor){
+        this.style.backgroundColor = backgroundColor;
+        this.setAttribute('background-color', backgroundColor);
+    }
+    set hidden(bool=false){
+        this.style.visibility = bool?'hidden':'visible';
+        if(bool){this.setAttribute('hidden','')}
+
+    }
+    //METHODS
+    probnaFunkcija(ev){
+        //console.log(ev);
+    }
+    nestNewElements(ev){
+
+        console.log(ev.target);
+
+        const divEl = document.createElement('div');
+        divEl.classList.add('rippling_item');
+        this.appendChild(divEl);
+        
+        this.appendChild(this.coverEl);
+        
+    }
+    ripplingHandlerUp(ev){
+
+        console.log(ev.target);
+
+        const divElArr = this.querySelectorAll('.rippling_item');
+        const length = divElArr.length;
+        divElArr[length-1].classList.add('rippling_effect');
+    }
+    //LIFECYCLE METHODS
+    connectedCallback(){
+        this.addEventListener('click', this.probnaFunkcija);
+        this.addEventListener('mousedown', this.nestNewElements);
+        this.addEventListener('mouseup', this.ripplingHandlerUp);
+
+        this.coverEl = document.createElement('div');
+        
+        this.coverEl.style.position = "absolute";
+        this.coverEl.style.width = "100%";
+        this.coverEl.style.height = "100%";
+        this.coverEl.style.opacity = 0;
+        this.coverEl.style.zIndex = 2;
+        this.coverEl.classList.add('cover');
+
+        this.coverEl.style.backgroundColor = "#e07228";
+
+    }
+    disconnectedCallback(){
+        this.removeEventListener('click', this.probnaFunkcija);
+    }
+    attributeChangedCallback(name, oldVal, newVal){
+        if(name === 'height'){
+            this.style.height = `${newVal}px`;
+        }
+        if(name === 'width'){
+            this.style.width = `${newVal}px`;
+        }
+        if(name === 'background-color'){
+            this.style.backgroundColor = newVal;
+        }
+        if(name === 'hidden'){
+            this.style.visibility = !oldVal?'visible':'hidden';
+        }
+    }
+    //OBSERVING ATTRIBUTE
+    static get observedAttributes(){
+        return ['width', 'height', 'background-color', 'hidden'];
+    }
+}
+
+window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
+
+const wavingDiv = new RipplingDiv(380, 160, "#9de758");
+document.querySelector('.rippling_root').appendChild(wavingDiv);
+
+//wavingDiv.width = 800;
+
+
+
+//console.log(wavingDiv);
 
