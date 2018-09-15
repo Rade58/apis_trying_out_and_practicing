@@ -2028,3 +2028,84 @@ konti.addEventListener('click', function(ev){
 });
 
 
+
+
+
+class RipplingDiv extends HTMLDivElement {
+    constructor(width=200, height=100, backgroundColor="#9de758"){
+        super();
+        this.style.width = `${width}px`;
+        this.style.height = `${height}px`;
+        this.style.backgroundColor = `${backgroundColor}`;
+        if(this.hasAttribute('width')){
+            this.style.width = this.getAttribute('width');
+        }
+        if(this.hasAttribute('height')){
+            this.style.height = this.getAttribute('width');
+        }
+        if(this.hasAttribute('background-color')){
+            this.style.backgroundColor = this.getAttribute('background-color');
+        }
+        if(this.hasAttribute('hidden')){
+            this.style.visibility = 'hidden';
+        }
+    }
+    //GETTERS
+    get width(){
+        return this.style.width;
+    }
+    get height(){
+        return this.style.height;
+    }
+    get backgroundColor(){
+        return this.style.backgroundColor;
+    }
+    //SETTERS
+    set width(width){
+        this.style.width = `${width}px`;
+        this.setAttribute('width', width);
+    }
+    set height(height){
+        this.style.height = `${height}px`;
+        this.setAttribute('height', height);
+    }
+    set backgroundColor(backgroundColor){
+        this.style.backgroundColor = backgroundColor;
+        this.setAttribute('background-color', backgroundColor);
+    }
+    set hidden(bool=false){
+        this.style.visibility = bool?'hidden':'visible';
+        if(bool){this.setAttribute('hidden','')}
+
+    }
+    //METHODS
+    probnaFunkcija(ev){
+        console.log(ev);
+    }
+    //LIFECYCLE METHODS
+    connectedCallback(){
+        this.addEventListener('click', this.probnaFunkcija);
+    }
+    disconnectedCallback(){
+        this.removeEventListener('click', this.probnaFunkcija);
+    }
+    attributeChangedCallabck(name, oldVal, newVal){
+
+    }
+    //OBSERVING ATTRIBUTE
+    /*static get observedAttributes(){
+        return ['width', 'height', 'background-color', 'hidden']
+    }*/
+}
+
+window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
+const wavingDiv = new RipplingDiv(380, 160);
+document.querySelector('.rippling_root').appendChild(wavingDiv);
+
+//wavingDiv.width = 800;
+
+
+
+
+
+

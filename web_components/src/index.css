@@ -56,7 +56,7 @@
 .neki_el {
     background-image: radial-gradient(circle, transparent 5%, green 20%, yellow 28%, purple 98%);
     color: #be88dda4;
-    color: #eb6cc0f6;
+    color: #9de758;
     color: #ec9358;
 }
 
@@ -160,3 +160,8 @@
     bottom: 5px;
     z-index: -1;
 }
+
+
+
+
+
