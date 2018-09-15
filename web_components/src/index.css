@@ -180,7 +180,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    border: #d64287 solid 2px;
+    border: #d64287 solid 0px;
     z-index: 1;
 
     background-image: radial-gradient(circle at center, #54dbb9c4 0%, #54dbb96e 28%, #54dbb9d7 28.1%, transparent 28.2%);

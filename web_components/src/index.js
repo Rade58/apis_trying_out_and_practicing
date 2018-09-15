@@ -2091,16 +2091,20 @@ class RipplingDiv extends HTMLDivElement {
         this.appendChild(divEl);
         
         this.appendChild(this.coverEl);
-        console.log(this);
+        //console.log(this);
         const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
         const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
-        console.log(halfWidth, halfHeight);
+        //console.log(halfWidth, halfHeight);
         const x = ev.offsetX;
         const y = ev.offsetY;
-        console.log(x, y);
+        //console.log(x, y);
 
         divEl.style.left = `${x - halfWidth}px`;
         divEl.style.top = `${y - halfHeight}px`;
+
+        divEl.addEventListener('transitionend', ev => {
+            ev.target.remove();
+        });
     }
     ripplingHandlerUp(ev){
         const divElArr = this.querySelectorAll('.rippling_item');
@@ -2123,7 +2127,6 @@ class RipplingDiv extends HTMLDivElement {
         this.coverEl.classList.add('cover');
 
         this.coverEl.style.backgroundColor = "#e07228";
-
     }
     disconnectedCallback(){
         this.removeEventListener('click', this.probnaFunkcija);
