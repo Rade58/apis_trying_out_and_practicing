@@ -2026,7 +2026,7 @@ konti.addEventListener('click', function(ev){
 
     console.log(ev.target.offsetLeft, ev.target.offsetTop)
 });
-
+konti.querySelectorAll('div')[4].style.width = "100%";
 
 
 
@@ -2049,6 +2049,9 @@ class RipplingDiv extends HTMLDivElement {
         if(this.hasAttribute('hidden')){
             this.style.visibility = 'hidden';
         }
+        this.style.position = 'relative';
+        this.style.margin = "auto auto";
+        this.style.overflow = "hidden";
     }
     //GETTERS
     get width(){
@@ -2080,32 +2083,76 @@ class RipplingDiv extends HTMLDivElement {
     }
     //METHODS
     probnaFunkcija(ev){
-        console.log(ev);
+        //console.log(ev);
+    }
+    nestNewElements(ev){
+
+        console.log(ev.target);
+
+        const divEl = document.createElement('div');
+        divEl.classList.add('rippling_item');
+        this.appendChild(divEl);
+        
+        this.appendChild(this.coverEl);
+        
+    }
+    ripplingHandlerUp(ev){
+
+        console.log(ev.target);
+
+        const divElArr = this.querySelectorAll('.rippling_item');
+        const length = divElArr.length;
+        divElArr[length-1].classList.add('rippling_effect');
     }
     //LIFECYCLE METHODS
     connectedCallback(){
         this.addEventListener('click', this.probnaFunkcija);
+        this.addEventListener('mousedown', this.nestNewElements);
+        this.addEventListener('mouseup', this.ripplingHandlerUp);
+
+        this.coverEl = document.createElement('div');
+        
+        this.coverEl.style.position = "absolute";
+        this.coverEl.style.width = "100%";
+        this.coverEl.style.height = "100%";
+        this.coverEl.style.opacity = 0;
+        this.coverEl.style.zIndex = 2;
+        this.coverEl.classList.add('cover');
+
+        this.coverEl.style.backgroundColor = "#e07228";
+
     }
     disconnectedCallback(){
         this.removeEventListener('click', this.probnaFunkcija);
     }
-    attributeChangedCallabck(name, oldVal, newVal){
-
+    attributeChangedCallback(name, oldVal, newVal){
+        if(name === 'height'){
+            this.style.height = `${newVal}px`;
+        }
+        if(name === 'width'){
+            this.style.width = `${newVal}px`;
+        }
+        if(name === 'background-color'){
+            this.style.backgroundColor = newVal;
+        }
+        if(name === 'hidden'){
+            this.style.visibility = !oldVal?'visible':'hidden';
+        }
     }
     //OBSERVING ATTRIBUTE
-    /*static get observedAttributes(){
-        return ['width', 'height', 'background-color', 'hidden']
-    }*/
+    static get observedAttributes(){
+        return ['width', 'height', 'background-color', 'hidden'];
+    }
 }
 
 window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
-const wavingDiv = new RipplingDiv(380, 160);
+
+const wavingDiv = new RipplingDiv(380, 160, "#9de758");
 document.querySelector('.rippling_root').appendChild(wavingDiv);
 
 //wavingDiv.width = 800;
 
 
 
-
-
+//console.log(wavingDiv);
 
