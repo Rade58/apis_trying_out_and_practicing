@@ -1848,6 +1848,10 @@ const wavingDiv = new RipplingDiv(380, 160, "#9de758");
 document.querySelector('.rippling_root').appendChild(wavingDiv);
 //wavingDiv.hidden = "maybe";
 //////////////////////////////////////////////////////////////////////////////////
+//U PROSLOM PRIMERU SAM DEFINISAO   hidden ATRIBUT, ODNOSNO DEFINISAO SAM DA JE TO MOGUCI ATRIBUT
+//SVAKE INSTANCE CUSTOMIZED ELEMENTA, DEFINSAO SAM STA SE DOGADJA NJEGOVOM PROMENOM
+// (NISAM ZANO DA JE TO TAKODJE I GLOBALNI ATRIBUT, KOJI STO RADI ONO STO RADI I MOJ hidden)
+//
 
 //POSTO SVAKIM NOVIM DEFINISANJEM LIFECYCLE METODA, UKLJUCUJUCI I STATICKI GETTER observedAttributes,
 //ONE OVERRIDUJU, ONE METODE KLASE IZ KOJE NOVA, KLASA EXTENDS 
@@ -1856,7 +1860,9 @@ document.querySelector('.rippling_root').appendChild(wavingDiv);
 //KOMPONENTU RipplingDiv, KAKO BI DEFINISAO SLEDECE, STO SAM ZAKLJUCIO DA JE VEOMA VAZNO
 
 //---------DA NIZ, KOJI JE POVRATNA VREDNOST       static get observedAttributes,
-//          JESTE USTVARI PROPERTI CUSTOMIZED ELEMENT INSTANCE
+//          JESTE USTVARI NIZ REFERENCIRAN OD NEKLE, ALI NE SME, ODNOSNO I NE MOZE DA BUDE 
+//          PROPERTI INSTANCE, JER KAO STO ZNAM, STATICKE METODE SE PRIMENJUJU NA KONSTRUKTORU
+//          KLASE, STO ZNACI DA NE MOGU REFERENCIRATI PROPERTIJE INSTANCE    
 
 //---------DA BIH REDEFINISAO CODE attributeChangedCallback-A , I USVOJIO DA OVAKAV NACIN KORISTIM 
 //I U BUDUCE
@@ -1866,22 +1872,230 @@ document.querySelector('.rippling_root').appendChild(wavingDiv);
 //DEFINISAO DA ONAJ CODE KOJI SE ZA PREDHODNU KLASI IZVRSAVA NAKON PROMENE ATRIBUTA, BUDE "NA SNAZI", I DALJE
 //OVO CE MI BITI JASNO KASNIJE, TOKOM JEDNOG PRIMERA, U KOJEM BUDEM EXTEND-OVAO SLEDECU KLASU
  
+//NOVA KLASA CE NOSITI IME                  DivRipple
 
+const nizPosmatranihAtributa = ['width', 'height', 'background-color', 'hidden'];
 
+class DivRipple extends HTMLDivElement {
+    constructor(width=200, height=100, backgroundColor="#f08fdb"){
+        super();
+        this.style.width = `${width}px`;
+        this.style.height = `${height}px`;
+        this.style.backgroundColor = `${backgroundColor}`;
+        if(this.hasAttribute('width')){
+            this.style.width = this.getAttribute('width');
+        }
+        if(this.hasAttribute('height')){
+            this.style.height = this.getAttribute('width');
+        }
+        if(this.hasAttribute('background-color')){
+            this.style.backgroundColor = this.getAttribute('background-color');
+        }
+        if(this.hasAttribute('hidden')){
+            this.style.visibility = 'hidden';
+        }
+        this.style.position = 'relative';
+        this.style.margin = "auto auto";
+        this.style.overflow = "hidden";
 
+        //  KAKO BIH RAZUMEO ZASTO KREIRAM, SLEDECI NIZ, IDI U OBIM     static get observedAttributes
+        //  I PROCITAJ KOMENTARE
 
+        this.observedAttributesNames = ['width', 'height', 'background-color', 'hidden'];
+    }
+    //GETTERS               //// U PROSLOJ KLASI SU GETTER, UZIMALI VREDNOST OD style ATRIBUTA
+    get width(){            ////SADA DEFINISEM DA ONI UZIMAJU VREDNOST OD KARAKTERISTICNIH ATRIBUTA
+        if(this.hasAttribute('width')){
+            return this.getAttribute('width');
+        }else{
+            return undefined;
+        }
+    }
+    get height(){
+        if(this.hasAttribute('height')){
+            return this.getAttribute('height');
+        }else{
+            return undefined;
+        }
+    }
+    get backgroundColor(){
+        if(this.hasAttribute('background-color')){
+            return this.getAttribute('background-color');
+        }else{
+            return undefined;
+        }
+    }
+    //SETTERS 
+    //U PREDHODNOM PRIMERU, SETTER-I SU TAKODJE DODELJIVALI VREDNOSTI style-OVIM PROPERTIJIMA, TO OVDE
+    //NE ZELIM, JER U ODNOSU NA PROMENU ATRIBUTA, SVE DODELE STILOVA BI TREBALE DA SE NALAZE U OBIMU
+    //      atrributeChangedCallback    -A
+    set width(width){
+        if(width){
+            this.setAttribute('width', width);
+        }else{
+            this.removeAttribute('width');
+        }
+    }
+    set height(height){
+        if(height){
+            this.setAttribute('height', height);
+        }else{
+            this.removeAttribute('height');
+        }
+    }
+    set backgroundColor(backgroundColor){
+        if(backgroundColor){
+            this.setAttribute('background-color', backgroundColor);
+        }else{
+            this.removeAttribute('background-color');
+        }
+    }
+    set hidden(val){
+        if(val){
+            this.setAttribute('hidden','')
+        }else{
+            this.removeAttribute('hidden')
+        }
+    }
+    //METHODS
+    probnaFunkcija(ev){
+        //console.log(ev);
+    }
+    nestNewElements(ev){
+        const divEl = document.createElement('div');
+        divEl.classList.add('rippling_item');
+        this.appendChild(divEl);
+        this.appendChild(this.coverEl);
+        const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
+        const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
+        const x = ev.offsetX;
+        const y = ev.offsetY;
+        divEl.style.left = `${x - halfWidth}px`;
+        divEl.style.top = `${y - halfHeight}px`;
+        divEl.addEventListener('transitionend', ev => {
+            ev.target.remove();
+        });
+    }
+    ripplingHandlerUp(ev){
+        const divElArr = this.querySelectorAll('.rippling_item');
+        const length = divElArr.length;
+        divElArr[length-1].classList.add('rippling_effect');
+    }
+    //LIFECYCLE CALLBACKS
+    connectedCallback(){
+        this.addEventListener('click', this.probnaFunkcija);
+        this.addEventListener('mousedown', this.nestNewElements);
+        this.addEventListener('mouseup', this.ripplingHandlerUp);
+        this.coverEl = document.createElement('div');
+        this.coverEl.style.position = "absolute";
+        this.coverEl.style.width = "100%";
+        this.coverEl.style.height = "100%";
+        this.coverEl.style.opacity = 0;
+        this.coverEl.style.zIndex = 2;
+        this.coverEl.classList.add('cover');
 
+        this.coverEl.style.backgroundColor = "#e07228";     //OVO NIJE POTREBNO UZ opacity NULA
+                                                            //ALI KORISTILO JE TOKOM DEFINISANJA KAO
+                                                            //POMOC 
+    }
+    disconnectedCallback(){
+        this.removeEventListener('click', this.probnaFunkcija);
+        //OVDE SAM TREBAO DA DEFINISEM REMOVAL OSTALIH HANDLERA, ALI U CILJU USTEDE VREMENA NISAM
+        //TO URADIO
+    }
+    attributeChangedCallback(name, oldVal, newVal){
+    //CODE KAKAV JE U ISTOJ OVAKVOJ LIFECYCLE METODI, PROSLE KOMPONENTE, A KOJI SAM DOLE COMMENTED-OUT
+    //DA BIH GA OVDE PRIKAZAO 
+    //BIO BI OVERRIDED (ILO OVERWRITEN; JOS NE ZNAM KOJI BI BIO PRAVI IZRAZ ZA OVO), U SLUCAJU KOMPONENTE    
+    //KOJKA EXTEND-UJE OVU, ODNOSNO U SLUCAJU CUSTOMIZED ELEMENTA, CIJA KLASA EXTENDUJE IZ OVE, NARAVNO
+    //U SLUCAJU KADA BI POMENUTA NOVA KLASA KOJA EXTENDUJE IZ OVE, IMALA DEFINISAN ISTI OVAJ LIFECYCLE
+    //CALLBACK    
+        
+        /*if(name === 'height'){                    //DAKLE OVO JE NEPOVOLJNO U SLUCAJU
+            this.style.height = `${newVal}px`;      //KOMPONENTE KOJA BI PROSIRIVALA OVU
+        }
+        if(name === 'width'){
+            this.style.width = `${newVal}px`;
+        }
+        if(name === 'background-color'){
+            this.style.backgroundColor = newVal;
+        }
+        if(name === 'hidden'){
+            this.style.visibility = !oldVal?'visible':'hidden';
+        }*/
 
+        //ZATO GORNJI CODE TREBAM "UKAPSULITI", U JEDNU METODU, KOJU BIH POZVAO U OBIMU OVOG
+        //LIFECYCLE CALLBACK-A
+        //A U DEFINICIJA TE METODE BI SE SASTOJALA IZ COMENTED-OUT CODE-A, KOJI SAM PRIKAZAO GORE
 
+        this.whenAttributeChange(name, oldVal, newVal);
+        //OVU METODU CU DEFINISATI, ODMAH ISPOD OVOG LIFCYCLE CALLBACK-A
+    }
+    whenAttributeChange(name, oldValue, newValue){
+        if(name === 'width'){
+            this.style.width = `${newValue}px`;
+        }
+        if(name === 'height'){
+            this.style.height = `${newValue}px`;
+        }
+        if(name === 'background-color'){
+            this.style.backgroundColor = newValue;
+        }
+        if(name === 'hidden'){
+            this.style.visibility = newValue?"hidden":"visible";
+        }
+    }
+    //OBSERVING ATTRIBUTE
+    static get observedAttributes(){
+        //U KOMPONENTI IZ PROSLOG PRIMERA NA SNAZI JE CODE, KOJI SAM JA COMMENTED OUT OVDE
+    //  return ['width', 'height', 'background-color', 'hidden'];
 
+        //NAIME, ONO STO ZELIM DA URADIM JESTE DA NIZ KOJI TREBA DA BUDE POVRATNA VREDNOST OVE METODE
+        //USTVARI BUDE VREDNOST PROPERTIJA      DivRipple       INSTANCE
+        //OVO ISTO RADIM ZBOG KLASE KOJA BI MOGLA EXTEND-OVATI IZ       DivRipple       KLASE
+        //AKO BI U POMENUTOJ, NEKOJ NOVOJ KLASI NANOVO DEFINISAO        static get observedAttributes
+        //JASNO JE DA BI DOSLO DO VERRIDINGA, I DA SE VISE NE BI PRATILE PROMENE ATRIBUTA, CIJE JE
+        //PRACENJE PROMENA DEFINISANO U OVOJ KOMOPONENTI
 
+        //return this.observedAttributesNames;
 
+        //ISKOMENTARISANI I OBJASNJENI NACIN GORE, JESTE POGRESAN I DOVESCE DO ERROR-A, JER SE U OBIMU
+        //STATICKIH METODA, NE MOGU REFERENCIRATI PROPERTIJI INSTANCE
 
+        //ZATO, DOBAR NACIN BI BIO DA SE, POMENUTI NIZ REFERENCIRA KAO VREDNOST NEKE GLOBLNE VARIJABLE
+        //JA SAM TAKVU VARIJABLU DEKLARISAO, PRE DEFINICIJE OVE KLASE
+        //I EVO SADA REFERENCIRAM TU VARIJABLU, KAO POVRATNU VREDNOST OVE STATICKE METODE
 
-//U PROSLOM PRIMERU SAM DEFINISAO   hidden ATRIBUT, ODNOSNO DEFINISAO SAM DA JE TO MOGUCI ATRIBUT
-//SVAKE INSTANCE CUSTOMIZED ELEMENTA, DEFINSAO SAM STA SE DOGADJA NJEGOVOM PROMENOM
-// (NISAM ZANO DA JE TO TAKODJE I GLOBALNI ATRIBUT, KOJI STO RADI ONO STO RADI I MOJ hidden)
-//
+        return nizPosmatranihAtributa;
+
+        //NA OVAJ NOVI NACIN, U SLEDECOJ, KOMPONENTI, KOJA BI EXTEND-OVALA OVU, OVA STATICKA METODA 
+        //SE NE BI
+        //NANOVO, NI DEFINISALA, VEC BIH SAMO DODAO NOVI PROPERTI (IME NOVOG ATRIBUTA ZA PRACENJE),
+        //NIZU CIJA REFERENCA JESTE POVRATNA VREDNOST, OVE METODE (I TAJ NIZ, OPET PONAVLJAM NE SME BITI
+        //VREDNOST PROPERTIJA, INSTANCE, OVE KLASE)
+
+    }
+    
+}
+////DEFINISAJUCI OVU KLASU, ALI I CITAJUCI CLANAK GOOGLE DEVELOPERA, O TEMI WEB KOMPONENTI
+////VIDEO SAM DA SU ONI U NJIHOVIM SETTER-IMA, DEFINISALI I NEKI CODE KOJI JE KONKRETNO NESTO RADIO
+///KAO STO JE TOGGLE-OVANJE NEKIH ELEMENATA, TAKO DA IZ TOG PRIMERA, MOGU DA VIDFIM, DA DODELA STILOVA
+///U SAMIM SETTERIM, ZAJEDNO SA SETTING-OM ATRIBUTA
+
+//REGISTROVANJE
+window.customElements.define('div-ripple', DivRipple, {extends: 'div'});
+//KREIRANJE INSTANCE
+const divRipple = new DivRipple(580, 248, "#e47c62");
+//KACENJE NA DOM
+rootElementi[12].appendChild(divRipple);
+//POKUSACU DA PROMENIM NEKI OD ATRIBUTA
+
+divRipple.width = 318;
+divRipple.backgroundColor = "#9de758";
+
+divRipple.hidden = "if you want, oh I don't know";
+divRipple.hidden = 0;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////OVDE CU SADA NASTAVITI SA OBJASNJENJIMA VEZANIM ZA CUSTOM ELEMENTE
