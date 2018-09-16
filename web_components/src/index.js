@@ -2075,8 +2075,8 @@ class DivRipple extends HTMLDivElement {
         //VREDNOST PROPERTIJA, INSTANCE, OVE KLASE)
 
     }
-    
 }
+
 ////DEFINISAJUCI OVU KLASU, ALI I CITAJUCI CLANAK GOOGLE DEVELOPERA, O TEMI WEB KOMPONENTI
 ////VIDEO SAM DA SU ONI U NJIHOVIM SETTER-IMA, DEFINISALI I NEKI CODE KOJI JE KONKRETNO NESTO RADIO
 ///KAO STO JE TOGGLE-OVANJE NEKIH ELEMENATA, TAKO DA IZ TOG PRIMERA, MOGU DA VIDFIM, DA DODELA STILOVA
@@ -2087,7 +2087,7 @@ window.customElements.define('div-ripple', DivRipple, {extends: 'div'});
 //KREIRANJE INSTANCE
 const divRipple = new DivRipple(580, 248, "#e47c62");
 //KACENJE NA DOM
-rootElementi[12].appendChild(divRipple);
+rootElementi[11].appendChild(divRipple);
 //POKUSACU DA PROMENIM NEKI OD ATRIBUTA
 
 divRipple.width = 318;
@@ -2139,11 +2139,11 @@ divRipple.hidden = 0;
 // u sinhronizaciji sa STANJEM JavaScript-a. Jedan od razloga zbog kojih biste želeli da reflektujete
  // properti jeste da bi se user-defined stilaplicirao onda kada se javascript stanje promeni
 
-// STA SAM MISLIO PO D OVIM, NAJBOLJE CU VIDETI IZ SLEDECEG PRIMERA 
+// STA SE PODRAZUMEVA POD OVIM, NAJBOLJE CU VIDETI IZ SLEDECEG PRIMERA 
 //PROSIRICU KLASU CUSTOMIZED BILT IN ELEMENTA (PROSLI PRIMER)
-//
 
-class OtherRipplingDiv extends RipplingDiv {
+
+class OtherRipplingDiv extends DivRipple {
     constructor(sirina, visina, background_boja){
         super(sirina, visina, background_boja);
         
@@ -2179,9 +2179,7 @@ class OtherRipplingDiv extends RipplingDiv {
         }
     }
 }
-
-
-//ON STO SAM DEFINISAO U CSS A, STO CU PRIKAZATI I OVDE (COMMENTED OUT), JESTE CSS
+//ONO STO SAM DEFINISAO U CSS A, STO CU PRIKAZATI I OVDE (COMMENTED OUT), JESTE CSS
 //PRE TOGA CU RECI SLEDECE, USTVARI RECI CU ZASTO SAM UOPSTE ZELEO DA IMAM, POMENUTI ATRIBUT
 //PA ONO STO ZELIM JESTE DA KADA NA ELEMENTU, POSTOJI, POMENUTI ATRIBUT, DA TADA NE FUNKCIONISU
 //MOUSE EVENT-OVI, I DA JE ELEMENT NESTO PROZIRNIJI NEGO STO JE TO NORMALNO
@@ -2201,11 +2199,22 @@ window.customElements.define('other-rippling-div', OtherRipplingDiv, {extends: '
 
 const someOtherRipplingDiv = new OtherRipplingDiv(420, 210);
 
-rootElementi[10].appendChild(someOtherRipplingDiv);
+rootElementi[12].appendChild(someOtherRipplingDiv);
 
 someOtherRipplingDiv.setAttribute('onesposobljen', '');
 
 someOtherRipplingDiv.removeAttribute('onesposobljen');
+
+//AKO POKUSAM DA PROMENIM NEKE ATRIBUTE, ODNOSNO KARKTERISTIKE, NASLEDJENE OD PREDHODNE KLASE
+//I TO MOGU URADITI
+someOtherRipplingDiv.width = 680;
+someOtherRipplingDiv.backgroundColor = 'silver';
+//TREBAM IMATI SLEDECU STVAR NA UMU, KOJA PROIZILAZI IZ CINJENICE DA U GORNJOJ KLASI NISAM 
+//DEFINISAO         static get observedAttributes   A NI   attributesChangedCallback
+//DA JESAM, TO BI OVERRIDE-OVALO, SVE ONO STO SAM U OBIMAIMA POMENUTIH METODA DEFINISAO, U ONOJ KLASI
+//IZ KOJE NASLEDJUJE    OtherRipplingDiv       (REC JE O KLASI DivRipple)
+//I POMENUTE KARAKTERITIKE (NASLEDJENE IZ PREDHODNE KLASE NE BI SE MOGLE PROMENITI)
+//TAKVU GRESKU PLANIRAM DA NAPRAVIM U SLEDECEM PRIMERU
 
 //POSTIGAO SAM STA SAM ZELEO OVIM PRIMEROM, STO SAM I VIDEO NAKON TESTIRANJA,
 //SAGLEDAO SAM, POMENUTU REFLEKSIJU, A ISTO SAM SVE MOGAO POSTICI I OBSERVING-OM PROMENA, U POGLEDU
@@ -2214,8 +2223,12 @@ someOtherRipplingDiv.removeAttribute('onesposobljen');
 //ALI U CILJU VEZBE CU OPET EXTENDOVATI KLASU , KRIRAJUCI NOVU KLASU, GDE CU DEFINISATI OBSERVING 
 //NOVOG ATRIBUTA, KOJI CE TAKODJE BITI BOOLEAN
 //NJIME CE SE DODAVATI      box-shadow
+//ZASTO OVO RADIM, PA ZATO STO U PROSLOM PRIMERU NISAM KORISTIO     static get observedAttributes
+//A NISAM KORISTIO NI       attributesChangedCallback
 
-
+//NECU NI U SLEDECEM PRIMERU KORISTITI, POMENUTO, VEC U PRIMERU, POTPUNOM DUPLIKATU, SLEDECEG
+//TO RADIM, JER ZELIM DA NAMERNO NAPRAVIM GRESKU U POGLEDU DEFINISANJA static get observedAttributes
+// I attributesChangedCallback-A
 
 class RipplingShad extends OtherRipplingDiv {
     constructor(sirina, visina, boja){
@@ -2234,7 +2247,6 @@ class RipplingShad extends OtherRipplingDiv {
             this.style.boxShadow = "";
         }
     }
-
 }
 
 
@@ -2243,11 +2255,47 @@ window.customElements.define('rippling-shad', RipplingShad, {extends: 'div'});
 
 const rippShad = new RipplingShad(420, 210);
 
-rootElementi[11].appendChild(rippShad);
+rootElementi[13].appendChild(rippShad);
 
 rippShad.setAttribute('shadow', '');
 
 rippShad.backgroundColor = "yellow";
+rippShad.width = 50;
+rippShad.height = 80;
+
+
+////////DEFINISANJE box-shadow VREDNOSTI U OVOM SLUCAJU JE BILO USPESNO
+/////ZATIM BILO JE USPESNO 'ONEMOGUCENJE' OVOG ELEMENTA, I NJEGOVO PONOVNO 'OMOGUCENJE'
+////STO JE KARAKTERISTICNO ZA SVAKU OtherRipplingDiv KLASU IZ KOJE RipplingShad NASLEDJUJE
+//////      ALI ONO STO NIJE USPELO JESTE ONO STO JE KARAKTERISTIKA     DivRipple KLASE IZ KOJE
+////NASLEDJUJU I OtherRipplingDiv KLASA, A I KLASA ELEMENTA, KOJIM SE TRENUTNO BAVIM
+/////DAKLE ONO STO NIJE USPELO JESTE DEFINISANJE NOVOG BACKGROUND COLOR-A, A NIJE USPELAO NI PROMENA
+/////SIRINE, NI PROMENA VISINE, SVE ONO STO JE KARAKTERISTICNO, ZA DivRipple KLASU, A CIJE PROMENE
+//// JESU DEFINISANE U OBIMU    attributechangedCallback-A, POMENUTE KLASE I CIJE PRACENJE JE
+////DEFINISANO U OBIMU   static get observedAttributes METODE
+////DAKLE, POMENUTE METODE DivRipple KLASE SU OVERRIDEN, SA ISTOIMENIM METODAMA RipplingShad KLASE
+////KOJA JE 'KLASA NASLEDJIVACICA'
+
+////ZATO NA RipplingShad KLASU, VISE NECU OBRACATI PAZNJU, VEC CU KREIRATI NOVU KLASU
+
+//// KLASA CE NOSITI IME        RipplingShadBetter      IMA CE SLEDECU "STAZU NASLEDJIVANJA"
+
+//      RipplingShadBetter   <---- OtherRipplingDiv   <---- DivRipple      
+
+//PRE TOGA PODSETICU SE JEDNOG NIZA, KOJI SAM KREIRAO, A KOJI JE POVRATNA VREDNSOT
+//  static get observedAttributes       METODE, DivRipple INSTANCE
+
+console.log(    nizPosmatranihAtributa    );  //  --> ['width', 'height', 'background-color', 'hidden']      
+                                              //DEFINISAN U REDU :1877
+//OVAJ NIZ JE NARAVNO VREDNOST GLOBALNE VARIJABLE (KADA SAM GA KREIRAO, TADA SAM I OBJASNIO ZASTO JE TAKO)
+
+//PODSETICU SE, JOS NECEGA, NAIME, JA NISAM DODELU VREDNSOTI style-U, DEFINISAO DIREKTNO U OBIMU
+//  atributeChangedCallback-A   DivRipple    INSTANCE, VEC SAM TO URADIO POZIVANJEM METODE (INSTNCE ISTE KLASE)
+//U OBIMU, POMENUTOG LIFECYCLE CALLBACKA
+//METODA, KOJA JE POZVANA JESTE SLEDECA:          whenAttributeChange       
+//POZVANA JE NARAVNO OVAKO:  this.whenAttributeChange(name, oldVal, newVal);    //RED  :2031    
+
+//POSTO SAM SE PODSETIO POMENUTOGA, POCECU SA DEKLARISANJEM     RipplingShadBetter      KLASE
 
 
 
