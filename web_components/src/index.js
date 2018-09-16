@@ -1102,14 +1102,14 @@ const defaultSlika = new DefaultImageConstructor(420, 268);
 //BI DA PRIKAZUJE SYNTWAVE DEFAULT SLIKU
 
 document.getElementById('cetvrti_koren').appendChild(defaultSlika);
-
 //KADA POGLEDAM WEB STRANICU, VIDECU SLIKU, KOJA JE DAFAULT
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////SLEDI GOMILE PRIMERA  ///////////////////////////////////////////////
+////////////////////////////MNOGO GRESAKA  ////////////////////////////////////////////////
+//////////////////////////// MNOGO TEKSTA  ///////////////////////////////////////////////
+///////////////////////////PRIMER KOJI MI SE SVIDJA  //////////////////////////////////////////////
+/////////////////////////KAKO SAM DEFINISAO POCINJE OD          1708-OG REDA      CTRL + G  ///////////
+/////////////////////////////////////////////////////////////////////////////////////////////// 
 //  SADA CU SE VRATITI NA PRIMER CUSTOMIZED BUILT IN BUTTON ELEMENTA, KOJEM SAM DODAO RIPPLE EFFECT
 //  NAIME, JA SAM PROSIRIO DUGME, TAKO DA ONO IMA RIPPLING EFFECT, PRILIKOM KLIKA, ODNOSNO, TADA SE
 //  TRIGGER-UJE, POMENUTA RIPPLING ANIMACIJA
@@ -1692,8 +1692,164 @@ const klasiDugme = new ClassyButton("#6781d4", "402px", "208px");
 
 rootElementi[9].appendChild(klasiDugme);
 //test
+
+
+
+
+
+
+
+
+
+
+
+
+                
+                //PRIMER, KOJI SAM KREIRAO I KOJI JE POTPUNIJI OD OSTALIH,
+                //KOJI KORISTE RIPPLING EFFECT
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+
+class RipplingDiv extends HTMLDivElement {
+    constructor(width=200, height=100, backgroundColor="#f08fdb"){
+        super();
+        this.style.width = `${width}px`;
+        this.style.height = `${height}px`;
+        this.style.backgroundColor = `${backgroundColor}`;
+        if(this.hasAttribute('width')){
+            this.style.width = this.getAttribute('width');
+        }
+        if(this.hasAttribute('height')){
+            this.style.height = this.getAttribute('width');
+        }
+        if(this.hasAttribute('background-color')){
+            this.style.backgroundColor = this.getAttribute('background-color');
+        }
+        if(this.hasAttribute('hidden')){
+            this.style.visibility = 'hidden';
+        }
+        this.style.position = 'relative';
+        this.style.margin = "auto auto";
+        this.style.overflow = "hidden";
+    }
+    //GETTERS
+    get width(){
+        return this.style.width;
+    }
+    get height(){
+        return this.style.height;
+    }
+    get backgroundColor(){
+        return this.style.backgroundColor;
+    }
+    //SETTERS //MISLIM DA U NJIMA IMA VISKA CODE-A, ODNOSNO IMA DODELE VREDNOSTI
+                //STILOVIMA; NAJBOLJE BI BILO DA SAM STILOVE, KOJE ZAVISE
+                //OD PROMENE ATRIBUTA DEFINISAO U attributeChangedCallback-U
+                //(TO SAM I URADIO), ALI SADA ZBOG TOGA IMAM DUPLI CODE, KOJI
+                //NECU MENJATI, JER ZELIM DA SE VIDI GDE SAM NAPRAVIO VISAK
+    set width(width){
+        this.style.width = `${width}px`;
+        this.setAttribute('width', width);
+    }
+    set height(height){
+        this.style.height = `${height}px`;
+        this.setAttribute('height', height);
+    }
+    set backgroundColor(backgroundColor){
+        this.style.backgroundColor = backgroundColor;
+        this.setAttribute('background-color', backgroundColor);
+    }
+    set hidden(val){
+        if(val){
+            this.setAttribute('hidden','')
+            this.style.visibility = 'hidden';
+        }else{
+            this.removeAttribute('hidden')
+            this.style.visibility = 'visible';
+        }
+    }
+    //METHODS
+    probnaFunkcija(ev){
+        //console.log(ev);
+    }
+    nestNewElements(ev){
+        const divEl = document.createElement('div');
+        divEl.classList.add('rippling_item');
+        this.appendChild(divEl);
+        
+        this.appendChild(this.coverEl);
+        //console.log(this);
+        const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
+        const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
+        //console.log(halfWidth, halfHeight);
+        const x = ev.offsetX;
+        const y = ev.offsetY;
+        //console.log(x, y);
+
+        divEl.style.left = `${x - halfWidth}px`;
+        divEl.style.top = `${y - halfHeight}px`;
+
+        divEl.addEventListener('transitionend', ev => {
+            ev.target.remove();
+        });
+    }
+    ripplingHandlerUp(ev){
+        const divElArr = this.querySelectorAll('.rippling_item');
+        const length = divElArr.length;
+        divElArr[length-1].classList.add('rippling_effect');
+    }
+    //LIFECYCLE METHODS
+    connectedCallback(){
+        this.addEventListener('click', this.probnaFunkcija);
+        this.addEventListener('mousedown', this.nestNewElements);
+        this.addEventListener('mouseup', this.ripplingHandlerUp);
+
+        this.coverEl = document.createElement('div');
+        
+        this.coverEl.style.position = "absolute";
+        this.coverEl.style.width = "100%";
+        this.coverEl.style.height = "100%";
+        this.coverEl.style.opacity = 0;
+        this.coverEl.style.zIndex = 2;
+        this.coverEl.classList.add('cover');
+
+        this.coverEl.style.backgroundColor = "#e07228";
+    }
+    disconnectedCallback(){
+        this.removeEventListener('click', this.probnaFunkcija);
+    }
+    attributeChangedCallback(name, oldVal, newVal){
+        if(name === 'height'){
+            this.style.height = `${newVal}px`;
+        }
+        if(name === 'width'){
+            this.style.width = `${newVal}px`;
+        }
+        if(name === 'background-color'){
+            this.style.backgroundColor = newVal;
+        }
+        if(name === 'hidden'){
+            this.style.visibility = !oldVal?'visible':'hidden';
+        }
+    }
+    //OBSERVING ATTRIBUTE
+    static get observedAttributes(){
+        return ['width', 'height', 'background-color', 'hidden'];
+    }
+}
+
+window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
+
+const wavingDiv = new RipplingDiv(380, 160, "#9de758");
+document.querySelector('.rippling_root').appendChild(wavingDiv);
+
+
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2031,130 +2187,7 @@ konti.querySelectorAll('div')[4].style.width = "100%";
 
 
 
-class RipplingDiv extends HTMLDivElement {
-    constructor(width=200, height=100, backgroundColor="#f08fdb"){
-        super();
-        this.style.width = `${width}px`;
-        this.style.height = `${height}px`;
-        this.style.backgroundColor = `${backgroundColor}`;
-        if(this.hasAttribute('width')){
-            this.style.width = this.getAttribute('width');
-        }
-        if(this.hasAttribute('height')){
-            this.style.height = this.getAttribute('width');
-        }
-        if(this.hasAttribute('background-color')){
-            this.style.backgroundColor = this.getAttribute('background-color');
-        }
-        if(this.hasAttribute('hidden')){
-            this.style.visibility = 'hidden';
-        }
-        this.style.position = 'relative';
-        this.style.margin = "auto auto";
-        this.style.overflow = "hidden";
-    }
-    //GETTERS
-    get width(){
-        return this.style.width;
-    }
-    get height(){
-        return this.style.height;
-    }
-    get backgroundColor(){
-        return this.style.backgroundColor;
-    }
-    //SETTERS
-    set width(width){
-        this.style.width = `${width}px`;
-        this.setAttribute('width', width);
-    }
-    set height(height){
-        this.style.height = `${height}px`;
-        this.setAttribute('height', height);
-    }
-    set backgroundColor(backgroundColor){
-        this.style.backgroundColor = backgroundColor;
-        this.setAttribute('background-color', backgroundColor);
-    }
-    set hidden(bool=false){
-        this.style.visibility = bool?'hidden':'visible';
-        if(bool){this.setAttribute('hidden','')}
 
-    }
-    //METHODS
-    probnaFunkcija(ev){
-        //console.log(ev);
-    }
-    nestNewElements(ev){
-        const divEl = document.createElement('div');
-        divEl.classList.add('rippling_item');
-        this.appendChild(divEl);
-        
-        this.appendChild(this.coverEl);
-        //console.log(this);
-        const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
-        const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
-        //console.log(halfWidth, halfHeight);
-        const x = ev.offsetX;
-        const y = ev.offsetY;
-        //console.log(x, y);
-
-        divEl.style.left = `${x - halfWidth}px`;
-        divEl.style.top = `${y - halfHeight}px`;
-
-        divEl.addEventListener('transitionend', ev => {
-            ev.target.remove();
-        });
-    }
-    ripplingHandlerUp(ev){
-        const divElArr = this.querySelectorAll('.rippling_item');
-        const length = divElArr.length;
-        divElArr[length-1].classList.add('rippling_effect');
-    }
-    //LIFECYCLE METHODS
-    connectedCallback(){
-        this.addEventListener('click', this.probnaFunkcija);
-        this.addEventListener('mousedown', this.nestNewElements);
-        this.addEventListener('mouseup', this.ripplingHandlerUp);
-
-        this.coverEl = document.createElement('div');
-        
-        this.coverEl.style.position = "absolute";
-        this.coverEl.style.width = "100%";
-        this.coverEl.style.height = "100%";
-        this.coverEl.style.opacity = 0;
-        this.coverEl.style.zIndex = 2;
-        this.coverEl.classList.add('cover');
-
-        this.coverEl.style.backgroundColor = "#e07228";
-    }
-    disconnectedCallback(){
-        this.removeEventListener('click', this.probnaFunkcija);
-    }
-    attributeChangedCallback(name, oldVal, newVal){
-        if(name === 'height'){
-            this.style.height = `${newVal}px`;
-        }
-        if(name === 'width'){
-            this.style.width = `${newVal}px`;
-        }
-        if(name === 'background-color'){
-            this.style.backgroundColor = newVal;
-        }
-        if(name === 'hidden'){
-            this.style.visibility = !oldVal?'visible':'hidden';
-        }
-    }
-    //OBSERVING ATTRIBUTE
-    static get observedAttributes(){
-        return ['width', 'height', 'background-color', 'hidden'];
-    }
-}
-
-window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
-
-const wavingDiv = new RipplingDiv(380, 160, "#9de758");
-document.querySelector('.rippling_root').appendChild(wavingDiv);
 
 //wavingDiv.width = 800;
 
