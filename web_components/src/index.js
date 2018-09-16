@@ -1848,6 +1848,36 @@ const wavingDiv = new RipplingDiv(380, 160, "#9de758");
 document.querySelector('.rippling_root').appendChild(wavingDiv);
 //wavingDiv.hidden = "maybe";
 //////////////////////////////////////////////////////////////////////////////////
+
+//POSTO SVAKIM NOVIM DEFINISANJEM LIFECYCLE METODA, UKLJUCUJUCI I STATICKI GETTER observedAttributes,
+//ONE OVERRIDUJU, ONE METODE KLASE IZ KOJE NOVA, KLASA EXTENDS 
+//ZATO MORAM REDEFINISATI PREDHODNU KLASU (ODNOSNO MORAM, KREIRATI POTPUNO NOVU KLASU KOJA CE
+//BITI POTPUNO ISTA KAO I PREDHODNA), U KOJOJ CU POPRAVITI, SVE STO RANIJE NIJE BILO DOBRO
+//KOMPONENTU RipplingDiv, KAKO BI DEFINISAO SLEDECE, STO SAM ZAKLJUCIO DA JE VEOMA VAZNO
+
+//---------DA NIZ, KOJI JE POVRATNA VREDNOST       static get observedAttributes,
+//          JESTE USTVARI PROPERTI CUSTOMIZED ELEMENT INSTANCE
+
+//---------DA BIH REDEFINISAO CODE attributeChangedCallback-A , I USVOJIO DA OVAKAV NACIN KORISTIM 
+//I U BUDUCE
+//DA SAV CODE KOJI SE NALAZI U POMENUTOJ LIFECYCLE METODI BUDE POZIVANJE FUNKCIJA, ODNOSNO METODA ILI
+//METODE, KLASE KOJOJ ONE PRIPADAJU
+///JER NA TAKAV NACIN, MOGU KORISTITI super NA KOJEM BIH MOGAO PRIMENITI, TAKVE METODE, CIME BIH
+//DEFINISAO DA ONAJ CODE KOJI SE ZA PREDHODNU KLASI IZVRSAVA NAKON PROMENE ATRIBUTA, BUDE "NA SNAZI", I DALJE
+//OVO CE MI BITI JASNO KASNIJE, TOKOM JEDNOG PRIMERA, U KOJEM BUDEM EXTEND-OVAO SLEDECU KLASU
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 //U PROSLOM PRIMERU SAM DEFINISAO   hidden ATRIBUT, ODNOSNO DEFINISAO SAM DA JE TO MOGUCI ATRIBUT
 //SVAKE INSTANCE CUSTOMIZED ELEMENTA, DEFINSAO SAM STA SE DOGADJA NJEGOVOM PROMENOM
 // (NISAM ZANO DA JE TO TAKODJE I GLOBALNI ATRIBUT, KOJI STO RADI ONO STO RADI I MOJ hidden)
@@ -1971,6 +2001,8 @@ someOtherRipplingDiv.removeAttribute('onesposobljen');
 //NOVOG ATRIBUTA, KOJI CE TAKODJE BITI BOOLEAN
 //NJIME CE SE DODAVATI      box-shadow
 
+
+
 class RipplingShad extends OtherRipplingDiv {
     constructor(sirina, visina, boja){
         super(sirina, visina, boja);
@@ -1984,6 +2016,8 @@ class RipplingShad extends OtherRipplingDiv {
     attributeChangedCallback(name, oldV, newV){
         if(name === "shadow" && !oldV){
             this.style.boxShadow = "20px 18px orange";
+        }else{
+            this.style.boxShadow = "";
         }
     }
 
@@ -1998,6 +2032,8 @@ const rippShad = new RipplingShad(420, 210);
 rootElementi[11].appendChild(rippShad);
 
 rippShad.setAttribute('shadow', '');
+
+rippShad.backgroundColor = "yellow";
 
 
 
