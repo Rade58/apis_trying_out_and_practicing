@@ -1777,8 +1777,12 @@ class RipplingDiv extends HTMLDivElement {
         divEl.classList.add('rippling_item');
         this.appendChild(divEl);
         
-        this.appendChild(this.coverEl);
-        //console.log(this);
+        this.appendChild(this.coverEl); //SVAKIM KLIKOM OVAJ ELEMENT CE SE KACITI KAO POSLEDNJI NESTED
+        //console.log(this);            //this-A, A ONO STO NISAM ZNAO JESTE DA GA NE MORAM OTKACIVATI
+                                        //SA DOM-A (METODOM removeChild), DA BIH GA KASNIJE PONOVO
+                                        //ZAKACIO, JER NOVA UPOTREBA appendChild METODE ZNACI DA CE SE
+                                        //ON KACITI NA NOVO MESTO (U OVOM SLUCAJU, OPET NA KRAJ
+                                        //NESTINGA this-A) 
         const halfWidth = parseInt((/\d+/gi).exec(window.getComputedStyle(this).width))/2;
         const halfHeight = parseInt((/\d+/gi).exec(window.getComputedStyle(this).height))/2;
         //console.log(halfWidth, halfHeight);
@@ -1842,11 +1846,37 @@ window.customElements.define('rippling-div', RipplingDiv, {extends: 'div'});
 
 const wavingDiv = new RipplingDiv(380, 160, "#9de758");
 document.querySelector('.rippling_root').appendChild(wavingDiv);
-
-
-
-
-
+//wavingDiv.hidden = "maybe";
+//////////////////////////////////////////////////////////////////////////////////
+//U PROSLOM PRIMERU SAM DEFINISAO   hidden ATRIBUT, ODNOSNO DEFINISAO SAM DA JE TO MOGUCI ATRIBUT
+//SVAKE INSTANCE CUSTOMIZED ELEMENTA, DEFINSAO SAM STA SE DOGADJA NJEGOVOM PROMENOM
+// (NISAM ZANO DA JE TO TAKODJE I GLOBALNI ATRIBUT, KOJI STO RADI ONO STO RADI I MOJ hidden)
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///////OVDE CU SADA NASTAVITI SA OBJASNJENJIMA VEZANIM ZA CUSTOM ELEMENTE
+//PREDHODNI PRIMERI SU BILI SKONCENTRISANI NA RIPPLING TRANZICIJU, IAKO TO MOZDA NIJE 'TEMA OVOG
+// REPOZITORIJUMA', IPAK JE VREDELO KREIRANJE CUSTOMIZED BUILT IN DIV ELEMENTA, KOJI IMA RIPPLING
+//  TRANZICIJU
+//I VREDELO JE JER SAM SAZNAO ZA NEKOLIKO EVENT-OVA, SA KOJIM SE RANIJE NISAM SUSRETAO
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//VEC SAM SE POZABAVIO OBSERVING-OM PROMENA ATRIBUTA
+//DODUSE U POSLEDNJEM PRIMERU SAM IMAO VISKA CODE-A U SETTER-IMA ATRIBUTA, JER SAM U NJIMA TAKODJE
+//DEFINISAO I DODELU STILOVA
+//
+//PRAVILNO BI BILO DA SAM URADIO, KAO STO SAM VEC I POMENUO, DA SE DODELE NOVIH VREDNOSTI STILOVIMA
+//I TO VREDNOSTI KOJE DEFINISU ILI ZAVISE OD PROMENE ATRIBUTA, DEFINISU U OBIMU
+//      attributeChangedCallback    -A
+//NARAVNO, KOJE TO PROMENE ATRIBUTA PRATIM DEFINISEM U NIZU KOJI JE POVRATNA VREDNOST    
+//      static get observedAttributes
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//SADA CU RECI MALO VISE O PROPERTIJIMA
+//
+//
+//
 
 
 
