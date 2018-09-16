@@ -207,3 +207,10 @@
     opacity: 1;
 }*/
 
+
+
+.other_rippling[onesposobljen] {
+    pointer-events: none;
+    opacity: 0.6;
+}
+

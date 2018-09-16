@@ -1732,8 +1732,8 @@ class RipplingDiv extends HTMLDivElement {
         this.style.margin = "auto auto";
         this.style.overflow = "hidden";
     }
-    //GETTERS
-    get width(){
+    //GETTERS               ///MISLIM DA MI GETTER-I NISU BAS DOBRO DEFINISANI JER CITAJU VREDNOST 
+    get width(){            //STILA, DIREKTNO, A NE VREDNOST ATRIBUTA
         return this.style.width;
     }
     get height(){
@@ -1875,8 +1875,129 @@ document.querySelector('.rippling_root').appendChild(wavingDiv);
 //////////////////////////////////////////////////////////////////////////////////////////////
 //SADA CU RECI MALO VISE O PROPERTIJIMA
 //
+//ODNOSNO RECI CU NESTO O 
+//          'REFLEKTOVANJU (ODRAZAVANJU) PROPERTIJA DO ATRIBUTA'
+
+//UOBICAJENO je za HTML PROPERTIJE da reflektuju svoju vrijednost nazad u DOM kao HTML atribut. Na primjer,
+ //kada SU vrijednosti     hidden-A  ili  id-JA    promijenjene u JS:
+
+                //      div.id = 'moj-id';
+                //      div.hidden = true;
+    //vrijednosti se primjenjuju na živi DOM kao atributi:
+
+    //    <div id="mi-id" hidden></div>
+
+//    Ovo se zove "rflektovanje propertij do atributa". Skoro svaki atribut u HTML-u to radi. 
+//  Zašto? Atributi su takođe korisni za konfiguriranje elementa deklarativno, a i određeni API-ji
+//  kao što su accessibiliti API ili CSS selektori, oslanjaju se na atribute
+
+//REFLEKTOVANJE nekog objekta je korisno BILO GDE, gde želite da zadržite reprezentaciju DOM elementa
+// u sinhronizaciji sa STANJEM JavaScript-a. Jedan od razloga zbog kojih biste želeli da reflektujete
+ // properti jeste da bi se user-defined stilaplicirao onda kada se javascript stanje promeni
+
+// STA SAM MISLIO PO D OVIM, NAJBOLJE CU VIDETI IZ SLEDECEG PRIMERA 
+//PROSIRICU KLASU CUSTOMIZED BILT IN ELEMENTA (PROSLI PRIMER)
 //
+
+class OtherRipplingDiv extends RipplingDiv {
+    constructor(sirina, visina, background_boja){
+        super(sirina, visina, background_boja);
+        
+        //NECU NISTA MENJATI NEGO CU DEFINISATI, NOVI, MOGUCI ATRIBUT OVE INSTANCE KOJI CE NOSITI IME
+        //    onesposobljen     (disabled U PREVODU)
+        //TO CE BITI BOOLEAN ATRIBUT
+
+        //PRE TOGA CU DEFINISATI DA SVAKA INSTANCA CUSTOMIZED ELEMENTA, IMA KLASU SA IMENOM
+        //          .other_rippling
+
+        this.classList.add('other_rippling');
+
+        //IPAK CU MU DATI title ATRIBUT SA NATPISOM (TO RADIM ZA SEBE, DA BIH NA HOVERINGU
+        //KURSORA, PREKO ELEMENTA MOGAO VIDETI DA SE RADI O INSTANCI OVE KLASE 
+        //(JER IMAM MNOGO ELEMENATA NA STRANICI))
+
+        this.setAttribute('title', "ovo je element koji ima ripplig effect, i koji se moze onemoguciti");
+       
+        //MEDJUTIM POGRESIO SAM, JER KADA ELEMENT BUDE 
+        //ONEMOGUCEN, NECE SE POKAZATI STRING title-A, PRELASKOM KURSORA PREKO innerHTML-A
+        //JER CU NAKON KREIRANJA INSTANCE I NJENOG KACENJA NA DOM 
+        //DEFINISATI CSS KLASU KOJOM SE APLICIRA DA SE SVAKI pointer-event NE MOZE "TRIGGER-OVATI"
+        //A TU KLASU CU DODATI ELEMENTU (A TAJ MOGUCI PRELAZAK KURSORA, PREKO ELEMENTA, JESTE pointer-event)
+    }
+
+    //DAKLE KREIRAM SETTER ZA, POMENUTI BOOLEAN ATRIBUT
+
+    set onesposobljen(vrednost){
+        if(vrednost){
+            this.setAttribute('onesposobljen', "");
+        }else{
+            this.removeAttribute('onesposobljen');
+        }
+    }
+}
+
+
+//ON STO SAM DEFINISAO U CSS A, STO CU PRIKAZATI I OVDE (COMMENTED OUT), JESTE CSS
+//PRE TOGA CU RECI SLEDECE, USTVARI RECI CU ZASTO SAM UOPSTE ZELEO DA IMAM, POMENUTI ATRIBUT
+//PA ONO STO ZELIM JESTE DA KADA NA ELEMENTU, POSTOJI, POMENUTI ATRIBUT, DA TADA NE FUNKCIONISU
+//MOUSE EVENT-OVI, I DA JE ELEMENT NESTO PROZIRNIJI NEGO STO JE TO NORMALNO
+//U TU SVRHU MOGU KORISTITI ATRIBUT SELEKTOR U CSS-U
 //
+//                         .other_rippling[onesposobljen]{
+//                              pointer-events: none;
+//                              opacity: 0.6;
+//                          } 
+//
+//SADA MOGU REGISTROVATI NOVI CUSTOMIZED BUILT IN div ELEMENT
+//ZATIM CU KREIRATI, NOVU INSTANCU, KOJU CU ZAKACITI NA DOM
+//PA CU POMENUTOJ NOVOJ INSTANCI, DODATI        onesposobljen       ATRIBUT, KAKO BIH
+//VIDEO KAKO CE SE TADA ELEMENT PONASATI
+
+window.customElements.define('other-rippling-div', OtherRipplingDiv, {extends: 'div'});
+
+const someOtherRipplingDiv = new OtherRipplingDiv(420, 210);
+
+rootElementi[10].appendChild(someOtherRipplingDiv);
+
+someOtherRipplingDiv.setAttribute('onesposobljen', '');
+
+someOtherRipplingDiv.removeAttribute('onesposobljen');
+
+//POSTIGAO SAM STA SAM ZELEO OVIM PRIMEROM, STO SAM I VIDEO NAKON TESTIRANJA,
+//SAGLEDAO SAM, POMENUTU REFLEKSIJU, A ISTO SAM SVE MOGAO POSTICI I OBSERVING-OM PROMENA, U POGLEDU
+//atributa      onesposobljen   , ODNOSNO KORISCENJEM       attributeChangedCallback    -A
+//STO SAM, VEC RANIJE I POKAZAO
+//ALI U CILJU VEZBE CU OPET EXTENDOVATI KLASU , KRIRAJUCI NOVU KLASU, GDE CU DEFINISATI OBSERVING 
+//NOVOG ATRIBUTA, KOJI CE TAKODJE BITI BOOLEAN
+//NJIME CE SE DODAVATI      box-shadow
+
+class RipplingShad extends OtherRipplingDiv {
+    constructor(sirina, visina, boja){
+        super(sirina, visina, boja);
+
+    }
+
+    static get observedAttributes(){
+        return ['shadow'];
+    }
+
+    attributeChangedCallback(name, oldV, newV){
+        if(name === "shadow" && !oldV){
+            this.style.boxShadow = "20px 18px orange";
+        }
+    }
+
+}
+
+
+
+window.customElements.define('rippling-shad', RipplingShad, {extends: 'div'});
+
+const rippShad = new RipplingShad(420, 210);
+
+rootElementi[11].appendChild(rippShad);
+
+rippShad.setAttribute('shadow', '');
 
 
 
