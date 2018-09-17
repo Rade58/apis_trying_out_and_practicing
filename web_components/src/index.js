@@ -2096,6 +2096,8 @@ divRipple.backgroundColor = "#9de758";
 divRipple.hidden = "if you want, oh I don't know";
 divRipple.hidden = 0;
 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////OVDE CU SADA NASTAVITI SA OBJASNJENJIMA VEZANIM ZA CUSTOM ELEMENTE
@@ -2243,8 +2245,6 @@ class RipplingShad extends OtherRipplingDiv {
     attributeChangedCallback(name, oldV, newV){
         if(name === "shadow" && !oldV){
             this.style.boxShadow = "20px 18px orange";
-        }else{
-            this.style.boxShadow = "";
         }
     }
 }
@@ -2258,6 +2258,9 @@ const rippShad = new RipplingShad(420, 210);
 rootElementi[13].appendChild(rippShad);
 
 rippShad.setAttribute('shadow', '');
+
+rippShad.onesposobljen = true;
+rippShad.onesposobljen = false;
 
 rippShad.backgroundColor = "yellow";
 rippShad.width = 50;
@@ -2296,8 +2299,82 @@ console.log(    nizPosmatranihAtributa    );  //  --> ['width', 'height', 'backg
 //POZVANA JE NARAVNO OVAKO:  this.whenAttributeChange(name, oldVal, newVal);    //RED  :2031    
 
 //POSTO SAM SE PODSETIO POMENUTOGA, POCECU SA DEKLARISANJEM     RipplingShadBetter      KLASE
+//ALI PE DEFINISANJA KLASE MOGU DODATI JEDAN STRING, NIZU, KOJEG SAM SE PRISETIO
+//      nizPosmatranihAtributa.push('shadow');
+//REC JE O STRINGU 'shadow', JER CE UPRAVO 'shadow' BITI ATRIBUT, KOJI MOZE IMATI INSTANCA SLEDECE
+//KLASE KOJU CU DEFINISATI SADA (RipplingShadBetter)
 
+//MEDJUTIM KADA SAM KREIRAO POMENUTI NIZ (VREDNOST GLOBALNE VARIJABLE), JA NISAM ZNAO DA JE POMENUTOM
+//NIZU, MOGUCE PRISTUPITI PUTEM SAMOG STATICKOG GETTERA 
+//  observedAttributes
+//BILO KOJE KLASE, ODNOSNO WEB KOMPONENTE
 
+//DAKLE, PRISTUPAM POMENUTOM NIZU NA SLEDECI NACIN
+
+console.log(  DivRipple.observedAttributes  ); //-->-->  ['width', 'height', 'background-color', 'hidden']
+//ILI UZ POMOC KLASE, KOJA EXTENDS DivRipple
+console.log( OtherRipplingDiv.observedAttributes ); //--> ['width', 'height', 'background-color', 'hidden']
+
+//TAKO DA POMENUTI NIZ, NIJE MORAO, USTVARI NIJE NI TREBAO BITI VREDNOST GLOBALNE VARIJABLE, ONDA KAD 
+//, ODNOSNO PRE NEGO STO SAM DEFINISAO DA POMENUTI NIZ BUDE POVRATNA VREDNOST, VEC MNOGO PUTA,
+// POMINJANOG STATICKOG GETTER-A, KLASE DivRipple
+//  KADA TO ZNAM, PROSTO MOGU DEFINISATI DA POVRATNA VREDNSOT ISTOG STATICKOG GETTERA, NOVE KLASE
+// UPRAVO BUDE PRIMENA STATICKOG GETTER-A, ONE KLASE IZ KOJE NOVA KLASA NASLEDJUJE
+//  STO ZNACI DA POVRATNA VREDNSOT, POMENUTOG STATICKOG GETTER-A, MOZE BITI SLEDECA
+            //NOVI NIZ SASTAVLJEN OD SLEDECIH
+        //           super.observedAttributes    + NIZ CIJI JE CLAN IME ATRIBUTA,
+                                                    //KARAKTERISTICNOG ZA NOVU KLASU
+//  super CE SE U NARESNOM SLUCAJU ODNOSITI, NARAVNO NA     OtherRipplingDiv    KLASU
+
+class RipplingShadBetter extends OtherRipplingDiv {
+    constructor(sirina, visina, backgroundColor){
+        super(sirina, visina, backgroundColor);
+    }
+
+    static get observedAttributes(){
+        const attributesArray = super.observedAttributes;
+        return attributesArray.concat(['shadow']);
+    }
+
+    //OSTAJE MI JOS DA DEFINISEM attributesChangedCallback
+    //AKO SE PODSETIM, SETICU SE DA SAM DODELU STILOVA (ZA INSTANCE DivRipple KLASE) DEFINISAO
+    //U POSEBNOJ METODI, KOJU SAM ONDA POZVAO U OBIMU attributesChangedCallback, KLASE DivRipple
+    //REC JE O METODI   whenAttributeChange
+    attributeChangedCallback(name, oldval, newval){
+        //E PA POMENUTU METODU I OVDE POZVATI
+        this.whenAttributeChange(name, oldval, newval);
+        //ALI POZVACU I NOVU METODU, KOJU SAM DEFINISAO ISPOD OVOG LIFECYCLE CALLBACK-A
+        //JASNO MI JE DA CODE TE METODE DEFINISE DODELU STILOVA, U RELACIJI SA shadow ATRIBUTOM
+        // INSTANCE
+        this.whenShadowChange(name, oldval);
+    }
+    
+    whenShadowChange(name, oldValue){
+        if(name === 'shadow' && !oldValue){
+            this.style.boxShadow = "8px 14px #759786d3";
+        }
+    }
+}
+
+//REGISTRACIJA CUSTOMIZED ELEMENTA, ZATIM KREIRANJE JEDNE INSTANCE CUSTOMIZED ELEMENTA 
+//I NJENO KACENJE U DOM
+
+window.customElements.define('ripp-div', RipplingShadBetter, {extends: 'div'});
+const betterDiv = new RipplingShadBetter(580, 214);
+rootElementi[14].appendChild(betterDiv);
+
+//ELEMENT JESTE RENDER-OVAN NA STRANICI
+//SADA CU PROVERITI , DA LI CE SE ELEMENTU DODATI BOX SHADOW, KADA POMENUTOM ELEMENTU DODAM
+//shadow ATRIBUT
+
+betterDiv.setAttribute('shadow', "");
+
+//AKO POGLEDAM STRANICU, VIDECU DA JE BOX SHADOW USPESNO DODAT, POMENUTOM ELEMENTU
+//SADA CU POVECATI VISINU, POMENUTOG ELEMENTA
+
+betterDiv.height = 416;
+
+////AKO POGLEDAM STRANICU, VIDECU DA ELEMENT IMA NOVU VISINU
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
