@@ -2376,6 +2376,81 @@ betterDiv.height = 416;
 
 ////AKO POGLEDAM STRANICU, VIDECU DA ELEMENT IMA NOVU VISINU
 
+
+////PRE NEGO STO NASTAVIM SA OBJASNJAVANJEM CUSTOM ELEMENATA, DOBRO BI BILO DA ODRADIM PRIMER
+
+//// NASTAVICU SA OBJASNJENJIMA VEZANIM ZA CUSTOM ELEMENTE, TAKO STO CU DODATI NESTO VAZNO
+//// A STO SAM I PRIMETIO, TOKOM BAVLJENJA SA HTML-OM, ALI I SADA, TOKOM UNOSENJA TAGOVA, CUSTOM
+//// ELEMENATA U HTML
+
+////ONO STO JE KARAKTERISTICNO ZA CUSTOM ELEMENTE JESTE PROGRESIVNO POBOLJSANJE, ODNOSNO
+////PROGRESSIVE ENHANCEMENT
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////NAIME, CUSTOM ELEMENTI SE MOGU KORISTI, I PRE NEGO STO JE NJIHOVA DEFINICIJA REGISTROVANA
+////MOGUCE JE DEKLARISATI GOMILE CUSTOM TAGOVA, BEZ TOGA DA REGISTRUJEM CUSTOM ELEMENTE
+////TO JE ZBOG OSOBIME NHTML-A
+////EVO, KREIRACU ELEMENT, KOJI NIJE NATURAL HTML ELEMENT, A NIJE NI REGISTROVAN KORISCENJEM define METODE
+
+////A SVI TI TAGOVI, KOJI U SVOM IMENU NEMAJU CRTICU PARSE-UJU SE KAO
+////        HTMLUnknownElement          INSTANCE, PORED TOGA STO SU I   HTMLElement     INSTANCE  
+//
+////STO SE NE DOGADJA SA CUSTOM ELEMENTIMA, KOJI SU NARAVNO HTMLElement INSTANCE,  
+//AKO SU KREIRANI SA VALIDNIM IMENOM (U KOJE SE UBRAJA I CRTICA (-)); DAKLE ONI NISU I
+//  HTMLUnknownElement INSTANCE
+
+//POKAZACU SLEDECIM PRIMERIM, ONO STO SAM GORE POMENUO
+
+console.log(    document.createElement('neko-dugme') instanceof HTMLElement  );  //     true
+console.log(    document.createElement('neko-dugme') instanceof HTMLUnknownElement  );  //     false
+
+
+console.log(    document.createElement('dugmeneko') instanceof HTMLUnknownElement    );  //  true
+console.log(    document.createElement('dugmeneko') instanceof HTMLElement    );         //  true
+
+//DAKLE, KAO STO SAM REAKO, MOGU DELARISATI GOMILU neko-dugme ELEMNATA, NA STRANICI, BEZ SLEDECEG POZIVANJA
+//      window.customElements.define('neko-dugme',.....)
+//KOJE MOGU DEFINISATI, KASNIJE (POZIVANJE)
+//TO POZIVANJE define METODE SE NAZIVA:
+////                                        "ELEMENT UPGRADE"
+//I TO JESTE ENDOWING (POBOLJSANJE, PROSIRENJE, OBDARENJE) POSTOJECEG ELEMENTA SA class DEFINICIJOM
+////
+//// PRI OVAKVOM SLUCAJU NAROCITO JE INTERESANTNA JOS JEDNA METODA CustomElementRegistry INSTANCE, A TO JE
+//
+//          whenDefined 
+
+const kont_neki = document.querySelector(".neki_kont");
+const some_cust = document.createElement('some-element');
+some_cust.innerHTML = "TEKST TEKST TEKST TEKST tekst";
+
+kont_neki.appendChild(some_cust);
+
+const PromiseOb = window.customElements.whenDefined('some-element');
+
+PromiseOb.then(val => {
+    console.log(val, "neka radnja");
+});
+
+console.log("blocking code");
+console.log("blocking code");
+console.log("blocking code");
+console.log("blocking code");
+console.log("blocking code");
+console.log("blocking code");
+window.setTimeout(ev=>{
+    window.customElements.define('some-element', class extends HTMLElement {
+        constructor(){
+            super();
+            this.style.display = "block";
+            this.style.width = "200px";
+            this.style.height = "100px";
+            this.style.backgroundColor = "pink"
+        }
+    });
+
+    console.log(ev);
+
+}, 4000);
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
