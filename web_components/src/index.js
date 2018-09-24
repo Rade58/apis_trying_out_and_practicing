@@ -2408,6 +2408,9 @@ console.log(    document.createElement('neko-dugme') instanceof HTMLUnknownEleme
 console.log(    document.createElement('dugmeneko') instanceof HTMLUnknownElement    );  //  true
 console.log(    document.createElement('dugmeneko') instanceof HTMLElement    );         //  true
 
+//   'neko-dugme'  VALIDNO CUSTOM ELEMENT IME       'dugmeneko'     NEVALIDNO CUSTOM ELEMENT IME
+
+
 //DAKLE, KAO STO SAM REAKO, MOGU DELARISATI GOMILU neko-dugme ELEMNATA, NA STRANICI, BEZ SLEDECEG POZIVANJA
 //      window.customElements.define('neko-dugme',.....)
 //KOJE MOGU DEFINISATI, KASNIJE (POZIVANJE)
@@ -2418,6 +2421,11 @@ console.log(    document.createElement('dugmeneko') instanceof HTMLElement    );
 //// PRI OVAKVOM SLUCAJU NAROCITO JE INTERESANTNA JOS JEDNA METODA CustomElementRegistry INSTANCE, A TO JE
 //
 //          whenDefined 
+//KAO ARGUMENT JOJ SE DODAJE IME CUSTOM TAGA
+//POVRATNA VREDNOST, OVE METODE JESTE Promise INSTANCA, KOJ SE RESOL-UJE, TEK ONDA, KADA SE IZVRSI 
+//define METODA 
+//POSTO JE REC O Promise-U, NA NJEGA SE MOZE CHAIN-OVATI then METODA , SA CALLBACK ARGUMENTOM
+//KOJI BI SE SLAO U QUEUE, TEK KAD SE IZVRSI define
 
 const kont_neki = document.querySelector(".neki_kont");
 const some_cust = document.createElement('some-element');
@@ -2451,6 +2459,219 @@ window.setTimeout(ev=>{
     console.log(ev);
 
 }, 4000);
+
+//MOGAO SAM PRIKAZATI I NESTO BOLJI PRIMER; A LI TO CU URADITI, TEK KAD OBJASNIM JEDNU CSS PSEUDO KLASU
+//REC JE O CSS PSEUDO KLASI         :defined
+//OVAKAV CODE IMAM U CSS FAJLU
+
+`
+    aside:defined {
+        background-color: olive;
+    }
+
+    novitag:defined {
+        background-color: pink;
+    }
+
+    novi-tag:defined {
+        background-color: yellow;
+    }
+
+`
+//ONO STO JE INTERESANTNO ZA OVU PSEUDO KLASU JESTE DA SE NJOME ZA STILIZOVANJ, SELEKTUJU ELEMENTI,
+//KOJI SU DEFINISANI (REGISTROVANI)
+
+const nestingSpot = document.querySelector('#nesting_spot');
+
+const textsForNesting = [
+    "some explanation, blah blah",
+    "different text",
+    "podcasts are legitness"
+];
+const o = {
+    natural: document.createElement('aside'),
+    unknown: document.createElement('novitag'),
+    custom: document.createElement('novi-tag')
+};
+o.natural.innerHTML = textsForNesting[0];
+o.unknown.innerHTML = textsForNesting[1];
+o.custom.innerHTML = textsForNesting[2];
+
+nestingSpot.appendChild(o.natural);
+nestingSpot.appendChild(o.unknown);
+nestingSpot.appendChild(o.custom);
+
+//TESTIRACU JOS JEDNOM OVE ELEMENTE U POGLEDU INSTANIC HTMLElement      I   HTMLUnknownElement
+
+console.log(o.natural instanceof HTMLElement, o.natural instanceof HTMLUnknownElement); // true   false
+console.log(o.unknown instanceof HTMLElement, o.unknown instanceof HTMLUnknownElement); // true   true 
+console.log(o.custom instanceof HTMLElement, o.custom instanceof HTMLUnknownElement);  // true  false
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//ONO STO MOGU VIDETI NA STRANICI JESTE DA SU NOVI BACKGROUND COLOR DOBILI NATURALNI I UNKNOWN ELEMENT
+//ALI TO NIJE DOBIO CUSTOM ELEMENT, JER JOS NIJE REGISTROVAN (define)
+
+//SADA CU KORISTITI, POSEBNU, BAR ZA MENE
+//     PSEUDO KLASU      :not()
+//ZAJEDNO SA :defined
+//ALI SAMO U SLUCAJU CUSTOM ELEMENTA
+`
+    aside:defined {
+        background-color: olive;
+    }
+
+    novitag:defined {
+        background-color: pink;
+    }
+
+    novi-tag:not(:defined) {
+        background-color: yellow;
+    }
+`
+
+//POSTO SAM KORISTIO KLASU NEGACIJE,         :not()         I TO SA :selected PSEUDO KLASOM KAO PARAMETROM
+//STO BI SE MOGLO PREVESTI NA:
+            //                      OVE STILOVE APLICIRAJ NA ELEMENT KOJI NIJE DEFINISAN
+
+//RENDER-OVANI CUSTOM ELEMENT JE DOBIO      ZUTI        BACKGROUND COLOR     
+//REGISTROVACU GA
+
+//I DOBIO JE BACKGROUND COLOR
+
+//SADA CU KREIRATI JEDAN PRIMER, U KOJEM CU KORISTITI, POMENUTU     whenDefined     METODU
+//A KORISTICU I :defined CSS KLASU ALI I :not() CSS KLASU, KAKO BI SELEKTOVAO ODREDJE CUSTOM ELEMENTE
+
+//IDEJA JE SLEDECA:
+        //NESTOVATI NEREGISTROVANI CUSTOM ELEMENT, U KOJEM TREBA DA SE PRIKAZU PODACI, KOJI SE
+        //ZAHTEVAJU SA SERVERA, ALI KAO STO ZNAM TIM PODACIMA TREBA VREMENA DA STIGNU DO KORISNIKA
+
+        //TAKODJE U ISTOM CONTAINER-U, TREBA NEST-OVATI PLACEHOLDER ELEMENT
+
+        //MOGU KORISTITI ASINHRONOST setTimeout METODE, KAKO BI SIMULIRAO SLANJE PODATAKA SA SERVERA
+
+//ONO STO CU PRVO URADITI JESTE KREIRANJE KLASE, ODNOSNO KOMPONENTE, KOJA BI ENDOW-OVALA CUSTOM 
+//ELEMENT, TEK KAD SE PREUZMU PODACI SA SERVERA 
+
+
+
+class NekiAnchor extends HTMLElement {
+    constructor(){
+        super();
+        this.attachShadow({mode: 'open'});
+        const divEl = document.createElement('div');
+        divEl.style.width = "100%";
+        divEl.style.border = "red solid 2px";
+        divEl.style.height = "1.8rem";
+        divEl.style.display = "block";
+        divEl.style.backgroundColor = "#67f19c85";
+        divEl.style.textAlign = "center";
+        
+        divEl.style.color = "#16181d";
+        const anchor = document.createElement('a');
+        anchor.setAttribute('href', '#');
+        
+        anchor.innerText = "loading...";
+        anchor.style.textDecorationLine = "none";
+
+        divEl.appendChild(anchor);
+        const styles = `
+            a {
+                color: #16181d;
+                opacity: 0;
+            
+
+                transition-property: opacity;
+                transition: 6s ease-in-out;
+            }
+
+            .opacity_trans {
+                opacity: 1;
+            }
+        `;
+        const styleEl = document.createElement('style');
+        styleEl.textContent = styles;
+
+        this.shadowRoot.appendChild(divEl);
+        this.shadowRoot.appendChild(styleEl);
+
+        anchor.addEventListener('click', ev => {ev.preventDefault()});
+    }
+
+    set valueChanger(val){
+        this.shadowRoot.querySelector('a').innerText = val;
+    }
+}
+
+class NekiMenu extends HTMLElement {
+    constructor(){
+        super();
+        this.style.width = "68vw";
+        const allAnchors = this.querySelectorAll('neki-anchor');
+        const length = allAnchors.length;
+        this.style.display = "block"
+        this.style.height = `${length * 2}rem`;
+        this.style.border = "pink solid 1px";
+        this.style.textAlign = "center";
+        this.style.overflow = "hidden"
+        const divPlaceholder = document.createElement('div');
+        divPlaceholder.innerText = "Loading...";
+        this.appendChild(divPlaceholder);
+
+        //SIMULIRANJE (MAKE BEILIVE) AJAX ZAHTEVA, U MOM SLOBODNOM IZVODJENJU, UZ POMOC    setTimeout
+
+        const nonRegisteredAnchors = this.querySelectorAll(':not(:defined)');
+        const nonRegisteredLength = nonRegisteredAnchors.length;
+
+        const contentArray = [];
+
+        let trajanjeZahteva = 2000;  
+
+        for(let i = 0; i < nonRegisteredLength; i++){
+            const podaci = ['ayohuasca', 'grass', 'yoga', 'meditacija', 'ladna voda'];
+            window.setTimeout(ev => {
+                contentArray.push(podaci[i]);
+
+                if(contentArray.length === nonRegisteredLength){
+                    window.customElements.define('neki-anchor', NekiAnchor);
+                }
+
+            }, trajanjeZahteva+=400);
+        }
+
+        window.customElements.whenDefined('neki-anchor').then(()=>{
+            let i =0;
+            //console.log(nonRegisteredAnchors);
+            console.log(contentArray);
+            for(let anch of nonRegisteredAnchors){
+                //console.log(anch);
+                anch.valueChanger = contentArray[i++];
+                console.log(anch.shadowRoot.querySelector('a'));
+                anch.shadowRoot.querySelector('a').classList.add('opacity_trans');
+                divPlaceholder.remove();
+            }
+        });
+    }
+}
+
+window.customElements.define('neki-menu', NekiMenu);
+
+
+
+//KREIRACU I CONTAINER (U KOJI BI SE NEST-OVALI CUSTOM ELEMENTI, KOJE BI REPREZENTOVALA GORNJA KLASA),
+// KOJEG CU ODMAH I REGISTROVATI
+
+
+
+//CUSTOM ELEMENTE, CIJI TAG NIJE REGISTROVAN, ODNOSNO ELEMENTE KOJI NISU, ENDOWED KLASOM, ZELIM DA
+//NESTUJEM U CONTAINER-U
+
+//ODNOSNO ONO STO ZELIM DA URADIM JESTE DA SE CUSTOM ELEMENT REGISTRUJE (KORISCENJEM define METODE)
+
+
+//ODRADICU, JEDAN PRIMER
+
+//SADA SAM VIDEO, KOJE SU OSOBINE, ODNOSNO OSOBINA, 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2795,4 +3016,20 @@ konti.querySelectorAll('div')[4].style.width = "100%";
 
 
 //console.log(wavingDiv);
+
+
+const el2 = document.createElement('div');
+
+el2.classList.add('normal_class');
+el2.innerText = "neki tekst";
+const root2 = document.getElementsByTagName('section')[0];
+
+root2.appendChild(el2);
+
+root2.addEventListener('click', function(ev){
+    const el = this.querySelector('.normal_class');
+    console.log(ev.target);
+    console.log(el)
+    el2.classList.add('transition_class');
+});
 

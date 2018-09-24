@@ -57,7 +57,8 @@
     background-image: radial-gradient(circle, transparent 5%, green 20%, yellow 28%, purple 98%);
     color: #be88dda4;
     color: #9de758;
-    color: #e47c62;
+    color: #67f19c85;
+    color: #16181d;
 }
 
 
@@ -214,3 +215,42 @@
     opacity: 0.6;
 }
 
+
+/*:defined PSEUDO CLASS*/
+
+aside:defined {
+    background-color: olive;
+}
+
+novitag:defined {
+    background-color: pink;
+}
+
+novi-tag:defined {
+    background-color: yellow;
+}
+
+novi-tag:not(:defined){
+    background-color: yellow;
+}
+
+section {
+    text-align: center;
+    border: #1b7a72 solid 2px;
+    opacity: 1;
+}
+.normal_class {
+    border: pink solid 2px;
+    width: 200px;
+    height: 180px;
+    font-size: 2rem;
+    opacity: 0;
+    color: pink;
+    transition-property: opacity-color;
+    transition: 6s ease-in-out;
+}
+
+.transition_class {
+    opacity: 1;
+    color: inherit;
+}
