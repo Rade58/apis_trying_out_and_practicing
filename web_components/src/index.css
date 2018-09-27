@@ -258,3 +258,10 @@ section {
     opacity: 1;
     color: inherit;
 }
+
+
+
+some-anchor:not(:defined ){
+    box-shadow: orange 10px 10px;
+}
+

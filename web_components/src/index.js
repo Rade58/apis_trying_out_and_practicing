@@ -2436,7 +2436,7 @@ kont_neki.appendChild(some_cust);
 const PromiseOb = window.customElements.whenDefined('some-element');
 
 PromiseOb.then(val => {
-    console.log(val, "neka radnja");
+//    console.log(val, "neka radnja");
 });
 
 console.log("blocking code");
@@ -2456,7 +2456,7 @@ window.setTimeout(ev=>{
         }
     });
 
-    console.log(ev);
+//    console.log(ev);
 
 }, 4000);
 
@@ -2642,11 +2642,11 @@ class NekiMenu extends HTMLElement {
         window.customElements.whenDefined('neki-anchor').then(()=>{
             let i =0;
             //console.log(nonRegisteredAnchors);
-            console.log(contentArray);
+            //console.log(contentArray);
             for(let anch of nonRegisteredAnchors){
                 //console.log(anch);
                 anch.valueChanger = contentArray[i++];
-                console.log(anch.shadowRoot.querySelector('a'));
+                //console.log(anch.shadowRoot.querySelector('a'));
                 anch.shadowRoot.querySelector('a').classList.add('opacity_trans');
                 divPlaceholder.remove();
             }
@@ -2660,7 +2660,7 @@ window.customElements.define('neki-menu', NekiMenu);
 //KREIRACU I JEDAN PRIMER, U KOJEM CU KORISTITI     Promise.all     FUNKCIJU, A TAKODJE I PROPERTI 
 //localName KOJIM, MOGU PRISTUPITI IMENU TAGA, NEKOG HTML ELEMENTA (OVO CE BITI KORISNO)
 
-//POCECU TAKO STO CU KREIRATI NOVU KOMPONENTU
+//POCECU TAKO STO CU KREIRATI NOVU KOMPONENTU (CUSTOM ANCHOR ELEMENT)
 
 class SomeAnchor extends HTMLElement {
     constructor(){
@@ -2670,9 +2670,7 @@ class SomeAnchor extends HTMLElement {
         const anchorElement = document.createElement('a');
         const styleElement = document.createElement('style');
         divElement.classList.add('an_kont');
-        console.log(this.innerHTML);
-        console.log(this);
-        console.log(this.innerText);
+
         this._nestedText = this.textContent;
         anchorElement.textContent = this._nestedText;
         anchorElement.setAttribute('href', '#');
@@ -2680,7 +2678,7 @@ class SomeAnchor extends HTMLElement {
             .an_kont {
                 box-size: border-box;
                 display: inline-block;
-                border: pink solid 0px;
+                border: pink solid 1px;
                 text-align: center;
                 margin-top: 4px;
                 margin-left: 8px;
@@ -2692,13 +2690,19 @@ class SomeAnchor extends HTMLElement {
             }
             
             .an_kont > a {
-                opacity: 0;
                 color: #292f38;
                 text-decoration-line: none;
+            }
 
+            .an_kont > a {
+                opacity: 0;
                 transition-property: opacity;
                 transition-duration: 4s;
-                transition-timing-function: ease-in;
+                transition-timing-function: ease-out;
+            }
+
+            .an_kont[opacitated] a {
+                opacity: 1;
             }
 
             .an_kont > a:visited {
@@ -2707,14 +2711,6 @@ class SomeAnchor extends HTMLElement {
 
             .an_kont > a:active {
                 color: lightcyan;
-            }
-
-            /*.an_kont > a:hover {
-                color: wheat;
-            }*/
-
-            .an_kont[opacitated] > a {
-                opacity: 1;
             }
 
             .an_kont[left_floating] {
@@ -2726,15 +2722,28 @@ class SomeAnchor extends HTMLElement {
             /*this , ODNOSNO CUSTOM ELEMENT, SE MOZE SELEKTOVATI*/
             /*UZ POMOC :host PSEUDO KLASE ALI OVO SE SAMO MOZE*/
             /*URADITI IZ SHADOW DOM-A, KAO STO JE OVDE SLUCAJ*/
-            :host {
+            
+            /*:host {
 
-            }                   
+            }*/
+            /*.an_kont > a:hover {
+                color: wheat;
+            }*/
+            /*.an_kont:defined {
+                box-shadow: green 10px 10px;
+            }*/
+            /*.an_kont:defined a {
+                opacity: 1;
+            }*/
+            /*.an_kont[opacitated]  a:hover {
+                opacity: 1;
+            }*/
         `;
+
         styleElement.textContent = styleContent;
         divElement.appendChild(anchorElement);
         this.shadowRoot.appendChild(styleElement);
         this.shadowRoot.appendChild(divElement);
-        console.log(this.textContent);
 
         anchorElement.addEventListener('click', ev => {
             ev.preventDefault();
@@ -2745,7 +2754,7 @@ class SomeAnchor extends HTMLElement {
         if(val){
             this.shadowRoot.querySelector('.an_kont').setAttribute('opacitated', '');
         }else{
-            this.shadowRoot.querySelector('.an_kont').removeAttribute('opacitated');          
+            this.shadowRoot.querySelector('.an_kont').removeAttribute('opacitated');
         }
     }
 
@@ -2760,207 +2769,23 @@ class SomeAnchor extends HTMLElement {
 
 //window.customElements.define('some-anchor', SomeAnchor);
 
+        ///////OBRATI PAZNJU, TRANZICIJA SE NE MOZE 'TRIGGEROVATI'(DODELOM KLASE ILI ATRIBUTA ELEMENTU)
+        /////U OBIMU then-OVOG CALLBACKA
+        /////ZATO NE TREBA KORISTITI Promise-E,
+        /////MENI JE POSLUZIO CALLBACK 
+
+/*console.log(document.querySelector('#nesting_kont some-anchor'));
+new Promise(function(resolve, reject){
+    resolve(document.querySelector('#nesting_kont some-anchor'));
+}).then(function(customAnchor){
+    setTimeout(function(ev){
+        customAnchor.opacitated = true;
+    }, 0);
+});*/
+
+//SADA CU DEFINISATI CUSTOM CONTAINER, KOJI TREBA DA "ENKAPSULISE" GRUPU CUSTOM ANCHOR-A
 
 
-window.setTimeout(function(ev){
-    document.querySelector('some-anchor').opacitated = true;
-}, 100);
-
-class SomeAnKont extends HTMLElement {
-    constructor(){
-        super();
-        this.attachShadow({mode: "open"});
-        const kontejnerEl = document.createElement('div');
-        const stilEl = document.createElement('style');
-        
-        
-        const nestedUnregisteredAnchors = this.querySelectorAll(':not(:defined)');
-        const nestedRegisteredAnchors = this.querySelectorAll(':defined');
-
-        this._unregAnchors = nestedUnregisteredAnchors;
-
-        for(let unregAn of nestedUnregisteredAnchors){
-            unregAn.style.border = "green solid 1px";
-            unregAn.style.height = "1.4rem";
-            unregAn.style.float = "left";
-            //unregAn.style.display = "inline-block";
-            unregAn.style.margin = "4px";
-            unregAn.style.opacity = 0;
-        }
-        
-        const fragment = document.createDocumentFragment();
-        //DEFINISEM DA ANCHORI FLOAT-UJU LEVO U CONTAINER-U
-        //A DEFINISEM I NJIHOVO "PAKOVANJE" U FRAGMENT
-        for(let an of nestedRegisteredAnchors.length?nestedRegisteredAnchors:nestedUnregisteredAnchors){
-            an.leftFloating = true;
-            console.log(an);
-            fragment.appendChild(an);
-        }
-        const stilTekst = `
-            /*:host {
-                box-sizing: border-box;
-                display: block;
-                border: #b1515e solid 0px;
-                width: 100%;
-            }*/
-            .major_kont {
-                box-sizing: border-box;
-                display: block;
-                width: 78%;
-                text-align: center;
-                border: pink solid 2px;
-                padding-left: 0px;
-                position: relative;
-            }
-            .major_kont::after {
-                display: block;
-                content: "";
-                clear: left;
-            }
-
-            .major_kont[placeholder]::before {
-                content: "Loading...";
-                display: inline-block;
-                height: 1.6rem;
-                font-size: 1.2rem;
-                border: olive solid 0px;
-                position: absolute;
-                box-size: border-box;
-                display: block;
-                top: 4px;
-                background-image: linear-gradient(48deg, lightseagreen, tomato);
-                margin: auto 4px;
-            }
-        `;
-        stilEl.textContent = stilTekst;
-        kontejnerEl.classList.add('major_kont');
-        kontejnerEl.appendChild(fragment);
-        
-        this.shadowRoot.appendChild(kontejnerEl);
-        this.shadowRoot.appendChild(stilEl);
-
-        console.log(nestedUnregisteredAnchors);
-        console.log(nestedRegisteredAnchors);
-
-        if(nestedUnregisteredAnchors.length){
-            //AKO SU CUSTOM ELEMENTI NEREGISTROVANI, POTREBNO JE U CONTAINER-U PRIKAZATI
-            //PLACEHOLDER ELEMENT
-            this.placeholder = true;
-            
-
-            //ISKORISTICU JEDNU METODU, U KOJOJ UCESTVUJE I PETLJA, STO JA NE VIDIM DA MOZE BAS BITI
-            //POVOLJNO U MOM PRIMERU, ALI PRIKAZUJE UPOTREBU localName PROPERTIJA
-            const nizPromisea = [];
-            for(let unr of nestedUnregisteredAnchors){
-                nizPromisea.push(window.customElements.whenDefined(unr.localName));
-            }
-            //DA BIH POKAZAO I DRUGACIJI NACIN, DEFINISACU KREIRANJE POTPUNO IDENTICNOG NIZA
-            //Promise INSTANCI, ALI OVOG PUTA NA DRUGI NACIN
-            const nizPromiseaDuplikat = [...nestedUnregisteredAnchors].map(function(anch){
-                return window.customElements.whenDefined(anch.localName);
-            });
-            console.log(nizPromisea, nizPromiseaDuplikat);
-            //MISLIM DA JE BOLJE DA USVOJIM KORISCENJE DRUGOG NACINA, I MALO VIECU UPOTREBU map METODE
-
-
-            //POVRATNA VREDNOST SLEDECE FUNKCIJE JESTE Promise INSTANCA, KOJA CE BITI RESOLVED SA
-            //PODACIMA SA SERVERA
-            const promisePodaciSaServera = this.simulateRequestCallb();
-            console.log(promisePodaciSaServera);
-
-            //MOGU CHAIN-OVATI then METODU, NA POMENUTI Promise, A U OBIMU ARGUMENT CALLBACK-A, 
-            //TE then METODE, MOGU DEFINISATI REGISTROVANJE, POMENUTOG CUSTOM ELEMENTA, ODNOSNO
-            //TAGA, KOJEG BI REPREZENTOVALA SomeAnchor KOMPONENTA
-            //U ISTOM CALLBACK-U, MOGU DEFINISATI, "HRANJENJE", NEREGUSTROVANIH ELEMENTA, PODACIMA,
-            //CAK PRE POMENUTE GORNJE STAVKE
-            //ONDA KADA REGISTRUJEM ELEMENTE, MOGU DEFINISATI NJIHOVO PRIKAZIVANJE, ODNOSNO FADING IN
-
-            const ovo = this;
-
-            promisePodaciSaServera.then(podaci => {
-                let counter = 0;
-                for(let anch of nestedUnregisteredAnchors){
-                    //POSTO JE OVO SAMO PRIMER, DEFINISACU mock-href ATRIBUT, ON NECE IMATI NIKAKVOG
-                    //EFEKTA, JER NISAM DEFINISAO U SAMOJ SomeAnchor KOMPONENTI RUKOVANJE PODACIMA
-                    //KOJI BI BILI LINKOVI I NJIHOVO PROSLEDJIVANJE U SHADOW DOM I DAVANJE KAO VREDNOSTI
-                    //href ATRIBUTA a TAGA, KOJI JE ELEMENT U SHADOW ROOT-U
-                    anch.setAttribute('mock-href', podaci[counter++]);
-                    anch.removeAttribute('style');
-                    anch.style.float = "left";                     
-                }
-
-                console.log(window.customElements.define('some-anchor', SomeAnchor));
-
-                return nestedUnregisteredAnchors;
-
-            }).then(anchors => {
-                anchors.forEach(anch => {
-                    anch.leftFloating = true;
-                });
-                ovo.placeholder = false;
-                return anchors;
-            }).then(anchors => {
-                
-                anchors.forEach(anch => {
-                    anch.opacitated = true;
-                });
-
-            });
-        }
-
-        this.simulateRequestCallb = this.simulateRequestCallb.bind(this);
-
-    }
-
-    simulateRequestCallb(){
-        const dataSentFromServer = [
-            "mock url 1",
-            "mock url 2",
-            "mock url 3",
-            "mock url 4"
-        ];
-        
-        let dataReceived = [];
-
-        const prom = new Promise((res, rej) => {
-            window.setTimeout(ev => {
-                dataReceived = dataSentFromServer;
-                res(dataReceived);
-            }, 4000);
-        });
-
-        return prom;
-    }
-
-    set placeholder(val){
-        if(val){
-            this.shadowRoot.querySelector('.major_kont').setAttribute('placeholder', '');
-        }else{
-            this.shadowRoot.querySelector('.major_kont').removeAttribute('placeholder');
-        }
-    }
-}
-
-window.customElements.define('some-an-kont', SomeAnKont);
-
-//document.querySelector('some-an-kont').placeholder = true;
-
-//document.querySelector('some-anchor').opacitated = false;
-
-//KREIRACU I CONTAINER (U KOJI BI SE NEST-OVALI CUSTOM ELEMENTI, KOJE BI REPREZENTOVALA GORNJA KLASA),
-// KOJEG CU ODMAH I REGISTROVATI
-
-
-
-//CUSTOM ELEMENTE, CIJI TAG NIJE REGISTROVAN, ODNOSNO ELEMENTE KOJI NISU, ENDOWED KLASOM, ZELIM DA
-//NESTUJEM U CONTAINER-U
-
-//ODNOSNO ONO STO ZELIM DA URADIM JESTE DA SE CUSTOM ELEMENT REGISTRUJE (KORISCENJEM define METODE)
-
-
-//ODRADICU, JEDAN PRIMER
-
-//SADA SAM VIDEO, KOJE SU OSOBINE, ODNOSNO OSOBINA, 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -3321,4 +3146,77 @@ root2.addEventListener('click', function(ev){
     console.log(el)
     el2.classList.add('transition_class');
 });
+
+
+
+
+class OblastElement extends HTMLElement {
+    constructor(){
+        super();
+        const divElement = document.createElement('div');
+        const anchorElement = document.createElement('a');
+        const styleElement = document.createElement('style');
+        const styles = `
+            .opsta_klasa {
+                border: pink solid 2px;
+                width: 280px;
+                height: 100px;
+                background: yellow;
+            }
+
+            .opsta_klasa a {
+                opacity: 0;
+                transition-property: opacity;
+                transition-duration: 2s;
+                transition-timing-function: ease-in;
+            }
+
+            .opsta_klasa[opacitated] a {
+                opacity: 1;
+            }
+        `;
+
+        styleElement.textContent = styles;
+        
+        divElement.classList.add('opsta_klasa');
+
+        anchorElement.innerText = "pritisni";
+        anchorElement.setAttribute('href', '#');
+
+        divElement.appendChild(anchorElement);
+
+        this.attachShadow({mode: 'open'});
+
+        this.shadowRoot.appendChild(styleElement);
+        this.shadowRoot.appendChild(divElement);
+        
+        this.shadowRoot.querySelector('a').addEventListener('click', ev => ev.preventDefault());
+
+        const custEl = this;
+        
+        custEl.addEventListener('click', function(ev){
+            custEl.opacitated = true;
+        });
+    }
+
+    set opacitated(val){
+        if(val){
+            this.shadowRoot.querySelector('.opsta_klasa').setAttribute('opacitated', '');
+        }else{
+            this.shadowRoot.querySelector('.opsta_klasa').removeAttribute('opacitated');
+        }
+    }
+}
+
+
+
+new Promise((resolve, rejct) => {
+    window.customElements.define('oblast-element', OblastElement);
+    resolve();
+}).then(function(){
+    //document.querySelector('.some_div_el').querySelector('oblast-element').opacitated = true;
+});
+
+
+
 
