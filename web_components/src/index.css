@@ -261,7 +261,7 @@ section {
 
 
 
-some-anchor:not(:defined ){
+/*some-anchor:not(:defined ){
     box-shadow: orange 10px 10px;
-}
+}*/
 

@@ -2656,6 +2656,11 @@ class NekiMenu extends HTMLElement {
 
 window.customElements.define('neki-menu', NekiMenu);
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //KREIRACU I JEDAN PRIMER, U KOJEM CU KORISTITI     Promise.all     FUNKCIJU, A TAKODJE I PROPERTI 
 //localName KOJIM, MOGU PRISTUPITI IMENU TAGA, NEKOG HTML ELEMENTA (OVO CE BITI KORISNO)
@@ -2785,6 +2790,153 @@ new Promise(function(resolve, reject){
 
 //SADA CU DEFINISATI CUSTOM CONTAINER, KOJI TREBA DA "ENKAPSULISE" GRUPU CUSTOM ANCHOR-A
 
+class AnchorGroup extends HTMLElement {
+    constructor(){
+        super();
+        
+        //IZBOR (I SKLADISTENJE) SVIH NEREGISTROVANIH CUSTOM ANCHOR-A
+        this._unregAnchs = this.querySelectorAll(':not(:defined)');
+        this._unregNumber = this._unregAnchs.length;
+        this._klasaAnchora = SomeAnchor;
+
+        console.log(this._unregAnchs, this._uregNumber);
+
+        const divElement = document.createElement('div');
+        const styleElement = document.createElement('style');
+        const fragment = document.createDocumentFragment();
+
+        this.attachShadow({mode: 'open'});
+
+        const styles = `
+            .an_gr {
+                border: olive solid 1px;
+                diplsy: block;
+                width: 78%;
+                position: relative;
+            }
+
+            .an_gr[loading_placeholder]::before {
+                display: inline-block;
+                content: "Loading...";
+                position: absolute;
+            }
+            
+            /*ZELIM DA NEREGISTROVANI some-anchor ELEMENTI ZAUZMU PROSTOR, ISTI ONAKAV, KAKV BI 
+            ZAUZIMALI, DIV ELEMENTI IZ NJIHOVOG SHADOW DOM-A(KADA SE REGISTRUJU) 
+            NA OVAJ NACIN SLUZE KAO PLACEHOLDERI (REGISTROVANIH ELEMENATA)
+            U CONTAINERU (DIV ELEMNTU SHADOW ROOT-A, anchor-group TAGA), KOJI JE MOGUCE RESIZOVATI*/
+            /*BITAN STIL OVOG SELEKTORA JESTE visibility*/
+            /*NEKI STILOVI SU SUVISNI, JER SU PREKOPIRANI IZ PREDHODNE KOMPONENTE
+            BITNI SU SAMO ONI KOJI SE TICU DIMENZIJA*/
+            
+            .an_gr > some-anchor:not(:defined) {
+                box-size: border-box;
+                display: inline-block;
+                border: pink solid 1px;
+                text-align: center;
+                margin-top: 4px;
+                margin-left: 8px;
+                margin-bottom: 4px;
+                padding: 2px;
+                font-size: 1.4rem;
+                height: 1.4rem;
+                background-image: linear-gradient(48deg, lightseagreen, tomato);
+                visibility: hidden;
+            }
+            
+        `;
+
+        styleElement.textContent = styles;
+        
+        divElement.classList.add('an_gr');
+
+        //KACENJE CUSTO ANCH-OVA NA FRAGMENT
+        for(let anch of this._unregAnchs){
+            fragment.appendChild(anch);
+        }
+
+        divElement.appendChild(fragment);
+
+        this.shadowRoot.appendChild(styleElement);
+        this.shadowRoot.appendChild(divElement);
+
+        //POTREBNO JE U "SLUCAJU SVAGOG OD" (OVDE SAM STAVIO),
+        // NESTED NEREGISTROVANIH CUSTOM ANCHOR-A DEFINISATI
+        //OVO RADIM, DA BI IMAO NIZ PROMISE-A, JER MI JE POTREBNO DA TAJ NIZ BUDE DOSTUPAN
+        //KAO ARGUMENT ZA Promise.all POZIVANJE
+        //OVO CE IZGLEDATI MALO NELOGICNO, ODNOSNO PRVA DVA OD DVA NACINA
+        
+        //PRVI NACIN
+        const nizPromisea = [...this._unregAnchs].map(anch => 
+            window.customElements.whenDefined(anch.localName)      
+        );
+        
+        //DRUGI NACIN
+        const nizPromisea2 = [];
+        for(let anch of this._unregAnchs){
+            nizPromisea2.push(window.customElements.whenDefined(anch.localName));
+        }
+
+        //TRECI NACIN
+        const nizPromisea3 = [];
+        for(let i = 0; i < this._unregNumber; i++){
+            nizPromisea3.push(window.customElements.whenDefined('some-anchor'));
+        }
+
+        //IDEJA IZA OVOGA JESTE DA, KADA SVAKI OD ELEMENATA BUDE REGISTROVAN (IAKO JE REC O 
+        //VISE ELEMENATA, KOJE TREBA DA PREDSTAVLJA, JEDAN TE ISTI NAME (TAG), I DA BUDU ENDOWED 
+        //JEDNOM TE ISTOM KLASOM, OVO SE RADI DA BIH IMAO NIZ PROMISE-A, KOJI KADA SE SVI BUDU RESOLVE-OVALI
+        //MOCI CE SE ODRADITI NESTO DRUGO DEFINISANO then METODOM
+
+        Promise.all(nizPromisea).then(() => {
+            window.setTimeout(ev => {
+                this._unregAnchs.forEach(anch => {
+                    anch.opacitated = true;                    
+                });
+            }, 2);
+        });
+
+        //PRVO SALJEM ZAHTEV SERVERU
+        
+        this.serverRequestSimulation().then(serverData => {
+            //HRANIM ANCHORE, PODACIMA
+            let brojac = 0;
+            this._unregAnchs.forEach(anch => {
+                anch.setAttribute('mock-url', serverData[brojac++]);
+            });
+
+            //REGISTRUJEM
+            window.customElements.define(this._unregAnchs[0].localName, this._klasaAnchora);
+            
+        });
+       
+
+        //window.customElements.define('some-anchor', SomeAnchor);
+
+    }
+
+    //METODE
+    //METODA, KOJA SIMULIRA SERVER REQUEST (PODACI CE STIZATI 4 SEKUNDE)
+    serverRequestSimulation(){
+        const serverData = [
+            '#mock-link-podcasts',
+            '#mock-link-authors',
+            '#mock-link-herbs',
+            '#mock-link-teas'
+        ];
+
+        return new Promise((resolve, reject) => {
+            window.setTimeout(() => {
+                resolve(serverData);
+            }, 2000);
+        });
+    }
+
+}
+
+window.customElements.define('anchor-group', AnchorGroup);
+
+//console.log(window.customElements.get('anchor-group'));
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
