@@ -2815,10 +2815,12 @@ class AnchorGroup extends HTMLElement {
                 position: relative;
             }
 
-            .an_gr[loading_placeholder]::before {
+            .an_gr[plh]::before {
                 display: inline-block;
                 content: "Loading...";
                 position: absolute;
+                left: 0px;
+                top: 0px;
             }
             
             /*ZELIM DA NEREGISTROVANI some-anchor ELEMENTI ZAUZMU PROSTOR, ISTI ONAKAV, KAKV BI 
@@ -2860,6 +2862,8 @@ class AnchorGroup extends HTMLElement {
         this.shadowRoot.appendChild(styleElement);
         this.shadowRoot.appendChild(divElement);
 
+        this.plh = true;
+
         //POTREBNO JE U "SLUCAJU SVAGOG OD" (OVDE SAM STAVIO),
         // NESTED NEREGISTROVANIH CUSTOM ANCHOR-A DEFINISATI
         //OVO RADIM, DA BI IMAO NIZ PROMISE-A, JER MI JE POTREBNO DA TAJ NIZ BUDE DOSTUPAN
@@ -2894,16 +2898,21 @@ class AnchorGroup extends HTMLElement {
                     anch.opacitated = true;                    
                 });
             }, 2);
+            console.log(this._unregAnchs);
         });
 
         //PRVO SALJEM ZAHTEV SERVERU
-        
+        const thisEl = this;
+
         this.serverRequestSimulation().then(serverData => {
             //HRANIM ANCHORE, PODACIMA
             let brojac = 0;
             this._unregAnchs.forEach(anch => {
                 anch.setAttribute('mock-url', serverData[brojac++]);
             });
+
+            //
+            this.plh = false;
 
             //REGISTRUJEM
             window.customElements.define(this._unregAnchs[0].localName, this._klasaAnchora);
@@ -2930,6 +2939,15 @@ class AnchorGroup extends HTMLElement {
                 resolve(serverData);
             }, 2000);
         });
+    }
+
+    //SETTERS
+    set plh(val){
+        if(val){
+            this.shadowRoot.querySelector('.an_gr').setAttribute('plh', '');
+        }else{
+            this.shadowRoot.querySelector('.an_gr').removeAttribute('plh');
+        }
     }
 
 }
