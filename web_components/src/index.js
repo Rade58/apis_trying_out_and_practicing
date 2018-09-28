@@ -2898,7 +2898,7 @@ class AnchorGroup extends HTMLElement {
                     anch.opacitated = true;                    
                 });
             }, 2);
-            console.log(this._unregAnchs);
+            //console.log(this._unregAnchs);
         });
 
         //PRVO SALJEM ZAHTEV SERVERU
@@ -2955,9 +2955,141 @@ class AnchorGroup extends HTMLElement {
 window.customElements.define('anchor-group', AnchorGroup);
 
 //console.log(window.customElements.get('anchor-group'));
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///PRE NEGO STO NASTAVIM, MORAM SE OSVRNUTI I RECI, DA KADA SE CUSTOM ELEMENT REGISTRUJE
+    /*`
+        neki-custom:not(:defined) {
+            stilovi
+        }
+    `*/
+////////////VISE NE VAZI SELEKTOVANJE   :not(:defined)          JER JE ELEMENT POSTAO       :defined
+//POMENUTO SE, JOS NAZIVA I PREESTYLING CUSTOM ELEMENATA
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+///////////////STILIZOVANJE
+//IAKO POSTOJI style TAG U shadowRoot-U, DALJE STILIZOVANJE CUSTOM ELEMENATA, IZVAN SHADOW DOM-A,
+//ODNOSNO USER DEFINED STILIZOVANJE, MOZE OVERRIDOVATI, ONE STILOVE KOJE SU DEFINISANI U SHADOW DOM-U 
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////TEMPLATES AND SLOTS
+////////////////////////////// OBRAZCI I SLOTOVI
+//
+//
+//POCECU S PRIMEROM
+
+//  OVO SAM DEFINISAO U HTML-U
+`
+<template id="my_paragraph">
+    <p>My paragraph</p>
+</template>
+<div class="za_obrazac"></div>
+`
+
+const template = document.getElementById('my_paragraph');
+const templateContent = template.content;                   //OVO JE DOCUMENT FRAGMENT
+                                                            //KOJI KAD STAMPAM NE PRIKAZUJE SADRZINU
+console.log(templateContent);
+
+console.log(templateContent.__proto__);             //I ON IMA SVOJE METODE I PROPERTIJE
+
+//JEDAN OD PROPERTIJA JE
+console.log(templateContent.children);              //PRE NEGO STO JE APPEND-OVAN NA DOM
+                                                    //OVAJ children NIZ IMA CLANOVE KOJI SU
+                                                    //ELEMENTI FRAGMENTA, A KADA SE APPEND-UJE
+                                                    //POMENUTI NIZ JE PRAZAN
+
+//document.querySelector('.za_obrazac').appendChild(templateContent);
+
+/////////////////////////////////////////////////////////////////////////////////
+//KORISCENJE TEMPLATE-OVA SA WEB KOMPONENTAMA
+//
+//NECU SUVISNO OBJASNJAVATI, VEC CU SAMO RECI DA CE U OVOM SLUCAJU KORISTI      cloneNode   METODA
+//Node-OVOG     PROTOTIPA
+
+window.customElements.define('my-paragraph', class extends HTMLElement {
+    constructor(){
+        super();
+        const templejt = document.getElementById('my_paragraph');
+        const templejtSadrzina = templejt.content;
+        //ONO STO RANIJE NISAM ZNAO JESTE DA POVRATNA VREDNOST      appendChild     METODE JESTE
+        //ELEMENT NA KOJI SE METODA PRIMENILA, ODNOSNO NA KOJI JE NESTO APPENDOVANO, POMENUTOM METODOM 
+        const shadowDom = this.attachShadow({mode: 'open'}).appendChild(templejtSadrzina.cloneNode(true));
+        //AKO SE BOOLEAN true DODA KAO ARGUMENT PRIMENI cloneNode METODE, TO ZNACI DA CE ZAJEDNO SA 
+        //Node
+        //ELEMENTOM BITI KLONIRANI I NJEGOVI children ELEMENTI
+        //DA SAM DODAO false, BIO BI KLONIRAN SAMO NODE NAD KOJI MSE METODA PRIMENILA
+        
+        //DAKLE, U OVOM SLUCAJU, KLONIRAN JE FRAGMENT, KOJI OBUHVATA SVE ELEMENTE, NESTOVANE, 
+        //U template-U
+        //I TAJ CLONE JE, ONDA ZAKACEN U shadowRoot, MOG CUSTOM ELEMENTA  
+    }
+});
+
+//ONO STO SAM MOGAO URADITI, A NISAM U PREDHODNOM PRIMERU, JESTE DA DODAM, ODNOSNO NESTUJEM style TAG, 
+//(NARAVNO ZAJEDNO SA STILOVIMA) U TEMPLATE; NA TAJ NACIN KADA KLONIRAM, SVU TU SADRZINU TEMPLATE-A, I
+//ZAKACIM JE U SHADOW DOM, CUSTOM ELEMENTA, NA TAJ NACIN BIH OBEZBEDIO STILIZOVANJE
+//
+
+//OVDE SAMO PRIKAZUJEM, KAKO IZGLEDA, MOJ TEMPLATE U HTML-U, KOJI SADA IMA NEST-OVAN I STYLE ELEMENT
+`
+<template id="my_paragraph">
+    <style>
+      p {
+        color: #211f2a;
+        background-color: indianred;
+        padding: 8px;
+      }
+    </style>
+    <p>My paragraph</p>
+  </template>
+`
+
+const mojParagraf = document.createElement('my-paragraph');
+document.getElementsByClassName('neki_kont8')[0].appendChild(mojParagraf);
+
+
+//////DODAVANJE FLEKSIBILNOSTI SA SLOTOVIMA             slots
+
+//TEKST PARAGRAFA (TEMPLATE-A) U HTML-U CU SADA OBUHVATITI   slot  TAGOM, KOJI CE IMATI name   ATRIBUT
+//VREDNOST      name        ATRIBUTA CE MI KORISTITI KADA BUDEM UPOTREBLJAVAO POMENUTI SLOT TEMPLEJTA
+`
+<template id="my_paragraph">
+    <style>
+      p {
+        color: #211f2a;
+        background-color: indianred;
+        padding: 8px;
+      }
+    </style>
+    <p><slot name="moj-tekst">My paragraph</slot></p>
+</template>
+`
+//ONO STO JE OBUHVACENO slot TAGOM, MOZE BITI PROMENLJIVO
+//JA SADA MOGU UPOTREBITI ISTI name ATRIBUT, KADA BUDEM NEST-OVAO NEKI ELEMENT ILI NEKI DRUGI TEKST,
+// U my-paragraph CUSTOM ELEMENTU
+
+//SADA CU DIREKTNO U HTML-U, NESTOVATI, POMENUTI my-paragraph CUSTOM ELEMENT, I OVOG PUTA C MU DODATI
+//JOS NEKI NESTED SADRZAJ, A TO CE SVE IZGLEDATI OVAKO
+//A SLOT REFERENIRAM UZ POMOC       slot        ATRIBUTA
+`
+<my-paragraph>
+      <span slot="moj-tekst" style="font-style: italic;">Neki drugi tekst</span>
+</my-paragraph>
+`
+
+//ELEMENTI KOJI MOGU BITI INSERTOVANUI U SLOT SE ZOVU       SLOTABLE        ELEMENTI
+//A KADA SE ELEMENT INSERT-UJE U SLOT, KAZE SE DA JE        SLOTTED
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

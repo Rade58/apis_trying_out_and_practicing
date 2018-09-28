@@ -262,7 +262,23 @@
   </div>
   <br />
   <hr />
+  <template id="my_paragraph">
+    <style>
+      p {
+        color: #201f25;
+        background-color: #df8f70f8;
+        padding: 8px;
+      }
+    </style>
+    <p><slot name="moj-tekst">My paragraph</slot></p>
+  </template>
   <br />
+  <hr />
+  <div class="neki_kont8"></div>
+  <br />
+  <my-paragraph>
+      <span slot="moj-tekst" style="font-style: italic">Neki drugi tekst</span>
+</my-paragraph>
   <hr />
   <script src="./src/index.js"></script>
   </body>
