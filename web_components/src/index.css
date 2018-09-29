@@ -265,3 +265,15 @@ section {
     box-shadow: orange 10px 10px;
 }*/
 
+.neki-div {
+    width: 260px;
+    height: 120px;
+    background-color: #1b7a72;
+}
+
+.neki-div > .child-div {
+    width: 56px;
+    height: 28px;
+    background-color: #b1515e;
+}
+

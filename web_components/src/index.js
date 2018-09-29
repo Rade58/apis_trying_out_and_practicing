@@ -3042,7 +3042,7 @@ window.customElements.define('my-paragraph', class extends HTMLElement {
 //
 
 //OVDE SAMO PRIKAZUJEM, KAKO IZGLEDA, MOJ TEMPLATE U HTML-U, KOJI SADA IMA NEST-OVAN I STYLE ELEMENT
-`
+var ab=`
 <template id="my_paragraph">
     <style>
       p {
@@ -3063,7 +3063,7 @@ document.getElementsByClassName('neki_kont8')[0].appendChild(mojParagraf);
 
 //TEKST PARAGRAFA (TEMPLATE-A) U HTML-U CU SADA OBUHVATITI   slot  TAGOM, KOJI CE IMATI name   ATRIBUT
 //VREDNOST      name        ATRIBUTA CE MI KORISTITI KADA BUDEM UPOTREBLJAVAO POMENUTI SLOT TEMPLEJTA
-`
+var a=`
 <template id="my_paragraph">
     <style>
       p {
@@ -3082,7 +3082,7 @@ document.getElementsByClassName('neki_kont8')[0].appendChild(mojParagraf);
 //SADA CU DIREKTNO U HTML-U, NESTOVATI, POMENUTI my-paragraph CUSTOM ELEMENT, I OVOG PUTA C MU DODATI
 //JOS NEKI NESTED SADRZAJ, A TO CE SVE IZGLEDATI OVAKO
 //A SLOT REFERENIRAM UZ POMOC       slot        ATRIBUTA
-`
+var b =`
 <my-paragraph>
       <span slot="moj-tekst" style="font-style: italic;">Neki drugi tekst</span>
 </my-paragraph>
@@ -3090,6 +3090,149 @@ document.getElementsByClassName('neki_kont8')[0].appendChild(mojParagraf);
 
 //ELEMENTI KOJI MOGU BITI INSERTOVANUI U SLOT SE ZOVU       SLOTABLE        ELEMENTI
 //A KADA SE ELEMENT INSERT-UJE U SLOT, KAZE SE DA JE        SLOTTED
+
+////SADA CU KREIRATI, JEDAN PRIMER, KOJI NIJE TRIVIJALAN KAO PREDHODNI
+///OVOG PUTA CU U template TAGU UCESTVOVATI ELEMENTI, SA KOJIMA SE RANIJE NISAM SUSRETAO
+//TO SU     details     I       summary    (ELEMNT FUNKCIONISE TAKO DA KORISNIK MOZE SAKRITI
+//ILI POKAZATI DODATNE INFORMACIJE )
+//PISACU PRVO OVDE PA CU PREKOPIRATI U HTML
+const templ1 = `
+    <template id="detalji-elementa-templejt">
+        <style>
+            details {
+                font-family: "Open Sans Light", Helvetica, Arial;
+            }
+            .ime{
+                font-weight: bold;
+                color: #217ac0;
+                font-size: 120%;
+            }
+            h4 {
+                margin: 10px 0 -8px 0;
+            }
+            h4 span {
+                background-color: #217ac0;
+                padding: 2px 6px 2px 6px;
+                border: 1px solid #cee9f9;
+                border-radius: 4px;
+                color: white;
+            }
+            .atributi {
+                margin-left: 22px;
+                font-size: 90%;
+            }
+            .atributi p {
+                margin-left: 16px;
+                font-style: italic;
+            }
+        </style>
+        <details>
+            <summary>
+                <span>
+                    <code class="ime">
+                        &#60;<slot name="ime_elementa">POTREBNO IME</slot>&#62;
+                    </code>
+                    <i class="opis">
+                        <slot name="opis">POTREBAN OPIS</slot>
+                    </i>
+                </span>
+            </summary>
+            <div class="atributi">
+                <h4><span>Atributi</span></h4>
+                <slot name="atributi"><p>Nijedan</p></slot>
+            </div>
+        </details>
+        <hr/>
+    </template>
+`;
+
+//SADA CU DEFINISATI, ODNOSNO REGISTROVATI, NOVI CUSTOM ELEMENT KOJI CE IMATI IME   detalji-elementa
+
+window.customElements.define('detalji-elementa', class extends HTMLElement {
+    constructor(){
+        super();
+        const templateContent = document.getElementById('detalji-elementa-templejt').content;
+        const shadowRoot = this.attachShadow({mode: 'open'}).appendChild(templateContent.cloneNode(true));
+    }
+});
+
+//POSTO SAM TO URADIO, SADA CU NESTOVATI MOJ NOVI CUSTOM ELEMENT
+///////////////////////////////////////////////////////////////////////////
+
+///////////////
+//U CILJU VEZBE OPET RADIM, GOTOVO ISTI PRIMER (NOVI TEMPLATE SAM KREIRAO U HTML-U)
+
+window.customElements.define('element-detail', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowDom = this.attachShadow({mode: 'open'});
+        const templateContent = document.getElementById('element_details').content;
+
+        shadowDom.appendChild(templateContent.cloneNode(true));
+    }
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////SADA CU SE NESTO DETALJNIJE BAVITI shadowDom-OM
+//POSTOJE NEKI rootElementi, KOJIMA I NIJE MOGUCE NAKACVITI SHADOW DOM
+//      img         IMA SMISLA ZASTO SE NE MOZE
+//      input   textarea    IMAJU SVOJ UGRADJEN ISHADOW DOM
+
+//POMENUCU NEKOLIKO TERMINA
+//
+//  Shadow host: 
+//      Regularni DOM node na koji je shadow DOM prikacen
+//  Shadow tree:
+//      DOM stablo unutar shadow DOM-A
+//  Shadow boundary: 
+//      mesto na kojem se shadow DOM završava, a regularni DOM počinje
+//  Shadow root
+//      root node shadow drveta     (OVO JE FRAGMENT) POVRATNA VREDNOST attachShadow METODE 
+//                                                    A TAKODJE MU JE MOGUCE PRISTUPITI UZ POMOC
+//                                                     shadowRoot       PROPERTIJA  host-A
+
+/////////////////////////////////POCECU S PRIMEROM////////////////
+
+window.customElements.define('some-practice-element', class SomePracticeElement extends HTMLElement{
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const nekiParagraf = document.createElement('p');
+
+        nekiParagraf.innerHTML = "Neki tekst";
+
+        shadowRoot.appendChild(nekiParagraf);
+
+        //KACENJE shadowRoot-a
+
+        console.log(     shadowRoot          );          //      -->        STAMPA SE FRAGMENT
+                                                                            //  A KADA PRITISNE STRLICU
+                                                                            //  VIDI SE CELO shadow drvo
+
+        console.log(     this.shadowRoot     );          //      -->         STAMPA SE ISTO STO I GORE
+
+        console.log(     shadowRoot.host     );          //      -->        STAMPA SE
+                                                                            //  <some-practice-element></some-practice-element>
+                                                                        //I OPET JE PRITISKOM NA STRELICU MOGUCE 
+                                                                        //VIDETI STA JE NESTED U POMENUTOM 
+                                                                        //CUSTOM ELEMENTU
+                                                                        //ZATIM JE MOGUCE VIDETI shadow root
+                                                                        //PRITISNUTI STRELICU I GLEDATI OD CEGA SE
+                                                                        //DUBLJE SASTOJI
+        
+        console.log(     this                );          //      -->        STAMPA SE ISTO STO I GORE 
+        
+        
+        const frag = document.createDocumentFragment();
+
+        console.log(frag);      //STAMPAK KLASICNI FRAGMENT U CILJU UPOREDJIVANJA SA shadow root-OM
+    }
+});
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -3521,4 +3664,13 @@ new Promise((resolve, rejct) => {
 
 
 
+
+
+const nekiDiv = document.getElementsByClassName('neki-div')[0];
+
+
+
+console.log(nekiDiv.nodeName);
+console.log(nekiDiv.nodeType);
+console.log(nekiDiv.nodeValue);
 

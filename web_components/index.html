@@ -280,6 +280,224 @@
       <span slot="moj-tekst" style="font-style: italic">Neki drugi tekst</span>
 </my-paragraph>
   <hr />
+  <hr />
+  <br />
+  <hr />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <template id="detalji-elementa-templejt">
+    <style>
+      details {
+        font-family: "Open Sans Light", Helvetica, Arial;
+      }
+      .ime{
+        font-weight: bold;
+        color: #217ac0;
+        font-size: 120%;
+      }
+      h4 {
+        margin: 10px 0 -8px 0;
+      }
+      h4 span {
+        background-color: #217ac0;
+        padding: 2px 6px 2px 6px;
+        border: 1px solid #cee9f9;
+        border-radius: 4px;
+        color: white;
+      }
+      .atributi {
+        margin-left: 22px;
+        font-size: 90%;
+      }
+      .atributi p {
+        margin-left: 16px;
+        font-style: italic;
+      }
+      dl {
+        margin-left: 6px;
+      }
+      dt {
+        font-weight: bold;
+        color: #217ac0;
+        font-size: 110%;
+        font-family: Consolas, "Liberation Mono", Courier;
+        margin-left: 16px;
+      }
+    </style>
+    <details>
+        <summary>
+            <span>
+                <code class="ime">
+                    &#60;<slot name="ime_elementa">POTREBNO IME</slot>&#62;
+                </code>
+                <i class="opis">
+                    <slot name="opis">POTREBAN OPIS</slot>
+                </i>
+            </span>
+        </summary>
+        <div class="atributi">
+            <h4><span>Atributi</span></h4>
+            <slot name="atributi"><p>NIJEDAN</p></slot>
+        </div>
+    </details>
+    <hr/>
+  </template>
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <hr />
+  <br />
+  <hr />
+  <detalji-elementa>
+    <span slot="ime_elementa">slot</span>
+    <span slot="opis">Placeholder unutar web komponente, koji korisnik moze popuniti, sa svojim
+      markup-om, sa efektom composing-a razlicitih DOM stabala, zajedno
+    </span>
+    <dl slot="atributi">
+      <dt>name</dt>
+      <dd>odnosi se na ime slota</dd>
+    </dl>
+  </detalji-elementa>
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+
+  <hr />
+  <br />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <template id="element_details">
+    <style>
+      details {
+        font-family: "Open Sans Light", Helvetica, Arial;
+        font-size: 100%;
+        
+      }
+      .element_name {
+        color:#2b5ed6;
+        font-weight: bold;
+        font-size: 128%;
+      }
+      .attributes {
+        margin-left: 28px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 94%;
+        margin-top: 4px;
+      }
+      .attributes h4 {
+        margin-bottom: 0px;
+      }
+      .attributes h4 span {
+        background-color: #2b5ed6;
+        color: bisque;
+        border-radius: 2px;
+        padding: 2px 4px 2px 4px;
+        margin-bottom: 0px;
+      }
+      .attributes span {
+        margin-top: 4px;
+      }
+       p {
+        margin-top: 2px;
+      }
+      dt{
+        margin-top: 4px;
+      }
+    </style>
+    <details>
+      <summary>
+        <span>
+          <code class="element_name">&#60;<slot name="element_name">NAME OF THE ELEMENT</slot>&#62;</code>
+          <i class="description"><slot name="elements_description">HIS DESCRIPTION</slot></i>
+        </span>
+      </summary>
+      <div class="attributes">
+        <h4><span>Attributes</span></h4>
+        <slot name="attributes"><p>NAME OF THE ATTRIBUTE AND ABOUT THE ATTRIBUTE</p></slot>
+      </div>
+    </details>
+    <hr />
+  </template>
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <br />
+  <br />
+  <element-detail>
+    <span slot="element_name">template</span>
+    <span slot="elements_description">Mehanizam za zadrzavanje client-side sadrzine, koja se
+      ne render-uje, kada se stranica load-uje, ali se moze, iznova i iznova (subsequently)
+      instancizirati (instantiate), tokom JavaScript-OVOG runtime-A
+    </span>
+    <span slot="attributes"><p>none</p></span>
+  </element-detail>
+  <br />
+  <br />
+  <br />
+  <br />
+  <element-detail>
+    <span slot="element_name">slot</span>
+    <span slot="elements_description">Placeholder unutar web komponente, koji korisnik moze popuniti, sa svojim
+        markup-om, sa efektom composing-a razlicitih DOM stabala, zajedno
+    </span>
+    <dl slot="attributes">
+      <dt>name</dt>
+      <dd>odnosi se na ime slot-a</dd>
+    </dl>
+  </element-detail>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <div class="neki-div">
+    <div class="child-div"></div>
+  </div>
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <some-practice-element></some-practice-element>
+  <hr />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
+  <hr />
+  <br />
   <script src="./src/index.js"></script>
   </body>
 </html>
