@@ -3421,6 +3421,88 @@ const flattened_DOM = `
         </div>
     </podcast-element>
 `;
+//////////////////////////////////////////////////////////////////////
+//              STILIZOVANJE
+//  NAJVECA PREDNOST JESTE SCOPED CSS, ODNOSNO CSS "OGRANICEN", ILI "UOBIMLJEN", ODNOSNO CSS KOJI SE 
+//  NE PRELIVA NA OKOLINU-ELEMENTE IZVAN shadow DOM-A; ODNOSNO STILOVI DEFINISANI UNUTRA, DON'T BLEED OUT
+//  
+//  CSS SELEKTORI IZ SPOLJASJOSTI SHADOW DOMA, SE NE APLICIRAJU NA UNUTRASNJOST KOMPONENTE
+//
+//SVE TO ZNACI DA MOGU KORISTITI    id      I       class   SELEKTORE UNUTAR style TAGA U shadow dom-u,
+//BEZ BOJAZNI DA CE TO IZAZVATI KONFLIKT BILO GDE DRUGDE NA STRANICI  
+//
+//MOGU CAK I DEFINISATI I EXTERNAL STYLESHEET, KOJI ONDA, MOGU LINK-OVATI UNUTAR SHADOW DOM-A
+//MEDJUTIM, SAZNAO SAM TAKODJE DA MOZE DOCI DO BUG-A, U SLUCAJU webkit-A
+
+//OPET CU KREIRATI NEKI JEDNOSTAVAN PRIMER, U KOJEM CU STILIZOVATI SHADOW TREE, NA POMENUTE RAZLICITE
+//NACINE
+//
+
+window.customElements.define('podcast-entity', class PodcastEntity extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divElement = document.createElement('div');
+        const styleElement = document.createElement('style');
+
+        const nekiSlot = document.createElement('slot');
+        nekiSlot.name = 'podcast';
+        nekiSlot.innerHTML = "<h1>DEFAULT TEKST</h1>";
+
+        divElement.appendChild(nekiSlot);
+
+        //SLEDECI STILOVI CE BITI DEO style TAGA, KOJI CE BITI TAG SHADOW DRVETA
+
+        const styleContent = `
+                                    /*OVDE JE SVE U REDU*/
+            div {                             
+                border: yellow solid 2px;       
+                text-align: center;
+                padding: 8px;
+                background-color: #e67ba6;
+            }*/
+
+            /*slot {                            POKUSAJ STILIZOVANJA SAMOG SLOT-A, JESTE MOGUC
+                background-color: pink;         ALI OPET NEZAHVALAN, JER SE OVIM ONO STO JE SLOTTED
+                color: lightcyan;               STILIZUJE NA NACIN DA NASLEDJUJE NEKE STILOVE OD SLOTA
+            }*/                                 /* A ZNAM DA SE ODREDJENI STILOVI NE MOGU NASLEDJIVATI
+                                                                JEDNOM RECJU OVO NEMA NIKAKVU POENTU  */
+            /*div p {                               
+                background-color: #e67ba6;          A PROBLEM JE NASTAO JER NE MOGU NA OVAJ NACIN
+            }*/                                     /*STILIZOVATI PARAGRAF KOJI JE SLOTTED*/
+
+            
+            /*NAIME ZA STILIZOVANJE SLOTTED ELEMENATA, MOGU KORISTITI PSEUDO ELEMENT
+                        ::slotted()       
+            U ZAGRADU POMENUTOG PSEUDO ELEMENTA, IDE ODGOVARAJUCI SLEKTOR NEKOG OD SLOTTED ELEMENATA
+            NA PRIMER           ::slotted(*)        CE SELEKTOVATI SVE SLOTTED ELEMENTE               
+
+                SADA CU STILIZOVATI PARAGRAF ELEMENT KOJI JE SLOTTED (AKO DOLE POGLEDAM LIGHT DOM MOGU
+                VIDETI KOJI SU ELEMENTI SLOTTED) ELEMENT                                            */
+            
+            ::slotted(.paragraf) {
+                color: white;
+                background-color: #67f19c85;
+            }
+        `;
+        
+        styleElement.textContent = styleContent;
+        
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(divElement);
+
+    }
+});
+
+const izgled_light_dom = `
+    <podcast-entity>
+        
+            <p class="paragraf" slot="podcast">Ovo je tekst nekog paragrafa</p>
+    
+    </podcast-entity>
+`;
+
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
