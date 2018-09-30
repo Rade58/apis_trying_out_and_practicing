@@ -3229,9 +3229,198 @@ window.customElements.define('some-practice-element', class SomePracticeElement 
         const frag = document.createDocumentFragment();
 
         console.log(frag);      //STAMPAK KLASICNI FRAGMENT U CILJU UPOREDJIVANJA SA shadow root-OM
+    
+    
+        const styles = `
+            :host {             /*DA SAM DEFINISAO STILOVE IZVAN SHADOW DOMA 
+                                    ODNOSNO DA SAM KORISTIO TAG SELECTOR  some-practice-element  
+                                    OVO STO JE DEFININISANO :host SELEKTOROM, NE BI VAZILO*/ 
+                color: pink;
+            }
+        `;
+        
+        const styleElement = document.createElement('style');
+
+        styleElement.textContent = styles;
+
+        nekiParagraf.appendChild(styleElement);
+    }
+});
+//AKO NESTU-JEM NEKE ELEMENTE U CUSTOM ELEMENTU, ONI NECE BITI RENDER-OVANI, U SLUCAJU POSTOJANJA
+//ZAKACENOG SHADOW DOMA
+
+//JA SAM RANIJE JAVASCRIPT-OM, U KONSTRUKTORU, PRISTUPAO, TIM ELEMENTIMA, PA SAM IH KACIO NA ELEMENTE
+//SHADOW TREE-JA, MEDJUTIM, JA SAM MOGAO KORISTITI slot-OVE
+
+//SADA CU SE POZABAVITI         KOMPOZICIJOM  SA    slot    ELEMENTIMA
+
+//MEDJUTIM DA SE PRVO UPOZNAM SA TERMINOLOGIJOM
+
+//          Light DOM
+//  MARKUP, KOJI UNOSI KORISNIK MOJIH KOMPONENTI, ODNOSNO ONAJ KOJI IH NESTUJE U HTML, ODNOSNO, MISLIM
+//  NA ONAJ HTML CODE, KOJI ZIVI IZVAN SHADOW DOM-A; ODNOSNO TO SU DIREKTNA DECA MOG CUSTOM ELEMENTA
+
+//          Shadow DOM
+//NECU GA DODATNO KOMENTARISATI, SAMO CU RECI DA JE LOKALAN ZA KOMPONENTU (DEFINISE NJENU UNUTRASNJU 
+//STRUKTURU I SCOPED CSS)
+
+//          Flattened DOM drvo      (izravnano DOM drvo)
+//     REZULTAT KOJI BROWSER POSTIZE DISTRIBUCIJOM KORISNIKOVOG (DRUGI DEVELOPER) LIGHT DOM-A,
+//      U MOJ SHADOW DOM, RENDER-UJUCI FINALNI PROIZVOD
+//TO JE ONO STO SE KAO REZULTAT VIDI U ELEMENT SEKCIJI DEV TOOLS-A, I STA JE RENDER-OVANO NA STRANICI
+//
+//
+//SADA CU NASTAVITI SA          slot    -OVMA
+//
+//Slots are placeholders inside your component that users can fill with their own markup
+
+//Elementima je dozvoljeno da "prelaze" Shadow boundary kada ih poziva <slot>. Ovi elementi se zovu
+//DISTRIBUIRANI node-OVI. Konceptualno, distribuirani node-ovi mogu izgledati malo bizarno
+//Slotovi, fizicki ne pomeraju DOM; oni ga rende-uju na drugoj lokaciji unutar shadow DOM-A.
+//Komponenta može definirati nula ili više slotova u njenom Shadow Dom-u. Slotovi mogu biti prazni ili
+//obezbediti rezervni, odnosno fallback, odnosno default sadržaj
+// Ako korisnik ne obezbedi light DOM sadržaj, slot pravi svoj rezervni sadržaj
+
+//PRVO CU SE POZABAVITI NEIMENOVANIM SLOTOVIMA, KOJI NEMAJU name ATRIBUT
+//AKO, I AKO DEVELOPER NE OBEZBEDI LIGHT DOM, SLOT RENDERUJE, SVOJ FALLBACK SADRZAJ
+
+window.customElements.define('some-hokus-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divEl = document.createElement('div');
+        
+        const slot1 = document.createElement('slot');
+        const slot2 = document.createElement('slot');
+        
+        slot1.textContent = "Neki Tekst blah blah";
+        slot2.textContent = "Drugi tekst blah slah";
+
+        divEl.appendChild(slot1);
+        divEl.appendChild(slot2);
+
+        shadowRoot.appendChild(divEl);
     }
 });
 
+const ovo_sam_unneo_u_HTML = `
+    <some-hokus-element>
+        <p>
+            Uneo drugi developer
+        </p>
+    </some-hokus-element>
+`;
+
+//  SADA AKO NEST-UJEM MOJ CUSTOM ELEMENT U HTML, I AKO TOG CUSTOM ELEMENTU, OBEZBEDIM SADRZAJ
+//  NA STRANICI CE SE RENDER-OVATI UNETA SADRZINA, ALI TAKODJE I SADRZINA DRUGOG SLOT-A
+//
+//  DAKLE, KOD VISE NEIMENOVANIH slot-OVA, ODNOSNO DEFAULT SLOTOVA; KORISTICE SE PRVI SLOT, A FALLBACK
+//  SADRZINA OSTALIH SLOTOAVA, NARAVNO AKO JE DEFINISANA TA FALLBACK SADRZINA, BICE PRIKAZANA, NAKON
+//  ONE SADRZINE KOJU JE DEVELOPER DEFINISAO, I KOJA JE "PROSLEDJENA NA MESTO PRVOG SLOTA"  
+//
+//  NISAM REKAO, ILI IPAK JESAM, DA MOGU DEFINISATI I PRAZAN slot (BEZ FALLBACK SADRZAJA)
+//
+//          MOGU NARAVNO KREIRATI I IMENOVANI SLOT      KOJI IMA    name    ATRIBUT
+//TO SAM I RADIO U PRIMERU SA details I summary TAGOVIMA
+//
+window.customElements.define('some-pokus-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divEl = document.createElement('div');
+        
+        const slot1 = document.createElement('slot');
+        const slot2 = document.createElement('slot');
+        
+        slot1.textContent = "Neki Tekst blah blah";
+        slot2.innerHTML = "<h4>Drugi tekst blah slah</h4>";     //OBRATI PAZNJU DA KAD U STRINGU
+                                                                //DEFINISES HTML, TADA SAMO KORISTIS
+        slot1.name = 'stavros';                                 //      innerHTML        
+        slot2.name = 'halkias';                                 //JER DA SAM KORISTIO       innerText
+                                                                //  ILI         textContent
+        divEl.appendChild(slot1);                               //CELI SADRZAJ STRINGA BI BIO PARSED 
+        divEl.appendChild(slot2);                               //KAO TEXT NODE
+
+        shadowRoot.appendChild(divEl);
+    }
+});
+
+const uneto_u_HTML = `       /*LIGHT DOM*/
+    <some-pokus-element>
+        <p slot="stavros">
+            Ovaj paragraf overriduje slotov fallback sadrzaj 
+        </p>
+    </some-pokus-element>
+`;
+
+const renderovano = `       /*FLATTENED DOM*/
+    <some-pokus-element>
+        <slot name=stavros>
+            <p slot="stavros">
+                Ovaj paragraf overriduje slotov fallback sadrzaj 
+            </p>
+        </slot>
+        <slot name="halkias">
+            <h4>Drugi tekst blah slah</h4>
+        </slot>
+    </some-pokus-element>
+`;
+
+//  DAKLE SADA JE SADRINA PRVOG SLOT-A OVERRIDEN, SA KORISNIKOVIM (DEVELOPER-OVIM) PARAGRAFOM
+//  I TEXT NODE-OM, TOG PARGTRAFA, ALI PORED DEVELOPEROVE SADRZINE, TU CE BITI
+//  RENDERED I FALLBACK SADRZINA (h4 ELEMENT) DRUGOG SLOTA, JER NISAM PROSLEDIO NISTA, U SLUCAJU DRUGOG
+//  NAMED slot-A
+
+//ONO STO JE MENI JOS INTERESANTNO, JESTE DA SE "FRAGMENTNO" (MOJE RECI), U LIGHT DOM-U MOZE DEFINISATI
+//BILO KOJI BROJ ELEMENATA, CIJE CE VREDNOSTI slot ATRIBUTA, KOJE SVAKI ELEMENT IMA, UPRAVO 
+//REFERENCIRATI, ISTO IME, ODNOSNO name , JEDNOG    slot-A
+//POKAZACU TO PRIMEROM
+
+window.customElements.define('podcasts-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const divEl = document.createElement('div');
+        const unorList = document.createElement('ul');
+        
+        const ajtemiSlot = document.createElement('slot');
+
+        ajtemiSlot.name = "podcasts";
+        ajtemiSlot.innerText = "OVDE IDE LIST ITEM";
+
+        unorList.appendChild(ajtemiSlot);
+        divEl.appendChild(unorList);
+        shadowRoot.appendChild(divEl);
+    }
+});
+
+const light_DOM = `
+    <podcasts-element>
+        <li slot="podcasts">Tues wth stories</li>
+        <li slot="podcasts">Ctown</li>
+        <li slot="podcasts">LOS</li>
+        <li slot="podcasts">Jeffries show</li>
+    </podcasts-element>
+`;
+
+const flattened_DOM = `
+    <podcast-element>
+        <div>
+            <ul>
+                <slot name="podcasts">
+                    <li slot="podcasts">Tues wth stories</li>
+                    <li slot="podcasts">Ctown</li>
+                    <li slot="podcasts">LOS</li>
+                    <li slot="podcasts">Jeffries show</li>
+                </slot>
+            </ul>
+        </div>
+    </podcast-element>
+`;
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
