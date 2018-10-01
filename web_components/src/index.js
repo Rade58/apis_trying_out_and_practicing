@@ -3460,13 +3460,13 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 text-align: center;
                 padding: 8px;
                 background-color: #e67ba6;
-            }*/
+            }
 
             /*slot {                            POKUSAJ STILIZOVANJA SAMOG SLOT-A, JESTE MOGUC
                 background-color: pink;         ALI OPET NEZAHVALAN, JER SE OVIM ONO STO JE SLOTTED
                 color: lightcyan;               STILIZUJE NA NACIN DA NASLEDJUJE NEKE STILOVE OD SLOTA
             }*/                                 /* A ZNAM DA SE ODREDJENI STILOVI NE MOGU NASLEDJIVATI
-                                                                JEDNOM RECJU OVO NEMA NIKAKVU POENTU  */
+                                                    JEDNOM RECJU OVO NEMA NIKAKVU POENTU  */
             /*div p {                               
                 background-color: #e67ba6;          A PROBLEM JE NASTAO JER NE MOGU NA OVAJ NACIN
             }*/                                     /*STILIZOVATI PARAGRAF KOJI JE SLOTTED*/
@@ -3480,9 +3480,9 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 SADA CU STILIZOVATI PARAGRAF ELEMENT KOJI JE SLOTTED (AKO DOLE POGLEDAM LIGHT DOM MOGU
                 VIDETI KOJI SU ELEMENTI SLOTTED) ELEMENT                                            */
             
-            ::slotted(.paragraf) {
-                color: white;
-                background-color: #67f19c85;
+            ::slotted(p) {
+                color: wheat;
+                background-color: #21695b8e;
             }
         `;
         
@@ -3496,12 +3496,93 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
 
 const izgled_light_dom = `
     <podcast-entity>
-        
-            <p class="paragraf" slot="podcast">Ovo je tekst nekog paragrafa</p>
-    
+            <p slot="podcast">Ovo je tekst nekog paragrafa</p>
     </podcast-entity>
 `;
 
+//////////////////// DODATNI PRIMERI
+const someHTMLCode = `<template id="form_kont">
+    <style>
+      ::slotted(input) {
+        background: skyblue;
+      }
+    </style>
+    <div>
+      <slot name="first-slot"></slot>
+      <slot name="second-slot"></slot>
+      <slot></slot>
+    </div>
+  </template>
+  
+  <form-container>
+    <label slot="first-slot">Label</label>
+    <input slot="second-slot" type="text">
+    <button>Button</button>
+  </form-container>
+`;
+
+
+class FormContainer extends HTMLElement {
+    constructor() {
+        super();
+        const shadowRoot = this.attachShadow({ mode: 'open' });
+        const template = document.querySelector('#form_kont');
+        
+        shadowRoot.appendChild(template.content.cloneNode(true));
+    }
+}
+  
+window.customElements.define('form-container', FormContainer);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+window.customElements.define('fancy-he', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divElement = document.createElement('div');
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+
+        slotElement.name = "stuff";
+        slotElement.innerHTML = "<h4>DEFAULT CONTENT</h4>";
+        const styleContent = `
+            div {
+                border: pink solid 2px;
+                text-align: center;
+                padding: 18px;
+            }
+
+            :host {
+                display: block;
+                border: 4px solid olive;
+                padding: 4px;
+            }
+
+            ::slotted(h4) {
+                font-size: 2em;
+                color: #e67ba6;
+            }
+
+            ::slotted(p) {
+                background-color: #67f19c85;
+                line-height: 4;
+                color: orange;
+                font-size: 1.2em;
+            }
+        `;
+        styleElement.textContent = styleContent;
+
+        divElement.appendChild(slotElement);
+        
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(divElement);
+    }
+});
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
