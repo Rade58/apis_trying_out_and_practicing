@@ -3444,34 +3444,54 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
         const shadowRoot = this.attachShadow({mode: 'open'});
         const divElement = document.createElement('div');
         const styleElement = document.createElement('style');
+        const sekcija = document.createElement('section');
+        const nekiParagraf = document.createElement('p');
+
+        divElement.classList.add('kontejner');
 
         const nekiSlot = document.createElement('slot');
+        const opetSlot = document.createElement('slot');
+
         nekiSlot.name = 'podcast';
+        opetSlot.name = 'twitch';
         nekiSlot.innerHTML = "<h1>DEFAULT TEKST</h1>";
+        opetSlot.innerHTML = "NEKI DEFAULT TEKST";
+
+        nekiParagraf.textContent = "Tekst paragrafa, koji nije slotted";
+
+        sekcija.appendChild(opetSlot);
+
+        sekcija.appendChild(nekiParagraf);
 
         divElement.appendChild(nekiSlot);
+        divElement.appendChild(sekcija);
 
         //SLEDECI STILOVI CE BITI DEO style TAGA, KOJI CE BITI TAG SHADOW DRVETA
 
         const styleContent = `
-                                    /*OVDE JE SVE U REDU*/
-            div {                             
+                                    
+            .kontejner {   /*OVDE JE SVE U REDU*/             
                 border: yellow solid 2px;       
                 text-align: center;
                 padding: 8px;
                 background-color: #e67ba6;
             }
 
-            /*slot {                            POKUSAJ STILIZOVANJA SAMOG SLOT-A, JESTE MOGUC
-                background-color: pink;         ALI OPET NEZAHVALAN, JER SE OVIM ONO STO JE SLOTTED
-                color: lightcyan;               STILIZUJE NA NACIN DA NASLEDJUJE NEKE STILOVE OD SLOTA
+            
+            
+            
+            /*slot {                            POKUSAJ STILIZOVANJA SAMOG SLOT-A, JESTE MOGUC (SAMO DO ODREDJENOG NIVOA, PO MOJOJ PROCENI)
+                background-color: pink;         NE TREBAM OVO RADITI NIKADA
+                color: lightcyan;               
             }*/                                 /* A ZNAM DA SE ODREDJENI STILOVI NE MOGU NASLEDJIVATI
                                                     JEDNOM RECJU OVO NEMA NIKAKVU POENTU  */
             /*div p {                               
-                background-color: #e67ba6;          A PROBLEM JE NASTAO JER NE MOGU NA OVAJ NACIN
+                background-color: #e67ba6;          PROBLEM JE NASTAO JER NE MOGU NA OVAJ NACIN
             }*/                                     /*STILIZOVATI PARAGRAF KOJI JE SLOTTED*/
 
             
+
+
             /*NAIME ZA STILIZOVANJE SLOTTED ELEMENATA, MOGU KORISTITI PSEUDO ELEMENT
                         ::slotted()       
             U ZAGRADU POMENUTOG PSEUDO ELEMENTA, IDE ODGOVARAJUCI SLEKTOR NEKOG OD SLOTTED ELEMENATA
@@ -3480,10 +3500,69 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 SADA CU STILIZOVATI PARAGRAF ELEMENT KOJI JE SLOTTED (AKO DOLE POGLEDAM LIGHT DOM MOGU
                 VIDETI KOJI SU ELEMENTI SLOTTED) ELEMENT                                            */
             
-            ::slotted(p) {
-                color: wheat;
-                background-color: #21695b8e;
+            /   *TREBAM ZNATI DA SE        ::slotted()       SELEKTOROM, MOGU SELEKTOVATI SAMO 
+            TOP-LEVEL SLOTTOVAN ELEMENT, JER AKO JE SLOTTED JEDAN ELEMENT, KOJI IMA DESCENDANT-E, 
+            TI DESCENDATI SE NE MOGU SELEKTOVATI, SELEKTORIMA, U KOJIM UCESTVUJE ::slotted()    */
+
+            ::slotted(p) {      /*OVAKO JE USPESNO DEFINISANJE STILOVA ZA PARAGRF KOJI JE SLOTTED*/
+                color: wheat;       
+                background-color: olive;
             }
+
+            ::slotted([neki_atribut]) {
+                border: #292f38 solid 6px;
+                color: white;
+            }
+
+            ::slotted(h4) {                 /*OVO CE SELEKTOVATI SVE h4 ELEMENTE*/
+                font-size: 2rem;            /*BEZ OBZIRA STO SU SLOTTED U RAZLICITE SLOTOVE*/
+                color: #9de758;              
+            }
+
+            ::slotted(.tube) {
+                border: tomato solid 8px;
+            }
+
+            ::slotted(.tube:hover) {        /*MOGUCE JE KORISTITI I PSEUDO KLASE*/
+                border-width: 18px;
+            }
+
+
+
+            ::slotted(.tube p) {            /*OVO NE FUNKCIONISE, JER SE SAMO MOGU SELEKTOVATI*/
+                border: black solid 2px;    /*TOP-LEVEL node-OVE, I AKO, DOLE POGLEDAM LIGHT DOM*/
+                color: purple;              /*VIDECU DA NIJENAD OD PARAGRAFA, KOJI JE DESCENDANT*/
+            }                               /*.tube KLASE, USTVARI NIJE TOP-LEVEL, VEC JE DUBLJE*/
+            
+            ::slotted(.tube) > p {            /*I OVDE VAZI ISTO STO JE VAZILO GORE*/
+                color: #67f19c85;               /*NE FUNKCIONISE*/
+            }
+
+
+            /*  SADA CU SE POZABAVITI      :host    ODNOSNO      :host()      PSEUDO KLASOM, 
+                KOJU SAM KORISTIO I RANIJE                                  U OVOM DOKUMENTU    */
+
+            :host {
+               display: block;
+               border: #21695b8e solid 4px;
+            }
+
+            :host([atribut_neki="vrednost"]) {  /*SELEKTUJE SAMO AKO HOST IMA ATRIBUT I KONKRETNU VREDNOST ATRIBUTA*/
+                outline-width: thick;
+                outline-offset: -28px;
+                outline-style: groove;
+                outline-color: #eeb752;
+            }
+
+            :host(.podkastovi) {        /*SELEKTUJE AKO HOST IMA NAVEDENU KLASU*/
+                margin: 15%;
+            }
+
+            :host(:hover){              /*MOGUCE KORISCENJE SA DRUGIM PSEUDO KLASAMA*/
+                outline-width: 16px;
+                outline-style: dotted;
+            }
+
         `;
         
         styleElement.textContent = styleContent;
@@ -3495,90 +3574,21 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
 });
 
 const izgled_light_dom = `
-    <podcast-entity>
-            <p slot="podcast">Ovo je tekst nekog paragrafa</p>
+    <podcast-entity class="podkastovi" atribut_neki="vrednost">
+        <p slot="podcast">Ovo je tekst nekog slotted paragrafa</p>
+        <h4 slot="podcast" neki_atribut>Ovo je naslov koji i tako to</h4>
+        <h1 slot="twitch">Na twitch appu se stream-uje nesto</h1>
+        <h4 slot="twitch">Opet nesto reci o twitch-u</h4>
+        <div class="tube" slot="twitch">
+            <p>Opet neki paragraf, koji je deo, novog slot-a</p>
+            <div>
+                <h2>Naslov, koji je dublje u slotu</h2>
+                <p>Paragraf, koji je duboko nested u slotu</p>
+            </div>
+        </div>
     </podcast-entity>
 `;
 
-//////////////////// DODATNI PRIMERI
-const someHTMLCode = `<template id="form_kont">
-    <style>
-      ::slotted(input) {
-        background: skyblue;
-      }
-    </style>
-    <div>
-      <slot name="first-slot"></slot>
-      <slot name="second-slot"></slot>
-      <slot></slot>
-    </div>
-  </template>
-  
-  <form-container>
-    <label slot="first-slot">Label</label>
-    <input slot="second-slot" type="text">
-    <button>Button</button>
-  </form-container>
-`;
-
-
-class FormContainer extends HTMLElement {
-    constructor() {
-        super();
-        const shadowRoot = this.attachShadow({ mode: 'open' });
-        const template = document.querySelector('#form_kont');
-        
-        shadowRoot.appendChild(template.content.cloneNode(true));
-    }
-}
-  
-window.customElements.define('form-container', FormContainer);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-window.customElements.define('fancy-he', class extends HTMLElement {
-    constructor(){
-        super();
-        const shadowRoot = this.attachShadow({mode: 'open'});
-        const divElement = document.createElement('div');
-        const slotElement = document.createElement('slot');
-        const styleElement = document.createElement('style');
-
-        slotElement.name = "stuff";
-        slotElement.innerHTML = "<h4>DEFAULT CONTENT</h4>";
-        const styleContent = `
-            div {
-                border: pink solid 2px;
-                text-align: center;
-                padding: 18px;
-            }
-
-            :host {
-                display: block;
-                border: 4px solid olive;
-                padding: 4px;
-            }
-
-            ::slotted(h4) {
-                font-size: 2em;
-                color: #e67ba6;
-            }
-
-            ::slotted(p) {
-                background-color: #67f19c85;
-                line-height: 4;
-                color: orange;
-                font-size: 1.2em;
-            }
-        `;
-        styleElement.textContent = styleContent;
-
-        divElement.appendChild(slotElement);
-        
-        shadowRoot.appendChild(styleElement);
-        shadowRoot.appendChild(divElement);
-    }
-});
 
 
 
@@ -4025,4 +4035,91 @@ const nekiDiv = document.getElementsByClassName('neki-div')[0];
 console.log(nekiDiv.nodeName);
 console.log(nekiDiv.nodeType);
 console.log(nekiDiv.nodeValue);
+
+
+
+//////////////////// DODATNI PRIMERI VEZANI ZA SLOT///////////////////////////////////
+const someHTMLCode = `<template id="form_kont">
+    <style>
+      ::slotted(input) {
+        background: skyblue;
+      }
+    </style>
+    <div>
+      <slot name="first-slot"></slot>
+      <slot name="second-slot"></slot>
+      <slot></slot>
+    </div>
+  </template>
+  
+  <form-container>
+    <label slot="first-slot">Label</label>
+    <input slot="second-slot" type="text">
+    <button>Button</button>
+  </form-container>
+`;
+
+
+class FormContainer extends HTMLElement {
+    constructor() {
+        super();
+        const shadowRoot = this.attachShadow({ mode: 'open' });
+        const template = document.querySelector('#form_kont');
+        
+        shadowRoot.appendChild(template.content.cloneNode(true));
+    }
+}
+  
+window.customElements.define('form-container', FormContainer);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+window.customElements.define('fancy-he', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divElement = document.createElement('div');
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+
+        slotElement.name = "stuff";
+        slotElement.innerHTML = "<h4>DEFAULT CONTENT</h4>";
+        const styleContent = `
+            div {
+                border: pink solid 2px;
+                text-align: center;
+                padding: 18px;
+            }
+
+            :host {
+                display: block;
+                border: 4px solid olive;
+                padding: 4px;
+            }
+
+            slot {
+                border: green solid 28px;
+            }
+
+            ::slotted(h4) {
+                font-size: 2em;
+                color: #e67ba6;
+            }
+
+            ::slotted(p) {
+                background-color: #67f19c85;
+                line-height: 4;
+                color: orange;
+                font-size: 1.2em;
+            }
+        `;
+        styleElement.textContent = styleContent;
+
+        divElement.appendChild(slotElement);
+        
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(divElement);
+    }
+});
+
 

@@ -516,8 +516,18 @@
   <hr />
   <br />
   <hr />
-  <podcast-entity>
-        <p slot="podcast">Ovo je tekst nekog paragrafa</p>
+  <podcast-entity class="podkastovi" atribut_neki="vrednost">
+    <p slot="podcast">Ovo je tekst nekog slotted paragrafa</p>
+    <h4 slot="podcast" neki_atribut>Ovo je naslov koji i tako to</h4>
+    <h1 slot="twitch">Na twitch appu se stream-uje nesto</h1>
+    <h4 slot="twitch">Opet nesto reci o twitch-u</h4>
+    <div class="tube" slot="twitch">
+        <p>Opet neki paragraf, koji je deo, novog slot-a</p>
+        <div>
+            <h2>Naslov, koji je dublje u slotu</h2>
+            <p>Paragraf, koji je duboko nested u slotu</p>
+        </div>
+    </div>
   </podcast-entity>
   <br />
   <hr />
