@@ -3628,6 +3628,7 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
         shadowRoot.appendChild(styleElement);
         shadowRoot.appendChild(divElement);
 
+
     }
 
     connectedCallback(){
@@ -3658,11 +3659,38 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
         console.log(neki_h4_slotted);
 
         //KACIM MU LISTENER, JER ZELIM DA SAZNAM VISE O         Event.composedPath()
+        //                                                 I    Event.composed     
 
         neki_h4_slotted.addEventListener('click', ev => {
-            console.log(    ev.composedPath()    );
-            console.log(    ev.composed          );
+            console.log(    ev.composedPath()    );         //-> PRIKAZAN JE NIZ KOJI SE SASTOJI OD
+                                                            //ELEMENATA KROZ GOJE SE DOGODILA
+                                                            //PROPAGATION (U PREVODU "RAZMNOZAVANJE")
+                                                            //A JA TO MOGU BOLJE SEBI DA OBJASNIM
+                                                            //DA JE NIZ FORMIRAN OD ELEMENATA
+                                                            //POCEV OD ONOG GDE JE NASTAO (EVENT), PA KROZ ONE
+                                                            //ELEMENTE DOM GRANE, KOJOJ PRIPADA (TAJ ELEMENT)
+                                                            //PA NA KRAJU DO Window INSTANCE
+            
+            console.log(ev.composedPath()[0]);     //->         h4      ELEMENT
+                                                        //              GDE JE CLICK EVENT NASTAO
+
+            //ONO STO JE BITNO RECI JESTE DA CE EVENT PROPAGATE-OVATI, KROZ SLOTTED ELEMENT, I KROZ,
+            //  slot  ,  KOJI MU JE PLACEHOLDER
+            //STO ME NAVODI DA, OPET PONOVIM (IAJKO JE MOZDA SUVISNO), DA SE SLOTTED ELEMENTU, PRISTUPA
+            //KAO DA SE NALAZI U LIGHT DOM-U, A EVENT INSTANCA PROPAGATES, KROZ FLATENED DOM                                             
+            
+            console.log(ev.composedPath()[9] instanceof Window);     //->   window      JE POSLEDNJE
+                                                                        // MESTO KROZ KOJI PROPAGATES
+                                                                        //POMENUTI EVENT, I ON JE POSLEDNJI
+                                                                        //CLAN NIZA, KOJI JE POVRATNA VREDNOST
+                                                                        //  composedPath METODE
+            
+            console.log(        ev.composed          );             //->    true  AKO, UOPSTE POSTOJI
+                                                                        //PROPAGATION EVENT-A, A false U
+                                                                        //SUPROTNOM
         });
+
+
     }
 });
 
@@ -3707,7 +3735,10 @@ KADA PRISTUPAM SVIM NESTED ELEMENTIMA */
 
 /*ZA ELEMENTE KOJI NISU SLOTTED, OVAJ PROPERTI CE IMATI VREDNOST null*/
 /*ZA ELEMENTE KOJI SU SLOTTED, VREDNOST assignedSlot PROPERTIJA JESTE ODGOVARAJUCI <slot>*/
-const podcastEntityElementInside = document.querySelectorAll('podcast-entity *'); //UZ POMOC OVOG SELEKTORA PRISTUPA SE SVIM ELEMENTIMA KOJI SU DESCENDANTI podcast-entity ELEMENTA
+const podcastEntityElementInside = document.querySelectorAll('podcast-entity *'); //UZ POMOC OVOG SELEKTORA 
+                                                                                //PRISTUPA SE SVIM ELEMENTIMA
+                                                                                // KOJI SU DESCENDANTI 
+                                                                                //podcast-entity ELEMENTA
 console.log(podcastEntityElementInside);
 
 for(let element of podcastEntityElementInside){
@@ -3744,7 +3775,7 @@ const fensli_pensiElement_light_dom = `
     <fensi-pensi>
         Ovo je neki text node    OVAJ TEXT NODE CE SE NACI U FLATTENED DOM-U, JER JE TAJ TEXT NODE
     </fensi-pensi>               SLOTTED, JER NE POSTOJI name ATRIBUT NA SLOTU INSERTOVANOM U SHADOW DOM
-`;                                                                                      
+`;                               //ODNOSNO, POMENUTI    slot (BEZ name-A) JE POSTAO, TEXT node-OV PLACEHOLDER                                                       
 
 //POKUSACU DA PRISTUPIM TEXT NODE-U, NA NAJPOVOLJNIJI MOGUCI NACIN
 
@@ -3778,6 +3809,13 @@ window.customElements.define('some-closed-element', class extends HTMLElement {
         super();
 
         const divElement = document.createElement('div');
+        
+        const sekcija = document.createElement('section');
+        const paragrafZaSekciju = document.createElement('p');
+        const tekstNodeParagrafa = document.createTextNode('Tekst node paragrafa, koji je nested u sekciji');
+
+        sekcija.appendChild(paragrafZaSekciju);
+        paragrafZaSekciju.appendChild(tekstNodeParagrafa);
 
         const slotElement = document.createElement('slot');
         slotElement.name = "blah";
@@ -3791,10 +3829,68 @@ window.customElements.define('some-closed-element', class extends HTMLElement {
         divElement.appendChild(neimenovaniSlot);
 
         shadowRoot.appendChild(divElement);
+        shadowRoot.appendChild(sekcija);
 
         console.log(  shadowRoot.host   );          //->     STAMPACE SE HOST SHADOW ROOT-A (divElement)
         console.log(  divElement.shadowRoot  );     //->     ALI OVDE CE STAMPATI     null
+
+        //POKUSACU DA, shadowRoot   SKLADISTIM KAO VREDNOST, PROPERTIJA, INSTANCE, MOG CUSTOM ELEMNTA
+        
+        this._shadow_root = shadowRoot;         // (NE ZNAM DA LI OVO STO SAM URADIO, PONISTAVA SVRHU
+                                                // SHADOW DOM-A)
+                                                // ALI OVO JE JEDINI NACIN DA KASNIJE MOGU KORISTITI
+                                                // shadowRoot; NA PRIMER U OBIMU connectedCallback-A
     }
+
+    connectedCallback(){
+        //SADA CU ZAKACITI, NEKI EVENT LISTENER, NA SLOTTED ELEMENT, JER ZELIM DA VIDIM DA LI MOGU
+        //  NAD Event INSTANCIM, PRIMENITI      composedPath       METODU
+        //I ZELIM DA VIDIM KOJA CE VREDNOST        composed     PROPERTIJA BITI, U SLUCAJU KADA JE slot
+        //U     'closed'     shadowRoot-U 
+        
+        const slottedHeader = this.querySelector('h1');
+
+        slottedHeader.addEventListener('click', ev => {
+            console.log(    ev.composedPath()    );     //-> STAMPACE SE NIZ, ZA KOJ ISAM VEC OBJASNIO
+                                                        //  KAKAV JE
+            //ALI U SLUCAJU closed SHADOW DOM-A, U TOM NIZU NECE BITI REFERENCIRANI ELEMENTI
+            //KOJI SU ELEMENTI SHADOW DOM-A, I KROZ KOJE EVENT PROPAGATE
+            //ZATO SE MENJU ELEMENTIMA TOG NIZA NECE REFERENCIRATI      slot       ,CIJI JE     h1
+            //SLOTTED ELEMENT                                             
+            console.log(        ev.composed          );             //-->     OVO CE BITI         true
+                                                                            //JER PROPAGATION POSTOJI
+        });
+
+        //ZATIM ZELIM DA ZAKACIM EVENT HANDLER, NA NEKOM ELEMENTU, KOJI NIJE SLOTTED, VEC JE TO SAMO NEKI
+        //ELEMENT, CIJU SAM INSERTION U SHADOW DOM, DEFINISAO U CONSTRUCTORU (KAO STO SAM TO RADIO SA
+        //slot ELEMENTIM, ALI NECU KACITI HANDLER NA SLOT, VEC NA NEKI DRUGI ELEMENT)
+
+        console.log(this._shadow_root);  //SHADOW ROOT-U MOGU PRISTUPITI, UZ POMOC PROPERTIJA
+                                            //  KOJ ISAM DEFINISAO U KONSTRUKTORU
+
+        console.log(this.shadowRoot);       //OVO NARAVNO JESTE   null   ZA SLUCAJ 'closed' SHADOW DOM-A
+                                            //KAKAV JE SADA U PITANJU
+
+        const sekcijinParagraf = this._shadow_root.querySelector('section p');
+
+        console.log(sekcijinParagraf);      //ELEMENTU SAM USPESNO PRISTUPIO NA POMENUTI NACIN
+
+        //ZAKACICU SADA EVENT HANDLER, NA TAJ ELEMENT
+
+        sekcijinParagraf.addEventListener('click', ev => {
+            console.log(ev.composedPath());     //U GOOGLE WEB FUNDAMENTALS TEKSTU RECENO JE DA OVO
+                                                //return-UJE  PRAZAN NIZ; ALI U MOM SLUCAJU NIJE TAKO
+                                                //NIZ SE SASTOJI OD SVIH ELEMENATA, KROZ KOJE EVENT
+                                                //PROPAGATE, POCEV OD PARAGRAFA, ZATIM SVIH NJEGOVIH 
+                                                //ANCESTOR IZ SHADOW DOM-A, PA ONIH ANCESTORA, KOJI SU
+                                                //IZVAN SHADOW DOMA, PA SVE DO window-A
+            
+            console.log(ev.composed);   //-> true
+        });
+
+    }
+
+
 });
 
 const light_dom_for_inserted_some_closed_element = `
@@ -3813,9 +3909,14 @@ const slotted_text_node = document.querySelector('some-closed-element').childNod
 console.log(    slotted_h1.assignedSlot     );      //->       null         
 console.log(    slotted_text_node.assignedSlot  );  //->       null
 
+//ZASTO NIKAD NE TREBA KREIRATI KOMPONENTE SA {mode: 'closed}
 
-
-
+// 1)     LAZNI OSECAJ SIGURNOSTI, JER NISTA NE SPRECAVA NAPADACA OD HIJACKING-A SLEDECEG 
+//              Element.prototype.attachShadow
+// 2)     Closed mode prevents your custom element code from accessing its own shadow DOM
+//          (OVO SAM VIDEO U SLUCAJU connectedCallback-A)
+// 3)     MY COMPONENTS ARE LESS FLEXIBILE FOR END USER (MISLI SE NA DEVELOPERA, KOJI BI KORISTIO, MOJE
+//         KOMPONENTE SA 'closed' SHADOW DOM-OM)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
