@@ -65,6 +65,7 @@
     color: #e67ba6;
     color: #21695b8e;
     color: #eeb752;
+    color: lightgreen;
 }
 
 
@@ -282,3 +283,15 @@ section {
 some-practice-element {
     color: #1b7a72;
 }
+
+
+.podcast_container {
+    border: pink solid 1px;
+    --podcast-font-style: italic;
+}
+
+.podcast_sibling {
+    border: pink solid 2px;
+    margin: 8px;
+}
+

@@ -3477,7 +3477,7 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 background-color: #e67ba6;
             }
 
-            
+            /*SADA CU POKAZATI STILIZOVANJE DISTRIBUTED node-OVA*/
             
             
             /*slot {                            POKUSAJ STILIZOVANJA SAMOG SLOT-A, JESTE MOGUC (SAMO DO ODREDJENOG NIVOA, PO MOJOJ PROCENI)
@@ -3497,10 +3497,13 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
             U ZAGRADU POMENUTOG PSEUDO ELEMENTA, IDE ODGOVARAJUCI SLEKTOR NEKOG OD SLOTTED ELEMENATA
             NA PRIMER           ::slotted(*)        CE SELEKTOVATI SVE SLOTTED ELEMENTE               
 
-                SADA CU STILIZOVATI PARAGRAF ELEMENT KOJI JE SLOTTED (AKO DOLE POGLEDAM LIGHT DOM MOGU
-                VIDETI KOJI SU ELEMENTI SLOTTED) ELEMENT                                            */
+                SADA CU STILIZOVATI PARAGRAF ELEMENT KOJI JE SLOTTED (AKO DOLE POGLEDAM LIGHT DOM 
+                    (PREKOPIRAO SAM LIGHT DOM (U SLUCAJU JEDNE INSTANCE MOG CUSTOM-A),IZ HTML-A 
+                    I DODELIO GA GLOBALNOJ VARIJABLI 
+                    DOLE ISPOD, KAKO BI TOKOM OVOG UCENJA SVE BILO PREGLEDNO NA DOHVAT RUKE) 
+                    MOGU VIDETI KOJI SU ELEMENTI SLOTTED) ELEMENT                            */
             
-            /   *TREBAM ZNATI DA SE        ::slotted()       SELEKTOROM, MOGU SELEKTOVATI SAMO 
+            /*      TREBAM ZNATI DA SE        ::slotted()       SELEKTOROM, MOGU SELEKTOVATI SAMO 
             TOP-LEVEL SLOTTOVAN ELEMENT, JER AKO JE SLOTTED JEDAN ELEMENT, KOJI IMA DESCENDANT-E, 
             TI DESCENDATI SE NE MOGU SELEKTOVATI, SELEKTORIMA, U KOJIM UCESTVUJE ::slotted()    */
 
@@ -3519,7 +3522,7 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 color: #9de758;              
             }
 
-            ::slotted(.tube) {
+            ::slotted(.tube) {              /*SELEKTOVANJE TOP LEVEL SLOTTED ELEMENTA, NA KOJEM JE APLICIRANA KLASA .tube*/
                 border: tomato solid 8px;
             }
 
@@ -3539,6 +3542,8 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
             }
 
 
+
+
             /*  SADA CU SE POZABAVITI      :host    ODNOSNO      :host()      PSEUDO KLASOM, 
                 KOJU SAM KORISTIO I RANIJE                                  U OVOM DOKUMENTU    */
 
@@ -3552,16 +3557,69 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
                 outline-offset: -28px;
                 outline-style: groove;
                 outline-color: #eeb752;
+                pointer-event: none;
             }
 
             :host(.podkastovi) {        /*SELEKTUJE AKO HOST IMA NAVEDENU KLASU*/
                 margin: 15%;
             }
 
-            :host(:hover){              /*MOGUCE KORISCENJE SA DRUGIM PSEUDO KLASAMA*/
+            :host(:hover) {             /*MOGUCE KORISCENJE SA DRUGIM PSEUDO KLASAMA*/
                 outline-width: 16px;
                 outline-style: dotted;
             }
+
+
+            /*MOGUCE JE STILIZOVANJE I U ODNOSU NA CONTEXT*/
+            /*ILI PROSTIJE RECENO, OVO JE STILIZOVANJE U ODNOSU NA OKOLINU (KAD KAZEM OKOLINU, MISLIM NA
+                ANCESTOR-E) CUSTOM TAGA, ALI I NA SAM CUSTOM TAG, ALI NE I NA NJEGOVE SIBLINGS-E*/
+            /*ZA TU POTREBU, KORISTI SE
+                                            :host-context()                        */
+
+            :host-context(.podcast_container) {      /* OVO CE SELEKTOVATI HOST (ODNOSNO this)*/
+                border: lightgreen solid 28px;       /* AKO NEKI OD NJEGOVIH ANCESTORA IMA ALPICIRANU*/
+            }                                        /* .podcast_container    KLASU*/
+
+            :host-context([pozadina_atribut]) {      /*INSTANCA CUSTOM-A, IMA OVAJ ATRIBUT*/
+                font-family: sans-serif; /*IAKO SAM ISTO MOGAO POSTICI UZ KORISCENJE SAME*/
+            }                                 /*    :host  PSEUDO KLASE    */
+                                              /* ALI SAM IPAK, UPOTREBIO, OVAJ NACIN KAKO BIH POKAZAO
+                                              DA JE ISTO MOGUCE POSTICI I UZ POMOC  :host-context() */
+
+            :host-context(.podcast_sibling) {     /*OVO NE FUNKCIONISE, ODNOSNO NE SELEKTUJE HOST-A*/
+                outline-style: dashed;            /*JER JE .podcast_sibling KLASA APLICIRANA NA*/
+            }                                     /*SUSEDNI, ODNOSNO SIBLING ELEMENT MOG CUSTOM-A,
+                                                    A NE NA NJEGOV ANCESTOR*/
+
+            /*TREBA DA KAZEM DA JE OVO STILIZOVANJE BAZIRANO NA KONTEKSTU, KORISNO KADA JE U PITANJU
+            THEMING, ODNOSNO AKO NA PRIMER body ELEMENT IMA APLICIRANU KLASU .light_theme
+            MOGU U ODNOSU NA TAJ ANCESTOR PRILAGODITITI STILOVE CUSTOM ELEMENTA, KAKO BI I ONI IMALI
+            LIGHT OSECAJ*/
+
+            /*MEDJUTIM OVAKVO "KONTEKSNO STILIZOVANJE" JE KORISNIJE, KADA SE KORISTI SA CSS
+            CUSTOM PROPERTIJIMA, KOJE JA ZNAM KAO       CSS VARIJABLE               */
+            /*NAIME, JA CU SADA DEKLARISATI, JEDNU CSS VARIJABLU U EXTERNAL STYLESHEET-U, KOJI
+            JE LINKED SA MOJIM HTML DOKUMENTOM*/
+
+            /*DAKLE U EXTERNAL STYLESHEET-U, JE DEFINISANA SLEDECA CSS VARIJABLA(CSS CUSTOM PROPERTY)
+
+                        .podcast_container {                        OVDE JE MOGLO BITI I body ILI NEKI DRUGI ANCESTOR AKO POSTOJI
+                            --podcast-font-style: italic;
+                        }
+            */
+            /*  SADA CU APLICIRATI font-style ZA HOST ELEMENT, UZ POMOC     host-context()    */
+            /*  ALI U SLUCAJU DA JEDAN OD ANCESTORA CUSTOM ELEMENTA, IMA ATRIBUT
+                                                                    font_style_att              */
+            
+            :host-context([font_style_att]){
+                font-style: var(--podcast-font-style, bolder);      /*NE ZABORAVI DA JE MOGUCE DEFINISATI*/
+            }                                                       /*ZELJENI BROJ FALLBACK VREDNOSTI*/
+                                                                    /*KADA REFERENCIRAM CSS VARIJABLU*/
+                                                                    /*KAO STO SAM TO URADIO OVDE*/
+            
+            /*POMENUTO KORISCENJE CUSTOM PROPERTIJA, ODNOSNO CSS VARIJABLI, DEVELOPER-I, ZOVU I
+            KREIRANJE STYLE HOOK-OVA, UZ KORISCENJE CSS VARIJABLI, ODNOSNO CUSTOM PROPERTIJA*/
+
 
         `;
         
@@ -3571,31 +3629,195 @@ window.customElements.define('podcast-entity', class PodcastEntity extends HTMLE
         shadowRoot.appendChild(divElement);
 
     }
+
+    connectedCallback(){
+        // OVO JE JAKO BITNA STVAR KOJA SE TICE, KONKRETNO JAVASCRIPTA
+        //ZAPAMTI DA PRISTUPANJE ELEMENTIMA (CUSTOM ILI CUSTOMIZED ILI REGULARNIM), NIJE MOGUCE 
+        //UZ POMOC  UZ POMOC PSEUDO ELEMENATA
+        //A TAKAV ELEMENT JE I ::slotted
+        //ONO STO SAM TAKODJE PROCITAO O PSEUDO ELEMENTIMA, JESTE DA ONI NISU returned
+        //MISLIM DA SE TU MISLI UPRAVO NA MOGUCNOST PRISTUPANJA ELEMENTU
+        
+        const neki_h4_slotted_element = this.shadowRoot.querySelector('::slotted(h4)');
+        console.log(neki_h4_slotted_element);   //-> null
+
+        /*PRISTUPICU, JEDNOM OD SLOTTED ELEMENATA, NA DRUGACIJI NACIN, JER ZELIM DA NA TAKAV
+        ELEMENT, ZAKACIM EVENT HANDLER*/
+        /*ZAPAMTI DA KADA PRISTUPAS SLOTTED ELEMENTIMA U JAVASCRIPTU, NJIMA USTVARI PRISTUPAS U
+        LIGHT DOM-U*/
+        /*ZASTO TAKO? PA PO MOJOJ PROCENI ZATO STO JE slot ELEMENT, PLACEHOLDER ZA SLOTTED
+        ELEMENTE, I KAO TAKAV MOZE MU SE PRISTUPITI U SHADOW DOM-U, JER SAM GA (AKO JESAM) ZAKACIO
+        U SHADOW DOM, DOK SE SLOTTED ELEMENTIMA, PRISTUPA U LIGHT DOM-U, JER SE ONI TAMO NEST-UJU*/
+
+        //PRISTUPICU, JEDNOM slot ELEMENTU
+
+        console.log(this.shadowRoot.querySelector('slot'));     //->        <slot>
+
+        //SADA CU PRISTUPITI JEDNOM SLOTTED h4 ELEMENTU, PA CU NA NJEGA ZAKACITI HANDLER
+        const neki_h4_slotted = this.querySelector('[neki_atribut]');
+        console.log(neki_h4_slotted);
+
+        //KACIM MU LISTENER, JER ZELIM DA SAZNAM VISE O         Event.composedPath()
+
+        neki_h4_slotted.addEventListener('click', ev => {
+            console.log(    ev.composedPath()    );
+            console.log(    ev.composed          );
+        });
+    }
 });
 
 const izgled_light_dom = `
-    <podcast-entity class="podkastovi" atribut_neki="vrednost">
-        <p slot="podcast">Ovo je tekst nekog slotted paragrafa</p>
-        <h4 slot="podcast" neki_atribut>Ovo je naslov koji i tako to</h4>
-        <h1 slot="twitch">Na twitch appu se stream-uje nesto</h1>
-        <h4 slot="twitch">Opet nesto reci o twitch-u</h4>
-        <div class="tube" slot="twitch">
-            <p>Opet neki paragraf, koji je deo, novog slot-a</p>
-            <div>
-                <h2>Naslov, koji je dublje u slotu</h2>
-                <p>Paragraf, koji je duboko nested u slotu</p>
+    <div class="podcast_container" font_style_att>  <!--SVE SAM STAVIO U CONTAINER DA BIH SE UPZNAO SA    
+                                                                                :host-context()   -->
+        <div class="podcast_sibling">Neki tekst koji se nalazi u sibling-u, mog custom elementa</div>
+        <!--Ovo dole je light DOM (samo napominjem)-->
+        <podcast-entity class="podkastovi" atribut_neki="vrednost" pozadina>
+            <p slot="podcast">Ovo je tekst nekog slotted paragrafa</p>
+            <h4 slot="podcast" neki_atribut>Ovo je naslov koji i tako to</h4>
+            <h1 slot="twitch">Na twitch appu se stream-uje nesto</h1>
+            <h4 slot="twitch">Opet nesto reci o twitch-u</h4>
+            <div class="tube" slot="twitch">
+                <p>Opet neki paragraf, koji je deo, novog slot-a</p>
+                <div>
+                    <h2>Naslov, koji je dublje u slotu</h2>
+                    <p>Paragraf, koji je duboko nested u slotu</p>
+                </div>
             </div>
-        </div>
-    </podcast-entity>
+        </podcast-entity>
+        Ovo je neki tekst, za proveru text node-a
+    </div>
 `;
 
+/*STILIZOVANJE SPOLJA, NARAVNO POBEDJUJE STILOVE    :host   ELEMENTA ILI KLASE
+STO ZNACI DA AKO STILIZUJEM       <podcast-entity>    CUSTOM ELEMENT, SPOLJA, NA PRIMER U EXTERNAL
+STYLESHEET-U, TO CE OVERRIDE-OVATI STILOVE  APLICIRANE SA     :host
+      :host       SE NE MOZE KORISTITI IZVAN SHADOW DOM-A*/
 
+
+/*PRE NEGO STO NASTAVIM DALJE PRIKAZACU, JEDAN NACIN, KOJIM JE MOGUCE DA PRISTUPANJE slot ELEMENTIMA; 
+KOJE SAM ZAKACIO U MOJ SHADOW DOM
+TO, NAIME POSTIZEM TAKO STO, PRISTUPAM PROPERTIJU assignedSlot ONIH ELEMENTA, KOJE SAM NESTOVAO,
+ILI KOJE JE KORISNIK MOJE KOMPONENTE NESTOVAO U CUSTOM ELEMENT (ODNOSNO PRISTUPAM PROPERTIJU assignedSlot
+ONIH ELEMENATA, KOJI IMAJU name ATRIBUT "KOJI UPUCUJE", NA ODREDJENI SLOT, KOJEG SAM ZAKACIO U SHADOW
+DOM, KADA SAM DEFINISAO KLASU CUSTOM ELEMENTA*/
+
+/*JA CU SADA PRISTUPITI, SVIM NESTED ELEMENTIMA (UZ POMOC querySelectorAll METODE) (OVAKO NECE BITI PRISTUPLJENO SHADOW DOMU, ALI MISLIM DA JE TO POZNATO)
+I PRISTUPICU VREDNOSTI, NJIHOVOG PROPERTIJA assignedSlot
+KADA PRISTUPAM SVIM NESTED ELEMENTIMA */
+
+/*ZA ELEMENTE KOJI NISU SLOTTED, OVAJ PROPERTI CE IMATI VREDNOST null*/
+/*ZA ELEMENTE KOJI SU SLOTTED, VREDNOST assignedSlot PROPERTIJA JESTE ODGOVARAJUCI <slot>*/
+const podcastEntityElementInside = document.querySelectorAll('podcast-entity *'); //UZ POMOC OVOG SELEKTORA PRISTUPA SE SVIM ELEMENTIMA KOJI SU DESCENDANTI podcast-entity ELEMENTA
+console.log(podcastEntityElementInside);
+
+for(let element of podcastEntityElementInside){
+    console.log(element.assignedSlot);              //U SLUCAJU NEKIH ELEMENATA CE SE STAMPATI null
+}                                                   //A U SLUCAJU DRUGIH, ODGOVARAJUCI      <slot>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//      PRE NEGO STO NASTAVIM DALJE, OSVRNUCU SE NA NESTO CIME SAM SE I RANIJE SUSRETAO, A TO JE
+//  text Node ELEMENT (MORAM SE UPOZNATI S OVIM, IAKO TO NIJE, KONKRETNA TEMA OVOG DOKUMENTA) 
+//NAPRAVICU JEDAN TEXT NODE
+
+const tekstNodeElement = document.createTextNode("some text");
+console.log(tekstNodeElement);
+console.log(tekstNodeElement.__proto__);
+
+//SADA CU OPET REGISTROVATI JEDAN CUSTOM ELEMENT
+
+window.customElements.define('fensi-pensi', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const divElement = document.createElement('div');
+        const nekiSlot = document.createElement('slot');
+       // nekiSlot.name = "neki_slot1";
+        nekiSlot.innerHTML = "<h1>DEFAULT NASLOV</h1>"
+        
+        divElement.appendChild(nekiSlot);
+        shadowRoot.appendChild(divElement);
+    }
+});
+
+const fensli_pensiElement_light_dom = `
+    <fensi-pensi>
+        Ovo je neki text node    OVAJ TEXT NODE CE SE NACI U FLATTENED DOM-U, JER JE TAJ TEXT NODE
+    </fensi-pensi>               SLOTTED, JER NE POSTOJI name ATRIBUT NA SLOTU INSERTOVANOM U SHADOW DOM
+`;                                                                                      
+
+//POKUSACU DA PRISTUPIM TEXT NODE-U, NA NAJPOVOLJNIJI MOGUCI NACIN
+
+const fensiPensiElement = document.querySelector('fensi-pensi');
+const textNodePensi = fensiPensiElement.childNodes[0];
+
+//PRISTUPICU SADA slot ELEMENTU, POMENUTOG TEXT NODE-A (UZ POMOC    assignedSlot   PROPERTIJA)
+console.log(    textNodePensi.assignedSlot    );        //--> <slot><h1>DEFAULT NASLOV</h1></slot>
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//IAKO SE KONKRETNO NE TICE assignedSlot PROPERTIJA, PODSETICU SE DA SE TEXT NODE, MOZE I OVAKO KREIRATI
+
+console.log(             document.createTextNode('ovo je tekst, tekst node-a')               );
+
+//POSTOJE I NACINI PROVERE DA LI JE NEKI ELEMENT text node ELEMENT, I TU SE MOGU KORISTITI PROPERTIJI
+//KAO STO SU        
+                    //          nodeType        ILI         TEXT_NODE
+//ALI TO CU ZA SADA PRESKOCITI, KAKO BIH NASTAVIO DALJE BAVLJENJE SA SHADOW ROOT-OM, A DODATNIM STVARIMA
+//VEZANIM ZA NODE ELEMENTE, MEDJU NJIMA VEZANIM I TEKST NODE ELEMENTE, SE MORAM POSEBNO POZABAVITI U
+//NAJSKORIJE VREME
+///////////////////POSTO SAM SE POZABAVIO assignedSlot PROPERTIJEM SLOTTABLE ELEMENATA, I POSTO SAM SE
+
+//                  ADVANCED TOPICS
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/////           KREIRANJE ZATVORENIH SHADOW ROOT-OVA    ({mode: 'closed})      (TREBA SE IZBEGAVATI)
+/////   NEKI ELEMENTI, KAO STO JE <video> IMAJU ZATVOREN SHADOW ROOT       
+////        TO ZNACI DA SPOLJNI JAVASCRIPT, NE MOZE PRISTUPATI INTERNAL DOM-U
+
+window.customElements.define('some-closed-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const divElement = document.createElement('div');
+
+        const slotElement = document.createElement('slot');
+        slotElement.name = "blah";
+
+        const neimenovaniSlot = document.createElement('slot');
 
 
-//////////////////////////////////////////////////////////////////////
+        const shadowRoot = this.attachShadow({mode: 'closed'});   //  ZATVOREN FRAGMENT
+
+        divElement.appendChild(slotElement);
+        divElement.appendChild(neimenovaniSlot);
+
+        shadowRoot.appendChild(divElement);
+
+        console.log(  shadowRoot.host   );          //->     STAMPACE SE HOST SHADOW ROOT-A (divElement)
+        console.log(  divElement.shadowRoot  );     //->     ALI OVDE CE STAMPATI     null
+    }
+});
+
+const light_dom_for_inserted_some_closed_element = `
+    <some-closed-element>
+        <h1 slot="blah">Ovo je neki naslov</h1>
+        Neki text node
+    </some-closed-element>
+`;
+
+/*PRISTUPANJE    assignedSlot    PROPERTIJU, SLOTTED ELEMENATA, U SLICAJU CLOSED SHADOW ROOT-A
+REZULTOVACE null VREDNOSCU      */
+
+const slotted_h1 = document.querySelector('some-closed-element h1');
+const slotted_text_node = document.querySelector('some-closed-element').childNodes[2];
+
+console.log(    slotted_h1.assignedSlot     );      //->       null         
+console.log(    slotted_text_node.assignedSlot  );  //->       null
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -4032,9 +4254,9 @@ const nekiDiv = document.getElementsByClassName('neki-div')[0];
 
 
 
-console.log(nekiDiv.nodeName);
+/*console.log(nekiDiv.nodeName);
 console.log(nekiDiv.nodeType);
-console.log(nekiDiv.nodeValue);
+console.log(nekiDiv.nodeValue);*/
 
 
 
