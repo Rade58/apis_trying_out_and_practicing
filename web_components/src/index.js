@@ -4005,6 +4005,13 @@ window.customElements.define('jobly-bobly', class extends HTMLElement {
         //SADA CU VIDETI, KAKO SE TO ODRAZILO NA GORE PROSLEDJENI HANDLER, ODNOSNO VIDECU, KADA SE TAJ
         //HANDLER INVOCIRAO, TOKOM MODIFIKACIJA
 
+        //SADA MI IMA SMISLA RECENICA KOJA GLASI DA SE:
+        //                                  NECE TRIGGEROVATI slotchange EVENT PRILIKOM INSTATICIRANJA
+        //                                  CUSTOM ELEMENTA
+        //          JER INSTANTICIRANJE JESTE JEDNO
+        //          A NESTOVANJE POTENCIJALNIH SLOTTED ELMENATA, U LIGHT DOM
+        //          INSTANTICIRANOG CUSTOM ELMENTA, JESTE DRUGO (I ZA OVO DRUGO SE TRIGGERUJE 
+        //                                                          POMENUTI EVENT)
 
     }
 });
@@ -4080,21 +4087,67 @@ console.log(joblysFirstSlotted);        //ODGOVOR JE DA SE POMENUTA REFERENCA NE
 //ZA slot (name="podcast")
 
 const noviSlotted = document.createElement('h2');
-noviSlotted.setAttribute('slot', 'podcast');
 console.log(noviSlotted);
+noviSlotted.textContent =   `OVO JE NOVI SLOTTED ELEMENT, NAKNADNO DODAT JAVASCRIPTOM, DAKLE, NIJE NESTED 'RUCNO', U HTML FAJLU`;
+noviSlotted.slot = "podcast";      //DODELJUJEM MU VREDNOST ZA slot ATRIBUT, JER JE I OVAKVA 
+                                    //DODELA MOGUCA, PORED UPOTREB setAttribute METODE
 
-noviSlotted.textContent =   `OVO JE NOVI SLOTTED ELEMENT, NAKNADNO DODAT JAVASCRIPTOM,
-                            DAKLE, NIJE NESTED 'RUCNO', U HTML FAJLU`;
-
-
+//KREIRACU NOVU PROMISE INSTANCU, PA CU NA NJU CHAIN-OVATI, OVOG PUTA DVE PRIMENE then-A
+//ZASTO TO RADIM?
+//PA VEZBAJUCI SAM SHVATIO DA SE        slotchange      TRIGERUJE, SAMO AKO JE DEO CALLBACK-OVA
+//POSLATIH NA QUEUE, ALI SVAKA NOVA PROMENA (UKLANJANJE/DODAVANJE SLOTTED ELMENATA), MORA BITI DEO 
+//CALLBACK-A, POSLATOG U NOVI MICROTASK QUEUE
 new Promise((res, rej) => {
     res();
-}).then(() => {
-    jobly_bobly_Element.insertAdjacentElement('beforebegin', noviSlotted);
-    console.log('microtask 2');
+})
+.then(() => {
+    //DA SAM OVDE DEFINISAO DODAVANJE NOVOG SLOTTED ELMENTA, NE BI SE, PONOVO TRIGGEROVAO slotchange EVENT, JER
+    //TADA BI SE PREDHODNO DEFINISANO ODUZIMANJE DRUGOG SLOTTED-A (U OBIMU CALLBACK-A), NASLO U ISTOM
+    //MICROTASKU, KAO I DODAVANJE POMENUTOG NOVOG SLOTTED ELEMENTA, I slottchange EVENT BI BIO TRIGGER-
+    //OVAN SAMO JEDNOM
+
+    //NAIME, NAJBOLJE JE DA slotchange EVENT-U, RAZMISLJAM NA SLEDECI NACIN
+                //MA KOLIKO PROMENA (REMOVE/ADD) SLOTTED ELEMENATASE DOGODILO U PRI JEDNOM SLOZENOM 
+                //CALL STACK-U, JASNO JE DA CE SE   slotchange  EVENT TRIGGEROVATI JEDNOM
+                //
+                //ZATO AKO ZELIM VISE TRIGGER-OVANJA, ISTOG EVENT-A, (GOVORIM O JEDNOM slot ELEMENTU)
+                //TREBALO BI DA OBEZBEDIM VISE CALL STACK-OVA, STO JA OVDE I RADIM
+                
+                //ALI TAKODJE, PO MOJOJ SLOBODNOJ PROCENI, SMATRAM DA SE PROMENE NA ELEMNTIMA OBAVLJAJU
+                //UZ TRIGGERING, NEKIH DRUGIH EVENTOVA (KEYBOARD I MOUSE), CIME CE BITI OMOGUCEN
+                //NOVI QUEUING CALLBACK-AKOVA U ODVOJENE TASK QUEUE-E, CIME CE BITI I OMOGUCENO, 
+                //VISE SLAGANJA POZIVA, TIH CALLBACK-OVA U CALL STACK-OVE
+    return Promise[true?"resolve":"reject"]("neka vrednost");
+    //OVO SAM SAMO URADIO DA BIH SE PODSETIO, OVAKVOG "HACKA",
+    //IAKO OVO NIJE VEZANO SA TEMOM OVOG DOKUMENTA, A
+    //TAKODJE I DA NISAM OBEZBEDIO RESOLVED Promise KAO POVRATNU VREDNOST then-OVOG CALLBACKA
+    //POVRATNA VREDNOST then-A, BI BIO RESOLVED Promise (ALI BEZ VREDNOSTI, KOJU SAM JA U OVOM SLUCAJU
+    //OBEZBEDIO I SA KOJOM SE RESOLVE-OVAO, OVAJ Promise KOJI JE POVRATNA VREDNOST, OVOG CALLBACK-A)  
+})                                              
+.then((vrednost) => {                                   
+    jobly_bobly_Element.querySelector('h1:not([slot])').insertAdjacentElement(
+        'beforebegin',
+         noviSlotted                            //INSERTOVAO SAM NOVI SLOTTED 
+    );
+    
+    console.log('microtask 2', vrednost); //STAMPAM OVO CISTO RADI VEZBE I PODSECANJA ASINHRONOSTI
+    
+    //
+    //SAMO OVDE IMA SMISLA DA ISPITAM DA LI JE SLOTTED ELEMENTU ASSIGNED slot 
+    console.log(noviSlotted.assignedSlot);      //->    <slot name='podcast'>
+    //(DA SAM TO URADIO IZVAN, ODNOSNO, NE U OBIMU then-OVOG CALLBACK-A, 'RADILO BI SE O PREDHODNOM
+    //SLOZENOM CALL STACKU', A TADA OVAJ ELEMNT NISAM NESTOVAO U LIGHT DOM; I ZBOG TOGA BI VREDNOST
+    //assignedSlot PROPERTIJA BILA      null)
+
+    //AKO POGLEDAM KONZOLU I STA SE TAMO STAMPALO, VIDECU DA SE slotxhange  EVENT, JOS JEDNOM
+    //TRIGGER-OVAO
 });
 
-//I OVDE NIJE TRIGGEROVAN   'slotchange'    EVENT
+const unnamedSlotted = jobly_bobly_Element.querySelector(':not([slot])'); //JEDAN SLOTTED NEMA slot ATRIBUT
+                                                                        //NJEGA NISAM MENJAO (NI UKLANJAO NI VRACAO) ALI
+                                                                    //POKUSACU DA PRISTUPIM NJEGOVOM
+                                                                        //ASSIGNED slot-U
+console.log(unnamedSlotted.assignedSlot);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
