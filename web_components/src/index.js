@@ -3797,6 +3797,8 @@ console.log(             document.createTextNode('ovo je tekst, tekst node-a')  
 //NAJSKORIJE VREME
 ///////////////////POSTO SAM SE POZABAVIO assignedSlot PROPERTIJEM SLOTTABLE ELEMENATA, I POSTO SAM SE
 
+
+
 //                  ADVANCED TOPICS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3917,6 +3919,183 @@ console.log(    slotted_text_node.assignedSlot  );  //->       null
 //          (OVO SAM VIDEO U SLUCAJU connectedCallback-A)
 // 3)     MY COMPONENTS ARE LESS FLEXIBILE FOR END USER (MISLI SE NA DEVELOPERA, KOJI BI KORISTIO, MOJE
 //         KOMPONENTE SA 'closed' SHADOW DOM-OM)
+
+//  
+//SADA CU NASTAVITI SA ADVANCED TOPICS, VEZANIM ZA SHADOW DOM
+//SADA CU SE KONKRETNO POZABAVITI SA UTILITY-IMA, OBEZBEDJENIM OD DELA shadow DOM API-A, KOJI SU NAMENJENI
+//ZA RAD SA slot-OVIMA, I DISTRIBUIRANIM node-OVIMA (DRUGI NAZIV: SLOTTED ELEMENTI)
+
+//ZA TU POTREBU, KREIRACU, NOVI PRIMER, ODNOSNO REGISTROVACU NOVI CUSTOM ELEMENT
+
+window.customElements.define('jobly-bobly', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const divElement = document.createElement('div');
+        const sekcijaElement = document.createElement('section');
+        const paragraf1 = document.createElement('p');
+        const paragraf2 = document.createElement('p');
+        const textNode1 = document.createTextNode("Ovo je tekst node, prvog paragrafa");
+        const textNode2 = document.createTextNode("Ovo je tekst node, drugog paragrafa");
+
+        const slot1 = document.createElement('slot');
+        const slot2 = document.createElement('slot');
+
+        slot1.name = "podcast";
+
+        slot1.innerHTML = "<h4>FALLBACK PODCAST BLA</h4>";
+        slot2.innerHTML = "<h4>FALLBACK UNNAMED</h4>";
+
+        paragraf1.appendChild(textNode1);
+        paragraf2.appendChild(textNode2);
+        
+        sekcijaElement.appendChild(slot2);
+        sekcijaElement.appendChild(paragraf2);
+        
+        divElement.appendChild(slot1);
+        divElement.appendChild(paragraf1);
+        divElement.appendChild(sekcijaElement);
+
+        shadowRoot.appendChild(divElement);
+
+        this._a = 0;  //OVO SLUZI SAMO KAO BROJAC (POMOC KOD SHVATANJA NECEGA)
+
+        
+    }
+
+    connectedCallback(){
+        //NAIME, JA ZELIM DA SE POZABAVIM JEDNIM EVENTOM, KOJI JE EVENT KARAKTERISTICAN ZA SLOTOVE
+        //NAIME, REC JE O
+                            //              slotchange          EVENT-U
+        
+        //OVAJ EVENT BIVA TRIGGERED, KADA SE slot-OVLJEVI DISTTRIBUIRANI ELEMENTI (SLOTTED ELEMENTI)
+        //PROMENE; A POD TIME SE MISLI, KADA KORISNIK MOG CUSTOM ELEMENTA URADI SLEDECE
+        //              DODA ILI UKLONI         DECU IZ LIGHT DOM-A
+        //NAIME, OVAJ EVENT, SE MOZE TRIGGEROVATI SAMO NA slot ELEMENTU
+        //SDA CU JEDNOM slot-U, IZ MOG PRIMERA, ZAKACITI HANDLER, KOJI SE TREBA IZVRSITI PO
+        // TRIGGERINGU          slotchange      EVENT-A
+        
+        const prviSlot = this.shadowRoot.querySelector('[name=podcast]');
+        console.log(prviSlot);
+        
+        prviSlot.addEventListener('slotchange', ev => {
+            console.log(ev.composedPath());
+            console.log(++this._a);
+        });
+
+        //U DOKUMENTACIJI SAM PROCITAO DA SE GORE PROSLEDJENI HANDLER, NECE INVOCIRATI, TOKOM 
+        //INSTANCITIRANJA CUSTOM ELEMENTA
+
+        //ALI ONO STO JA VIDIM, JESTE SLEDECE
+        //DA NISAM NESTO-VAO, NI JEDAN ELEMENT U LIGHT DOM (REFERENCIRAJUCI slot-OVO IME AKO POSTOJI 
+        //NAMED slot U SHADOW DOM-U, ILI NE REFERNIRAJUCI slot-OVO IME (ZA SLUCAJ POSTOJANJA UNAMED 
+        //slota U shadow DOM-u); A KOD MENE SU OBA SLUCAJA PRISUTNA)
+        //POMENUTI HANDLER SE NE BI INVOCIRAO, STO SAM I POKUSAO I ZAISTA SE I NIJE INVOCIRAO
+        //A POSTO SAM U STARTU, ODNOSNO ODMAH KORISTECI MOJ CUSTOM ELEMENT U HTML FAJLU, JA MOJ CUSTOM
+        //ELEMENT KREIRAO TAKO DA SE U LIGHT DOM-U, ODMAH NALAZE SLOTTED ELEMENTI, HANDLER JE BIO IVOCIRAN
+        //STO ZNACI SLEDECE PO MOM ZAPAZANJU:
+
+        //      slotchange  SE POKRECE PRI BILO KOJEM NESTINGU SLOTTED ELEMENTA U LIGHT DOM
+        //                   ILI OTKACIVANJU SLOTTED ELEMENTA IZ LIGHT DOM-A
+        //ONO STO SAM POKUSAO, A STO SE MOZE VIDETI DOLE U GLOBALNOM OBIMU, JESTE DA SAM JA PRISTUPAO
+        //MOM NESTED CUSTOM ELEMENTU, I VRSIO NEKE MODIFIKACIJE NA LIGHT DOM-U, UZ POMOC JAVASCRIPT-A
+        
+        //SADA CU VIDETI, KAKO SE TO ODRAZILO NA GORE PROSLEDJENI HANDLER, ODNOSNO VIDECU, KADA SE TAJ
+        //HANDLER INVOCIRAO, TOKOM MODIFIKACIJA
+
+
+    }
+});
+
+const light_dom_za_jobly_bobly = `
+    <jobly-bobly>
+        <h1 slot="podcast">Ovo je neki naslov, koji je plasiran na mesto prvog slota, koji je named</h1>
+        <h1>Ovo je drugi naslov, koji je plasiran na mesto drugog slota, i taj slot je unnamed</h1>
+    </jobly-bobly>
+`;
+
+//OVO RADIM, CISTO U CILJU PROVERE I BOLJEG SHVATANJA SLOTTED OSOBINA, ALI I CSS SELEKTORA
+const slottedWithoutName = document.querySelector('jobly-bobly :not([slot])');      //DAKLE ZELIM DA
+                                                                            //PRISTUPIM h1 ELEMENTU
+                                                                            //KOJI NEMA slot ATRIBUT
+                                                                            //I UZ POMOC OVAKVOG, SELEKTORA
+                                                               //KOJI JE ARGUMENT querySelector METODE
+                                                               //SAM TO I USPEO             
+//SADA CU VIDETI KOJI JE        ASSIGNED slot, PRISTUPLJENOG SLOTTED ELEMNTA
+
+console.log(slottedWithoutName.assignedSlot);               //U KONZOLI SE STAMPAO ODGOVARAJUCI
+                                                            //  slot    ELEMENT 
+
+//MODIFIKOVANJE, ODNOSNO PROMENE KOJE VRSIM UZ POMOC JAVASCRIPT-A, ZA JEDAN
+// jobly-bobly SLOTTED ELEMENT, I POSMATRANJE KADA SE TO INVOCIRA, onslotchange HANDLER, 
+//KOJI JE ZKACEN NA slot ELEMENT (NAIME, DEFINISANJE KACENJA JE OBAVLJENO U OBIMU connectedCallback-A)
+
+const jobly_bobly_Element = document.querySelector('jobly-bobly');
+
+const joblysFirstSlotted = jobly_bobly_Element.querySelector('[slot=podcast]');
+
+
+joblysFirstSlotted.innerText = "ZAMENJEN TEKST prvog slotted-a"; //SAMO PROVERAVAM UPOTRBU innerText
+                                                            //JOS JEDNOM
+joblysFirstSlotted.setAttribute('some_attribute', '');
+
+const slotForPods = joblysFirstSlotted.assignedSlot; 
+console.log(slotForPods);
+
+slotForPods.querySelector('h4').innerText = "Some kind of new fallback blah"; 
+                                                                //PROVERAVAM DA LI querySelector
+                                                                //FUNKCIONISE KAD SE PRIMENI NA slot
+                                                                //I ISTO FUNKCIONISE KAO I ZA BILO KOJI
+                                                                //DRUGI NODE
+//joblysFirstSlotted.remove();
+
+console.log(joblysFirstSlotted);
+
+//UKLANJANJE SLOTTED ELEMENTA METODOM   removeChaild , KOJA JE METODA NJGOVOG ANCESTORA (U OVOM SLUCAJU
+//TAJ ANCESTOR JE TAG, ODNOSNO ELEMENT, JESTE MOJ CUSTOM ELEMENT)
+//TO RADIM DA BIH PROVERIO DA LI SE GUBI REFERENCA NA TAJ ELEMENT KADA SE UKLONI
+
+//ALI DEFINISANJE UKLANJENJA SE MORA OBAVITI U CALLBACK-U, KOJI JE POSLAT NA QUEUE
+
+new Promise((res, rej) => {
+    res();
+}).then(() => {
+    jobly_bobly_Element.removeChild(joblysFirstSlotted);
+    console.log('microtask 1');
+});
+
+
+console.log(joblysFirstSlotted);        //ODGOVOR JE DA SE POMENUTA REFERENCA NE GUBI
+//DA BI SE IZGUBILA REFERENCA (I PO MOM SECANJU KAZEM, DA BI SE UKLONIO ELEMENT IZ MEMORIJSKOG PROSTORA)
+//TREBALO BI SE URADITI SLEDECE:
+//                                      joblysFirstSlotted = null;
+
+//POSTO SE      'slotchange'    EVENT TRIGGEROVAO DVA PUTA
+//PRVI PUT, KADA SE DIREKTNO NESTOVAO ELEMENT (SA ATRIBUTOM slot="podcast") U LIGHT DOM, U HTML FAJLU
+//DRUGI PUT, KADA JE POZIVANJE CALLBACKA (U CIJEM OBIM USAM DEFINISAO UKLANJANJE SLOTTED ELEMENTA) STAVLJENO NA STACK
+//POKUSACU SADA DA DODAM NOVI ELEMENT ZA DISTRIBUTION, U SLUCAJU ISTOG slot-A, PA DA POGLEDAM DA LI CE
+//SE TRIGGEROVATI   slotchange  EVENT, PO INSERTOVANJU NOVOG ELEMENTA, KOJI TREBA DA BUDE DISTRIBUIRAN
+//ZA slot (name="podcast")
+
+const noviSlotted = document.createElement('h2');
+noviSlotted.setAttribute('slot', 'podcast');
+console.log(noviSlotted);
+
+noviSlotted.textContent =   `OVO JE NOVI SLOTTED ELEMENT, NAKNADNO DODAT JAVASCRIPTOM,
+                            DAKLE, NIJE NESTED 'RUCNO', U HTML FAJLU`;
+
+
+new Promise((res, rej) => {
+    res();
+}).then(() => {
+    jobly_bobly_Element.insertAdjacentElement('beforebegin', noviSlotted);
+    console.log('microtask 2');
+});
+
+//I OVDE NIJE TRIGGEROVAN   'slotchange'    EVENT
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
