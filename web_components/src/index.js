@@ -3942,17 +3942,21 @@ window.customElements.define('jobly-bobly', class extends HTMLElement {
 
         const slot1 = document.createElement('slot');
         const slot2 = document.createElement('slot');
+        const slot3 = document.createElement('slot');
 
         slot1.name = "podcast";
+        slot3.name = "screencast";
 
         slot1.innerHTML = "<h4>FALLBACK PODCAST BLA</h4>";
         slot2.innerHTML = "<h4>FALLBACK UNNAMED</h4>";
+        slot3.innerHTML = "<h4>FALLBACK SCREENCAST BLA</h4>";
 
         paragraf1.appendChild(textNode1);
         paragraf2.appendChild(textNode2);
         
         sekcijaElement.appendChild(slot2);
         sekcijaElement.appendChild(paragraf2);
+        sekcijaElement.appendChild(slot3);
         
         divElement.appendChild(slot1);
         divElement.appendChild(paragraf1);
@@ -3991,7 +3995,7 @@ window.customElements.define('jobly-bobly', class extends HTMLElement {
         //ALI ONO STO JA VIDIM, JESTE SLEDECE
         //DA NISAM NESTO-VAO, NI JEDAN ELEMENT U LIGHT DOM (REFERENCIRAJUCI slot-OVO IME AKO POSTOJI 
         //NAMED slot U SHADOW DOM-U, ILI NE REFERNIRAJUCI slot-OVO IME (ZA SLUCAJ POSTOJANJA UNAMED 
-        //slota U shadow DOM-u); A KOD MENE SU OBA SLUCAJA PRISUTNA)
+        //slota U shadow DOM-u; A KOD MENE SU OBA SLUCAJA PRISUTNA)
         //POMENUTI HANDLER SE NE BI INVOCIRAO, STO SAM I POKUSAO I ZAISTA SE I NIJE INVOCIRAO
         //A POSTO SAM U STARTU, ODNOSNO ODMAH KORISTECI MOJ CUSTOM ELEMENT U HTML FAJLU, JA MOJ CUSTOM
         //ELEMENT KREIRAO TAKO DA SE U LIGHT DOM-U, ODMAH NALAZE SLOTTED ELEMENTI, HANDLER JE BIO IVOCIRAN
@@ -4001,18 +4005,45 @@ window.customElements.define('jobly-bobly', class extends HTMLElement {
         //                   ILI OTKACIVANJU SLOTTED ELEMENTA IZ LIGHT DOM-A
         //ONO STO SAM POKUSAO, A STO SE MOZE VIDETI DOLE U GLOBALNOM OBIMU, JESTE DA SAM JA PRISTUPAO
         //MOM NESTED CUSTOM ELEMENTU, I VRSIO NEKE MODIFIKACIJE NA LIGHT DOM-U, UZ POMOC JAVASCRIPT-A
+        //PA SAM PRATIO KADA CE SE SVE TO TRIGGER-OVATI slotchange EVENT
         
         //SADA CU VIDETI, KAKO SE TO ODRAZILO NA GORE PROSLEDJENI HANDLER, ODNOSNO VIDECU, KADA SE TAJ
-        //HANDLER INVOCIRAO, TOKOM MODIFIKACIJA
 
-        //SADA MI IMA SMISLA RECENICA KOJA GLASI DA SE:
+        //MOZDA JE SUVISNO RECE ALI MORAM DODATI DA MI, SADA MI IMA SMISLA RECENICA KOJA GLASI DA SE:
         //                                  NECE TRIGGEROVATI slotchange EVENT PRILIKOM INSTATICIRANJA
         //                                  CUSTOM ELEMENTA
         //          JER INSTANTICIRANJE JESTE JEDNO
         //          A NESTOVANJE POTENCIJALNIH SLOTTED ELMENATA, U LIGHT DOM
         //          INSTANTICIRANOG CUSTOM ELMENTA, JESTE DRUGO (I ZA OVO DRUGO SE TRIGGERUJE 
         //                                                          POMENUTI EVENT)
+        //A ONO STO SAM JA URADIO UNOSECI TAG CUSTOM ELEMENTA U HTML FAJL, ZNACILO JE INSTANTICIRANJE
+        //MOG CUSTOM ELEMENTA, A SLUCAJNO SAM TADA NEST-OVAO NEKOLIKO SLOTTED ELEMENTA, STO JE TRIGGER-
+        //OVALO      slotchange     EVENT
 
+
+        //MEDJUTIM U SLUCAJU JAVASCRIPTA,         slotchange      EVENT SE MOZE TRIGGEROVATI SAMO, AKO SE
+        //RMOVE/INSERTION SLOTTED ELEMENTA OBAVLJA U OBIMU CALLBACK-A, POSLATOG U TASK QUEUE (ZNAM SIGURNO
+        //DA JE TO MOGUCE ZA MICROTASK, A ZA MACROTASK OSTAJE DA PROVERIM, ALI PO MOJOJ PROCENI NE VIDIM
+        //NIKAKVU PREPREKU, JER ONO STO MI PADA NA PAMET JESTE DA BI SE UKLANJANJE/DODAVANJE SLOTTABLE ELEMENATA,
+        // MOGLO DOGADJATI KORISNIKOVIM KLIKOM, ILI U CALLBACK ARGUMENTU  setTimeout METODE, ILI 
+        // U SLUCAJU MICROTASK-A (KADA SE then-OV CALLBACK SALJE U MICROTASK QUEUE, CIME SAM SE DOLE
+        //I BAVIO))
+
+        //ONO STO SAM DOLE OBJASNIO ALI STO CU OVDE NAPOMENUTI JESTE SLEDECE
+        //      U SLUCAJU JEDNOG slot-A, KADA SE NJEGOVI DISTRIBUIRANI ELEMENTI DODAVAJU/UKLANJAJU
+        //      BEZ OBZIRA KOLIKO SE NJIH DODA/UKLONI TOKOM JEDNOG STACKINGA POZIVA FUNKCIJA (POMENUTIH 
+        //      CALLBACK-OVA), slotchange SE IZVRSVA SAMO JEDNOM
+
+        //ALI AO POSMATRAM SITUACIJU OVAKO
+        //                  KORISNIK KLIKNE I TIME UKLONI JEDAN SLOTTED ELEMENT 
+        //(POSLAO SE CALLBACK U QUEUE I EVENTUALNO JE DOSLO DO SLAGANJA POZIVANJA U STACK) 
+        //                          -->  TRIGGEROVAO SE slotchange    JEDANPUT
+        //KORISNIK KLIKNE I TIME UKLONI/DODA VISE SLOTTED ELEMENATA IZ/U LIGHT DOM-A
+        //                 (POSLAO SE CALLBACK U QUEUE I EVENTUALNO JE DOSLO DO SLAGANJA POZIVANJA U STACK)
+        //                  -->     TRIGGEROVAO SE slotchange JEDANPUT 
+        //                          (BEZ OBZIRA STO JE UKLONJENO/DODATO VISE SLOTTED ELEMENATA)
+        //                              JER onslotchange EVENT SE MOZE TRIGGEROVATI SAMO JEDNOM ZA
+        //                                          TRENUTNI STACK
     }
 });
 
@@ -4061,10 +4092,12 @@ slotForPods.querySelector('h4').innerText = "Some kind of new fallback blah";
 console.log(joblysFirstSlotted);
 
 //UKLANJANJE SLOTTED ELEMENTA METODOM   removeChaild , KOJA JE METODA NJGOVOG ANCESTORA (U OVOM SLUCAJU
-//TAJ ANCESTOR JE TAG, ODNOSNO ELEMENT, JESTE MOJ CUSTOM ELEMENT)
-//TO RADIM DA BIH PROVERIO DA LI SE GUBI REFERENCA NA TAJ ELEMENT KADA SE UKLONI
+//TAJ ANCESTOR JE TAG, ODNOSNO ELEMENT, KOJI JESTE MOJ CUSTOM ELEMENT)
+//IZMEDJU OSTALOG TO RADIM DA BIH PROVERIO DA LI SE GUBI REFERENCA NA TAJ ELEMENT KADA SE UKLONI
 
-//ALI DEFINISANJE UKLANJENJA SE MORA OBAVITI U CALLBACK-U, KOJI JE POSLAT NA QUEUE
+//ALI DEFINISANJE UKLANJENJA SE MORA OBAVITI U CALLBACK-U, KOJI JE POSLAT NA QUEUE 
+// RAZLOGE ZASTO, NAVEO SAM NA MNOGO MESTE; U KOMENTARU U OBIMU connectedCallback-A, ALI I U DALJIM
+// KOMENTARIMA KOJI SLEDE
 
 new Promise((res, rej) => {
     res();
@@ -4135,11 +4168,11 @@ new Promise((res, rej) => {
     //
     //SAMO OVDE IMA SMISLA DA ISPITAM DA LI JE SLOTTED ELEMENTU ASSIGNED slot 
     console.log(noviSlotted.assignedSlot);      //->    <slot name='podcast'>
-    //(DA SAM TO URADIO IZVAN, ODNOSNO, NE U OBIMU then-OVOG CALLBACK-A, 'RADILO BI SE O PREDHODNOM
+    //(DA SAM TO URADIO IZVAN, ODNOSNO, NE U OBIMU then-OVOG CALLBACK-A, 'RADILO BI SE O PREDHODNOM (CAK NE NI PREDHODNOM, VEC U ONOM PRE PREDHODNOG)
     //SLOZENOM CALL STACKU', A TADA OVAJ ELEMNT NISAM NESTOVAO U LIGHT DOM; I ZBOG TOGA BI VREDNOST
     //assignedSlot PROPERTIJA BILA      null)
 
-    //AKO POGLEDAM KONZOLU I STA SE TAMO STAMPALO, VIDECU DA SE slotxhange  EVENT, JOS JEDNOM
+    //AKO POGLEDAM KONZOLU I STA SE TAMO STAMPALO, VIDECU DA SE slotchange  EVENT, JOS JEDNOM
     //TRIGGER-OVAO
 });
 
@@ -4147,7 +4180,356 @@ const unnamedSlotted = jobly_bobly_Element.querySelector(':not([slot])'); //JEDA
                                                                         //NJEGA NISAM MENJAO (NI UKLANJAO NI VRACAO) ALI
                                                                     //POKUSACU DA PRISTUPIM NJEGOVOM
                                                                         //ASSIGNED slot-U
-console.log(unnamedSlotted.assignedSlot);
+console.log(unnamedSlotted.assignedSlot);       //->    <slot>...</slot>
+
+// POSTO SAM SE POZABAVIO slotchange EVENTOM, KOJIM JE MOGUCE PRATITI UKLANJANJE I INSERTOVANJE
+// SLOTTABLE ELEMENATA
+
+// SADA CU SE POZABAVITI, JEDNIM API-EM, KOJI PREPORUCUJE GOOGLE DEVELOPER, KOJI JE NAPISAO CLANKE
+// O WEB KOMPONENTAMA (MEDJU NJIMA I shadow DOM) (DEO GRUPACIJE CLANAKA, POD IMENOM WEB FUNDAMENTALS) 
+// I KOJI SE BAVI OBSERVINGOM PROMENA
+////     ODNOSNO REC JE O API-U, KOJI SE ZOVE     
+
+    MutationObserver 
+                    
+                //ODNOSNO REC JE O 
+////    MutationObserver INTERFACE-U, KOJI DAJE MOGUCNOST POSMATRANJA PROMENA KOJE SE DOGADJAJU NA
+////    DOM DRVETU
+//  KONSTRUKTOR, KOJI SE KORISTIT JESTE      MutationObserver     (NARAVNO POZIVA SE SA new KEYWORD-OM)
+//KREIRA I return-UJE NOVU MutationObserver INSTANCU
+//A KAO ARGUMENT, POMENUTOM KONSTRUKTORU, DODAJE SE CALLBACK ARGUMENT
+//POMENUTI CALLBACK SE INVOCIRA, KADA SE POJAVE PROMENE NA DOM-U
+//POMENUTOM CALLBACK-U, SE PRILIKOM INVOCIRANJA, DODAJU DVA ARGUMENTA
+//TO SU:
+//            mutation LISTA (PREDPOSTAVLJAM, NIZ ELEMENATA DOM-A, NA KOJIMA SU SE DESILE PROMENE)
+//            observer  OBJEKAT (PREDPOSTAVLJAM MutationObserver INSTANCA)
+//
+//MEDJUTIM, BOLJE JE DA SE POMENUTIM, ZA OVAJ PRVI PUT POZABAVIM, PUTEM PRIMERA
+
+//PRISTUPICU, MOM CUSTOM ELEMENTU, KOJI JE INSERTED U DOM
+
+const joblyBoblyElement = document.querySelector('jobly-bobly');
+
+console.log(jobly_bobly_Element);
+
+//INSTANCITIRACU JEDNU MutationObserver INSTANCU
+
+const mutationObserverObject = new MutationObserver(function(mutationList, observerObjekat){
+//    console.log(mutationList, observerObjekat);
+
+    //NA OVO SAM SE VRATIO KASNIJE, POSTO SAM OBJASNIO NEKE OD MOGUCNOSTI OPCIJA
+    for(let mutation of mutationList){
+        if(mutation.type === 'childList'){  //AKO JE DOSLO DO REMOVE ILI INSERTA CHILD ELEMENTA
+            console.log("Child node, je dodat ili uklonjen iz observed custom elementa");
+        }
+
+        if(mutation.type === "attributes"){
+            console.log("Atribut" + mutation.attribteName + " je modifikovan");     //MOGU SAZNATI
+        }                                                                       //IME ATRIBUTA, KOJI JE
+                                                                                //PROMENJEN
+    }
+
+});
+
+//DEFINISACU, KOJI DOM ELEMENT, KOJI JE INSERTED U DOM, ZELIM DA OBSERVE-UJEM
+//TO CE NARAVNO BITI, MOJ CUSTOM ELEMENT
+//DEFINISANJE POMENUTOG OBSERVINGA SE POSTIZE PRIMENOM      observe     METODE, MutationObserver-OVOG
+//PROTOTIPA
+//POMENUTOJ METODI SE PRILIKOM POZIVANJA DODAJU DVA ARGUMENTA
+
+        //DOM ELEMENT, KOJI ZELI MDA POSMATRAM (U OVOM SLUCAJU TO CE BITI <jobly-bobly>)
+        //OBJEKAT, OPCIJA, KOJE ZELIM DA SE PRATE, ZA POMENUTI ELEMENT
+                        //TO MOGU, NAIME BITI:
+                        //          attributes: true|false
+                        //          childList: true|false
+                        //          subtree: true|false
+//OSTALE OPCIJE MOGU PRONACI NA SLEDECOJ WEB STRANICI
+//  https://developer.mozilla.org/en-US/docs/Web/API/MutationObserverInit
+
+//POSTO SAM SE UPOZNAO, DO ODREDJENOG NIVOA , SA ONIM, KAKVE SE MUTACIJE MOGU POSMATRATI
+// VRATICU SE NA GORNJI CALLBACK ARGUMENT, KAKO BIH DEFINISAO, STA SETO
+//TREBA DOGODITI, AKO SU CHILD ELEMNTI, POSMATRANOG ELEMENTA, USTVARI REMOVED ILI INSERTED
+//I STA SE TREBA DOGODITI, AKO JE ATRIBUT ELEMENTA, PROMENJEN
+
+//POSTO SAM DEFINISAO, POMENUTO, MOG USE POZABAVITI SLEDECIM
+
+//NAIME, POMENUTA define METODA, KONFIGURIRA MutationObserver INSTANCU, KAKO BI POMENUTA POCELA DA PRIMA
+//NOTIFICATION-E, KROZ CALLBACK (ARGUMENT KONSTRUKTORA), KADA SE DOM PROMENI, MATCH-UJUCI DATU OPCIJU
+
+mutationObserverObject.observe(joblyBoblyElement, {
+    attributes: true,
+    childList: true,
+    subtree: true
+});
+
+//AKO ZELIM DA SE OBSERVING, VISE NE OBAVLJA, MOGU, NA    MutationObserver INSTANCI, PRIMENITI
+//              disconnect          METODU (BEZ ARGUMENATA)
+
+//POSTO NISAM DISCONNECT-OVAO OBSERVER, MOGU POGLEDATI STA SE TO STAMPALO U KONZOLI, KAO REZULTAT
+//ONOGA STO SAM DEFINISAO (U OBIMU GORNJEG CALLBACK-A), DA SE URADI, POSTO JE OBSERVER "UOCIO PROMENU" 
+
+//POSTO ZNAM DA SAM POMENUTI OBSERVING DEFINISAO OVDE, A POSTO ZNAM DA SAM VRSIO NEKE MODIFIKACIJE
+//NA CUSTOM ELEMENTU (UKLANJAO I DODAVAO SLOTTED ELEMENTE), A SVE SE TO SLALO (ODNOSNO KOREKTNIJ JE RECI
+//DA CE SE SLATI) U QUEUE-E, JASNO MI JE DA TO ZNACI DA SAM OVDE PRVO DEFINISAO DA SE OBSERVUJE
+//CUSTOM HTML ELEMENT, A ONO STO JE DEFINISAO U CALLBACKOVIMA (then METODA), JASNO MI JE DA JE ONO NAREDNO
+//STO SE IZVRSAVA (SALJE N STACK-OVE), JASNO MI JE DA CU ZAISTA MOCI VIDETI KOJE SU SE TO MUTACIJE DOGODILE
+//ZA POMENUTI ELEMENT
+
+//I ZAISTA U KONZOLI SE SVE STAMPALO, KAKO TREBA I TO U TRI NAVRATA, JER SAM IMAO DVA NAVRATA
+//REMOVINGA/INSERTION-A, SLOTTED ELEMENATA IZ LIGHT DOM-A, CUSTOM ELEMENTA
+//(MEDJUTIM POSTOJE TRI NAVRATA INSERTION/REMOVINGA, ALI PRVI JE POSTIGNUT DIREKTNIM NESTINGOM
+//U HTML FAJLU, DAKLE BEZ UPOTREBE JAVASCRIPT-A, I VEROVATNO ZATO NIJE NI PRIMECEN OD OBSERVER-A)
+
+//A ZA MUTACIJE NAD ATRIBUTIMA, NIJE SE NISTA STAMPALO, JER SE NISU NI DGODILE NIKAKVE MUTACIJE SA
+//ATRIBUTIMA CUSTOM ELEMENTA
+
+//NARAVNO, TREBA DODATI DA JE POMENUTI CALLBACK (ARGUMENT MutationObserver KONSTRUKTORA),
+// ISTO PO NEKOJ MUTACIJI SALJE U QUEUE
+
+//SLEDECE STO JE STAMPANO U KONZOLI MI MOZE TO I PRIKAZATI
+const stampano_u_konzoli = `
+index.js:3984       (3) [slot, div, document-fragment]
+index.js:3985        1
+index.js:4102       microtask 1
+index.js:4219       Child node, je dodat ili uklonjen iz observed custom elementa   /**/
+index.js:3984       (3) [slot, div, document-fragment]
+index.js:3985       2
+index.js:4162       microtask 2 neka vrednost
+index.js:4166       <slot name=​"podcast">​…​</slot>​
+index.js:4219       Child node, je dodat ili uklonjen iz observed custom elementa       /**/
+index.js:3984       (3) [slot, div, document-fragment]
+index.js:3985       3
+`;
+//OSTAJE PODSETNIK DA SE DETALJNIJE POZABAVIM, ODNOSNO DA DETALJNIJE NAUCIM SVE OSOBINE I METODE,
+//I NAJBOLJU PRAKSU PRILIKOM UPOTREBE     MutationObserver INSTANCI, STO MOGU PROCITATI, IZ NEKOLIKO
+//MDN CLANAKA
+
+//SADA NASTAVLJAM MOJE BAVLJENJE SA shadow DOM-OM I slot-OVIMA
+//
+//RANIJE SAM KORISTIO GETTER, ILI PROPERTI assignedSlot, SLOTTED ELEMENTA, KOJIM SE PRISTUPA, NJEGOVOM
+//ASSIGNED slot-U, MEDJUTIM, MOGUCE JE PRISTUPITI I SLLOTED ELEMENTU, ILI ELEMENTIMA, KOJI SU DITRIBUIRANI
+//PREKO slota, KOJEM SU DISTRIBUIRANE
+//
+//          TO SE POSTIZE UZ POMOC METODE       assignedNodes()
+//
+//AKO ZELIM DA SAMO PRISTUPIM SLOTTED ELEMENTIMA, POMENUTOJ METODI CU, KAO ARGUMENT DODATI NISTA
+//
+//A AKO ZELIM DA PRISTUPIM FALLBACK CONTENT-U, slot-A, U SLUCAJU DA NE POSTOJE DISTRIBUTED NODES
+//POMENUTOJ METODI CU DODATI, SLEDECI OBJEKAT, KAO ARGUMENT
+//              {flatten: true}
+
+const prviSlot = document.querySelector('jobly-bobly').shadowRoot.querySelector('[name=podcast]');
+const treciSlot = document.querySelector('jobly-bobly').shadowRoot.querySelector('[name=screencast]');
+console.log(prviSlot, treciSlot);
+
+console.log(    prviSlot.assignedNodes()                        );          //  ->      [h1]    (JEDAN CLAN, ODNOSNO JEDAN SLOTTED h1 ELEMENT)
+console.log(    treciSlot.assignedNodes()                       );          //  ->      []      (NEM CLANOVA, ODNOSNO NEMA SLOTTED ELEMENATA)
+console.log(    treciSlot.assignedNodes({flatten: true})        );          //  ->      [h4]    (JEDAN CLAN, FALLBACK CONTENT MU JE h4 ELEMENT)
+//
+//
+//SADA CU SE POZABAVITI NECIM STO SE ZOVE       shadow DOM event model
+//
+//REGISTROVACU NOVI CUSTOM ELEMENT, ZA OVU POTREBU
+
+window.customElements.define('some-bobly-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        //KREIRAO SAM, ODNOSNO REGISTROVAO SAM, NOVI CUSTOM ELEMENT, PRVENSTVENO, KAKO BI SAGLEDAO
+        //PROPAGATION EVENTA, OD MESTA GDE NASTANU, U shadow DOM-U, PA DO window-A
+        
+        //PRVENSTVENO TO RADIM, ZBOG RECENICE KOJE SAM PROCITAO U WEB FUNDAMENTALS GOOGLE CLANCIMA, A KOJA
+        //GLASI DA, SAMO AKO SE RADI O  open    SHADOW ROOT-U,      event.composedPath()
+        //CE return-OVATI NIZ, SA ONIM node-OVIMA, KROZ KOJE SE EVENT PROPAGATE-OVAO, ODNOSNO KROZ
+        //KOJE JE PUTOVAO, A MEDJU NJIMA CE SE NALAZITI I node-OVI, KOJI SU DEO SHADOW THREE-JA
+
+        //PREDPOSTAVLJAM DA SE POMENUTIM MISLILO, DA SE U SLUCAJU    closed      SHADOW ROOT-A
+        //NECE, U POMENUTOM retur-OVANOM NIZU NACI I ONI node-OVI, KOJI SU DEO SHADOW DOM-A, VEC CE SE
+        //RACUNATI, DA SE 'EVENT RODIO', ILI DIREKTNO, U MOM CUSTOM ELEMENTU, ILI U NEKOM NJEGOVOM NESTED 
+        //ELEMENTU, KOJI NIJE DEO SHADOW DOM-A
+
+        //SVE POMENUTO CU ISPITATI NA NACIN DA CU TOKOM KACENJA HANDLERA, NA ELEMENTE U SHADOW DOMU,
+        //JA MENJATI        
+        //                    OPENNESS          I           CLOSENESS
+        //                         SHADOW ROOT-A, NA SLEDECI NACIN
+
+        //( OVDE CU SAMO OSTAVITI DA SAM NAKON SVIH TESTIRANJAM ZA KOJE SAM REKAO DA CU SPROVESTI
+        //UTVRDIO DA SE GORNJE POMENUTO ODNOSI SAMO NA      SLOTTED         ELEMENTE)
+
+       //const shadowRoot = this.attachShadow({mode: 'closed'});         //DAKLE NEKAD CU COMMENT OUT
+                                                                        //OVO, A NEKAD OVO SLEDECE
+       const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const textNode1 = document.createTextNode("Tekst prvog paragrafa");
+        const textNode2 = document.createTextNode("Ovo je drugi paragraf");
+        const textNode3 = document.createTextNode("Treci paragraf ovo je");
+
+        const styleContent = `
+            :host {
+                border: orange solid 2px;
+                display: block;
+                padding: 8px;
+            }
+
+            ::slotted(*) {
+                margin-left: 48px;
+                padding: 16px;
+            }
+
+            ::slotted([slot=fidget]) {
+                border: tomato solid 8px;
+            }
+
+            ::slotted([slot=spinner]) {
+                border: olive solid 8px;
+            }
+
+            section {
+                border : yellow solid 4px;
+                padding: 8px;
+            }
+        `;
+
+        const paragraf1 = document.createElement('p');
+        const paragraf2 = document.createElement('p');
+        const paragraf3 = document.createElement('p');
+
+        const slot1 = document.createElement('slot');
+        const slot2 = document.createElement('slot');
+        const slot3 = document.createElement('slot');
+
+        const divElement = document.createElement('div');
+        const sekcijaElement = document.createElement('section');
+        const styleElement = document.createElement('style');
+        
+        paragraf1.appendChild(textNode1);
+        paragraf2.appendChild(textNode2);
+        paragraf3.appendChild(textNode3);
+
+        slot1.name = "fidget";
+        slot3.name = "spinner";
+        
+        slot1.innerHTML = "<h1>SLOT1 FALLBACK</h1>";
+        slot2.innerHTML = "<h1>SLOT2 FALLBACK</h1>";
+        slot3.innerHTML = "<h1>SLOT3 FALLBACK</h1>";
+
+        styleElement.textContent = styleContent;
+
+        divElement.appendChild(paragraf1);
+        sekcijaElement.appendChild(paragraf2);
+        divElement.appendChild(slot1);
+        sekcijaElement.appendChild(slot2);
+        sekcijaElement.appendChild(paragraf3);
+        sekcijaElement.appendChild(slot3);
+
+        divElement.appendChild(sekcijaElement);
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(divElement);
+
+        //HANDLERE CU KACITI OVDE, A NE U OBIMU connectedCallback-a, DA NE BIH MORAO DA SKLADISTIM
+        // shadowRoot U PROPERTIJU INSTANCE CUSTOM ELEMENTA (TO BIH MORAO RADITI USLUCAJU
+        //CLOSED SHADOW ROOT,A, JER NJEMU NIJE MOGUCE PRISTUPITI)
+        //ILI DA NE BIH MORAO SKLADISTITI, NEKI, SHADOW DOM-OV ELEMENT, NA KOJI BIH KACIO HANDLER
+        //TO GOVORIM JER, closed SHADOW DOM-U
+        //JEDINO MOGU PRISTUPITI, AKO IMAM NJEGOVU REFERENCU, KOJA JE RETURNED, PRILIKOM NJEGOVOG
+        //ATTACHING-A
+        
+        //ZAKACICU HANDLER, NA JEDAN OD PARAGRAFA U SHADOW DOM-U
+        
+        paragraf3.addEventListener('click', ev => {
+            console.log(ev.composedPath());
+            // U SLUCAJU OTVORENOG SHADOW ROOT-A, STAMPALO SE SLEDECE
+            //[p, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+            // DA JE SHADOW ROOT ZATVOREN, STAMPALO BI SE SLEDECE
+            //  [p, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+            //TAKO DA ONO, STO JE RECENO 
+            //          'DA SE U SLUCAJU    closed      SHADOW ROOT-A
+            //          NECE, U POMENUTOM retur-OVANOM NIZU NACI I ONI node-OVI, KOJI SU DEO 
+            //          SHADOW DOM-A'
+            //PO SVEMU SUDECI NIJE TACNO, JER SU SE, I U SLUCAJU CLOSED SHDOW ROOT-A, U RETURNED NIZU
+            //NASLI         p         section         div          document-fragment(shadowroot)
+        });
+        
+        //MOZDA SE ONO STO MISLIM DA JE POGRESNO, ODNOSILI SAMO NA slot ELEMENTE, I TO CU PROVERITI
+        //TAKO STO CU NA JEDAN OD slot ELEMENATA, ZAKACITI HANDLER
+        
+        slot2.addEventListener('click', ev => {
+            console.log(ev.composedPath());
+            //I U OVOM SLUCAJU ISTO VAZI STO JE VAZILO I GORE, JER CE SE I U SLUCAJU OPEN I CLOSED
+            //SHADOW ROOT-A, STAMPATI SLEDECE:
+
+         //[h4, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+        //DAKLE, BEZ OBZIRA DA LI JE SHADOW ROOT, OPEN ILI CLOSED, U NIZU SE NALAZE, ONAJ SLOTTED ELEMENT,
+        // PA NJEGOV ASSIGNED SLOT, PA OSTALI ELEMENTI SHADOW  DOMA, PA DALJE SVE SVE DO window-a
+            
+        });
+
+        //POSTO SAM ZAKACIO HANDLERE NA JEDNOM ELEMENTU (KOJI NIJE SLOT A NI SLOTTED) SHADOW DOM-A,
+        //PA SAM ZAKACIO HANDLER ZAKACIO NA SLOT ELEMENT, OSTAJE MI DA HANDLER ZAKACIM NA SLOTTED ELEMENT
+        //I POGLEDAM STA CE SE SVE NALAZITI U NIZU, POVRATNOJ VREDNOSTI   event.composedPath    METODE,
+        //I U SLUCAJU OPENA, A I CLOSED SHADOW ROOT-A
+        //JA CU USTVARI ZAKACITI onclick HANDLER-E, NA DVA SLOTTED ELEMENTA
+
+
+        this.querySelector('[slot=fidget]').addEventListener('click', ev => {
+            console.log(ev.composedPath());
+            //U SLUCAJU     'closed'   SHADOW ROOT-A, STAMPALO SE SLEDECE
+
+            //          [h4, some-bobly-element, body, html, document, Window]
+            
+            //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
+
+            //    [h4, slot, div, document-fragment, some-bobly-element, body, html, document, Window]
+
+        });
+
+        this.querySelector('[slot=spinner]').addEventListener('click', ev => {
+            console.log(ev.composedPath());
+
+            //U SLUCAJU     'closed'   SHADOW ROOT-A, STAMPALO SE SLEDECE
+
+            //          [p, div, some-bobly-element, body, html, document, Window]
+
+            //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
+
+        // [p, div, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+
+        });
+
+        //I NAKON PREGLEDANJA, POVRATNE VREDNOSTI       ev.composedPath()   POZIVANJA
+        //U SLUCAJU KAD JE EVENT HANDLER ZAKACEN NA SLOTTED ELEMENT, POKAZALO
+        //SE DA SE U SLUCAJU          closed          SHADOW ROOT-A       U ONOM NIZU, KOJI JE POVRATNA 
+        //VREDNOST composedPath POZIVANJA, NALAZE node-OVI, BEZ ONIH KOJI PRIPADAJU SHADOW DOM-U
+        //DAKLE, KAO DA JE EVENT TRIGGER-OVAN U LIGHT DOM-U, NAD SLLOTED ELEMENTOM, ODNOSNO KAO DA JE
+        //"USKRACENA INFORMACIJA" DA SE RADI O SLOTTED ELEMENTU DISTRIBUIRANOM U SLOT, KOJI SE NALAZI
+        //U SHADOW DOM-U
+
+        //I NAKON PREGLEDANJA, POVRATNE VREDNOSTI       ev.composedPath()   POZIVANJA
+        //U SLUCAJU KAD JE EVENT HANDLER ZAKACEN NA SLOTTED ELEMENT, POKAZALO
+        //SE DA SE U SLUCAJU          open          SHADOW ROOT-A       U ONOM NIZU, KOJI JE POVRATNA 
+        //VREDNOST composedPath POZIVANJA, NALAZE node-OVI, MEDJU KOJIMA SU I ONI KOJI PRIPADAJU 
+        //SHADOW DOM-U; DAKLE, VIDI SE DA JE EVENT TRIGGER-OVAN NA SLOTTED ELEMENTU, PA SE RAZMNOZAVAO
+        //ODNOSNO PROPAGATE-OVAO DO SLOTA, PA OD SLOTA KROZ GRANU SHADOW DOM DRVETA, PA KROZ SHADOW
+        //BOUNDARY, "NAPOLJE", SVE DO window-A
+
+    }
+});
+
+const some_bobly_Element_light_dom = `
+<some-bobly-element>
+    <h4 slot="fidget">Ovo je fidget</h4>
+    <div slot="spinner">
+      <h4>Ovo je spinner</h4>
+      <p>A ovo je njegov paragraf</p>
+    </div>
+    <h4>Ovo je neimenovani header</h4>
+    <p>Ovo je neimenovanog pargraf</p>
+  </some-bobly-element>
+`;
+
+//REGISTROVAO SAM, NOVI CUSTOM ELEMENT, I ZAKACIO EVENT HANDLER, NA JEDAN OD NJEGOVIH 
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
