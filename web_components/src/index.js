@@ -4356,9 +4356,9 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
         //( OVDE CU SAMO OSTAVITI DA SAM NAKON SVIH TESTIRANJAM ZA KOJE SAM REKAO DA CU SPROVESTI
         //UTVRDIO DA SE GORNJE POMENUTO ODNOSI SAMO NA      SLOTTED         ELEMENTE)
 
-       //const shadowRoot = this.attachShadow({mode: 'closed'});         //DAKLE NEKAD CU COMMENT OUT
+        //const shadowRoot = this.attachShadow({mode: 'closed'});         //DAKLE NEKAD CU COMMENT OUT
                                                                         //OVO, A NEKAD OVO SLEDECE
-       const shadowRoot = this.attachShadow({mode: 'open'});
+        const shadowRoot = this.attachShadow({mode: 'open'});
 
         const textNode1 = document.createTextNode("Tekst prvog paragrafa");
         const textNode2 = document.createTextNode("Ovo je drugi paragraf");
@@ -4374,6 +4374,10 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             ::slotted(*) {
                 margin-left: 48px;
                 padding: 16px;
+            }
+
+            ::slotted(:not([slot])) {
+                border: pink solid 1px;
             }
 
             ::slotted([slot=fidget]) {
@@ -4449,6 +4453,11 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             //          SHADOW DOM-A'
             //PO SVEMU SUDECI NIJE TACNO, JER SU SE, I U SLUCAJU CLOSED SHDOW ROOT-A, U RETURNED NIZU
             //NASLI         p         section         div          document-fragment(shadowroot)
+
+            //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
+            console.log(ev.target);
+            //I U SLUCAJU close, I U SLUCAJU open SHADOW ROOT-A, VREDNOST targeta CE BITI PARAGRAF
+            //A NE CUSTOM ELEMENT, U CIJEM SHADOW DOM-U, SE OVAJ PARAGRAF NALAZI
         });
         
         //MOZDA SE ONO STO MISLIM DA JE POGRESNO, ODNOSILI SAMO NA slot ELEMENTE, I TO CU PROVERITI
@@ -4460,8 +4469,16 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             //SHADOW ROOT-A, STAMPATI SLEDECE:
 
          //[h4, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
-        //DAKLE, BEZ OBZIRA DA LI JE SHADOW ROOT, OPEN ILI CLOSED, U NIZU SE NALAZE, ONAJ SLOTTED ELEMENT,
-        // PA NJEGOV ASSIGNED SLOT, PA OSTALI ELEMENTI SHADOW  DOMA, PA DALJE SVE SVE DO window-a
+         //DAKLE, BEZ OBZIRA DA LI JE SHADOW ROOT, OPEN ILI CLOSED, U NIZU SE NALAZE, ONAJ SLOTTED ELEMENT,
+         // PA NJEGOV ASSIGNED SLOT, PA OSTALI ELEMENTI SHADOW  DOMA, PA DALJE SVE SVE DO window-a
+
+            //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
+            console.log(ev.target);
+            //I U SLUCAJU close, I U SLUCAJU open SHADOW ROOT-A, VREDNOST targeta CE BITI PARAGRAF ILI
+            //h4 ELEMENT, U ZAVISNOSTI NA KOJI OD NJIH SAM KLIKNUO 
+            //(ONI SU DISTRIBUTED NEIMENOVANOM SLOT-U)
+            //A NE SLOT, ILI CUSTOM ELEMENT (some-bobly-element), U CIJI SE POMENUTI SLOT (U SHADOW DOM-U),
+            // OVI ELEMENTI DISTRIBUIRAJU
             
         });
 
@@ -4481,6 +4498,10 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
 
             //    [h4, slot, div, document-fragment, some-bobly-element, body, html, document, Window]
+            
+            //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
+            console.log(ev.target);
+            //I U SLUCAJU close, I U SLUCAJU open SHADOW ROOT-A, VREDNOST targeta CE BITI SLOTTED ELEMENT
 
         });
 
@@ -4493,7 +4514,13 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
 
             //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
 
-        // [p, div, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+         //[p, div, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+            
+            //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
+            console.log(ev.target);
+            //I U SLUCAJU close, I U SLUCAJU open SHADOW ROOT-A, VREDNOST targeta CE BITI SLOTTED ELEMENT
+            //U OVOM SLUCAJU TO MOZE BITI (div, KOJI IMA slot ATRIBUT; ILI ELEMENT, KOJI JE NESTED U TOM
+            //div-u (div KOJI JE SLOTTED (A KOJI TAKODJE IMA I NESTED ELEMENTE, h4 I p)))
 
         });
 
@@ -4513,6 +4540,31 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
         //ODNOSNO PROPAGATE-OVAO DO SLOTA, PA OD SLOTA KROZ GRANU SHADOW DOM DRVETA, PA KROZ SHADOW
         //BOUNDARY, "NAPOLJE", SVE DO window-A
 
+        //PROVERA, KADA SE TRIGGERUJU, NEKI OD EVENTOVA (CISTO DA SAZNAM VISE O EVENT-OVIMA, JER SE
+        //RANIJE NISAM BAVIO SA MNOGO NJIH) (URADICU TO IAKO TO NIJE KONKRETNA TEMATIKA OVOG DOKUMENTA)
+
+        console.log(this.querySelectorAll('h4:not([slot])')[1]);
+        console.log(this.querySelectorAll('p:not([slot])')[1]);
+
+        this.querySelectorAll('h4:not([slot])')[1].addEventListener('mouseenter', ev => {
+            //console.log(ev.target);
+            console.log("mouseeneter", ev.composedPath());
+        });
+
+        this.querySelectorAll('p:not([slot])')[1].addEventListener('mouseover', ev => {
+            //console.log(ev.target);
+            console.log("mouseover", ev.composedPath());
+        });
+
+        slot3.addEventListener('mouseenter', ev => {
+            //console.log(1, ev.target);
+            console.log(1, ev.composedPath());
+        });
+        
+        slot3.addEventListener('mouseover', ev => {
+            //console.log(2, ev.target);
+            console.log(2, ev.composedPath());
+        });
     }
 });
 
@@ -4528,9 +4580,168 @@ const some_bobly_Element_light_dom = `
   </some-bobly-element>
 `;
 
-//REGISTROVAO SAM, NOVI CUSTOM ELEMENT, I ZAKACIO EVENT HANDLER, NA JEDAN OD NJEGOVIH 
+//OSTAJE PODSETNIK DA MORAM DA ISPITAM ZASTO SE PO MOJOJ PROCENI DESAVAJU 'CUDNE STVARI', KADA
+//SHADOW ROOT PRIKACIM NA NEKI DIV ELEMENT, UMESTO DA GA DIREKTNO KACIM NA this
+//ONO STO MOGU TADA DA PRIMETIM JESTE DA FLATTENED DOM IZGLEDA CUDNO NAKON NESTOVANJA SLOTTED ELEMNATA
+//MOZDA ZATO STO LIGHT DOM TADA "NIJE CIST", I DESAVA SE DA SE SAM DIV, KOJI SLUZI KAO CONTAINER ZA 
+//SHADOW ROOT, USTVARI DISTRIBUIRA, NEIMENOVANO MSLOTU (TAKO DA IMAM NEKU CUDNU 'REKURZIVNU' SITUACIJU)
+
+// SADA CU NASTAVITI BAVLJENJE SA   DOM event model-OM
+
+//KADA SE EVENT BUBBLE-UJE UP, SA NEKOG ELEMENTA U SHADOW DOM-U, EVENT-OV target JE PRILAGODJEN (ADJUSTED)
+//KAKO BI ZADRZAO ENCAPSULATION, KOJI OBEZBEDJUJE SHADOW DOM
+//ODNOSNO EVENT-OVI SU RETARGETED, KAKO BI IZGLEDALO DA DOLAZE OD KOMPONENTE, UMESTO INTERNAL ELEMENTA,
+//U SHADOW DOM-U
+//    (OVO STO SAM CITIRAO SA WEB FUNDAMENTALS CLANKA, NE DELUJE ISTINITO, JER SAM JA U GORNJEM PRIMERU
+//    STAMPAO VREDNOSTI target-A (I U SLUCAJU ZAKACENOG HANDLERA NA slot, SLOTTED, ELEMENT, ILI ONAJ
+//    KOJI NIJE NI SLOT A NI SLOTED, A ZAKACEN JE U SHADOW DOM-U)); I U SVIM TIM SLUCAJEVIMA, target
+//    JE BIO KONKRETAN NESTED ELEMENT, MA KOLIKO BIO DUBOKO U SHADOW DOM-U, I BILO DA JE SHADOW ROOT,
+//      'open'      ILI     'closed'
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//NE ZNAM DA LI SAM, U PREDHODNOM PRIMERU POGRESIO U TERMINOLOGIJI, UPRAVO IZ RAZLOGA, RANIJEG POVRSNOG
+//UPOZNAVANJA SA EVENT-OVIMA, I NJIHOVIM OSOBINAMA
+//ZATO IZ TOG RAZLOGA, U NASTAVKU CU SE BAVITI PONAVALJANJEM, SVEGA STO ZNAM O EVENT-OVIMA, I TRUDICU
+//SE DA OTKLONIM NEDOUMICE, KOJE IMAM U POGLEDU NJIH
+//                    POCECU, SA TERMINOM                  PROPAGATION
+//  ZATIM TERMINIMA                             BUBBLING                    CAPTURING
+//
+//PROPAGATION EVENT-A, ODNOSNO MNOZENJE EVENTA, ILI PRECIZNIJE RECENO RAZMNOZAVANJE JESTE USTVARI TERMIN
+//KOJIM SE ZAJEDNICKI OPISUJE PONASANJE EVENTA
+//                                 I U SLUCAJU          BUBLLING-A    I U SLUCAJU   CAPTURINGA
+//DAKLE REC JE O 'REPLIKACIJI' JEDNOG EVENT-A, A BUBBLING I CAPTURING JESU SMEROVI TOG RAZMNOZAVANJA
+//(PO MOJOJ PROCENI, ODNOSNO PO MOM SHVATANJU)
+
+//                              CAPTURING 
+//NA KOJI DEV-OVI, MNOGO NE OBRACAJU PAZNJE, JESTE RAZMNOZAVANJE KROZ 
+//DOM GRANU, SVE DO ONOG ELEMENTA NA KOJEM JE EVENT TRIGGER-OVAN (target) ('DAKLE, ODOZGO- NADOLE')
+//                                                              (OD window-A, DO target-A)
+//
+//                              BUBBLING 
+//RAZMNOZAVANJE EVENTA, KROZ DOM GRAN-U, POCEV OD targeta, KROZ ANCESTOR-E, SVE DO window-A 
+//
+//SADA, TREBA VODITI RACUNA DA cpturing NIJE PO DEFAULT-U, UNABLED KADA SE KACE HANDLERI
+//ODNOSNO CAPTURING NIJE NESTO STO SE PO DEFAULT-U UPOTREBLJAVA
+//U SLUCAJU KACENJA HANDLER-A, KORISCENJEM      addEventListener    METODE, capturing SE MOZE 
+//ENABLE-OVATI, KADA SE UZ HANDLER, DODA I BOOLEAN true ARGUMENT
+//
+//STA TO ZNACI KONKRETNO ZA ELEMENT, NA KOGA JE ZAKACEN HANDLER?
+//TO ZNACI      DA CE TAJ ELEMENT BITI, EVENTOV target, A NE ELEMENTOVI DESCENDATI 
+
+//JA TO GLEDAM NA SLEDECI NACIN:  DAJUCI BOOLEAN true KAO ARGUMENT addEventListener     METODI, JA SAM
+//DEFINISAO DA      target      HANDLERA, UPOTREBI TAJ "TALAS RAZMNOZAVANJA EVENTA", KOJI IDE NA DOLE
+//OD ANCESTORA KA ELEMENTU, NA KOJEM JE ZAKACEN HANDLER  
+
+window.customElements.define('some-shably-element', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        //const shadowRoot = this.attachShadow({mode: 'closed'});
+
+        const div1 = document.createElement('div');
+        const div2 = document.createElement('div');
+        const div3 = document.createElement('div');
+
+        const paragraf1 = document.createElement('p');
+        const paragraf2 = document.createElement('p');
+        const paragraf3 = document.createElement('p');
+
+        const styleElement = document.createElement('style');
+
+        const slot1 = document.createElement('slot');
+        const slot2 = document.createElement('slot');
+        const slot3 = document.createElement('slot');
+
+        const styleText = `
+            :host {
+                display: block;
+                border: pink solid 4px;
+                padding: 8px;
+            }
+
+            ::slotted(*) {
+                margin-left: 28px;
+            }
+
+            ::slotted([slot]) {
+                border: orange solid 6px;
+            }
+
+            ::slotted(:not([slot])) {
+                border: olive solid 4px;
+            }
+
+            div {
+                border: yellow solid 2px;
+                padding: 58px;
+                
+            }
+        `;
+
+        slot1.name = 'ayohuasca';
+        slot3.name = 'canabis';
+
+        slot1.innerHTML = "<h1>SLOT1 FALLBACK</h1>";
+        slot2.innerHTML = "<h1>SLOT2 FALLBACK</h1>";
+        slot3.innerHTML = "<h1>SLOT3 FALLBACK</h1>";
+
+        div1.appendChild(slot1);
+        div1.appendChild(paragraf1);
+
+        div2.appendChild(slot2);
+        div2.appendChild(paragraf2);
+
+        div3.appendChild(slot3);
+        div3.appendChild(paragraf3);
+
+        styleElement.textContent = styleText;
+
+        div2.appendChild(div3);
+        div1.appendChild(div2);
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(div1);
+
+    }
+});
+
+const shably_light_dom = `
+<some-shably-element>
+    <h4 slot="ayohuasca">Ovo je AYOHUASCA</h4>
+    <p slot="ayohuasca">Ona nije biljka vec napitak koji se spravlja od vise biljaka</p>
+    <h2>Dodatno droziranje nije dozvoljeno</h2>
+    <div slot="canabis">
+        <h3>Naslov za KANABIS</h3>
+        <p>Kanabis je jednogodisnja biljka iz porodice kanabisnoblabloida, evo ti o njoj</p>
+        <ol>
+            <li>Halucinacije</li>
+            <li>Leci sve</li>
+        </ol>
+    </div>
+    <p>Nista vazno, samo neki paragraf</p>
+    <p>A nije dozvoljeno iz sledecih razloga...blah..blah</p>
+</some-shably-element>
+`;
 
 
+
+
+//PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
+//NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
+
+//EVENTOVI, KOJI ZAISTA PRELAZE SHADOW BOUNDARY JESU SLEDECI (DACU I KRATKO OBJASNJENJE KADA SE
+//TRIGGER-UJU):
+//  Focus Events: blur, focus, 
+//                focusin (TRIGERUJE SE NEPOSREDNO PRE NEGO STO CE ELEMENT DOBITI focus) (NEMA BUBBLE UP-A)
+//                focusout (TRIGGERUJE SE NEPOSREDNO NAKON STO ELEMENT IZGUBI focus) (NEMA BUBBLE UP-A)
+//  Mouse Events: click, dblclick,
+//                mouseenter (TRIGGERUJE SE KADA JE POINTER POMEREN PREKO ELEMENTA, KOJI IMA ZAKACEN
+//                            LISTENER) (NE BUBBLE UP-UJE SE)
+//                          IAKO JE SLICAN KAO mouseover, KOJI SE BUBBLE-UP-UJE, mouseenter SE NE SALJE
+//                           DSCENDANTIMA (POTOMCIMA), KADA SE POINTER POMERI SA DESCENTANTOVOG FIZICKI
+//                              PROSTORA, NA ELEMNTOV 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

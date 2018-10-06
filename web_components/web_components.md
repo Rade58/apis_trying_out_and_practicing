@@ -27,3 +27,4 @@
     I isto tako se mogu koristiti uobičajene DOM metode za kloniranje obrazca i njegovo kačenje na shadow DOM.
 1.  Koristi prilagođene elemente (custom elements) kako želiš na svojoj stranici, kao što bi to radio       sa regularnim HTML elemntima.
 ___
+#### U OVOM DOKUMENTU BAVIO SAM SE I PONAVLJANJEM NEKIH KONCEPATA, VAZNIH ZA EVENT-OVE
