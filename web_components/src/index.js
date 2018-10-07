@@ -4621,24 +4621,44 @@ const some_bobly_Element_light_dom = `
 //                              BUBBLING 
 //RAZMNOZAVANJE EVENTA, KROZ DOM GRAN-U, POCEV OD targeta, KROZ ANCESTOR-E, SVE DO window-A 
 //
-//SADA, TREBA VODITI RACUNA DA cpturing NIJE PO DEFAULT-U, UNABLED KADA SE KACE HANDLERI
+//SADA, TREBA VODITI RACUNA O SLEDECOJ CINJENICI, A TO JE DA caturing NIJE PO DEFAULT-U, 
+//ENABLED KADA SE KACE HANDLERI
 //ODNOSNO CAPTURING NIJE NESTO STO SE PO DEFAULT-U UPOTREBLJAVA
-//U SLUCAJU KACENJA HANDLER-A, KORISCENJEM      addEventListener    METODE, capturing SE MOZE 
+//U SLUCAJU KACENJA HANDLER-A, KORISCENJEM      addEventListener    METODE; capturing SE, NAIME MOZE 
 //ENABLE-OVATI, KADA SE UZ HANDLER, DODA I BOOLEAN true ARGUMENT
 //
 //STA TO ZNACI KONKRETNO ZA ELEMENT, NA KOGA JE ZAKACEN HANDLER?
-//TO ZNACI      DA CE TAJ ELEMENT BITI, EVENTOV target, A NE ELEMENTOVI DESCENDATI 
+//
+//MEDJUTIM, JA NISAM PRICAO O       TARGGETING-U   (NISAM VIDEO DA TO IKO TAKO ZOVE ALI JA SAM TO TAKO
+//NAZVAO), A TO JE ONO STO MOGU TAKO ZVATI A ODNOSI SE NA TRIGGERING EVENTA, NA KONKRETNOM ELEMENTU
 
-//JA TO GLEDAM NA SLEDECI NACIN:  DAJUCI BOOLEAN true KAO ARGUMENT addEventListener     METODI, JA SAM
-//DEFINISAO DA      target      HANDLERA, UPOTREBI TAJ "TALAS RAZMNOZAVANJA EVENTA", KOJI IDE NA DOLE
-//OD ANCESTORA KA ELEMENTU, NA KOJEM JE ZAKACEN HANDLER  
+//ZATO, KAO STO SAM PROCITAO U JEDNOM CLANKU, NAJBOLJE JE DA ONO STO SE TICE EVENT-OVA, POSMATRAM TAKO
+//STO CU, SAM PROPAGATION, POSMATRATI, KROZ TRI FAZE
+
+                //CAPTURING   FAZA  (EVENT SE RAMNOZAVA DOLE, KA ELEMENTU)
+
+                //TARGET    FAZA    (EVENT JE DOSTIGAO TARGET ELEMENT)
+                            //JAKO BITNO JE RECI DA SE OVA FAZA BAVI ELEMNT-OM NA KOJEM JE EVENT
+                            //TRIGGEROVAN, DAKLE NE ELEMENT ZA KOJEG JE ZAKACEN HANDLER, VEC ELEMENT
+                            //GDE JE EVENT TRIGGERED
+                           //STO ZNACI DA AKO JE KLIKNUTO NA ELEMENTOV (ONAJ ELEMENT NA KOJEM JE 
+                           //ZAKACEN HANDLER)
+                           //DESCENDANT, ON JESTE       target
+                           //STO ZNACI DA, VREDNOST EVENT-OVOG PROPERTIJA    target    JESTU UVEK, 
+                           //BEZ OBZIRA NABILO STA DRUGO, ONAJ ELEMENT GDE JE EVENT TRIGGERED
+                           
+                            // A PROPERTI       currentTarget   UVEK SKLADISTI ELEMENT ZA KOJI JE 
+                            //HANDLER ZAKACEN
+
+                //BUBBLING  FAZA    (EVENT BUBBLES UP, ODNOSNO RAZMNOZAVA SE GORE OD ELEMENTA(target-A))
 
 window.customElements.define('some-shably-element', class extends HTMLElement {
     constructor(){
         super();
 
-        const shadowRoot = this.attachShadow({mode: 'open'});
-        //const shadowRoot = this.attachShadow({mode: 'closed'});
+        //const shadowRoot = this.attachShadow({mode: 'open'});
+        
+        const shadowRoot = this.attachShadow({mode: 'closed'});
 
         const div1 = document.createElement('div');
         const div2 = document.createElement('div');
@@ -4647,6 +4667,10 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
         const paragraf1 = document.createElement('p');
         const paragraf2 = document.createElement('p');
         const paragraf3 = document.createElement('p');
+
+        paragraf1.textContent = "Tekst prvog paragrafa";
+        paragraf2.textContent = "Tekst drugog paragrafa";
+        paragraf3.textContent = "Tekst treceg paragrafa";
 
         const styleElement = document.createElement('style');
 
@@ -4662,7 +4686,7 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
             }
 
             ::slotted(*) {
-                margin-left: 28px;
+                margin-left: 18%;
             }
 
             ::slotted([slot]) {
@@ -4677,6 +4701,15 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
                 border: yellow solid 2px;
                 padding: 58px;
                 
+            }
+
+            p {
+                border: tomato solid 1px;
+                text-align: center;
+            }
+
+            ::slotted(div) {
+                font-family: cursive;
             }
         `;
 
@@ -4703,7 +4736,111 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
 
         shadowRoot.appendChild(styleElement);
         shadowRoot.appendChild(div1);
+        
+        //OVO STAMPAM SAMO KAO PODSETNIK, DA JE MOGUCE PRISTUPITI ELEMENTIMA LIGHT DOM-A
+        //NA SLEDECI NACIN (ODNOSNO SLOTTED ELEMENTIMA, NE PRISTUPAM KROZ SHADOW ROOT)
+        console.log(        this.querySelector('div[slot=canabis]').querySelector('ol')         );
+        //SLOT JE NARAVNO U SHADOW DOM-U
+        console.log(        shadowRoot.querySelector('slot[name=canabis]')                      );
 
+        //SADA CU POCETI DA SE, KONKRETNO BAVIM EVENT-OVIMA, I NJIHOVIM ODLIKAMA (NAIME, PROBACU
+        //RAZLICITE STVARI, ODNSONO KACICU HANDLERE NA RAZLICITE ELEMENTE (BEZ OBZIRA BILI ONI SLOTTED
+        //ELEMENTI, ILI BILI ONI ELEMENTI U SHADOW DOM-U))
+
+        //ZA POCETAK ZELIM DA ZAKACIM, EVENT HANDLER, NA SLOTTED ELEMENT, KOJI JE DISTRIBUIRAN, ONOM 
+        //SLOT-U,KOJI JE NAJDUBLJE NESTED U SHADOW DOM
+        //ZASTO ZELIM TAJ ELEMENT?
+        //PA ZATO STO SE KAO STO SAM REKAO NALAZI DUBOKO U SHADOW DOMU, ALI TAKODJE ZATO STO TAJ
+        //SLOTTED ELEMENT, I SAM IMA SVOJE DESCENDANT-E
+
+        //MEDJUTIM, JA CU NA ELEMENT ZAKACITI, DVA HANDLER-A (DAKLE, PRIMENICU DVA PUTA addEventListener
+        //NA ISTI ELEMENT, I U SLUCAJU ISTOG EVENT-A (NEKA BUDE TIPA 'click'))
+        
+        //JEDAN CALLBACK JE ARROW FUNKCIJA (STO ZNACI DA CE SE U OBIMU, JEDNOG CALLBACK-A this ODNOSITI
+        //NA CUSTOM ELEMENT (<some-shably-element>)) (OVO NISAM MORAO DA RADIM, ALI ZELIM DA PROVEZBAM STO JE VISE MOGUCE STVARI)
+
+        //CALLABCK DRUGOG addEventListener METODE NECE IMATI BINDED this, JER CE CALLBACK BITI ANONIMNA
+        //FUNKCIJA, ALI NE ARROW
+
+        //DAKLE ONO NA STA TREBA DA SE KONCENTRISEM, I KAKO CU NAJBOLJE SHVATITI SVE OVE FAZE, JESTE
+        //DA NAKON STO SAM ZAKACIO I DEFINISAO HANDLERE (SVE PRIKAZANO DOLE), JA USTVARI OBAVIM
+        //TESTIRANJE NA SLEDECI NACIN:
+                    //NECU KLIKNUTI NA DIV, VEC NA NJEGOV DESCENDATN (I TO NEKA NE BUDE CHILD, VEC NEKI
+                    //DALJU DESCENDANT, ODNOSNO TO CE BITI JEDAN OD LIST ITEMA ORDERED LISTE)
+
+        this.querySelector('div[slot]').addEventListener('click', ev => {
+            console.log('-------------------------');
+            console.log(ev.composedPath());  //NIZ IMA RAZLICIT BROJ CLANOVA, U ZAVISNOSTI OD OTVORENOSTI ILI ZATVORENOSTI SHADOW DOM-A, ALI O TOME SAM VEC GOVORIO, I NECU NISTA DODATNO KOMENTARISATI 
+            console.log(ev.target); //  target JE UVEK ONAJ ELEMENT NA KOJI SE KLIKNE (<li> ELEMENT U OVOM SLUCAJU)
+            console.log(ev.currentTarget);  //ELEMENT NA KOJI JE ZAKACEN HANDLER (div[slot])
+            console.log(this);  //  <some-shably-element></some-shably-element>  (BINDED, ZBOG ARROW)
+            console.log('--------NO CAPTURE-------');
+        }, {capture: false});
+
+        this.querySelector('div[slot]').addEventListener('click', function(ev){
+            console.log('-------------------------');
+            console.log(ev.composedPath());  //NIZ IMA RAZLICIT BROJ CLANOVA, U ZAVISNOSTI OD OTVORENOSTI ILI ZATVORENOSTI SHADOW DOM-A, ALI O TOME SAM VEC GOVORIO, I NECU NISTA DODATNO KOMENTARISATI 
+            console.log(ev.target); //  target JE UVEK ONAJ ELEMENT NA KOJI SE KLIKNE (<li> ELEMENT U OVOM SLUCAJU)    
+            console.log(ev.currentTarget);  //ELEMENT NA KOJI JE ZAKACEN HANDLER (div[slot])
+            console.log(this);  //  div[slot]         (NEMA BINDING-A this-A; NIJE KORISCEN ARROW A NI bind METODA)
+            console.log('-----capture enabled-----');
+        }, {capture: true});
+
+        //DOSAO SAM DO NAJBITNIJE STVARI, A TO JE DA OBZNANIM, KOJI SE TO CALLBACK PRVI POSLAO U QUEUE
+        //ODNOSNO, POZIVANJE CIJEG CALLBACK-A, SE PRVO SLOZILO NA STACK POZIVA
+        
+        //PA TO JE ONAJ ARGUMENT CALLBACK, addEventListener POZIVANJA, KOJI JE PORED SEBE IMAO SLEDECI
+        //ARGUMENT OBJEKAT
+                            //          {capture: true}     (MOGAO SAM STAVITI I SAMO true KAO DRUGI ARGUMENT, A NE CEO OBJEKAT, JER OBJEKAT SE KORISTI, AKO ZELIM DA DEFINISEM, JOS NEKE DRUGE OPCIJE)
+        
+        //CAK CU NACRTATI I SLIKU KOJA CE POKAZATI CAPTURING I BUBBLING FAZE, CIME CU LAKSE VIDETI 
+        //KAK OSE KOJE POZIVANJE SLALO U QUEUE
+
+//                               capturing                                    bubbling
+//                                       \                                    /
+//                                        \                                 /
+//                                         \                              /
+//                                          \        div[slot]          /
+// callback --> {capture: true} QUEUED FIRST \ -------  ¤    -------  / callback --> {capture: false} QUEUED SECOND
+//                                            \   currentTarget     /
+//                                             \                  /
+//                                 capturing    \               /    bubbling
+//                                               \            /
+//                                                \         /
+//                                                 \      /
+//                                                  \   /
+//                                                   \/
+//                                                 target
+//                                                   ¤
+//                                                list item
+
+        //POSTOJI JEDNA BITNA STVAR A TICE SE BUBBLING-A I CAPTURING-A, PRI SLEDECIM POSTAVKAMA
+        //      target === currentTarget
+        //ODNOSNO TO JE SITUACIJA, KADA JE HANDLER ZAKACEN NA ELEMENT, KOJI NEMA CHILD ELEMENT/E
+        //U TU SVRHU, ZAKACICU HANDLERE (ISTO ZA 'click' TIP EVENT), ZA JEDAN DRUGI SLOTTED ELEMENT
+        console.log(this.querySelector('h2:not([slot])'));
+        //NEKA TO BUDE h2 ELEMENT, KOJI NEMA slot ATRIBUT (ODNOSNO KOJI SE DISTRIBUIRA U NEIMENOVANI slot ELEMENT)
+        //A NEMA NI CHILD ELEMENT/E
+
+        this.querySelector('h2:not([slot])').addEventListener('click', function(ev){
+            console.log('--------NO CAPTURING-------');
+            console.log(ev.target === ev.currentTarget);            //OVAJ HANDLER SE PRVI QUEUE-OVAO
+        });
+
+        this.querySelector('h2:not([slot])').addEventListener('click', function(ev){
+            console.log('-------capture enabled------');
+            console.log(ev.target === ev.currentTarget);            //OVAJ HANDLER SE DRUGI QUEUE-OVAO
+        }, true);
+
+        //PREDPOSTAVLJAO SAM DA CE SE PRVO IZVRSITI HANDLER, U CIJEM SLUCAJU JE DOZVOLJEN capture, 
+        //ALI NIJE TAKO
+
+        //EVENT J NAIME BIO U TARGET FAZI, I TADA UOPSTE NIJE BITNO DA LI JE CAPTURE DOZVOLJEN,
+        //VEC SU SE HANDLER-I IZVRSILI PO REDOSLEDU, PO KOJEM SU I ZAKACENI NA ELEMENT, KOJI NEMA
+        //DESCENDANAT-A
+        
+        //ONO CIME SADA ZELIM DA SE POZABAVIM, JESTE MOGUCNOST PREKIDA RAZMNOZAVANJA (PROPAGATION)
+        //EVENT-A, U OBIMU HANDLER-A
     }
 });
 
