@@ -4704,12 +4704,19 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
             }
 
             p {
-                border: tomato solid 1px;
+                border: tomato solid 4px;
                 text-align: center;
             }
 
             ::slotted(div) {
                 font-family: cursive;
+            }
+
+            ::slotted(.neka_sekcija_slotted) {
+               /*HTEO SAM DA DEFINISEM BORDER, ALI NJEGA OVERRIDUJE section SLEKTOR IZ EXTERNAL STYLESHEET*/
+               /*ZATO CU DEFINISATI OUTLINE, SAMO DA SE UVERIM DA OVA JSELEKTOR FUNKCIONISE*/
+               outline: dotted 8px #426286;
+               padding: 24px;
             }
         `;
 
@@ -4840,7 +4847,35 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
         //DESCENDANAT-A
         
         //ONO CIME SADA ZELIM DA SE POZABAVIM, JESTE MOGUCNOST PREKIDA RAZMNOZAVANJA (PROPAGATION)
-        //EVENT-A, U OBIMU HANDLER-A
+        //EVENT-A, U OBIMU HANDLER-A (KAD KAZEM PREKIDA PROPAGATION-A, MISLIM NA PREKID BUBBLING UP-A)
+
+        //DEFINISACU KACENJE HANDLERA, NA section ELEMENT, KOJI JE TAKODJE SLOTTED ELEMENT
+        //I ONO STO MI JE BITNO JESTE DA TAJ ELEMENT, IMA DESCENDANT-E
+
+        this.querySelector('.neka_sekcija_slotted').addEventListener('click', ev => {
+            console.log("EVENT JE PROPAGATE-OVAO DO SEKCIJE");
+        });
+
+        //SADA CU DA ZAKACIM HANDLER NA JEDAN OD DESCENDANT-OVA, POMENUTOG SECTION ELEMENTA (TAJ DESCENDANT JE PARAGRAF)
+
+        this.querySelector('.neka_sekcija_slotted p').addEventListener('click', ev => {
+            console.log('-------------------------');
+            ev.stopImmediatePropagation();
+            console.log('(paragraph) FIRST handler invoked');
+            console.log('Event bubbles up --->', ev.bubbles);
+            console.log('-------------------------');
+            
+
+        });
+
+        //ZAKACICU, JOS JEDAN HANDLER, NA POMENUTOM PARAGRAFU
+
+        this.querySelector('.neka_sekcija_slotted p').addEventListener('click', ev => {
+            console.log('-------------------------');
+            console.log('(paragraph) SECOND handler invoked');
+            console.log('Event bubbles up --->', ev.bubbles);
+            console.log('-------------------------');
+        });
     }
 });
 
