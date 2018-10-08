@@ -4656,9 +4656,9 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
     constructor(){
         super();
 
-        //const shadowRoot = this.attachShadow({mode: 'open'});
+        const shadowRoot = this.attachShadow({mode: 'open'});
         
-        const shadowRoot = this.attachShadow({mode: 'closed'});
+        //const shadowRoot = this.attachShadow({mode: 'closed'});
 
         const div1 = document.createElement('div');
         const div2 = document.createElement('div');
@@ -4842,7 +4842,7 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
         //PREDPOSTAVLJAO SAM DA CE SE PRVO IZVRSITI HANDLER, U CIJEM SLUCAJU JE DOZVOLJEN capture, 
         //ALI NIJE TAKO
 
-        //EVENT J NAIME BIO U TARGET FAZI, I TADA UOPSTE NIJE BITNO DA LI JE CAPTURE DOZVOLJEN,
+        //EVENT JE, NAIME BIO U TARGET FAZI, I TADA UOPSTE NIJE BITNO DA LI JE CAPTURE DOZVOLJEN,
         //VEC SU SE HANDLER-I IZVRSILI PO REDOSLEDU, PO KOJEM SU I ZAKACENI NA ELEMENT, KOJI NEMA
         //DESCENDANAT-A
         
@@ -4854,6 +4854,29 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
 
         this.querySelector('.neka_sekcija_slotted').addEventListener('click', ev => {
             console.log("EVENT JE PROPAGATE-OVAO DO SEKCIJE");
+            //AKO JE ZA JEDAN OD ELEMENATA, KOJI JE DESCENDANT, .neka_sekcija_slotted ELEMENTA, USTVARI
+            //ZAKACEN HANDLER, U SLUCAJU ISTOG EVENTA (event.type === 'click' U OVOM SLUCAJU),
+            // I AKO JE U OBIMU, 
+            //POMENUTOG HANDLERA (ZAKACENOM NA POMENUTI DESCENDANT), NAD Event INSTANCOM PRIMENJENA
+            //stopPropagation; OVAJ HANDLER (U KOJEM PISEM OVAJ KOMENTAR), SE NECE IZVRSITI
+            //ISTA STVAR BI BILA I DA JE POZVANA stomImmediatePropafation
+            //JER BI PRIMENOM BILO KOJE OD TE DVE METODE, BIO PREKINUT PROPAGATION EVENTA (U OVOM
+            //SLUCAJU BIO BI PREKINUT BUBBLING, I TIME SE EVENT NE BI RAZMNOZIO DO .neka_sekcija_slotted 
+            //ELEMENTA)
+            
+            //A POSTO POGLEDAM DOLE JEDAN OD HANDLERA, KOJI SU ZAKACENI, NA PARAGRAF, KOJI JE DESCENDANT
+            // .neka_sekcija_slotted ELEMENTA, VIDECU DA SAM TAMO POZVAO stopPropagation (ILI stopImmediatePropagation,
+            //JER SAM NEKAD PRIMENJIVAO JEDNU, A NEKAD DRUGU METODU, DA BIH VIDEO KAKAV EFEKAT IMAJU)
+            //I ZBOG TOGA OVAJ LISTENER, ZAISTA NIJE BIO QUEUED, ZA POZIVANJE
+            
+            //A DA SAM ZELEO DA SE OVAJ LISTENER IZVRSI, MOGAO SAM DODATI JOS JEDAN ARGUMENT, OVOJ 
+            //addEventListener METODI
+            //                                {capture: true}           ILI SAMO            true
+            //TADA BI BIO ENABLEOVAN CAPTURING, A ZNAM DA SE PRILIKOM CAPTURING-A, EVENT RAZMNOZAVA OD
+            //ANCESTORA KA DESCENDATIMA, I TIME BI SE LISTENER ZAISTA POSLAO U QUEUE, JER SAM OMOGUCIO
+            //SLANJE TO LISTENER-A NA QUEUE U CAPTURING FAZI EVENT-A, I NEBI GA MOGLO ZAUSTAVITI, ODNOSNO
+            //NIKAKAVOG EFEKTA NE BI IMALO POZIVANJE    stopPropagation-A ILI stopImmediatePropagation-A,
+            //U HANDLERIMA, KOJI SU ZAKACENI NA DESCENDANTE .neka_sekcija_slotted ELEMENTA 
         });
 
         //SADA CU DA ZAKACIM HANDLER NA JEDAN OD DESCENDANT-OVA, POMENUTOG SECTION ELEMENTA (TAJ DESCENDANT JE PARAGRAF)
@@ -4861,20 +4884,109 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
         this.querySelector('.neka_sekcija_slotted p').addEventListener('click', ev => {
             console.log('-------------------------');
             ev.stopImmediatePropagation();
+            //ev.stopPropagation();
             console.log('(paragraph) FIRST handler invoked');
-            console.log('Event bubbles up --->', ev.bubbles);
-            console.log('-------------------------');
             
-
+            console.log('-------------------------');
+            //ONO STO JE SIGURNO U SLUCAJU OVOG LISTENER-A, JESTE DA CE ON BITI POSLAT NA QUEUE
+            //JER PO OVAKVIM POSTAVKAMA NEMA NISTA STO BI SPRECILO, NJEGOVO SLANJE NA QUEUE (NAKON KILKA)
+            //ODNOSNO NIGDE NEMA PREKIDA U PROPAGATION-U, KOJI VODI DO NJEGA
+            //ALI ONO STO SAM DEFINISAO U OVOM HANDLER-U, JESTE PRIMENA     stopImmediatePropagation
+            //(ILI stopPropagation, JER SAM DA BI VIDEO KAKAV EFEKAT IMAJU TE DVE METODE, PRIMENU
+            //ISTIH, STAVLJAO I BRISAO, PA OPET, DA BIH VIDEO KAKAV EFEKAT DONOSE)
+            //TO ZNACI DA JE PROPAGATION, ODNOSNO RAZMNOZAVANJE Event-A PREKINUTO, OD NJEGA DO ANCESTORA
+            
+            //MEDJUTIM, STA JE TO DONOSI PRIMENA        stopImmediatePropagation METODE
+            //PA TO ZNACI DA CE PROPAGATION BITI PREKINUT, I PORED TOGA STO SE EVENT NECE RAZMNOZITI 
+            //DO ANCESTORA, PREE TOGA NECE SE MOCI U QUEUE, POSLATI HANDLERI, KOJI BI U NASTAVKU 
+            //(NOVOM PRIMENOM addEventListener) BIL IZAKACENI
+            //NA ISTI PARAGRAF (U SLUCAJU EVENTA, ISTOG TIPA) (sto sam u ovom slucaju, ako pogledam
+            //dole i uradio)
         });
 
         //ZAKACICU, JOS JEDAN HANDLER, NA POMENUTOM PARAGRAFU
 
         this.querySelector('.neka_sekcija_slotted p').addEventListener('click', ev => {
             console.log('-------------------------');
+            
             console.log('(paragraph) SECOND handler invoked');
-            console.log('Event bubbles up --->', ev.bubbles);
-            console.log('-------------------------');
+            
+            console.log('-------------------------');               
+
+            //DAKLE KADA JE U PREDHODNOM HANDLER-U, NAD EVENT INSTANCOM PRIMENJENA stopImmediatePropagation
+            //METODA, OVAJ LISTENER SE NECE POSLATI NA QUEUE
+            
+            //A DA JE U PREDHODNOM HANDLERU, NAD Event INSTANCOM BILA PRIMENJENA, stopPropagation METODA
+            //OVAJ LISTENER BI BIO POSLAT NA QUEUE
+
+            //MEDJUTIM, IAKO BI OVAJ LISTENER BIO POSAT NA QUEUE, PROPAGATION BI BIO PREKINUT, I NEBI
+            //Event SE DALJE NE BI RAZMNOZAVAO DO OSTALIH ELEMENATA, DO KOJIH BI U NORMALNIM
+            //USLOVIMA, PROPAGATION DOSTIZAO
+        });
+
+        //JOS JEDNA JAKO BITNA CINJENICA VEZANA ZA PROPAGATION
+        //
+        //                      AKO JE HANDLER POSLAT NA QUEUEU, U CAPTURING FAZI, ON NECE PONOVO
+        //                      BITI POSLAT NA QUEUE, U BUBBLING FAZI
+        //                      DAKLE, PRI NA PRIME, JEDNOM KLIKU, BEZ OBZIRA STO JE CAPTURE OMOGUCEN
+        //                      NECU SE DESITI DVA POZIVANJA, POMENUTOG HANDLER-A, VEC SAMO JEDNO
+
+        //I AJDE DA JOS JEDNOM PONOVIM, IAKO JE TO MOZDA I SUVISNO 
+        //(ENABLING CAPTURING ZA currentElement === target), NEMA NIKAVOG
+        //EFEKTA NA REDOSLED SLANJA HANDLERA U QUEUE, JER SE TADA HANDLERI, SALJU U QUEUE, PO ISTOM
+        //REDOSLEDU, KOJIM SU I ZAKACENI ZA TAJ JEDAN ELEMENT (NARAVNO U SLUCAJU EVENT-A ISTOG TIPA)
+
+
+        console.log(paragraf3);
+        console.log(div3);
+
+        paragraf3.addEventListener('click', ev => {
+            console.log(ev.cancelable);
+            console.log('handler na PARAGRAF-U 3 izvrsen');
+        });
+
+        div3.addEventListener('click', ev => {
+            console.log(ev.cancelable);
+            console.log('handler na DIV-U 3 izvrsen');
+        });
+
+        //ZAKACICU HANDLER NA JOS NEKE ELEMENTE, KAKO BI SE UPOZNAO SA bubbles PROPERTIJEM, Event
+        //INSTANCE, I JOS NEKIM PROPERTIJIMA, KOJI SU KARAKTERISTICNI ZA Event INSTANCE
+        //NAIME MOZDA JE DOBRO DA NAPOMENEM DA POSTOJE I RAZLICITE KLASE EVENTOVA
+        //NA PRIMER MouseEvent EKSTENZUJE Event, A TAKODJE I FocusEvent EKSTENZUJE Event
+
+        //ZAKACIO SAM HANDLERE NA DVA RAZLICITA ELEMENTA (KOJI NISU U SRODSTVU, KAD TO KAZEM MISLIM DA
+        //NEMAJU ODNOS ANCESTOR/DESCENDANT IZMEDJU SEBE)
+
+        //JEDNOM KACIM HANDLER ZA SLUCAJ EVENT-A, TIPA          'mouseenter'
+        //DRUGOM KACIM HANDLER ZA SLUCAJ EVENT-A, TIPA          'mouseover'
+
+        //TO RADIM JER ZELIM DA UPOREDIM, KOJE JE RAZLIKA IZMEDJU OVA DVA EVENTA
+
+        //PRE NEGO STO SE POZABAVIM, POMENUTIM, ZELEO BIH DA NAPRAVIM JEDNU DIGRESIJU, ALI NE DALEKU
+        //ODNOSNO ZELEO BIH DA POGLEDAM KURSOR I DA GA POMERAM PREKO RAZLICITIH ELEMENATA, KOJE SU NA
+        //STRANICI (ELEMENATA, KOJI IMAJU ANCESTOR/DESCENDANT ODNOS, I ONIH KOJE NEMAJU, DAKLE SVIH)
+        //KURSOR CE PRELAZITI GRANICE,
+        //TADA SE NAIME TRIGGER-UJU, RAZLICITI MOUSE EVENT-OVI
+
+        this.querySelector('.neka_sekcija_slotted div').addEventListener('mouseenter', ev => {
+            console.log('------------------------');
+            console.log("ENTER");
+            console.log("bubbles -->", ev.bubbles);
+            console.log("cancelable -->", ev.cancelable);
+            console.log(ev.composedPath());
+            console.log(ev.target);
+            console.log('------------------------');
+        });
+
+        this.querySelector('div[slot=canabis]').addEventListener('mouseover', ev => {
+            console.log('------------------------');
+            console.log("OVER");
+            console.log("bubbles -->", ev.bubbles);
+            console.log("cancelable -->", ev.cancelable);
+            console.log(ev.composedPath());
+            console.log(ev.target);
+            console.log('------------------------');
         });
     }
 });
@@ -4885,15 +4997,22 @@ const shably_light_dom = `
     <p slot="ayohuasca">Ona nije biljka vec napitak koji se spravlja od vise biljaka</p>
     <h2>Dodatno droziranje nije dozvoljeno</h2>
     <div slot="canabis">
-        <h3>Naslov za KANABIS</h3>
-        <p>Kanabis je jednogodisnja biljka iz porodice kanabisnoblabloida, evo ti o njoj</p>
-        <ol>
+        <h3 style="border: tomato solid 1px; margin: 8px;">Naslov za KANABIS</h3>
+        <p style="border: tomato solid 1px; margin: 8px;">Kanabis je jednogodisnja biljka iz porodice kanabisnoblabloida, evo ti o njoj</p>
+        <ol style="border: tomato solid 1px; margin: 8px;">
             <li>Halucinacije</li>
             <li>Leci sve</li>
         </ol>
     </div>
-    <p>Nista vazno, samo neki paragraf</p>
+    <p slot="canabis">Nista vazno, samo neki paragraf</p>
     <p>A nije dozvoljeno iz sledecih razloga...blah..blah</p>
+    <section class="neka_sekcija_slotted">
+      <div style="outline: tomato ridge 4px; padding: 12px;">
+        Div element
+        <h1 style="border:chocolate 1px solid">Ovo je header nested u section elementu</h1>
+        <p style="border:chocolate 1px solid">Ovo je paragraf nested u section elementu</p>
+      </div>
+    </section>
 </some-shably-element>
 `;
 
@@ -4916,6 +5035,7 @@ const shably_light_dom = `
 //                              PROSTORA, NA ELEMNTOV 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -5443,3 +5563,106 @@ window.customElements.define('fancy-he', class extends HTMLElement {
 });
 
 
+const buya = document.querySelector('.buyaaaa');
+
+buya.addEventListener('click', ev => {
+    let confirmation;
+    if(ev.target instanceof HTMLAnchorElement || ev.target !== ev.currentTarget){
+        confirmation = window.confirm("Would you like segnor?");
+        if(confirmation){
+            return;
+        }else{
+            ev.preventDefault();
+        }
+    }
+});
+
+
+
+window.customElements.define('image-galery', class extends HTMLElement {
+    constructor(srcs){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const imageNumber = srcs.length;
+        const fragment = document.createDocumentFragment();
+        const alt = "opis slike";
+        const styleElement = document.createElement('style');
+
+        for(let src of srcs){
+            let picKont = document.createElement('div');
+            let anch = document.createElement('a');
+            let img = document.createElement('img');
+            picKont.classList.add('pic_kont');
+            anch.href = src;
+            img.src = src;
+            img.alt = alt;
+            img.setAttribute('width', '100%');
+            anch.appendChild(img);
+            picKont.appendChild(anch);
+            fragment.appendChild(picKont);
+        }
+
+        const styleText = `
+            :host {
+                display: block;
+                border: pink solid 2px;
+                padding: 8px;
+                width: 68%;
+            }
+
+            .pic_kont {
+                border: tomato solid 2px;
+                width: ${98/(imageNumber-1)}%;
+                display: inline-block;
+            }
+
+            #pic_kont_first {
+                width: 100%;
+            }
+        `;
+        
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(fragment);
+
+        
+        const prviPicKont = shadowRoot.querySelector('.pic_kont');
+        const prviImg = prviPicKont.querySelectorAll('img')[0];
+        prviPicKont.id = 'pic_kont_first';
+        console.log(shadowRoot.childNodes);
+        
+        shadowRoot.addEventListener('click', ev => {
+            if(ev.target instanceof HTMLImageElement){
+                ev.preventDefault();
+            }
+
+            if(ev.target !== prviImg){
+                const targetSrc = ev.target.src;
+                const srcMain = prviImg.src;
+
+                ev.target.src = srcMain;
+                prviImg.src = targetSrc;
+            }
+        });
+
+    }
+});
+const srcs = [
+    './img/galery/1.jpg',
+    './img/galery/2.jpg',
+    './img/galery/3.jpg',
+    './img/galery/4.jpg',
+    './img/galery/5.jpg',
+];
+const Galery = window.customElements.get('image-galery');
+
+const galery = new Galery(srcs);
+
+console.log(window.customElements.get('image-galery'));
+
+const galery_kont = document.querySelector('.galery-kont');
+
+galery_kont.appendChild(galery);
