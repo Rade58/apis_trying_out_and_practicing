@@ -4936,20 +4936,6 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
         //EFEKTA NA REDOSLED SLANJA HANDLERA U QUEUE, JER SE TADA HANDLERI, SALJU U QUEUE, PO ISTOM
         //REDOSLEDU, KOJIM SU I ZAKACENI ZA TAJ JEDAN ELEMENT (NARAVNO U SLUCAJU EVENT-A ISTOG TIPA)
 
-
-        console.log(paragraf3);
-        console.log(div3);
-
-        paragraf3.addEventListener('click', ev => {
-            console.log(ev.cancelable);
-            console.log('handler na PARAGRAF-U 3 izvrsen');
-        });
-
-        div3.addEventListener('click', ev => {
-            console.log(ev.cancelable);
-            console.log('handler na DIV-U 3 izvrsen');
-        });
-
         //ZAKACICU HANDLER NA JOS NEKE ELEMENTE, KAKO BI SE UPOZNAO SA bubbles PROPERTIJEM, Event
         //INSTANCE, I JOS NEKIM PROPERTIJIMA, KOJI SU KARAKTERISTICNI ZA Event INSTANCE
         //NAIME MOZDA JE DOBRO DA NAPOMENEM DA POSTOJE I RAZLICITE KLASE EVENTOVA
@@ -4963,11 +4949,7 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
 
         //TO RADIM JER ZELIM DA UPOREDIM, KOJE JE RAZLIKA IZMEDJU OVA DVA EVENTA
 
-        //PRE NEGO STO SE POZABAVIM, POMENUTIM, ZELEO BIH DA NAPRAVIM JEDNU DIGRESIJU, ALI NE DALEKU
-        //ODNOSNO ZELEO BIH DA POGLEDAM KURSOR I DA GA POMERAM PREKO RAZLICITIH ELEMENATA, KOJE SU NA
-        //STRANICI (ELEMENATA, KOJI IMAJU ANCESTOR/DESCENDANT ODNOS, I ONIH KOJE NEMAJU, DAKLE SVIH)
-        //KURSOR CE PRELAZITI GRANICE,
-        //TADA SE NAIME TRIGGER-UJU, RAZLICITI MOUSE EVENT-OVI
+        //POZABAVICU SE OVIM NAKNADNO
 
         this.querySelector('.neka_sekcija_slotted div').addEventListener('mouseenter', ev => {
             console.log('------------------------');
@@ -5016,6 +4998,236 @@ const shably_light_dom = `
 </some-shably-element>
 `;
 
+                        //BAVLJENJE SA EVENT-OVIMA, NASTAVIU TAKO STO SE PONOVO UPOZNATI SA
+                        //DEFAULT PONASANJEM BROWSER-A, ODNOSNO, PONOVICU, KAKAO TO DA
+                        //ZAUSTAVIM DEFAULT PONASANJE, KOJE JE BUILT IN, U SLUCAJU 
+                        //TRIGGER-OVANJA ODREDJENIH WVENT-OVA, NA ODREDJENIM NATURALNIM
+                        //HTML ELEMENTIM-A
+
+//OPET CU KREIRATI JEDAN NOVI CUSTOM ELEMENT, A TO JE GALERIJA; POMENUTI NOVI ELEMENT PRAVIM, KAKO BIH
+//NA NAJBOLJI NACIN PRIKAZO PRIMENU
+
+                //preventDefault        METODE
+//UZ KORISCENJE EVENT DELEGATION-A
+
+window.customElements.define('image-galery', class extends HTMLElement {
+    constructor(srcs){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const imageNumber = srcs.length;
+        const fragment = document.createDocumentFragment();
+        const alt = "opis slike";
+        const styleElement = document.createElement('style');
+
+        for(let src of srcs){
+            let picKont = document.createElement('div');
+            let anch = document.createElement('a');
+            let img = document.createElement('img');
+            picKont.classList.add('pic_kont');
+            anch.href = src;
+            img.src = src;
+            img.alt = alt;
+            img.setAttribute('width', '100%');
+            anch.appendChild(img);
+            picKont.appendChild(anch);
+            fragment.appendChild(picKont);
+        }
+
+        const styleText = `
+            
+            :host {
+                display: block;
+                border: pink solid 2px;
+                padding: 8px;
+                width: 68%;
+                box-sizing: border-box;
+            }
+            div {
+                box-sizing: border-box;
+            }
+            .pic_kont {
+                border: tomato solid 2px;
+                width: ${Math.floor(100/(imageNumber-1))}%;
+                display: inline-block;
+                
+            }
+
+            #pic_kont_first {
+                width: 100%;
+                margin-bottom: 28px;
+                height: 38vw;
+                overflow: hidden;
+            }
+
+            #pic_kont_first img {
+                min-width: 300px;
+            }
+        `;
+        
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(fragment);
+
+        
+        const prviPicKont = shadowRoot.querySelector('.pic_kont');
+        const prviImg = prviPicKont.querySelectorAll('img')[0];
+        prviPicKont.id = 'pic_kont_first';
+        console.log(shadowRoot.childNodes);
+        
+        //DEFINISAN IZBOR SLIKE ZA NAJVECI PROZOR, ALI STO JE VAZNIJE
+        //SPRECENO JE DEFAULT PONASANJE BROWSERA, U SLUCAJU ANCHOR-A
+        //(DAKLE, ONO STO SE NECE DOGODITI JESTE OTVARANJE NOVE STRANICE, I SKOK NA POCETAK,
+        //POSTOJECE STRANICE, KADA KORISNIK KLIKNE NA ANCHOR, ODNOSNO SLIKU, KOJA JE NESTED U ANCHOR-U)
+
+        shadowRoot.addEventListener('click', ev => {
+            if(ev.target instanceof HTMLImageElement){
+                ev.preventDefault();
+            }
+
+            if(ev.target !== prviImg){
+                const targetSrc = ev.target.src;
+                const srcMain = prviImg.src;
+
+                ev.target.src = srcMain;
+                prviImg.src = targetSrc;
+            }
+        });
+
+        //OVIM SAM SPRECIO DA KADA KORISNIK TRIGGER-UJE DESNI KLIK (contextmenu), NA CELOM SHADOW ROOT-U
+        //BUDE SPRECENO DEFAULT PONASANJE SAMO ZA SLUCAJ, KADA target BUDE 'img',
+        //ODNOSNO TADA SE NECE OTVORITI MENI, KOJI IMA OPCIJE ZA DOWNLOAD SLIKE, ILI NJENO OTVARANJE
+        //U ODVOJENO WINDOW-U
+
+        shadowRoot.addEventListener('contextmenu', ev => {
+            if(ev.target instanceof HTMLImageElement || ev.target instanceof HTMLAnchorElement){
+                ev.preventDefault();
+            }
+        });
+    }
+});
+const srcs = [
+    './img/galery/1.jpg',
+    './img/galery/2.jpg',
+    './img/galery/3.jpg',
+    './img/galery/4.jpg',
+    './img/galery/5.jpg',
+];
+const Galery = window.customElements.get('image-galery');
+
+const galery = new Galery(srcs);
+
+//DEFINISAO SAM NESTOVANJE, MOG ELEMENT U HTML NA DRUGACIJI NACIN NEGO RANIJE
+
+console.log(window.customElements.get('image-galery'));
+
+const galery_kont = document.querySelector('.galery-kont');
+
+galery_kont.appendChild(galery);
+
+
+//BAVLJENJE SA preventDefault METODOM, I SA EVENT-OVIMA U ODNOSU NA DEFAULT PONASANJE BROWSER-A,
+//NASTAVICU TAKO STO CU RECI DA POSTOJI MOGUCNOST DA 
+
+                //DVA EVENTA, TEKU JEDAN U DRUGI
+    //STA POD TIME MISLIM?
+    
+//PA NA PRIMER TAKVA SITUACIJA JE PRISUTNA U SLUCAJU TRIGGERING-A click EVENTA NA input ELEMENTU
+//TADA, ONO STO SE DOGADJE JESTE DA 
+                    //                  input       TAKODJE DOBIJE FOCUS, ODNOSNO DA SE NA NJEMU
+                    //  TRIGGER-UJJE focus EVENT
+//DAKLE, JEDAN EVENT FLOWS U DRUGI
+
+//MEDJUTIM AKO, U SLUCAJU JEDNOG input-A, ODLUCIM DA PRIMENIM      preventDefault     NA Event INSTANCI,
+//'mousedown' TIPA, TO CE SPRECITI PONASANJE BROWSER-A, DA U TOM SLUCAJU TRIGGER-UJE I DRUGU Event 
+//INSTANCU, TIPA, 'focus' 
+
+//POKAZACU TO, PUTEM PRIMERA
+
+window.customElements.define('broken-inputs', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const input1 = document.createElement('input');
+        const input2 = document.createElement('input');
+        const input3 = document.createElement('input');
+        const input4 = document.createElement('input');
+
+        const styleElement = document.createElement('style');
+
+        input1.value = "(listening for mousedown)NOTHING PREVENTED, tab focusable";
+        input3.value = "(listening for click)NOTHING PREVENTED, tab focusable";
+        
+        input2.setAttribute('for_mousedown', '');
+        input4.setAttribute('for_click', '');
+
+        input2.value = "(mousedown PREVENTED) |NO FOCUS after MOUSEDOWN|, tab focusable";
+        input4.value = "(click PREVENTED) |YES FOCUS after CLICK|, tab focusable";
+
+        const styleContent = `
+            :host {
+                display: block;
+                width: 68%;
+                border: pink solid 2px;
+            }
+        
+            input {
+                display: block;
+                width: 78%;
+                margin: 8px;
+                font-size: 1.2rem;
+                line-height: 1.2;
+            }
+        `;
+        
+        styleElement.textContent = styleContent;
+
+        shadowRoot.appendChild(styleElement); 
+        shadowRoot.appendChild(input1); 
+        shadowRoot.appendChild(input2); 
+        shadowRoot.appendChild(input3); 
+        shadowRoot.appendChild(input4);
+    }
+
+    connectedCallback(){
+
+        //PRIMENIO SAM preventDefault(), U SLUCAJU mousedown, ALI I U SLUCAJU click
+        
+        //OVO SAM URADIO KAKO BI SE UVERIO, DA AKO SPECIM DEFAULT PONSANJE U SLUCAJU click-A
+        //TO NECE SPRECITI TRIGGEROVANJE focus-A
+
+        //ALI SPRECAVANJA DEFAULT-A, U SLUCAJU mousedown-A, HOCE SPRECITI TRIGGER-OVANJE focus-A
+
+        //A NE SMEM ZABORAVITI DA JE SVIM input-IMA , tabindex PODESEN NA 0, STO IH POSTAVLJA U 
+        //TAJ ORDER FOKUSIRANJA, PRITISKOM NA Tab DUGME TASTATURE 
+
+        this.shadowRoot.addEventListener('mousedown', ev => {
+            if(ev.target instanceof HTMLInputElement && ev.target.hasAttribute('for_mousedown')){
+                ev.preventDefault();    //OVIM SE HOCE SPRECITI TRIGGER-OVANJE FOCUSA
+            }
+        });
+
+        this.shadowRoot.addEventListener('click', ev =>{
+            if(ev.target instanceof HTMLInputElement && ev.target.hasAttribute('for_click')){
+                ev.preventDefault();        //OVIM SE DAKLE NECE SPRECITI TRIGGEROVANJE FOCUSA
+            }
+        });
+        //FOCUS DOES NOT PROPAGATE SO YOU CAN'T USE EVEND DELEGATION (ON shadowRoot)
+        // (DAKLE DIREKTNO MORAM ZAKACITI HANDLER ZA INPUT U SLUCAJU FOCUS-A)
+        this.shadowRoot.querySelector('[for_mousedown]').addEventListener('focus', function(ev){        //NISAM KORISTIO ARROW, DA BI this REFERENCIRALO input,  A NE CUSTOM ELEMENT
+            this.value = "GOT FOCUS";
+        });
+        
+    }
+});
+
+const broken_inputs_ELEMENT_light_dom = `
+    <broken-inputs></broken-inputs>
+`;
 
 
 
@@ -5579,90 +5791,4 @@ buya.addEventListener('click', ev => {
 
 
 
-window.customElements.define('image-galery', class extends HTMLElement {
-    constructor(srcs){
-        super();
 
-        const shadowRoot = this.attachShadow({mode: 'open'});
-
-        const imageNumber = srcs.length;
-        const fragment = document.createDocumentFragment();
-        const alt = "opis slike";
-        const styleElement = document.createElement('style');
-
-        for(let src of srcs){
-            let picKont = document.createElement('div');
-            let anch = document.createElement('a');
-            let img = document.createElement('img');
-            picKont.classList.add('pic_kont');
-            anch.href = src;
-            img.src = src;
-            img.alt = alt;
-            img.setAttribute('width', '100%');
-            anch.appendChild(img);
-            picKont.appendChild(anch);
-            fragment.appendChild(picKont);
-        }
-
-        const styleText = `
-            :host {
-                display: block;
-                border: pink solid 2px;
-                padding: 8px;
-                width: 68%;
-            }
-
-            .pic_kont {
-                border: tomato solid 2px;
-                width: ${98/(imageNumber-1)}%;
-                display: inline-block;
-            }
-
-            #pic_kont_first {
-                width: 100%;
-            }
-        `;
-        
-        styleElement.textContent = styleText;
-
-        shadowRoot.appendChild(styleElement);
-        shadowRoot.appendChild(fragment);
-
-        
-        const prviPicKont = shadowRoot.querySelector('.pic_kont');
-        const prviImg = prviPicKont.querySelectorAll('img')[0];
-        prviPicKont.id = 'pic_kont_first';
-        console.log(shadowRoot.childNodes);
-        
-        shadowRoot.addEventListener('click', ev => {
-            if(ev.target instanceof HTMLImageElement){
-                ev.preventDefault();
-            }
-
-            if(ev.target !== prviImg){
-                const targetSrc = ev.target.src;
-                const srcMain = prviImg.src;
-
-                ev.target.src = srcMain;
-                prviImg.src = targetSrc;
-            }
-        });
-
-    }
-});
-const srcs = [
-    './img/galery/1.jpg',
-    './img/galery/2.jpg',
-    './img/galery/3.jpg',
-    './img/galery/4.jpg',
-    './img/galery/5.jpg',
-];
-const Galery = window.customElements.get('image-galery');
-
-const galery = new Galery(srcs);
-
-console.log(window.customElements.get('image-galery'));
-
-const galery_kont = document.querySelector('.galery-kont');
-
-galery_kont.appendChild(galery);
