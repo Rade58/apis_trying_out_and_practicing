@@ -5216,7 +5216,7 @@ window.customElements.define('broken-inputs', class extends HTMLElement {
                 ev.preventDefault();        //OVIM SE DAKLE NECE SPRECITI TRIGGEROVANJE FOCUSA
             }
         });
-        //FOCUS DOES NOT PROPAGATE SO YOU CAN'T USE EVEND DELEGATION (ON shadowRoot)
+        //FOCUS DOES NOT PROPAGATE SO YOU CAN'T USE EVENT DELEGATION (ON shadowRoot)
         // (DAKLE DIREKTNO MORAM ZAKACITI HANDLER ZA INPUT U SLUCAJU FOCUS-A)
         this.shadowRoot.querySelector('[for_mousedown]').addEventListener('focus', function(ev){        //NISAM KORISTIO ARROW, DA BI this REFERENCIRALO input,  A NE CUSTOM ELEMENT
             this.value = "GOT FOCUS";
@@ -5230,7 +5230,83 @@ const broken_inputs_ELEMENT_light_dom = `
 `;
 
 
+//ONO STO SE POSTIZE preventDefault METODOM, MOZE SE POSTICI, I AKO SE HANDLER-U, DEFINISE
 
+//            return false;
+
+//ALI TAKAV NACIN NIJE PREPORUCIV DA SE KORISTI, ZAJEDNO SA addEventListener METODOM
+//MOZE SE KORISTITI PRILIKOM DEFINISANJA, ODNOSNO KACENJA on HANDLERA (U HTML-U), INLINE, ILI on HANDLERA, U
+//JAVASCRIPT-U 
+
+
+//SADA CU SE POZABAVITI PROPERTIJEM         event.defaultPrevented    (BOOLEAN)
+//DAKLE, AKO JE SPRECENO DEFAULT PONASANJE BROWSERA, OVAJ PROPERTI VRACA true
+
+//TO BI UPRAVO ZNACILO DA BI PROPAGATION-OM, ODNOSNO BUBBLING-OM, TAJ EVENT (SA PREVENTED DEFAULT BEHAVIOR-OM)
+// STIGAO DO DRUGOG ELEMENTA (ELEMENTI KOJI IMAJU ODNOS ANCESTOR/DESCENDANT), I NOSIO BI TU INFORMACIJU
+//O POMENTOM PREVENT-OVANJU
+
+window.customElements.define('button-modals', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const buttonElement = document.createElement('button');
+        const styleElement = document.createElement('style');
+
+        buttonElement.innerText = "open context";
+
+        const styleText = `
+            :host {
+                border: pink solid 2px;
+                display: inline-block;
+                padding: 4px;
+            }
+
+            button {
+                background-color: #67f19c85;
+                text-align: center;
+                font-size: 2rem;
+            }
+        `;
+
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(buttonElement);
+    }
+
+    connectedCallback(){
+        
+        this.shadowRoot.querySelector('button').addEventListener('contextmenu', function(ev){
+            ev.preventDefault();
+            alert("context menu on button prevented");
+            //ALI NISAM ZAUSTAVIO PROPAGATION (BUBBLING)
+            //JER ZELIM DA SE OVAJ EVENT RAZMNOZI DO DOKUMENTA
+        });
+
+        document.addEventListener('contextmenu', function(ev){
+            if(ev.defaultPrevented){
+                console.log('prevented event bubbled to document');
+                return;           //AKO JE DEAFULT PREVENTED, NEKA SE FUNKCIJA RETURN-UJE
+            }
+
+            //DAKLE SLEDECE CE SE IZVRSITI, KADA DO document, NIJE BUBBLED UP EVENT, KOJEM JE PREVENTED
+            //DEFAULT (ODNOSNO EVENT KOJI SE PROPAGIRA, OD BUTTON-A PA OVAMO)
+            
+            const openContextMenu = confirm("Are you sure you want to open context menu?");
+
+            !openContextMenu?ev.preventDefault():null;   //OVDE SAM UPOTREBIO TERNARY, IAKO JE LOSA PRAKSA AKO TERNARY NIJE ASSGNMENT
+            //DAKLE, AKO KORISNIK U CONFIR DIALOGU PRITISNE: NE; CONTEXT MENU NECE BITI OTVOREN 
+        });
+    }
+});
+
+
+const button_modals_light_dom = `
+<button-modals></button-modals>
+`;
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
 
