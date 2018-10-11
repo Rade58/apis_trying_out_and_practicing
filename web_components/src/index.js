@@ -4949,7 +4949,14 @@ window.customElements.define('some-shably-element', class extends HTMLElement {
 
         //TO RADIM JER ZELIM DA UPOREDIM, KOJE JE RAZLIKA IZMEDJU OVA DVA EVENTA
 
-        //POZABAVICU SE OVIM NAKNADNO
+        //POZABAVICU SE OVIM NAKNADNO, KADA PONOVIM preventDefault METODU
+        //ODNOSNO, JA KONKRETNO ZELIM DA VIDIM, ODNOSNO UPOREDIM SLEDECE METODE
+        
+        //      defaultPrevented        cancelable      bubbles
+
+        //ONO STO CU SAMO URADITI JESTE KACENJE EVENT LISENERA, ZA SLUCAJEVE, POMENUTIH EVENT-OVA,
+        //NA NEKIM ELEMENTIM IZ SHADOW ROOT-A, PA CU POGLEDATI STA KAKO SE TRIGGER-UJU, POMENUTI
+        //EVENT-OVI, ALI NECU NISTA KOMENTARISATI
 
         this.querySelector('.neka_sekcija_slotted div').addEventListener('mouseenter', ev => {
             console.log('------------------------');
@@ -4998,7 +5005,7 @@ const shably_light_dom = `
 </some-shably-element>
 `;
 
-                        //BAVLJENJE SA EVENT-OVIMA, NASTAVIU TAKO STO SE PONOVO UPOZNATI SA
+                        //BAVLJENJE SA EVENT-OVIMA, NASTAVICU TAKO STO SE PONOVO UPOZNATI SA
                         //DEFAULT PONASANJEM BROWSER-A, ODNOSNO, PONOVICU, KAKAO TO DA
                         //ZAUSTAVIM DEFAULT PONASANJE, KOJE JE BUILT IN, U SLUCAJU 
                         //TRIGGER-OVANJA ODREDJENIH WVENT-OVA, NA ODREDJENIM NATURALNIM
@@ -5303,10 +5310,229 @@ window.customElements.define('button-modals', class extends HTMLElement {
     }
 });
 
-
 const button_modals_light_dom = `
 <button-modals></button-modals>
 `;
+
+
+
+
+//PRE NEGO STO NASTAVIM BAVLJENJE SA KONKRETNIM EVENT-OVIMA, ODNOSNO PRE NEGO STO POCNEM DA SE BAVIM
+//SVAKIM, OD EVENT-OVA PO NA OSOB I PRE NEGO STO SE POZABAVIM CUSTOM EVENT-OVIMA
+//KREIRACU NEKOLIKO PRIMERA, U KOJIM UCESTVUJE EVENT DELEGATION
+
+window.customElements.define('color-table', class extends HTMLElement {
+    constructor(numberOfTableDatas){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const table = document.createElement('table');
+        const styleElement = document.createElement('style');
+        const caption = document.createElement('caption');
+
+        let styleText = `
+            :host {
+                display: block;
+                border: pink solid 4px;
+                padding: 18px;
+            }
+            .data_table {
+                max-width: 178px;
+                height: 98px;
+                padding: 18px;
+            }
+            h4, p {
+                text-align: center;
+                border: pink solid 2px;
+            }
+            h4 {
+                color: orange;
+            }
+            p {
+                font-family: cursive;
+                color: olive;
+            }
+        `;
+        //ZA ZADAVANJE RAZLICITIH BOJA KORISTICU hls FUNKCIJU, CSS-A
+
+        let h = 359;
+        let s = 100;
+        let l = 100;
+        let realH = 28;
+        let realS = 18;
+        let realL = 8;
+        let tableRow = document.createElement('tr');
+
+        for(let i = 0; i < numberOfTableDatas; i++){
+            let singleTableDataStyle = `
+                .color_data-table_${i} {
+                    background-color: hsl(${realH < h ? realH+=8:realH = 28}, ${realS < s ? realS+=8:realS = 18}%, ${realL < l ? realL+=8:realL = 8}%);
+                }
+            `;
+            styleText = styleText + singleTableDataStyle;
+            let tableData = document.createElement('td');
+            let strongText = "Some kind";
+            let italicText = "some explanation";
+
+            let header = document.createElement('h4');
+            let paragraf = document.createElement('p');
+            let strong = document.createElement('strong');
+            let italic = document.createElement('i');
+            
+            strong.innerText = strongText;
+            italic.innerText = italicText;
+
+            header.appendChild(strong);
+            paragraf.appendChild(italic);
+
+            tableData.classList.add(`color_data-table_${i}`);
+            tableData.classList.add('data_table');
+            tableData.appendChild(header);
+            tableData.appendChild(paragraf);
+            
+            if(tableRow.childNodes.length === 4){
+                table.appendChild(tableRow);
+                tableRow = document.createElement('tr');
+            }
+
+            tableRow.appendChild(tableData);
+        }
+
+        if(tableRow.childNodes.length){
+            table.appendChild(tableRow);
+        }
+
+        styleText = styleText + 
+        `
+            .pick_cell {
+                background-color: tomato;
+            }
+        `;
+        caption.textContent = "Neka tabela boja";
+        table.appendChild(caption);
+        styleElement.textContent = styleText;
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(table);
+        //console.log(shadowRoot.querySelector('td').nodeName);
+    }
+
+    connectedCallback(){
+        let currentTablePicked; //OVO SLUZI KAO 'IZVOR ISTINE' (ODREDNICA, KOJU SAM PRIHVATIO IZ ReactJS-A)
+        
+        /*      SLEDECI CODE SAM COMMENT OUT, ZATO STO JE NAKON NJE PONUDJENO EFIKASNIJE RESENJE
+                ALI OVO STO SAM NAPISAO KAO OBJASNJENJE U OBIMU HANDLERA, JESTE VAZNO
+        
+        this.shadowRoot.addEventListener('click', function(ev){
+            //POSTO ZELIM DA SE KLIKOM NA td ILI NA NJEGOVE NESTED ELEMENT, PROMENI BACKGROUND COLOR
+            //NA td ELEMENTU; MOGU KORISTITI, JEDNU METODU, SA KOJOM SAM SE UPOZNAO U jQuery-JU
+            //A KOJU SU, PREDPOSTAVLJAM UVELI I U KLASICNI JAVASCRIPT
+            //REC JE O closest METODI (DODAJE JOJ SE STRING SELEKTORA)(KAO KOD querySelector METODE)
+
+            //ELEMENT, KOJI SE BIRA POMENUTOM METODOM, JESTE ELEMENT KOJI JE CLOSEST ANCESTOR, ODNOSNO
+            //NAJBLIZI ANCESTOR ELEMENTA, NA KOJEM SE METODA PRIMENJUJE, I TO MORA DA BUDE ANCESTOR
+            //KOJEM ODGOVARA CSS SELEKTOR, KOJI SE DODAJE KAO ARGUMENT, POMENUTOJ METODI
+
+            //AKO, POMENUTI SELEKTOR ODGOVARA, SAMAMO ELEMENT NA KOJEM SE METODA PRIMENJUJE, POVRATNA
+            //VREDNOST closest METODE, BICE TAJ ELEMENT NA KOJEM SE METODA PRIMENJUJE
+
+            //DAKLE, ZELIM KADA KORISNIK KLIKNE, I NA NESTED ELEMENT-E, td-A, DA SE td-DODA NOVI 
+            //BACKGROUND COLOR, A DA SE TAKODJE, DIREKTNIM KLIKOM NA, SAM td ELEMENT, ISTOM DODELI
+            //NOVI BACKGROUND COLOR 
+
+            if(ev.target.closest('.data_table') && currentTablePicked){
+                currentTablePicked.classList.remove('pick_cell');
+            }
+            if(ev.target.closest('.data_table')){
+                ev.target.closest('.data_table').classList.add('pick_cell');
+                currentTablePicked = ev.target.closest('.data_table');
+            }
+        });
+
+        */
+
+
+        console.log(this.shadowRoot.querySelector('td').__proto__);
+
+        //MEDJUTIM, POSTOJI JOS JEDNA METODA, SA KOJOM JE DOBRO DA SE UPOZNAM
+        //TO JE NAIME METODA, KOJOM SE PROVERAVA, A LI DVA ELEMENTA, IMAJU ODNOS ANCESTOR/DESCENDANT
+        //REC JE METODI         contains
+        //I JASNO JE DA DA BI POVRATNA VREDNOST OVE METODE, BILA BOLLEAN true, node ELEMENT, KOJI SE
+        //DODAJE, KAO ARGUMENT, PRIMENE METODE, MORA BITI DESCENDANT, node-A, NAD KOJIM SE METODA
+        //PRIMENJUJE
+
+        this.shadowRoot.addEventListener('click', function(ev){
+
+            const tdElement  = ev.target.closest('.data_table');
+
+            //TREBALO BI DA USVOJIM, SLEDECI PRINICIP PRILIKOM KACENJA HANDLER-A, ODNOSNO PRINCIP, KOJI
+            //PRIMENJUJEM PRE EVENT DELEGATION-A, ODNOSNO PRINCIP PRI KOJEM, PRVO DEFINISE, KADA BI
+            //FUNKCIJA TREBALA DA SE return-UJE KAKO BI MOJ CODE BIO EFIKASNIJI
+
+            //AKO SHADOW ROOT NE SADRZI td ELEMENT TREBALO BI DA SE return-UJE FUNKCIJA
+            /* 
+         
+            if(!this.contains(tdElement)){     // (THIS JE U OVOM SLUCAJU ELEMENT NAD KOJIM SE
+                return;                        //   addEventListener METODA PRIMENJUJE, ZATO STO HANDLER NIJE ARROW FUNCTION)
+            }  
+            
+            //OVAJ CODE STO SAM PRIKAZO SAM VIDEO U TUTORIJALU, ALI MI IZGLEDA SUVISNO
+            */
+            //MEDJUTIM, MENI PREDHODNI DEO CODE-A IZGLEDA SUVISAN JER SASVIM JE JASNO DA ev.target
+            //U OVOM SLUCAJU MORA BITI ILI NEKI DESCENDANT shadowRoot-A
+            //JA BIH MOZDA TREBAO OVAKO DEFINISATI USLOVNU IZJAVU
+            /*
+
+            if(!tdElement){
+                return;
+            }
+
+            */
+
+            //IPAK CU ISKOMBINOVATI, DVA USLOVA IZ PREDHODNE DVE COMMENTED OUT USLOVNE IZJAVE
+            //JEDAN JE DAKLE IZ TUTORIJALA, A DRUGI DODAJEM JA 'NA SVOJU RUKU'
+
+            //MEDJUTIM, KADA POGLEDAM CODE, IPAK IMA VISE SMISLA DA SE DEFINISU DVE USLOVNE IZJAVE
+            //I DA SE FUNKCIJA return-UJE U SLUCAJU ISPUNJENJA JEDNOG USLOVA
+            //ZATIM DA SE return-UJE I U SLUCAJU ISPUNJENJA USLOVA, DRUGE USLOVNE IZJAVE
+
+            //NA TAJ NACIN NE BIH SE MORAO PROCENJIVATI DRUGI USLOV
+            //JER BI FUNKCIJA VEC return-OVALA
+            //I ZA NIJANSU BI BILA EFIKASNIJA
+
+            //DAKLE OSTAVLJAM JEDNU USLOVNU IZJAVU, U CILJU USTEDE VREMENA, ALI CU OPET POMENUTI DA 
+            //JE BOLJE DA IMAM DVE ODVOJENE USLOVNE IZJAVE (JEDINO JE DILEMA, USLOVNA IZJAVA SA KOJIM
+            //UALOVOM BI ISLA PRE)
+
+            if(!this.contains(tdElement) || !tdElement){
+                console.log(2);    //UMESTO this (shadowRoot-A)
+                return;                 // OVDE JE MOGAO DA SE           
+            }                      //REFERENCIRA table 
+            
+            if(currentTablePicked &&           //OVO SVE ODAVDE, PA DO KRAJA OBIMA HANDLERA JE MOGLO DA 
+                currentTablePicked instanceof HTMLTableCellElement &&    //SE DEFINISE KAO ODVOJENA 
+                currentTablePicked.classList.contains('pick_cell')       //METODA, A OVDE DA SE POZOVE         
+            ){                                                      //U USLOVU SAM PRIMENIO 
+                currentTablePicked.classList.remove('pick_cell');   //classList.contains
+            }                                                       //A I instanceof OPERATOR
+                                                                    //MOZDA SUVISNO
+            currentTablePicked = tdElement;
+            tdElement.classList.add('pick_cell');
+
+            //DAKLE NESTO SAM VIDEO IZ POMENUTOG CLANKA, A NEKE STVARI SAM I JA DODAO, I NECU DODATNO
+            //KOMENTARISATI, OVAJ PRIMER
+        });
+
+    }
+});
+
+const nestingRoot = document.querySelector('.table-container');
+
+const ColorTable = window.customElements.get('color-table');
+
+const colorTableElement = new ColorTable(18);
+
+nestingRoot.appendChild(colorTableElement);
+
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
 
@@ -5866,5 +6092,14 @@ buya.addEventListener('click', ev => {
 });
 
 
+console.log(location.href);
+/*let len = 10;
+let i = 1;
+
+let a = (i < 0)?Math.max(0, len + i):i;
+let b = i?a:0;
+i = b;
+*/
+//    i = i ? i < 0 ? Math.max(0, len + i) : i : 0;
 
 
