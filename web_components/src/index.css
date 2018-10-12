@@ -296,3 +296,12 @@ some-practice-element {
     margin: 8px;
 }
 
+.tree_kont ul {
+    /*border: #d64287 solid 2px;*/
+    color: #292f38;
+}
+
+.tree_kont h4:hover {
+    cursor: pointer;
+    color: #b1515e;
+}

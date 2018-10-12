@@ -5462,16 +5462,18 @@ window.customElements.define('color-table', class extends HTMLElement {
 
         this.shadowRoot.addEventListener('click', function(ev){
 
-            const tdElement  = ev.target.closest('.data_table');
+            const tdElement  = ev.target.closest('.data_table');        //AKO NEMA ELEMENT SA DATIM
+                                                                        //SELEKTOROM
+                                                                        //POVRATNA VREDNOST JE  null
 
             //TREBALO BI DA USVOJIM, SLEDECI PRINICIP PRILIKOM KACENJA HANDLER-A, ODNOSNO PRINCIP, KOJI
             //PRIMENJUJEM PRE EVENT DELEGATION-A, ODNOSNO PRINCIP PRI KOJEM, PRVO DEFINISE, KADA BI
             //FUNKCIJA TREBALA DA SE return-UJE KAKO BI MOJ CODE BIO EFIKASNIJI
 
-            //AKO SHADOW ROOT NE SADRZI td ELEMENT TREBALO BI DA SE return-UJE FUNKCIJA
+            //AKO SHADOW ROOT NE SADRZI td ELEMENT TREBALO BI DA SE return-UJE FUNKCIJA (PRVI USLOV)
             /* 
          
-            if(!this.contains(tdElement)){     // (THIS JE U OVOM SLUCAJU ELEMENT NAD KOJIM SE
+            if(!this.contains(tdElement)){     // (this JE U OVOM SLUCAJU ELEMENT NAD KOJIM SE
                 return;                        //   addEventListener METODA PRIMENJUJE, ZATO STO HANDLER NIJE ARROW FUNCTION)
             }  
             
@@ -5482,9 +5484,9 @@ window.customElements.define('color-table', class extends HTMLElement {
             //JA BIH MOZDA TREBAO OVAKO DEFINISATI USLOVNU IZJAVU
             /*
 
-            if(!tdElement){
-                return;
-            }
+            if(!tdElement){                         (OVAJ USLOV JE MOZDA TREBAO DA BUDE PRVI
+                return;                             JER AKO JE tdElement, USTVARI null, FUNKCIJA JE
+            }                                       TREBALA DA SE return-UJE)
 
             */
 
@@ -5532,6 +5534,279 @@ const ColorTable = window.customElements.get('color-table');
 const colorTableElement = new ColorTable(18);
 
 nestingRoot.appendChild(colorTableElement);
+
+
+//NASTAVLJAM BAVLJENJE SA DELEGATIONOM TAKO STO CU SE POZABAVITI NECIM STO SE ZOVE OPTIMIZACIJA
+//HANDLING-A
+
+//ODNOSNO ONO STO ZELIM DA DEFINISEM JESTE KORISCENJE ISTOG HANDLER-A ZA OBAVLJANJE VISE AKCIJA
+
+//SADA NECU DEFINISATI CUSTOM ELEMENT
+//ALI CU KORISTITI ES6 KLASE
+
+//OVAKO CE IZGLEDATI HTML
+
+const htmlMenija = `
+<div id="neki_menu">
+    <button data-akcija="save">Save</button>
+    <button data-akcija="load">Load</button>
+    <button data-akcija="search">Search</button>
+</div>
+`;
+
+//U OVOM PRIMERU, POMAZE data ATRIBUT
+
+//POTRBNO JE SVE METODE DEFINISATI NA NACIN DA BUDU METODE JEDNE ES6 KLASE
+//KONSTRUKTOR KLASE TREBA DA PARAMETAR, KOJI SE ODNOSI NA JEDAN OD OVA TRI MENIJA
+
+//U OVOM PRIMERU CU KORISTITI, ATRIBUT, SA KOJIM SAM SE RANIJE BAVIO, A TO JE       data-
+//U OVOM PRIMERU CU DAKLE KORISTITI dataset PROPERTI KOJI MOZE DA IMA SVAKI ELEMENT, I KOJIM SE PRISTUPA
+//UPRAVO DRUGOM DELU data ATRIBUTA, ODNOSNO ONOM DELU NAKON CRTICE 
+
+//ZNACI PRINCIP JE DA RAZLICITI ELEMENTI IMAJU ISTIT data-      ATRIBUT, ALI DA JE VREDNOST TOG
+//ATRIBUTA, ZA SVAKI ELEMENT RAZLICITA
+
+class Meni {
+    constructor(menuElement){
+        
+        this._menuElement = menuElement;        //OVO JE SUVISNO, ALI U CLANKU JE DEFINISANO
+
+        this.onClickHandler = this.onClickHandler.bind(this);
+
+        menuElement.addEventListener('click', this.onClickHandler);
+        
+        //JOS JEDNA BITNA STVAR, A TO JE DA NISAM KORISTIO addEventListener METODU,
+        // MORAO BIH NAPISATI OVAKO, UZ DODELOM onclick-U
+        
+       //        menuElement.onclick = this.onClickHandler.bind(this);
+    }
+
+    save(){
+        alert('saving!');
+    }
+
+    load(){
+        alert('loading!');
+    }
+
+    search(){
+        alert('searching!');
+    }
+
+    //CILJ JE DA IMAM JEDAN HANDLER, ALI CU U NJEMU KORISTITI EVENT DELEGATION, KOJA ZAVISI OD 
+    //data ATRIBUTA, ODREDJENOG DUGMETA
+
+    onClickHandler(ev){
+       // const buttonElement = ev.target.closest('button');  //NISAM MORAO IMATI DVE VARIJABLE, JER
+                                                            //SVE JE MOGLO BITI JEDNA
+                                                            //ALI U CILJU BOLJEG PRIKAZA NEKA STOJE
+                                                            //DVE VARIJABLE OVDE, COMMENTED OUT
+        // const dataValue = buttonElement.dataset['akcija'];
+        //BOLE JE OVAKO
+
+        const akcija = ev.target.dataset['akcija'];     //AKO NE POSTOJI data-akcija ATRIBUT
+                                                        //POVRATNA VREDNOST JE null         
+
+        //JEDNA OD METODA, OVE KLASE JE IZABRANA NA OSNOVU data-   ATRIBUTA
+        //TU METODU CU POZVATI OVAKO
+        if(akcija){    
+            this[akcija]();         //akcija JESTE, SLEDECI MOGUCI STRINGOVI      'save'     'load'   
+        }                                                                 //            'search'
+    }
+
+}
+
+const meni = new Meni(document.querySelector('#neki_menu'));
+//DAKLE NE ZABORAVI         dataset
+//A ONO ZASTO JE PREDHODNI PRIMER, VEOMA VAZAN JE JESTE STO SAM MOGA DODATI, KOLIKO HOCU BUTTON-A
+//U MENU, I DODATI NOVU METODU, CIJE CE IME BITI ISTO, KAO I DRUGI DEO IMENA (NAKON CRTICE), data-
+//ATRIBUTA
+
+
+
+document.querySelector('#neki_menu').innerHTML = 
+    document.querySelector('#neki_menu').innerHTML + 
+    '<button data-akcija="kibla">Isprazni kiblu!</button>';
+
+meni.__proto__.kibla = function(){
+    confirm('Isprazni, kiblu?');
+};
+
+
+//SADA CU SE POZABAVITI NECIM STO SE ZOVE           'BEHAVIOR'      PATTERN
+                                        //          'PONASANJE'     OBRAZAC
+
+const html_primera_sa_inputima_dugmadima = `
+    <div id="dugm_kont">
+        BROJAC 1: <input type="button" value="1" data-counter>
+        BROJAC 2: <input type="button" value="2" data-counter>
+    </div>
+`;
+
+document.querySelector('#dugm_kont').addEventListener('click', function(ev){
+    let target = ev.target;
+    
+    // DAKLE KADA JE U PITANJU BOOLEAN ATRIBUT, KAKAV JE OVAJ data-counter
+    //AKO GA IMA ELEMENT, VREDNOST ATRIBUTA JESTE PRAZAN STRING
+
+    //DAKLE AKO BUDEM VREDNOSCU, ISTOG ATRIBUTA PRISTUPAO I POMOCU      dataset-A    I POMOCU
+    //      getAttribute    METODE, VREDNOST, KOJA CE BITI RETURNED JESTE PRAZAN STRING
+
+    //TO CU I DA PROVERIM
+
+    console.log(    target.getAttribute('data-counter')    );   //-->   ""
+    console.log(    target.dataset['counter']              );   //-->   ""
+
+    //ALI POVRATNA VREDNOST, getAttribute METODE I VREDNOST, KOJOJ PRITUPAM U dataset-U CE SE
+    //RAZLIKOVATI, U SLUCAJU KADA ELEMENT, NEMA ATRIBUT, KOJI POTRAZUJEM
+
+    console.log(    target.getAttribute('data-brojac')      );  //-->   null
+    console.log(    target.dataset['brojac']                );  //-->   undefined
+
+    //KAO STO VIDIM, MOZDA JE DOBRO DA PAZIM, KAKO KORISTIM POVRATNE POMENUTE VREDNOSTI 
+
+    for(data in target.dataset){
+        console.log("~~~~~~", data);       //OVO JE SAMO DOKAZ DA JE dataset ZAISTA ITERABLE OBJEKAT
+    }
+
+    //DAKLE SVE OVO GORE JE BILO SUVISNO ZA OVU FUNKCIJU,
+    //ALI SAM PRISTUPAO NEKIM VREDNOSTIMA, KAKO BI SE PODSETIO
+    //NA NEKE STVARI SA KOJIMA SAM SE, DAVNO UPOZNAO
+
+    //OVAJ SLEDECI USLOV SE, U PRIMERU 
+    //IZ CLANKA, SAMO SASTOJAO
+    //IZ DELA SA UPOTREBOM          dataset    ITERABLE OBJEKTA
+
+    if(target && target.value && target.dataset['counter'] !== undefined){
+        console.log(    typeof target.value    );       //-->  "string"
+        //KAO STO VIDIM IZ ONOGA STO SAM STAMPAO U KONZOLI VREDNOST value ATRIBUTA JESTE 'string' TIPA
+
+        //ONO STO MI PADA NA PAMET JESTE UPOTREBA       parseInt
+
+        // JER  OVO NE BI BILO MOGUCE     target.value = target.value + 1;    JER BI SE OVIM CONCATENATE
+                                                                                //-OVALA DVA STINGA   
+
+        //MEDJUTIM, POSTOJE CAKE U JAVASCRIPT-U, ZA KOJE SAM TEK SAZNAO
+        //NAIME, IAKO value JESTE STRING, ONO STO JE, IPAK IZMEDJU ZNAKOVA NAVODA JESTE VALIDNA NUMBER
+        //VREDNOST, I AKO SE TAKAVA VREDNOST KORISTI, KAO OPERAND INKREMENTA, ONA CE BITI PRETVORENA
+        //U NUMBER I SABRANA SA JEDINICOM, ODNOSNO KALKULACIJA BI BILA MOGUCA
+        
+        //              target.value++;             OVO SAM COMMENTED OUT, SAMO ZATO STO POSTOJI JOS
+                                                    //MOGUCNOSTI
+    
+        //A POSTOJE I NESTO STO SE ZOVU         UNARY OPERATORS
+        //KONKRETNO JE REC O        UNARY +     I       UNARY -
+        
+        target.value = +target.value + 1;
+        //SA UNARY OPERATORIMA CU SE POSEBNO POZABAVITI SA SLEDECE STRANICE
+        //  https://javascript.info/operators
+        //
+        //A POSEBNO CU PRECI I SLEDECU WEB STRANICU
+        //    https://javascript.info/number               
+    }
+});
+
+//DAKLE U PREDHODNOM PRIMERU, BUTTONIMA (INPUTIMA) JE ZADAT, POSEBAN 'BEHAVIOUR' DA BUDU COUNERI
+
+//SADA CU SE POZABAVITI, NOVIM PRIMEROM, A TO JE TOGGLER
+
+const html_for_toggler = `
+    <div class="kontish">
+        <button data-toggle-id="subscribe-mail">Pokazi formular za subskripciju</button>
+        <form id="subscribe-mail" hidden>
+            <input type="mail">
+        </form>
+    </div>
+`;
+
+document.querySelector('.kontish').addEventListener('click', function(ev){
+    const id = ev.target.dataset['toggleId'];      //NE ZABORAVI DA AKO SE data ATRIBUT SASTOJI OD 
+                                                //VISE CRTICA, dataset-OV PROPERI CE BITI cammelCase
+                                            //ODNOSNO PRISUTAN JE OVAKAV ATRIBUT    data-toggle-id
+                                            //A PROPERTI U dtaset OBJEKTU CE BITI       toggleId
+    console.log(id);                        
+    
+    if(!id){        //!undefined OCEKUJEM OVAKVU VREDNSOT AKO target NEMA POMENUTI data ATRIBUT
+        return;                 //RETURNUJEM, AKO target ELEMENT NEMA TAKAV ATRIBUT
+    }
+
+   const form = document.querySelector(`#${id}`); //MOGAO SAM I getElementById
+   form.hidden = !form.hidden;   //BOOLEAN ATRIBUT (SVAKIM NOVIM KLIKOM DODELJUJE MU SE ILI BOOLEAN 
+   //                                                                               true ILI false)
+})
+
+//JOS JEDAN PRIMER SA EVENT DELEGATION-OM
+const mammals_and_fishes = `
+<div class="tree_kont" style="border:darkorange solid 2px">
+    <ul>
+      <li>
+        <h4>Zivotinje</h4>
+        <ul>
+          <li>
+            <h4>Sisari</h4>
+            <ul>
+              <li>Krave</li>
+              <li>Magarci</li>
+              <li>Psi</li>
+              <li>Tigrovi</li>
+            </ul>
+          </li>
+          <li>
+            <h4>Druge</h4>
+            <ul>
+              <li>Dazdevnjaci</li>
+              <li>Ptice</li>
+              <li>Zelembaci</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <h4>Ribe</h4>
+        <ul>
+          <li>
+            <h4>Akvarijum</h4>
+            <ul>
+              <li>Andjeoska ribica</li>
+              <li>Zlatna ribica</li>
+            </ul>
+          </li>
+          <li>
+            <h4>More</h4>
+            <ul>
+              <li>Morska pastrmka</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+`;
+
+document.querySelector('.tree_kont').addEventListener('click', ev => {
+    if(ev.target.nodeName !== 'H4'){
+        return;
+    }
+
+    const ul =  ev.target.closest('li').querySelector('ul');
+    const ulDisplay = window.getComputedStyle(ul).display;
+    let displayNeu = ulDisplay === 'block'?'none':'block';
+    ul.style.display = displayNeu;
+})
+
+
+
+//GORNJI HANDLER SAM TREBAO DA ZAKACIM NA document (TAKO JE BILO U CLANKU)
+//A ONO STO JE BITNO JESTE DA SE NIKAD NE KACI on EVENT HANDLER ZA document, ODNOSNO DA SE FUNKCIJA NE 
+//DODELJUJE
+// on EVENT HANDLER-U, JER AKO SLEDECI PUT BUDEM ZELEO DA ZAKACIM HANDLER, MOZE DOCI DO OVERRIDINGA
+// ODNOSNO POJAVE KONFLIKATA
+
+//ZAPAMTI DA SVI ELEMENTI NISU ELEMENTI KOJI SE RAZMNOZAVAJU (PROPAGATE), ODNOSNO BUBBLE UP-UJU,
+// KAO STO JE NA PRIMER focus
+//I ZA TAKVE EVENTOVE, DEFINISANJE EVENT DELEGATION-A, NEMA NIKAKVOG EFEKTA
+
+
 
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
