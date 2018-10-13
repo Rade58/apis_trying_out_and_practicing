@@ -5792,8 +5792,7 @@ document.querySelector('.tree_kont').addEventListener('click', ev => {
     const ulDisplay = window.getComputedStyle(ul).display;
     let displayNeu = ulDisplay === 'block'?'none':'block';
     ul.style.display = displayNeu;
-})
-
+});
 
 
 //GORNJI HANDLER SAM TREBAO DA ZAKACIM NA document (TAKO JE BILO U CLANKU)
@@ -5806,6 +5805,116 @@ document.querySelector('.tree_kont').addEventListener('click', ev => {
 // KAO STO JE NA PRIMER focus
 //I ZA TAKVE EVENTOVE, DEFINISANJE EVENT DELEGATION-A, NEMA NIKAKVOG EFEKTA
 
+
+//URADICU OPET ISTI PRIMER U CILJU PROSIRENJA ZNANJA U POGLEDU MANIPULACIJE DOM-OM, ALI I ZATO STO JE
+//U CLANKU KOJI CITAM, OVAJ PRIMER, NESTO DRUGACIJE ODRADJEN
+
+//ONO STO JE NEPOVOLJNO U GORNJEM PRIMERU JESTE STO JE h4 BLOK ELEMENT, 
+//A TO JE PREVISE PROSTORA ZA KLIK (ODNONO KLIK JE MOGUC NA PROSTORU h4 ELEMENTA, GDE NEMA KLIKA)
+
+//TO SAM POPRAVIO, TAKO STO SAM GA UCINIO inline-block ELEMENTOM
+
+//OVAJ PRIMER FUNKCUONISE ALI U CLANKU KOJI CITAM, OVAJ PRIMER JE TAKAV DA SE U HTML-U NIJE NALAZIO
+//h4 ELEMENT, VEC SAMO TEKST NESTED U UNORDERED LISTI, A NAKON TEKSTA U UNORDERED LISTI SU JESTE
+//SLEDECA UNORDERED LISTA, KAO SIBLING, POMENUTOG TEKSTA
+
+//ONO STO JE U PRIMERU URADJENO, I TO JAVASCRIPT-OM (PREDPOSTAVLJAM U CILJU VEZBE) JESTE PREPEND-OVANJE
+//(NESTOVANJE NA POCETAK), span TAGOVA, UNUTAR SVAKOG list ITEM-A, I NAKON TOGA OTKACIVANJE Text node-a
+//KOJI JE PRIPADO LIST ITEM-U DIREKTNO, I NJEGOVO KACENJE U POMENUTI span TAG, KOJI JE POSTAO CHILD
+//ELEMENT, list item-A
+
+//OPET CU DEFINISATI HTML
+
+const html_drvo = `
+<div class="kont_za_drvo">
+    <ul>
+        <li>
+            Zivotinje
+            <ul>
+                <li>
+                    Sisari
+                    <ul>
+                        <li>Krave</li>
+                        <li>Magarci</li>
+                        <li>Psi</li>
+                        <li>Tigrovi</li>
+                    </ul>
+                </li>
+                <li>
+                    Druge
+                    <ul>
+                        <li>Dazdevnjaci</li>
+                        <li>Ptice</li>
+                        <li>Zelembaci</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            Ribe
+            <ul>
+                <li>
+                    Akvarijum
+                    <ul>
+                        <li>Andjeoska ribica</li>
+                        <li>Zlatna ribica</li>
+                    </ul>
+                </li>
+                <li>
+                    More
+                    <ul>
+                        <li>Morska pastrmka</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+`;
+
+//KREIRACU FUNKCIJU U CIJEM OBIMU CU DEFINISATI, POMENUTU DODAVANJE span-OVA, MOM HTML-U
+
+const addSpansToDrvo = function(){
+    for(listAjtem of document.querySelectorAll('.kont_za_drvo li')){
+        //OVAJ CODE NARAVNO TREBALO JE REFAKTORISATI, ALI OSTAVICU GA OVAKO DA BI SE VIDELO, KAKVE
+        //VREDNOSTI KORISTIM, I KAKVE METODE I PROPERTIJE KORISTIM, A IMENA VARIJABLI SU SUGESTIVNA
+        
+        if(listAjtem.children.length){    //OVU USLOVNU IZJAVU SAM JA DODAO (DAKLE, SPANOVI SE NECE 
+                                          //NESTOVATI U ELEMENTIMA U KOJIMA DECA JESU NAJDUBLJE NESTOVANA,
+                                          // DAKLE AKO NEMAJU CHILD-A, ILI AKO SU TEXT NODE-OVI) 
+            let spanElement = document.createElement('span');
+            listAjtem.prepend(spanElement);
+            let textNode = spanElement.nextSibling;     //nextSibling REFERENCIRA NAREDNI TEXT NODE SIBLING
+            spanElement.append(textNode);               //A POSTOJI PROPERTI nextElementSibling
+        }                                            //KOJA RETURNUJE SAMO ELEMENT NODE (NE TEXT NODE)
+        //POSTOJE I METODE KAO STO SU 
+        //  insertAdjacentElement , I appendChild, ALI U CLANKU SU KORISCENE append I prepend METODE
+        //ZA KOJE, OPET PONAVLJAM, ODNOSNO PREDPOSTAVLJAM DA SU PREUZETE IZ jQuery-JA
+        //POSTOJI I METODA insertAdjacentHTML (SAMO UZGRED, SPOMINJEM)
+    }
+};
+
+addSpansToDrvo();
+
+//POSTO SVAKI TEXT NODE, PREDHODNO NESTED (DIREKTNO U HTML) U LIST ITEM-U, SADA JESTE, UZ POMOC
+//JAVASCRIPT-A, NESTED U SPAN TAGU, MOGU SE POZABAVITI DODAVANJEM FUNKCIONALNOSTI, KOJOM SE POSTIZE
+//DA KLIKOM NA span, NESTANE, unordered list-A, KOJA JE NJEGOV SIBLING
+
+document.querySelector('.kont_za_drvo').addEventListener('click', function(ev){
+    const target = ev.target;
+
+    if(target.nodeName !== 'SPAN' || !target.nextElementSibling){ //BOLJE BI BIL ODA SAM IMAO DVE USLOVNE IZJAVE
+        //UMESTO        nodeName        MOGLO JE I      tagName
+        
+        return;                                                             
+    }
+    //UMESTO KORISCENJA nextElementSibling-A, MOGAO SAM UPOTREBITI I querySelector
+    //U PROSLOM PRIMERU SAM KORISTIO display PROPERTI STILOVA, A SADA CU KORISTITI hidden 
+    //BOOLEAN ATRIBUT
+
+    ev.target.nextElementSibling.hidden = !ev.target.nextElementSibling.hidden;
+
+});
 
 
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
@@ -6377,4 +6486,73 @@ i = b;
 */
 //    i = i ? i < 0 ? Math.max(0, len + i) : i : 0;
 
+/*
+const someFunk = function(){
+    console.log('varijabla!');
+};
 
+function someFunk(){            //DOCI CE DO ERROR-A
+    console.log('funkcija');        
+}
+
+someFunks();
+*/
+
+//MERGE SORT
+const nekiNiz = [28, 1, 56, 2, 18, 4, 42, 68];
+
+let brojRekurzija = 0;
+
+const mergeSort = function(niz){
+    if(niz.length < 2){
+        return niz;
+    }
+    const noviIstiNiz = niz.concat([]);
+    const len = noviIstiNiz.length;
+    const middleIndex = Math.floor(len/2);
+    const middleNiz = [].concat(noviIstiNiz[middleIndex]);
+    const levi = noviIstiNiz.slice(0, middleIndex);
+    const desni = noviIstiNiz.slice(middleIndex+1, len);
+    
+    const noviLevi = [];
+    const noviDesni = [];
+
+    for(let i = 0; i<levi.length; i++){
+        
+        /*console.log(levi[i]);
+        console.log(desni[i]);*/
+
+        if(levi[i] > middleNiz[0]){
+            noviDesni.push(levi[i]);
+        }else{
+            noviLevi.push(levi[i]);
+        }
+
+        if(!desni[i]){
+            break;
+        }
+
+        if(desni[i] > middleNiz[0]){
+            noviDesni.push(desni[i]);
+        }else{
+            noviLevi.push(desni[i]);
+        }
+
+    }
+
+    /*console.log(levi);
+    console.log(desni);
+
+    console.log(noviLevi);
+    console.log(middleNiz);
+    console.log(noviDesni);*/
+
+    brojRekurzija++;
+
+    return mergeSort(noviLevi).concat(middleNiz).concat(mergeSort(noviDesni));
+}
+
+const sredjenNiz = mergeSort(nekiNiz);
+
+console.log(sredjenNiz);
+console.log(brojRekurzija);

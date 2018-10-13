@@ -305,3 +305,12 @@ some-practice-element {
     cursor: pointer;
     color: #b1515e;
 }
+
+.tree_kont h4 {
+    display: inline-block;
+}
+
+
+.kont_za_drvo li > span:hover {
+    cursor: pointer;
+}
