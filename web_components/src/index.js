@@ -5916,6 +5916,118 @@ document.querySelector('.kont_za_drvo').addEventListener('click', function(ev){
 
 });
 
+//BAVLJENJE EVENT DELEGATION-OM CU NASTAVITI, KREIRANJEM, JOS JEDNOG NOVOG PRIMERA, KOJI JE URADJEN U
+//CLANKU, ALI POSTO U PRIMERU VIDIM PRILIKU, KOJOM SE MOGU PODSETITI ALGORITAMA (KONKRETNO QUICK SORT-A)
+//A I VIDIM DA JE DOBRO DA KREIRAM, JEDAN NOVI CUSTOM ELEMENT
+
+//POCECU S DEFINISANJEM I REGISTROVANJEM, NOVOG CUSTOM ELEMENTA
+
+window.customElements.define('fancy-table', class extends HTMLElement {
+    constructor(...imenaIgodine){
+        super();
+        
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const duzinaArgumentNiza = imenaIgodine.length;
+
+        const mapa = new Map();
+
+        for(let i = 0; i < duzinaArgumentNiza; i++){
+            if(!(i % 2) || i === 0){
+                mapa.set(imenaIgodine[i], imenaIgodine[i+1]);
+            }
+            if(!(imenaIgodine[i + 2])){
+                break;
+            }
+        }
+
+        const tableElement = document.createElement('table');
+        const tableHead = document.createElement('thead');
+        const trForHead = document.createElement('tr');
+        const thHeadIme = document.createElement('th');
+        const thHeadBroj = document.createElement('th');
+        const tableBody = document.createElement('tbody');
+
+        thHeadIme.textContent = 'br. godina';
+        thHeadBroj.textContent = 'Ime';
+
+        thHeadIme.dataset['type'] = "string";       //OPET VEZBAM dataset
+        thHeadBroj.dataset.type = "number";
+
+        this._unsortedRowsFragment = document.createDocumentFragment();
+
+        for(let par of mapa.entries()){
+            let currentRow = document.createElement('tr');
+            let dataName = document.createElement('td');
+            let dataAge = document.createElement('td');
+            let textNodeName = document.createTextNode(par[0]);
+            let textNodeAge = document.createTextNode(`${par[1]}`);
+            dataName.appendChild(textNodeName);
+            dataAge.appendChild(textNodeAge);
+            currentRow.appendChild(dataAge);
+            currentRow.appendChild(dataName);
+            this._unsortedRowsFragment.appendChild(currentRow);
+        }
+        
+        
+        console.log(this._unsortedRowsFragment);
+    }
+
+    //DODACU QUICK SORT ALGORITAM, A NJEGA CU KORISTITI U KONSTRUKTORU, ALI I EVENT LISTENERU
+
+    quickSort(niz){
+
+        if(niz.length < 2){
+            return niz;
+        }
+
+        const noviIstiNiz = niz.concat([]);
+        const len = noviIstiNiz.length;
+        const middleIndex = Math.floor(len/2);
+        const middleNiz = [].concat(noviIstiNiz[middleIndex]);
+        const levi = noviIstiNiz.slice(0, middleIndex);
+        const desni = noviIstiNiz.slice(middleIndex+1, len);
+        
+        const noviLevi = [];
+        const noviDesni = [];
+    
+        for(let i = 0; i<levi.length; i++){
+    
+            if(levi[i] > middleNiz[0]){
+                noviDesni.push(levi[i]);
+            }else{
+                noviLevi.push(levi[i]);
+            }
+    
+            if(!desni[i]){
+                break;
+            }
+    
+            if(desni[i] > middleNiz[0]){
+                noviDesni.push(desni[i]);
+            }else{
+                noviLevi.push(desni[i]);
+            }
+    
+        }
+    
+        return quickSort(noviLevi).concat(middleNiz).concat(quickSort(noviDesni));
+    }
+
+
+});
+
+const FensiTabla = window.customElements.get('fancy-table');
+
+/*const imenaIgodine = [['neko', 2], ['neko drugi', 8]];
+
+const nekaMapa = new Map(
+    imenaIgodine
+);*/
+
+const fensiTablaElement = new FensiTabla('neko ime', 2, 'neko drugi', 8, 'nesto drugo opet');
+
+
 
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
@@ -6503,7 +6615,7 @@ const nekiNiz = [28, 1, 56, 2, 18, 4, 42, 68];
 
 let brojRekurzija = 0;
 
-const mergeSort = function(niz){
+const quickSort = function(niz){
     if(niz.length < 2){
         return niz;
     }
@@ -6549,10 +6661,10 @@ const mergeSort = function(niz){
 
     brojRekurzija++;
 
-    return mergeSort(noviLevi).concat(middleNiz).concat(mergeSort(noviDesni));
+    return quickSort(noviLevi).concat(middleNiz).concat(quickSort(noviDesni));
 }
 
-const sredjenNiz = mergeSort(nekiNiz);
+const sredjenNiz = quickSort(nekiNiz);
 
 console.log(sredjenNiz);
 console.log(brojRekurzija);
