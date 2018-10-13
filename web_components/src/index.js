@@ -1632,9 +1632,9 @@ class ClassyButton extends SminkerDugme {
             ["border", "0px solid orange"]
         ]);
 
-        for(let par of styleMap.entries()){
-            //console.log(par);
-            divel.style[par[0]] = par[1];
+        for(let celija of styleMap.entries()){
+            //console.log(celija);
+            divel.style[celija[0]] = celija[1];
             //console.log(divel);
         }
         
@@ -5930,11 +5930,13 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         const duzinaArgumentNiza = imenaIgodine.length;
 
-        const mapa = new Map();
+        const ageNameSet = new Set();
+        const alphaSet = new Set();
 
         for(let i = 0; i < duzinaArgumentNiza; i++){
             if(!(i % 2) || i === 0){
-                mapa.set(imenaIgodine[i], imenaIgodine[i+1]);
+                ageNameSet.add([imenaIgodine[i + 1], imenaIgodine[i]]);
+                alphaSet.add([imenaIgodine[i].charCodeAt(0), imenaIgodine[i]]);
             }
             if(!(imenaIgodine[i + 2])){
                 break;
@@ -5948,7 +5950,7 @@ window.customElements.define('fancy-table', class extends HTMLElement {
         const thHeadBroj = document.createElement('th');
         const tableBody = document.createElement('tbody');
 
-        thHeadIme.textContent = 'br. godina';
+        thHeadIme.textContent = 'Br. godina';
         thHeadBroj.textContent = 'Ime';
 
         thHeadIme.dataset['type'] = "string";       //OPET VEZBAM dataset
@@ -5956,21 +5958,22 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         this._unsortedRowsFragment = document.createDocumentFragment();
 
-        for(let par of mapa.entries()){
+        for(let celija of ageNameSet.values()){
             let currentRow = document.createElement('tr');
             let dataName = document.createElement('td');
             let dataAge = document.createElement('td');
-            let textNodeName = document.createTextNode(par[0]);
-            let textNodeAge = document.createTextNode(`${par[1]}`);
+            let textNodeAge = document.createTextNode(`${celija[0]}`);
+            let textNodeName = document.createTextNode(celija[1]);
             dataName.appendChild(textNodeName);
             dataAge.appendChild(textNodeAge);
             currentRow.appendChild(dataAge);
             currentRow.appendChild(dataName);
             this._unsortedRowsFragment.appendChild(currentRow);
         }
-        
-        
+    
         console.log(this._unsortedRowsFragment);
+        console.log(ageNameSet);
+        console.log(alphaSet);
     }
 
     //DODACU QUICK SORT ALGORITAM, A NJEGA CU KORISTITI U KONSTRUKTORU, ALI I EVENT LISTENERU
@@ -6668,3 +6671,12 @@ const sredjenNiz = quickSort(nekiNiz);
 
 console.log(sredjenNiz);
 console.log(brojRekurzija);
+
+
+
+const alphLow = 'abcdefghijklmnopqrstuvwxyz';
+const alphHigh = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+for(let i = 0; i<alphLow.length; i++){
+    console.log(alphLow.charCodeAt(i), alphHigh.charCodeAt(i));
+}
