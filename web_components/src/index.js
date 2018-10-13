@@ -5930,13 +5930,13 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         const duzinaArgumentNiza = imenaIgodine.length;
 
-        const ageNameSet = new Set();
-        const alphaSet = new Set();
+        const ageNameArray = new Array(0);
+        const alphaArray = new Array(0);
 
         for(let i = 0; i < duzinaArgumentNiza; i++){
             if(!(i % 2) || i === 0){
-                ageNameSet.add([imenaIgodine[i + 1], imenaIgodine[i]]);
-                alphaSet.add([imenaIgodine[i].charCodeAt(0), imenaIgodine[i]]);
+                ageNameArray.push([imenaIgodine[i + 1], imenaIgodine[i]]);
+                alphaArray.push([imenaIgodine[i].charCodeAt(0), imenaIgodine[i]]);
             }
             if(!(imenaIgodine[i + 2])){
                 break;
@@ -5958,7 +5958,7 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         this._unsortedRowsFragment = document.createDocumentFragment();
 
-        for(let celija of ageNameSet.values()){
+        for(let celija of ageNameArray){
             let currentRow = document.createElement('tr');
             let dataName = document.createElement('td');
             let dataAge = document.createElement('td');
@@ -5971,12 +5971,62 @@ window.customElements.define('fancy-table', class extends HTMLElement {
             this._unsortedRowsFragment.appendChild(currentRow);
         }
     
-        console.log(this._unsortedRowsFragment);
-        console.log(ageNameSet);
-        console.log(alphaSet);
+        //console.log(this._unsortedRowsFragment);
+        //console.log(ageNameArray);
+
+        this.quickSortSet = this.quickSortSet.bind(this);
+
+        console.log(this.quickSortSet(alphaArray));
     }
 
     //DODACU QUICK SORT ALGORITAM, A NJEGA CU KORISTITI U KONSTRUKTORU, ALI I EVENT LISTENERU
+
+    quickSortSet(array){
+
+        //console.log(array);
+
+        if(array.length < 2){
+            return array;
+        }
+
+        const arrayNeue = [].concat(array);
+        const len = arrayNeue.length;
+        const middleIndex = Math.floor(len/2);
+        const middleArrayOfPairs = [[].concat(arrayNeue[middleIndex])];
+        const leftPairs = arrayNeue.slice(0, middleIndex);
+        const rightPairs = arrayNeue.slice(middleIndex + 1, len);
+
+        console.log(leftPairs[0]);
+        console.log(rightPairs[0]);
+        console.log(middleArrayOfPairs);
+
+        const left = [];
+        const right = [];
+
+        for(let i = 0; i < leftPairs.length; i++){
+            
+            if(leftPairs[i][0] > middleArrayOfPairs[0][0]){
+                right.push(leftPairs[i]);
+            }else{
+                left.push(leftPairs[i]);
+            }
+
+            if(!rightPairs[i]){
+                break;
+            }
+
+            if(rightPairs[i][0] > middleArrayOfPairs[0][0]){
+                right.push(rightPairs[i]);
+            }else{
+                left.push(rightPairs[i]);
+            }
+        }
+
+        const quickSortSet = this.quickSortSet;
+
+        return quickSortSet(left).concat(middleArrayOfPairs).concat(quickSortSet(right));
+
+    }
 
     quickSort(niz){
 
@@ -6028,7 +6078,7 @@ const nekaMapa = new Map(
     imenaIgodine
 );*/
 
-const fensiTablaElement = new FensiTabla('neko ime', 2, 'neko drugi', 8, 'nesto drugo opet');
+const fensiTablaElement = new FensiTabla('opet ime', 2, 'neko drugi', 8, 'ali koji', 20, 'nesto drugo opet');
 
 
 
