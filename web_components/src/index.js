@@ -1010,11 +1010,11 @@ const nekiElement2 = document.createElement('img', {is: 'other-image'});    //OV
 nekiElement1.src = './icon.png';              //DOVODIM FAJLOVE SLIKA DO
 nekiElement2.src = './img/default.ico';       //OBA img ELEMENTA
 
-const fragment = document.createDocumentFragment();         //STAVLJAM OBA img ELEMENTA U FRAGMENT
-fragment.appendChild(nekiElement1);
-fragment.appendChild(nekiElement2);
+const bodyNeue = document.createDocumentFragment();         //STAVLJAM OBA img ELEMENTA U FRAGMENT
+bodyNeue.appendChild(nekiElement1);
+bodyNeue.appendChild(nekiElement2);
 
-document.getElementById('drugi_koren').appendChild(fragment);       //KACIM FRAGMENT U DOM
+document.getElementById('drugi_koren').appendChild(bodyNeue);       //KACIM FRAGMENT U DOM
 
 
 //AKO POGLEDAM WEB STRANICU TREBALO BI DA IMAM JEDNU SLIKU PORED DRUGE
@@ -2803,7 +2803,7 @@ class AnchorGroup extends HTMLElement {
 
         const divElement = document.createElement('div');
         const styleElement = document.createElement('style');
-        const fragment = document.createDocumentFragment();
+        const bodyNeue = document.createDocumentFragment();
 
         this.attachShadow({mode: 'open'});
 
@@ -2854,10 +2854,10 @@ class AnchorGroup extends HTMLElement {
 
         //KACENJE CUSTO ANCH-OVA NA FRAGMENT
         for(let anch of this._unregAnchs){
-            fragment.appendChild(anch);
+            bodyNeue.appendChild(anch);
         }
 
-        divElement.appendChild(fragment);
+        divElement.appendChild(bodyNeue);
 
         this.shadowRoot.appendChild(styleElement);
         this.shadowRoot.appendChild(divElement);
@@ -4288,16 +4288,16 @@ mutationObserverObject.observe(joblyBoblyElement, {
 
 //SLEDECE STO JE STAMPANO U KONZOLI MI MOZE TO I PRIKAZATI
 const stampano_u_konzoli = `
-index.js:3984       (3) [slot, div, document-fragment]
+index.js:3984       (3) [slot, div, document-bodyNeue]
 index.js:3985        1
 index.js:4102       microtask 1
 index.js:4219       Child node, je dodat ili uklonjen iz observed custom elementa   /**/
-index.js:3984       (3) [slot, div, document-fragment]
+index.js:3984       (3) [slot, div, document-bodyNeue]
 index.js:3985       2
 index.js:4162       microtask 2 neka vrednost
 index.js:4166       <slot name=​"podcast">​…​</slot>​
 index.js:4219       Child node, je dodat ili uklonjen iz observed custom elementa       /**/
-index.js:3984       (3) [slot, div, document-fragment]
+index.js:3984       (3) [slot, div, document-bodyNeue]
 index.js:3985       3
 `;
 //OSTAJE PODSETNIK DA SE DETALJNIJE POZABAVIM, ODNOSNO DA DETALJNIJE NAUCIM SVE OSOBINE I METODE,
@@ -4444,15 +4444,15 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
         paragraf3.addEventListener('click', ev => {
             console.log(ev.composedPath());
             // U SLUCAJU OTVORENOG SHADOW ROOT-A, STAMPALO SE SLEDECE
-            //[p, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+            //[p, section, div, document-bodyNeue, some-bobly-element, body, html, document, Window]
             // DA JE SHADOW ROOT ZATVOREN, STAMPALO BI SE SLEDECE
-            //  [p, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+            //  [p, section, div, document-bodyNeue, some-bobly-element, body, html, document, Window]
             //TAKO DA ONO, STO JE RECENO 
             //          'DA SE U SLUCAJU    closed      SHADOW ROOT-A
             //          NECE, U POMENUTOM retur-OVANOM NIZU NACI I ONI node-OVI, KOJI SU DEO 
             //          SHADOW DOM-A'
             //PO SVEMU SUDECI NIJE TACNO, JER SU SE, I U SLUCAJU CLOSED SHDOW ROOT-A, U RETURNED NIZU
-            //NASLI         p         section         div          document-fragment(shadowroot)
+            //NASLI         p         section         div          document-bodyNeue(shadowroot)
 
             //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
             console.log(ev.target);
@@ -4468,7 +4468,7 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             //I U OVOM SLUCAJU ISTO VAZI STO JE VAZILO I GORE, JER CE SE I U SLUCAJU OPEN I CLOSED
             //SHADOW ROOT-A, STAMPATI SLEDECE:
 
-         //[h4, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+         //[h4, slot, section, div, document-bodyNeue, some-bobly-element, body, html, document, Window]
          //DAKLE, BEZ OBZIRA DA LI JE SHADOW ROOT, OPEN ILI CLOSED, U NIZU SE NALAZE, ONAJ SLOTTED ELEMENT,
          // PA NJEGOV ASSIGNED SLOT, PA OSTALI ELEMENTI SHADOW  DOMA, PA DALJE SVE SVE DO window-a
 
@@ -4497,7 +4497,7 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
             
             //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
 
-            //    [h4, slot, div, document-fragment, some-bobly-element, body, html, document, Window]
+            //    [h4, slot, div, document-bodyNeue, some-bobly-element, body, html, document, Window]
             
             //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
             console.log(ev.target);
@@ -4514,7 +4514,7 @@ window.customElements.define('some-bobly-element', class extends HTMLElement {
 
             //U SLUCAJU     'open'       SHADOW ROOT-A, STAMPALO SE SLEDECE
 
-         //[p, div, slot, section, div, document-fragment, some-bobly-element, body, html, document, Window]
+         //[p, div, slot, section, div, document-bodyNeue, some-bobly-element, body, html, document, Window]
             
             //PROVERICU I KOJU VREDNOST IMA Event-OV, target PROPERTI
             console.log(ev.target);
@@ -5024,7 +5024,7 @@ window.customElements.define('image-galery', class extends HTMLElement {
         const shadowRoot = this.attachShadow({mode: 'open'});
 
         const imageNumber = srcs.length;
-        const fragment = document.createDocumentFragment();
+        const bodyNeue = document.createDocumentFragment();
         const alt = "opis slike";
         const styleElement = document.createElement('style');
 
@@ -5039,7 +5039,7 @@ window.customElements.define('image-galery', class extends HTMLElement {
             img.setAttribute('width', '100%');
             anch.appendChild(img);
             picKont.appendChild(anch);
-            fragment.appendChild(picKont);
+            bodyNeue.appendChild(picKont);
         }
 
         const styleText = `
@@ -5076,7 +5076,7 @@ window.customElements.define('image-galery', class extends HTMLElement {
         styleElement.textContent = styleText;
 
         shadowRoot.appendChild(styleElement);
-        shadowRoot.appendChild(fragment);
+        shadowRoot.appendChild(bodyNeue);
 
         
         const prviPicKont = shadowRoot.querySelector('.pic_kont');
@@ -5990,7 +5990,7 @@ window.customElements.define('fancy-table', class extends HTMLElement {
         
         tableElement.appendChild(tableHead);
 
-        this._unsortedRowsFragment = document.createDocumentFragment();
+        this._tableBody = tableBody;
 
         for(let celija of ageNameCharCodeArray){
             let currentRow = document.createElement('tr');
@@ -6002,38 +6002,120 @@ window.customElements.define('fancy-table', class extends HTMLElement {
             dataAge.appendChild(textNodeAge);
             currentRow.appendChild(dataAge);
             currentRow.appendChild(dataName);
-            this._unsortedRowsFragment.appendChild(currentRow);
+            this._tableBody.appendChild(currentRow);
         }
 
+        this._sortedByAgeBody = null;
+        this._sortedByNameBody = null;
+
+        this._ageNameCharCodeArray = ageNameCharCodeArray;
+
         styleElement.textContent = styleText;
-        tableBody.appendChild(this._unsortedRowsFragment);
-        tableElement.appendChild(tableBody);
+        tableElement.appendChild(this._tableBody);
         shadowRoot.appendChild(styleElement);
         shadowRoot.appendChild(tableElement);
         
         this.quickSortSet = this.quickSortSet.bind(this);
 
         //PROVERA CUSTOM QUICK SORT-A
-        console.log(ageNameCharCodeArray);
+        /*console.log(ageNameCharCodeArray);
         console.log(this.quickSortSet(ageNameCharCodeArray));
-        console.log(this.quickSortSet(ageNameCharCodeArray, true));
+        console.log(this.quickSortSet(ageNameCharCodeArray, true));*/
 
+        console.log(this._tableBody);
+        console.log(this._sortedByAgeBody);
+        console.log(this._sortedByNameBody);
+
+        this._state = {lastClickedType: null};
     }
 
     connectedCallback(){
+
         this.shadowRoot.addEventListener('click', ev => {
-            const target = ev.target.closest('th');
-            
-            if(target){
+            const currentTableHeader = ev.target.closest('th');
+            const type = currentTableHeader.dataset['type'];
+            const typeOfPreviousHeader = this._state.lastClickedType;
+
+            if(!currentTableHeader){
                 return;
             }
 
+            if(type === typeOfPreviousHeader){
+                return;
+            }
 
-            
+            this._state.lastClickedType = type;
+
+            const tableElement = currentTableHeader.closest('table');
+            const bodyElement = tableElement.querySelector('tbody');
+
+            if(this._sortedByAgeBody && this._sortedByNameBody){
+                
+                let sortedBody = type === 'number'
+                ?
+                this._sortedByAgeBody
+                :
+                this._sortedByNameBody;
+
+                let bodyForDetach = sortedBody === this._sortedByAgeBody
+                ?
+                this._sortedByNameBody
+                :
+                this._sortedByAgeBody;
+
+                if(bodyForDetach !== null){
+                    tableElement.removeChild(bodyForDetach);
+                }
+
+               // bodyElement.isConnected?tableElement.removeChild(bodyElement):null;
+
+                tableElement.appendChild(sortedBody);
+
+                return;
+            }
+
+            const ageNameCharCodeArray = this._ageNameCharCodeArray;
+            const bodyNeue = document.createElement('tbody');
+            const sorted = type === 'number'
+            ?
+            this.quickSortSet(ageNameCharCodeArray)
+            :
+            this.quickSortSet(ageNameCharCodeArray, true);
+
+            for(let subArray of sorted){
+                let tableRow = document.createElement('tr');
+                let leftTableData = document.createElement('td');
+                let rightTableData = document.createElement('td');
+                
+                leftTableData.textContent = subArray[0];
+                rightTableData.textContent = subArray[1];
+
+                tableRow.appendChild(leftTableData);
+                tableRow.appendChild(rightTableData);
+
+                bodyNeue.appendChild(tableRow);
+            }
+
+            tableElement.removeChild((type === 'number')
+                ?
+                ((this._tableBody.isConnected?this._tableBody:null) || this._sortedByNameBody)
+                :
+                ((this._tableBody.isConnected?this._tableBody:null) || this._sortedByAgeBody)
+            );
+            tableElement.appendChild(bodyNeue);
+
+            if(type === 'number'){
+                this._sortedByAgeBody = bodyNeue;
+            }else{
+                this._sortedByNameBody = bodyNeue;
+            }
+
         });
+
     }
 
-    //DODACU QUICK SORT ALGORITAM, A NJEGA CU KORISTITI U KONSTRUKTORU, ALI I EVENT LISTENERU
+    //DODACU, MOJ CUSTOM QUICK SORT ALGORITAM, A NJEGA CU ISPITIVATI U KONSTRUKTORU, ALI
+    //CU GA NA KRAJU KORISTITI U EVENT LISTENERU, KOJI CU KACITI NA shadowRoot, U OBIMU connectedCallback-A
 
     quickSortSet(array, alpha){
 
