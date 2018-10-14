@@ -5930,13 +5930,15 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         const duzinaArgumentNiza = imenaIgodine.length;
 
-        const ageNameArray = new Array(0);
-        const alphaArray = new Array(0);
+        const ageNameCharCodeArray = new Array(0);
 
         for(let i = 0; i < duzinaArgumentNiza; i++){
             if(!(i % 2) || i === 0){
-                ageNameArray.push([imenaIgodine[i + 1], imenaIgodine[i]]);
-                alphaArray.push([imenaIgodine[i].charCodeAt(0), imenaIgodine[i]]);
+                ageNameCharCodeArray.push([
+                    imenaIgodine[i + 1],
+                    imenaIgodine[i],
+                    imenaIgodine[i].charCodeAt(0)
+                ]);
             }
             if(!(imenaIgodine[i + 2])){
                 break;
@@ -5949,16 +5951,48 @@ window.customElements.define('fancy-table', class extends HTMLElement {
         const thHeadIme = document.createElement('th');
         const thHeadBroj = document.createElement('th');
         const tableBody = document.createElement('tbody');
+        const styleElement = document.createElement('style');
+        const styleText = `
+            tr:nth-child(even) {
+                background-color: #f5c9c5;
+            }
 
-        thHeadIme.textContent = 'Br. godina';
-        thHeadBroj.textContent = 'Ime';
+            table {
+                border: tomato solid 2px;
+                border-collapse: collapse;
+                text-align: center;
+            }
+
+            td, th {
+                border: olive solid 1px;
+                line-height: 1.6;
+            }
+
+            th:hover {
+                cursor: pointer;
+                opacity: 0.8;
+            }
+
+            th .picked {
+                border-bottom: 
+            }
+        `;
+
+        thHeadIme.textContent = 'Ime';
+        thHeadBroj.textContent = 'Broj godina';
 
         thHeadIme.dataset['type'] = "string";       //OPET VEZBAM dataset
         thHeadBroj.dataset.type = "number";
 
+        trForHead.appendChild(thHeadBroj);
+        trForHead.appendChild(thHeadIme);
+        tableHead.appendChild(trForHead);
+        
+        tableElement.appendChild(tableHead);
+
         this._unsortedRowsFragment = document.createDocumentFragment();
 
-        for(let celija of ageNameArray){
+        for(let celija of ageNameCharCodeArray){
             let currentRow = document.createElement('tr');
             let dataName = document.createElement('td');
             let dataAge = document.createElement('td');
@@ -5970,117 +6004,99 @@ window.customElements.define('fancy-table', class extends HTMLElement {
             currentRow.appendChild(dataName);
             this._unsortedRowsFragment.appendChild(currentRow);
         }
-    
-        //console.log(this._unsortedRowsFragment);
-        //console.log(ageNameArray);
 
+        styleElement.textContent = styleText;
+        tableBody.appendChild(this._unsortedRowsFragment);
+        tableElement.appendChild(tableBody);
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(tableElement);
+        
         this.quickSortSet = this.quickSortSet.bind(this);
 
-        console.log(this.quickSortSet(alphaArray));
+        //PROVERA CUSTOM QUICK SORT-A
+        console.log(ageNameCharCodeArray);
+        console.log(this.quickSortSet(ageNameCharCodeArray));
+        console.log(this.quickSortSet(ageNameCharCodeArray, true));
+
+    }
+
+    connectedCallback(){
+        this.shadowRoot.addEventListener('click', ev => {
+            const target = ev.target.closest('th');
+            
+            if(target){
+                return;
+            }
+
+
+            
+        });
     }
 
     //DODACU QUICK SORT ALGORITAM, A NJEGA CU KORISTITI U KONSTRUKTORU, ALI I EVENT LISTENERU
 
-    quickSortSet(array){
-
-        //console.log(array);
+    quickSortSet(array, alpha){
 
         if(array.length < 2){
             return array;
         }
 
+        const index = alpha?2:0;
+
         const arrayNeue = [].concat(array);
         const len = arrayNeue.length;
         const middleIndex = Math.floor(len/2);
-        const middleArrayOfPairs = [[].concat(arrayNeue[middleIndex])];
-        const leftPairs = arrayNeue.slice(0, middleIndex);
-        const rightPairs = arrayNeue.slice(middleIndex + 1, len);
+        const middleArrayOfThree = [[].concat(arrayNeue[middleIndex])];
+        const leftThrees = arrayNeue.slice(0, middleIndex);
+        const rightThrees = arrayNeue.slice(middleIndex + 1, len);
 
-        console.log(leftPairs[0]);
-        console.log(rightPairs[0]);
-        console.log(middleArrayOfPairs);
 
         const left = [];
         const right = [];
 
-        for(let i = 0; i < leftPairs.length; i++){
+        for(let i = 0; i < leftThrees.length; i++){
             
-            if(leftPairs[i][0] > middleArrayOfPairs[0][0]){
-                right.push(leftPairs[i]);
+            if(leftThrees[i][index] > middleArrayOfThree[0][index]){
+                right.push(leftThrees[i]);
             }else{
-                left.push(leftPairs[i]);
+                left.push(leftThrees[i]);
             }
 
-            if(!rightPairs[i]){
+            if(!rightThrees[i]){
                 break;
             }
 
-            if(rightPairs[i][0] > middleArrayOfPairs[0][0]){
-                right.push(rightPairs[i]);
+            if(rightThrees[i][index] > middleArrayOfThree[0][index]){
+                right.push(rightThrees[i]);
             }else{
-                left.push(rightPairs[i]);
+                left.push(rightThrees[i]);
             }
         }
 
-        const quickSortSet = this.quickSortSet;
-
-        return quickSortSet(left).concat(middleArrayOfPairs).concat(quickSortSet(right));
+        return this.quickSortSet(left, alpha).concat(middleArrayOfThree).concat(this.quickSortSet(right, alpha));
 
     }
-
-    quickSort(niz){
-
-        if(niz.length < 2){
-            return niz;
-        }
-
-        const noviIstiNiz = niz.concat([]);
-        const len = noviIstiNiz.length;
-        const middleIndex = Math.floor(len/2);
-        const middleNiz = [].concat(noviIstiNiz[middleIndex]);
-        const levi = noviIstiNiz.slice(0, middleIndex);
-        const desni = noviIstiNiz.slice(middleIndex+1, len);
-        
-        const noviLevi = [];
-        const noviDesni = [];
-    
-        for(let i = 0; i<levi.length; i++){
-    
-            if(levi[i] > middleNiz[0]){
-                noviDesni.push(levi[i]);
-            }else{
-                noviLevi.push(levi[i]);
-            }
-    
-            if(!desni[i]){
-                break;
-            }
-    
-            if(desni[i] > middleNiz[0]){
-                noviDesni.push(desni[i]);
-            }else{
-                noviLevi.push(desni[i]);
-            }
-    
-        }
-    
-        return quickSort(noviLevi).concat(middleNiz).concat(quickSort(noviDesni));
-    }
-
 
 });
 
 const FensiTabla = window.customElements.get('fancy-table');
+const fensiTablaElement = new FensiTabla(
+    'Omlet Imenic', 26,
+    'Neko Drugic', 18,
+    'Ali Koji', 20,
+    'Kengi Pengi', 34,
+    'Bleki Kleki', 52,
+    'Ahmet Ahmet', 19,
+    'Don Dosnon', 18,
+    'Lester Najgard', 46,
+    'Lorn Malvo', 22,
+    'Dunkan Trussel', 41,
+    'Tekila Polila', 16,
+    'Terance McKenna', 64,
+    'Neko'
+);
 
-/*const imenaIgodine = [['neko', 2], ['neko drugi', 8]];
-
-const nekaMapa = new Map(
-    imenaIgodine
-);*/
-
-const fensiTablaElement = new FensiTabla('opet ime', 2, 'neko drugi', 8, 'ali koji', 20, 'nesto drugo opet');
-
-
+document.querySelector('.fancy_kontejner').appendChild(fensiTablaElement);
 
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
