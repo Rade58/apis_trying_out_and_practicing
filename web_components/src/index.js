@@ -6033,12 +6033,13 @@ window.customElements.define('fancy-table', class extends HTMLElement {
 
         this.shadowRoot.addEventListener('click', ev => {
             const currentTableHeader = ev.target.closest('th');
-            const type = currentTableHeader.dataset['type'];
             const typeOfPreviousHeader = this._state.lastClickedType;
 
             if(!currentTableHeader){
                 return;
             }
+
+            const type = currentTableHeader.dataset['type'];
 
             if(type === typeOfPreviousHeader){
                 return;
@@ -6047,7 +6048,6 @@ window.customElements.define('fancy-table', class extends HTMLElement {
             this._state.lastClickedType = type;
 
             const tableElement = currentTableHeader.closest('table');
-            const bodyElement = tableElement.querySelector('tbody');
 
             if(this._sortedByAgeBody && this._sortedByNameBody){
                 
@@ -6179,6 +6179,163 @@ const fensiTablaElement = new FensiTabla(
 );
 
 document.querySelector('.fancy_kontejner').appendChild(fensiTablaElement);
+
+//ODRADICU OVAJ PRIMER I ONAKO KAKO JE URADJEN U CLANKU
+//OVDE NE KORISTIM CustomElementRegistry
+
+//OVAKO CE IZGLEDATI HTML PRIMERA (DAKLE POTPUNO ISTA TABELA KAKAV JE CUSTOM ELEMENT, KOJI SE 
+//INSTANTIZIRA, WEB KOMPONENTOM, KOJU REFERENCIRA FensiTabla)
+
+const tabelin_html = `
+<div id="sortable_table">
+    <table>      
+      <thead>
+        <tr>
+          <th dat-type="number">Age</th>
+          <th dat-type="string">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>5</td>
+          <td>Tim</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Jenny</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>Eugene</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Anna</td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td>Jally</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Carisa</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+`; 
+
+//PRE NEGO STO NASTAVIM SA PRIMEROM, MORAM DODATI NESTO VAZNO STO DO SADA NISAM ZNAO, A BILO JE UVEK TU
+//'ISPRED NOSA', A REC JE O     id   I      name     ATRIBUTIMA
+
+//AKO POGLEDAM HTML, KOJI SE NALAZI U MOM HTML FAJLU, ALI KOJI SAM PRIKAZAO U GORNJEM TEMPLATE STRING-U
+//VIDECU DA SAM DEFINISAO, JEDAN    id      ATRIBUT NA CONTAINER-U (KOJI CU KORISTITI U DALJEM KODIRANJU, 
+//OVOG PRIMERA) 
+
+//NAIME, AKO ZADAM OVAJ ATRIBUT ELEMENTIMA, NJIHOVE VREDNOSTI CE POSTATI IMENA PROPERTIJA   window-A
+
+console.log(    window.sortable_table    );         //-->       <div id="sortable_table">...</div>
+
+//NAIME, window SE NIJE MORAO REFERENCIRATI (ALI, IPAK URADIO SAM TO U OVOM SLUCAJU)
+
+//KAO STO VIDIM U KONZOLI, ZAISTA SE STAMPAO ELEMENT SA id-JEM, CIJ USAM VREDNSOT KORISTIO, NA PRIKAZANI
+//SPECIFICAN NACIN
+
+//SAMO CU DALJE DODATI DA SE POMENUTO NE TREBA KORISTITI (NE PREPORUCUJE SE), I DA JE TO JEDAN FEATURE
+//KOJI JE KORISTIO INTERNET EXPLORER (I DALJE GA KORISTI), A KOJI SU ZBOG KOMPATIBILNOSTI, POCELI
+//TADA, KORISTITI I DRUGI BROWSER-I (UKLJUCUJUCI CHROM-E I NEKI DRUGI (KOJI GA I DALJE KORISTE))
+
+//MEDJUTIM, JA CU KORISTITI, POMENUTI FEATURE, U MOM CODE, CISTO DA POKAZEM DA JE MOGUCE, ALI I ZATO STO
+//JE POMENUTI FEATURE, KORISCEN U CLANKU, KOJI SAM CITAO I CIJE PRIMERE SAM RADIO, DOK SAM PISAO OVE
+//KOMENTARE
+
+//PRVO CU DEFINISATI SORTING FUNKCIJU
+//U CIJEM OBIM UCU KORISTITI, POMENUTI FEATURE, CIJA UPOTREBA SE NE PREPORUCUJE
+
+//A TREBA DA OBRATIM PAZNJU, JER CU U SLEDECOJ FUNKCIJI KORISTITI, RAZLICITE KARAKTERISTICNOSTI TABELE,
+//KOJE NISAM RANIJE POZNAVAO (KADA TO KAZEM MISLIM NA PROPERTIJE, I PREDPOSTAVLJAM GETTER-E, 
+//KARAKTERISTICNE, SAMO ZA table ELEMENT I NJEGOVE DESCENDANT-E)
+
+const sortTable = function(kolona, type){                        //   type SE ODNOSI NA dataset VREDNOST
+                                                   //A KOLONA NA ONU KOLONU TABELE, PO KOJOJ ZELIM
+                                                   //DA SORTIRAM
+
+    //PRE NEGO STO POCNEM SA DEFINISANJEM OVE FUNKCIJE, SAMO CU RECI DA CE OVA FUNKCIJA ZA SORTING
+    //KORISTITI sort METODU Array-EVOG PROTOTIPA
+    //DAKLE NECE POSTOJATI CUSTOM ALGORITAM ZA SORTING, VEC CE SE KORISTITI, TAJ OD POMENUTE sort
+    //METODE
+
+    const tableBody = sortable_table.querySelector('tbody');
+
+    const rowsIterableObject = tableBody.rows; //POVRATNA VREDNOST, OVOG   rows   GETTER-A JESTE
+                                            //       HTMLCollection
+                                        //INSTANCA, CIJE SU CELIJE tr ELEMENTI, tbody ELEMENT
+                                        //tbody  ELEMENT JESTE INSTANCA   HTMLTableSelectionElement-A
+    
+    console.log(rowsIterableObject instanceof HTMLCollection);      //-->   true
+    console.log(tableBody instanceof HTMLTableSectionElement);      //-->   true
+
+    //PREDPOSTAVLJAM DA JE I thead, ISTO TAKO INSTANCA      HTMLTableSelectionElement-A
+
+    //POSTOJI I        cells        GETTER, KOJIM SE 'GET-UJE, ITERABLE OBJEKAT, A TO JE GETTER
+    //      HTMLTableRowElementa
+
+    console.log(  rowsIterableObject[0].cells  );   //STAMPA SE HTMLColection  INSTANCA (ITERABLE OBJEKAT),
+                                                        //CIJI SU CLANOVI, USTVARI  th  i/ili   td 
+                                                        //ELEMENTI JEDNOG REDA (U OVOM SLUCAJU SAMO 
+                                                        //td    ELEMENTI NULTOG ROW-A)
+                                                        
+    console.log(  rowsIterableObject[0].cells instanceof HTMLCollection  );     //-->   true
+
+    //OD CELIJA POMENUTE, HtmlCollection INSTANC-E (CLANOVI: tr ELEMENTI), MOGU KREIRATI, ARRAY, UZ POMOC
+    //  Array.from    METODE
+
+    const rowsArray = Array.from(rowsIterableObject);       //ARGUMENTI KOJI SE MOGU DODATI OVOJ METODOI
+                                                            //JESU   Iterable OBJEKAT, ALI I 
+                                                            //map   CALLBACK (FUNKCIONISE ISTO KAO I 
+                                                            //map METODA(DAKLE POVRATNA VREDNOST
+                                                            //CALLBACK-A, POSTAJE CLAN NOVOG NIZA
+                                                            //A JASNO JE DA SE CALLBACK-U, KAO
+                                                            //ARGUMENTI 'IZA KULISA', PROSLEDJUJU
+                                                            //CLANOVI ITERABLE OBJEKTA))
+                                                            //Arrray.from MOZE BITI I GENERATOR NIZA BROJEVA
+                                                            //ALI O TOME NECU SADA, (SAMO SAM NEGDE ISPRO
+                                                            //BAO OVU MOGUCNOST)
+
+    //  sort    METODA, KOJU CU KORISTITI IMA MOGUCNOST DA JOJ SE KAO ARGUMENT DODAJE CALLBACK
+    //ODNOSNO MORA JOJ SE DODATI CALLLBACK, AKO ZELIM DA SE SORTIRANJE BUDE KOREKTNO
+
+    //ZASTO TO GOVORIM?
+    //PA ZATO STO U SLUCAJU AKO SE sort METODI NE OBEZBEDI CALLBACK ARGUMENT, ONA CE BROJEVE (CLANOVE NIZA)
+    //PRETVORITI U STRING-OVE, I KAO TAKVE IH UPOREDJIVATI
+
+    //A TU MOZE NASTATI, NA PRIMER, SLEDECI PROBLEM         "2"  >  "11"    ===    true 
+
+    //POMENUTI CALLBACK ARGUMENT JE USTVARI COMPARING FUNKCIJA
+    //A DOK SAM JE ISPITIVAO, NEGDE DALEKO DOLE U CODE-U, JA SAM SHVATIO DA ALGORITAM KOJI SE KORISTI
+    //JESTE:
+                //MOZDA BUBBLE SORT, ALI IPAK MISLIM DA JE INSERTION SORT
+    //
+
+
+    //KREIRACU JEDNU VARIJABLU, KOJA TREBA DA SKLADISTI
+
+
+
+}
+
+sortTable();
+
+//DAKLE SADA KACIM LISTENER (UZ KORISCENJE, POMENUTOG NEPREPORUCLJIVOG FEATUREA (KOJI SAM KORISTIO I U
+//SAMOJ SORTING FUNKCIJI)), U KOJEM CU POZVATI, DEFINISANU SORTING FUNKCIJU
+
+sortable_table.addEventListener('click', function(ev){
+    if(ev.target.tagName === 'TH') return;
+
+    const tableHeader = ev.target;
+});
+
+
 
 //PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
 //NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
@@ -6828,3 +6985,100 @@ const alphHigh = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 for(let i = 0; i<alphLow.length; i++){
     console.log(alphLow.charCodeAt(i), alphHigh.charCodeAt(i));
 }
+
+
+//GENERATOR BROJEVA, UZ POMOC Array.from METODE
+const noviNiz1 = Array.from({length: 8}, function(_,i){
+    return i;
+});
+
+console.log(noviNiz1);
+
+const array1 = [8,5,12,1,4,6,8,2];
+
+const array2 = array1.sort(function(a,b){
+    console.log(a,b);
+    return a-b;
+});
+
+const array3 = array1.sort();
+console.log(array1 === array2)
+console.log(array2);
+console.log(array3);
+
+const array8 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
+
+const bubbleSort = function(array){
+    const arryForSorting = [].concat(array);
+
+    let kontrola = true;
+
+    while(kontrola){
+        let i = 0;
+
+        let unutrasnjaKontrola = 0;
+        
+        while(i < arryForSorting.length){
+            if(arryForSorting[i] > arryForSorting[i+1]){
+
+                console.log(arryForSorting[i], arryForSorting[i + 1]);
+
+                let memberArr = arryForSorting.splice(i, 1)[0];
+                arryForSorting.splice(i+1, 0, memberArr);
+
+                unutrasnjaKontrola++;
+            }
+
+            i++;
+        }
+
+        kontrola = unutrasnjaKontrola === 0?false:kontrola;
+    }
+
+    return arryForSorting;
+
+};
+
+//console.log(bubbleSort(array8));
+
+const array4 = [8,5,12,1,4,6,8,2];
+
+const array5 = bubbleSort(array4);
+
+console.log(array5);
+
+const insertionSort = function(array){
+    const arr = [].concat(array);
+
+    let j = arr.length - 1;
+
+    while(j > 0){
+
+        let i = 0;
+
+        while(i !== j){
+            
+            if(arr[j] < arr[i]){
+
+                const member = arr.splice(j, 1)[0];
+                
+                if(i === 0){
+                    arr.unshift(member);
+                }else{
+                    arr.splice(i, 0, member);
+                }
+            }
+
+            i++;
+        }
+
+        j--;
+    }
+    
+    return arr;    
+    
+};
+
+const array6 = insertionSort(array4);
+
+console.log(array6);
