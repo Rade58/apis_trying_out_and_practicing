@@ -6924,9 +6924,11 @@ const nekiNiz = [28, 1, 56, 2, 18, 4, 42, 68];
 let brojRekurzija = 0;
 
 const quickSort = function(niz){
+    
     if(niz.length < 2){
         return niz;
     }
+
     const noviIstiNiz = niz.concat([]);
     const len = noviIstiNiz.length;
     const middleIndex = Math.floor(len/2);
@@ -6939,8 +6941,7 @@ const quickSort = function(niz){
 
     for(let i = 0; i<levi.length; i++){
         
-        /*console.log(levi[i]);
-        console.log(desni[i]);*/
+        console.log('quick', levi[i], desni[i]);
 
         if(levi[i] > middleNiz[0]){
             noviDesni.push(levi[i]);
@@ -6972,9 +6973,9 @@ const quickSort = function(niz){
     return quickSort(noviLevi).concat(middleNiz).concat(quickSort(noviDesni));
 }
 
-const sredjenNiz = quickSort(nekiNiz);
+//const sredjenNiz = quickSort(nekiNiz);
 
-console.log(sredjenNiz);
+//console.log(sredjenNiz);
 console.log(brojRekurzija);
 
 
@@ -6997,7 +6998,7 @@ console.log(noviNiz1);
 const array1 = [8,5,12,1,4,6,8,2];
 
 const array2 = array1.sort(function(a,b){
-    console.log(a,b);
+    console.log('sort', a,b);
     return a-b;
 });
 
@@ -7021,7 +7022,7 @@ const bubbleSort = function(array){
         while(i < arryForSorting.length){
             if(arryForSorting[i] > arryForSorting[i+1]){
 
-                console.log(arryForSorting[i], arryForSorting[i + 1]);
+                console.log('bubble', arryForSorting[i], arryForSorting[i + 1]);
 
                 let memberArr = arryForSorting.splice(i, 1)[0];
                 arryForSorting.splice(i+1, 0, memberArr);
@@ -7060,6 +7061,8 @@ const insertionSort = function(array){
             
             if(arr[j] < arr[i]){
 
+                console.log('insertion', arr[j], arr[i]);
+
                 const member = arr.splice(j, 1)[0];
                 
                 if(i === 0){
@@ -7081,4 +7084,56 @@ const insertionSort = function(array){
 
 const array6 = insertionSort(array4);
 
+const array18 = quickSort(array4);
+
 console.log(array6);
+
+console.log(array18);
+
+
+const mergeSort = function(array){
+
+    if(array.length  <= 1){
+        return array;
+    }
+
+    const stitch = function(left, right){
+        const arrayForPushingLesser = [];
+        let i = 0;
+        while(left[i] !== undefined && right[i] !== undefined){
+            if(left[i] <= right[i]){
+                let member = left.shift(i);
+                arrayForPushingLesser.push(member);
+            }else{
+                let member = right.shift(i);
+                arrayForPushingLesser.push(member);
+            }
+        }
+
+        return arrayForPushingLesser.concat(left).concat(right);
+
+    };
+
+    const arr = [].concat(array);
+    const length = arr.length;
+    const middleIndex = Math.floor(length/2);
+    const leftArr = arr.slice(0, middleIndex);
+    const rightArr = arr.slice(middleIndex, length);
+    
+    /*console.log(middleIndex);
+    console.log(arr[middleIndex]);
+    console.log(leftArr, rightArr);*/
+
+    return stitch(mergeSort(leftArr), mergeSort(rightArr));
+    
+};
+
+
+const array9 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
+
+
+console.log(mergeSort(array9));
+
+
+
+
