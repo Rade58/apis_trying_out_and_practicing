@@ -6191,8 +6191,8 @@ const tabelin_html = `
     <table>      
       <thead>
         <tr>
-          <th dat-type="number">Age</th>
-          <th dat-type="string">Name</th>
+          <th data-type="number">Age</th>
+          <th data-type="string">Name</th>
         </tr>
       </thead>
       <tbody>
@@ -6249,20 +6249,20 @@ console.log(    window.sortable_table    );         //-->       <div id="sortabl
 //JE POMENUTI FEATURE, KORISCEN U CLANKU, KOJI SAM CITAO I CIJE PRIMERE SAM RADIO, DOK SAM PISAO OVE
 //KOMENTARE
 
-//PRVO CU DEFINISATI SORTING FUNKCIJU
+//PRVO CU DEFINISATI compare FUNKCIJU
 //U CIJEM OBIM UCU KORISTITI, POMENUTI FEATURE, CIJA UPOTREBA SE NE PREPORUCUJE
 
 //A TREBA DA OBRATIM PAZNJU, JER CU U SLEDECOJ FUNKCIJI KORISTITI, RAZLICITE KARAKTERISTICNOSTI TABELE,
 //KOJE NISAM RANIJE POZNAVAO (KADA TO KAZEM MISLIM NA PROPERTIJE, I PREDPOSTAVLJAM GETTER-E, 
 //KARAKTERISTICNE, SAMO ZA table ELEMENT I NJEGOVE DESCENDANT-E)
 
-const sortTable = function(kolona, type){                        //   type SE ODNOSI NA dataset VREDNOST
+const sortTable = function(brKolone, type){                        //   type SE ODNOSI NA dataset VREDNOST
                                                    //A KOLONA NA ONU KOLONU TABELE, PO KOJOJ ZELIM
                                                    //DA SORTIRAM
 
-    //PRE NEGO STO POCNEM SA DEFINISANJEM OVE FUNKCIJE, SAMO CU RECI DA CE OVA FUNKCIJA ZA SORTING
+    //PRE NEGO STO POCNEM SA DEFINISANJEM OVE FUNKCIJE, SAMO CU RECI DA CE OVA FUNKCIJA ZA compare
     //KORISTITI sort METODU Array-EVOG PROTOTIPA
-    //DAKLE NECE POSTOJATI CUSTOM ALGORITAM ZA SORTING, VEC CE SE KORISTITI, TAJ OD POMENUTE sort
+    //DAKLE NECE POSTOJATI CUSTOM ALGORITAM ZA compare, VEC CE SE KORISTITI, TAJ OD POMENUTE sort
     //METODE
 
     const tableBody = sortable_table.querySelector('tbody');
@@ -6302,6 +6302,14 @@ const sortTable = function(kolona, type){                        //   type SE OD
                                                             //ALI O TOME NECU SADA, (SAMO SAM NEGDE ISPRO
                                                             //BAO OVU MOGUCNOST)
 
+    //ZASTO JA OVAJ     rows       ITERABLE OBJEKAT, USTVARI PRETVARAM U NIZ?
+    //PA SAMO IZ JEDNOG RAZLOGA
+
+                        //DA BIH NA TOM NOVOM NIZU MOGAO PRIMENITI      Array.prototype.sort
+                        //JER SE TA METODA NE MOZE PRIMENITI NA HTMLCollection INSTANCI, JER JE
+                        //TAKVA INSTANCA NE NASLEDJUJE sort
+                        //TAKODJE ZELIM I DA IMAM MOGUCNOST KORISCENJA SPREAD SINTAKSE ZA POMENUTI NIZ
+
     //  sort    METODA, KOJU CU KORISTITI IMA MOGUCNOST DA JOJ SE KAO ARGUMENT DODAJE CALLBACK
     //ODNOSNO MORA JOJ SE DODATI CALLLBACK, AKO ZELIM DA SE SORTIRANJE BUDE KOREKTNO
 
@@ -6312,27 +6320,103 @@ const sortTable = function(kolona, type){                        //   type SE OD
     //A TU MOZE NASTATI, NA PRIMER, SLEDECI PROBLEM         "2"  >  "11"    ===    true 
 
     //POMENUTI CALLBACK ARGUMENT JE USTVARI COMPARING FUNKCIJA
-    //A DOK SAM JE ISPITIVAO, NEGDE DALEKO DOLE U CODE-U, JA SAM SHVATIO DA ALGORITAM KOJI SE KORISTI
+    //SAZNAO SAM OD BRJANA HOLTA (IZ NJEGOVOG TUTORIJALA) DA ALGORITAM KOJI SE KORISTI
     //JESTE:
-                //MOZDA BUBBLE SORT, ALI IPAK MISLIM DA JE INSERTION SORT
-    //
+                //          MERGE SORT, 
+                
+    // BAR TAKO ON KAZE, DA SE TAKAV ALGORITAM, KORISTI ISPOD sort METODE, U SLUCAJU CHROME-A 
+    //(TO MOGU DA ISPITAM ALI NE OVDE, MOZDA NEGDE DOLE U CODE-U)
 
 
-    //KREIRACU JEDNU VARIJABLU, KOJA TREBA DA SKLADISTI
+    //KREIRACU JEDNU VARIJABLU, KOJOJ TREBA DA SE DODELI ODGOVARAJUCA FUNKCIJA, KAO VREDNOST
+
+    let compareCallback;
+
+    //A KOJA FUNKCIJA TREBA DA SE DODELI, ODLUCICE      switch      IZJAVA
+    
+    switch(type){
+
+        case 'number':
+            compareCallback = function(jedanRed, drugiRed){
+                //PRE NEGO STO NASTAVIM, RECI CU DA SE U JAVASCRIPTU MOGU VRITI MATEMATICKE
+                //OPERACIJE SA DVA STRINGA, KOJI SU NUMERICAL (KOJI SE SASTOJE SAMO OD CIFARA)
+
+                return jedanRed.cells[brKolone].innerHTML - drugiRed.cells[brKolone].innerHTML;  
+                                                                        //PODSETI SE
+                                                                        // OPET DA JE
+            };                                                         //cells USTVARI ITERABLE OBJEKAT
+                                                                    //A ITERABLE OBJEKAT IMA INDEKSIRANE
+                                                                    //CLANOVE                                                            
+            break;                                                  //IT IS CONVINIENT DA SU TI INDEKSI
+                                                                    //NUMERISANI SA 0 I 1
+                                                                    //A TO SU I BROJEVI KOLONA
+        
+        
+        case 'string':                                              
+            compareCallback = function(jedanRed, drugiRed){                              
+                //A KADA SE RESAVAJU SLOVA, NA DRUGACIJI NACIN TREBAM IZABRATI DA NEGATIVAN ILI
+                //POZITIVAN BROJ BUDU POVRATNE VREDNOSTI CALLBACKA, JER U OVOM SLUCAJU TREBA DA SE
+                //SLOZE SLOVA PO VELICINI
+                //DAKLE STRINGOVI SA ALPHABETICAL KARAKTERIMA
+                //A NE MOGU ODUZIMATI, JEDAN STRING OD DRUGOG, KAKO SAM TO MOGAO SA NUMERICAL STRINGOVIMA
+
+                return jedanRed.cells[brKolone].innerHTML < drugiRed.cells[brKolone].innerHTML?-1:1;
 
 
+            };
+            break;
+
+    }
+
+    //PRIMENA sort METODE, NA NIZU SASTAVLJENOM OD TABLE ROW-OVA; KAO ARGUMENT SE DODAJE compareCallback
+
+    rowsArray.sort(compareCallback);
+
+    //JOS JEDNA BITNA STVAR, KOJA SE TICE APPEND-OVANJA
+    //NAIME, VEC NESTOVANI ELEMENTI, SE OPET MOGU APENDOVATI, ONI CE NA TAJ NACIN SAMO PROMENITI SVOJE
+    //PRVOBITNO MESTO
+
+    //DAKLE APPEND-UJEM SVE, VEC NESTOVANE TABLE ROWS, CIME CE ONI ZAUZETI NOVO MESTO U TABLE BODY-JU
+    //A UZ TO CU KORISTITI I SPREAD SINTAKSU (DODAVANJE ARGUMENATA append METODI)
+
+    tableBody.append(...rowsArray);
 
 }
 
-sortTable();
-
 //DAKLE SADA KACIM LISTENER (UZ KORISCENJE, POMENUTOG NEPREPORUCLJIVOG FEATUREA (KOJI SAM KORISTIO I U
-//SAMOJ SORTING FUNKCIJI)), U KOJEM CU POZVATI, DEFINISANU SORTING FUNKCIJU
+//SAMOJ compare FUNKCIJI)), U KOJEM CU POZVATI, DEFINISANU compare FUNKCIJU
 
 sortable_table.addEventListener('click', function(ev){
-    if(ev.target.tagName === 'TH') return;
 
-    const tableHeader = ev.target;
+    if(ev.target.tagName !== 'TH') return;
+
+    const currentHeader = ev.target;
+    const type = currentHeader.dataset.type;
+    
+    const redniBrojKolone = type === 'number'?0:1;   //MOGAO SAM OVAKO PRISTUPITI REDNOM BROJU KOLONE
+                                                    //STO IZGLEDA I LOGICNO
+                                                    //ALI IPAK NECU KORISTITI OVU VREDNOST
+    //JER, NAIME JA MAOGU KORISTITI, OPET NESTO A TO JE ODLIKA KOLONE
+    //TO JE GETTER      cellIndex
+    //I TO JE UPRAVO REDNI BROJ KOLONE
+
+    //LEVOM JE NULA, KAO VREDNSOT INDEKSA CELIJE, A DESNOM JE JEDINICA
+    //(DAKLE UPRAVO SAM SAZNAO DA SVAKA CELIJA, TJ SVAKI    th      td      ELEMENT, IMA I SVOJ 
+    // cellIndex
+    //IAKO MU IME SUGERISE DA SVAKA CELIJA IMA SVOJ LICNI UINDEKS, IPAK NIJE TAKO
+    //OVO JE BROJ KOLONE, KOJOJ th, ILI td   PRIPADA
+    //POMENUTA VREDNOST CE BITI KORISNA KAO ARGUMENT sortTable FUNKCIJE
+    //JER U SUSTINI, RESAVACE SE REDOVI NA TAKAV NACIN, DA CE SE PRITUPATI CELIJAMA (NIZU CELIJA 
+    //U JEDNOM REDU), I SVAK OD TIH CELIJA U JEDNOM REDU CE IMATI SVOJ INDEX (POSTO IMAM DVE CELIJE U 
+    //REDU, INDEKSI CE BITI NULA I JEDAN); A TO MI BAS ODGOVARA JER SADA IMAM I BROJEVE KOLONA
+    //A TO SU 0 I 1; TAKO DA UZ POMOC BROJA KOLONE KOJU MOGU KORISTITI KAO 
+    //ALI TO SE NARAVNO SVE VIDI U DEFINICIJI
+
+            //  sortTable           FUNKCIJE (KOJU SAM DEFINISAO GORE)
+
+    const redniBrojKol = currentHeader.cellIndex;       //OVO MOZE BITI     0    ILI    1
+
+    sortTable(redniBrojKol, type);
 });
 
 
@@ -6918,10 +7002,18 @@ function someFunk(){            //DOCI CE DO ERROR-A
 someFunks();
 */
 
-//MERGE SORT
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////// compare    ALGORITMI/////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////    PODSECANJE, VEZBANJE I ISPITIVANJE, KOJI TO compare ALGORITAM, KORISTI 
+///////////////////////////////               Array.prototype.sort
+
 const nekiNiz = [28, 1, 56, 2, 18, 4, 42, 68];
 
-let brojRekurzija = 0;
+//let brojRekurzija = 0;
 
 const quickSort = function(niz){
     
@@ -6941,7 +7033,7 @@ const quickSort = function(niz){
 
     for(let i = 0; i<levi.length; i++){
         
-        console.log('quick', levi[i], desni[i]);
+        console.log('quick sort', levi[i], desni[i]);
 
         if(levi[i] > middleNiz[0]){
             noviDesni.push(levi[i]);
@@ -6968,7 +7060,7 @@ const quickSort = function(niz){
     console.log(middleNiz);
     console.log(noviDesni);*/
 
-    brojRekurzija++;
+    //brojRekurzija++;
 
     return quickSort(noviLevi).concat(middleNiz).concat(quickSort(noviDesni));
 }
@@ -6976,7 +7068,7 @@ const quickSort = function(niz){
 //const sredjenNiz = quickSort(nekiNiz);
 
 //console.log(sredjenNiz);
-console.log(brojRekurzija);
+//console.log(brojRekurzija);
 
 
 
@@ -6998,7 +7090,7 @@ console.log(noviNiz1);
 const array1 = [8,5,12,1,4,6,8,2];
 
 const array2 = array1.sort(function(a,b){
-    console.log('sort', a,b);
+    console.log('sort', a , b);
     return a-b;
 });
 
@@ -7010,7 +7102,7 @@ console.log(array3);
 const array8 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
 
 const bubbleSort = function(array){
-    const arryForSorting = [].concat(array);
+    const arryForcompare = [].concat(array);
 
     let kontrola = true;
 
@@ -7019,13 +7111,13 @@ const bubbleSort = function(array){
 
         let unutrasnjaKontrola = 0;
         
-        while(i < arryForSorting.length){
-            if(arryForSorting[i] > arryForSorting[i+1]){
+        while(i < arryForcompare.length){
+            if(arryForcompare[i] > arryForcompare[i+1]){
 
-                console.log('bubble', arryForSorting[i], arryForSorting[i + 1]);
+                console.log('bubble sort', arryForcompare[i], arryForcompare[i + 1]);
 
-                let memberArr = arryForSorting.splice(i, 1)[0];
-                arryForSorting.splice(i+1, 0, memberArr);
+                let memberArr = arryForcompare.splice(i, 1)[0];
+                arryForcompare.splice(i+1, 0, memberArr);
 
                 unutrasnjaKontrola++;
             }
@@ -7036,7 +7128,7 @@ const bubbleSort = function(array){
         kontrola = unutrasnjaKontrola === 0?false:kontrola;
     }
 
-    return arryForSorting;
+    return arryForcompare;
 
 };
 
@@ -7061,7 +7153,7 @@ const insertionSort = function(array){
             
             if(arr[j] < arr[i]){
 
-                console.log('insertion', arr[j], arr[i]);
+                console.log('insertion sort', arr[j], arr[i]);
 
                 const member = arr.splice(j, 1)[0];
                 
@@ -7099,15 +7191,17 @@ const mergeSort = function(array){
 
     const stitch = function(left, right){
         const arrayForPushingLesser = [];
-        let i = 0;
-        while(left[i] !== undefined && right[i] !== undefined){
-            if(left[i] <= right[i]){
+        let i = 0;      //SAMO JEDAN i (DAKLE NEMA j); A OVO i TOKOM LOOPINGA SE NIKAD NECE PROMENITI
+        while(left[i] !== undefined && right[i] !== undefined){ //KADA JEDAN OD NIZOVA OSTANE BEZ CLANOVA 
+            if(left[i] <= right[i]){                            //PETLJA CE PRESTATI SA LOOPING-OM
                 let member = left.shift(i);
                 arrayForPushingLesser.push(member);
             }else{
                 let member = right.shift(i);
                 arrayForPushingLesser.push(member);
             }
+
+            console.log('merge sort', left[i], right[i]);
         }
 
         return arrayForPushingLesser.concat(left).concat(right);
@@ -7133,6 +7227,44 @@ const array9 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
 
 
 console.log(mergeSort(array9));
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//NAKON SVEOG OVOG PODSECANJA I DEFINISANJA compare ALGORITAMA
+//DEFINISACU JEDAN NIZ
+////////////////////////////////////////////////////////////////////////////////////////////
+const jedanNiz = [56, 11, 298, 64 , 52, 488, 298, 641, 2, 26, 16, 4, 26, 8, 10, 8];
+
+////////     SADA CU UPOTREBITI OVAJ NIZ, TAKO STO CE POMENUTI BITI ARGUMENT, KADA BUDEM
+///////      EGZEKUTOVAO, MOJE, GORE DEFINISANE ALGORITME
+///////      A NA KRAJU CU I NA POMENUTOM NIZU, PRIMENITI       sort        METODU, NIZOVOG
+///////      PROTOTIPA
+////////     A KAKO CU SAZNATI, KOJI JE OD POMENUTIH ALGORITAMA, UPOTREBLJEN U DEFINICIJI, compare METODE?
+//////       PA DEFINISAO SAM, U OBIMIMA, SVAKOG compare ALGORITMA, DA SE STAMPAJU TRENUTNI BROJEVI
+/////        KOJI SE SORTIRAJU, UZ INFORMACIJU O KOM ALGORITMU SE RADI
+
+////ISTO CU DEFINISATI I U CALLBACK-U, KOJEG BUDEM PROSLEDJIVAO KAO ARGUMENTA, sort PRIMENE
+
+
+/* const A = quickSort(jedanNiz);
+const B = bubbleSort(jedanNiz);
+const C = insertionSort(jedanNiz);
+const D = mergeSort(jedanNiz);
+                                                // OVO JE COMMENTED OUT ZATO STO IMA MNOGO STAMPANJA
+const E = jedanNiz.sort(function(a,b){                    //A MOGU KOMENTARE UKLONITI AKO BUDEM ZELEO DA POGLEDAM
+    console.log('Array.prototype.sort', a , b);        //KOJE SE TO VREDNOSTI STAMPAJU
+    return a - b;
+});
+
+
+console.log(`
+    ${A}
+    ${B}
+    ${C}
+    ${D}
+    ${E}
+`); */
+
 
 
 
