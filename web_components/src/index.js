@@ -6272,20 +6272,20 @@ const sortTable = function(brKolone, type){                        //   type SE 
                                         //INSTANCA, CIJE SU CELIJE tr ELEMENTI, tbody ELEMENT
                                         //tbody  ELEMENT JESTE INSTANCA   HTMLTableSelectionElement-A
     
-    console.log(rowsIterableObject instanceof HTMLCollection);      //-->   true
-    console.log(tableBody instanceof HTMLTableSectionElement);      //-->   true
+    // console.log(rowsIterableObject instanceof HTMLCollection);      //-->   true
+    // console.log(tableBody instanceof HTMLTableSectionElement);      //-->   true
 
     //PREDPOSTAVLJAM DA JE I thead, ISTO TAKO INSTANCA      HTMLTableSelectionElement-A
 
     //POSTOJI I        cells        GETTER, KOJIM SE 'GET-UJE, ITERABLE OBJEKAT, A TO JE GETTER
     //      HTMLTableRowElementa
 
-    console.log(  rowsIterableObject[0].cells  );   //STAMPA SE HTMLColection  INSTANCA (ITERABLE OBJEKAT),
+    // console.log(  rowsIterableObject[0].cells  );   //STAMPA SE HTMLColection  INSTANCA (ITERABLE OBJEKAT),
                                                         //CIJI SU CLANOVI, USTVARI  th  i/ili   td 
                                                         //ELEMENTI JEDNOG REDA (U OVOM SLUCAJU SAMO 
                                                         //td    ELEMENTI NULTOG ROW-A)
                                                         
-    console.log(  rowsIterableObject[0].cells instanceof HTMLCollection  );     //-->   true
+    // console.log(  rowsIterableObject[0].cells instanceof HTMLCollection  );     //-->   true
 
     //OD CELIJA POMENUTE, HtmlCollection INSTANC-E (CLANOVI: tr ELEMENTI), MOGU KREIRATI, ARRAY, UZ POMOC
     //  Array.from    METODE
@@ -6360,8 +6360,19 @@ const sortTable = function(brKolone, type){                        //   type SE 
                 //DAKLE STRINGOVI SA ALPHABETICAL KARAKTERIMA
                 //A NE MOGU ODUZIMATI, JEDAN STRING OD DRUGOG, KAKO SAM TO MOGAO SA NUMERICAL STRINGOVIMA
 
-                return jedanRed.cells[brKolone].innerHTML < drugiRed.cells[brKolone].innerHTML?-1:1;
+                //IMAJ NA UMU SLEDECE:
 
+                console.log("A" > "B");         //-->   false
+                console.log("P" > "F");         //-->   true
+                
+                //ALI TO NECE UTIACATI NA UPOREDJIVANJE DVE STRING VREDNOSTI U OVOJ FUNKCIJI, JER
+                //OVDE SAM DEFINISAO, KAO DA JE         "A" > "B"   ===   true
+                //I TAKVO DEFINISANJE JE DONELO TACAN REZULTAT
+
+                return jedanRed.cells[brKolone].innerHTML > drugiRed.cells[brKolone].innerHTML?1:-1;
+
+                //POKUSAO SAM DA ZAMENIM MESTA ZA    1   I      -1
+                //ALI NA KRAJU SU VREDNOSTI BILE SLOZENE OD     Z     DO      A  ;  UMESTO OD A  DO  Z
 
             };
             break;
@@ -6418,6 +6429,188 @@ sortable_table.addEventListener('click', function(ev){
 
     sortTable(redniBrojKol, type);
 });
+
+
+//URADICU, JOS JEDAN PRIMER, U KOJEM CE AKCENAT BITI STAVLJEN, JOS JEDNOM, PRETEZNO NA EVENT DELEGATION
+//EVENTOVI, KOJI CE BITI ZASTUPLJENI U OVIM PRIMERU JESU
+//                                                                mouseover
+//                                                                mouseout
+//   KAO STO SAM SAZNAO ZA RAZLIKU OD  mouseenter I mouseleave
+////            mouseover    I      mouseout        SU ELEMENTI KOJI BUBBLE UP-UJU, I KOJI SU CANCELABLE
+////
+//ONO STO CE BITI PRISUTNO U OVOM PRIMERU JESU DVA DUGMETA
+//I TOOLTIP, KOJI TREBA DA SE POJAVI KADA KURSOROM UDJEM U OBLAST KOJA JE DUGMETOVA
+//OBA DUGMETA CE IMATI  
+//                              data-tooltip        ATRIBUT
+//VREDNOST OVOG ATRIBUTA CE BITI ONO STO SE TREBA PRIKAZATI, KAO TEXT TOOLTIPA
+//NARAVNO, KADA KURSOR IZADJE IZ OBLASTI BUTTONA; TOOLTIP TREBA DA SE SKLONI
+//STRANICA TREBA DA BUDE SCROLLABLEJER ZELIM DA AKO NEMA MESTA DA SE TOOLTIP PRIKAZE IZNAD DUGMETA;
+//DA SE ON PRIKAZE ISPOD DUGMETA
+
+//EVENT LISTENER CU KACITI NA document
+
+const html_button_tooltip_primera = `
+    <button data-tooltip="Neki tekst, neko objasnjenje, koje se prikazuje..." style="margin-left: 628px;">
+        Ayohuasca
+    </button>
+    <button data-tooltip="Neki html<br><b>Ovo je</b>">
+        Something
+    </button>
+`;
+
+const css_pomenutog_primera = `
+    .tooltip {
+        position: fixed;                    /*KADA SE FIKSNO POZICIONIRA ELEMENT, I AKO MU SE*/
+        padding: 8px 18px;                  /*NE ZADAJU VREDNOSTI top ILI left CSS PROPERTIJA*/
+        border: 1px solid olive;            /*ELEMENT JE POZICIONIRAN NA DNU ISPOD VISLJIVOG DELA*/
+        text-align: center;                         /*ODNOSNO 'NEMA GA', NE MOZE SE VIDETI*/
+        font: italic 14px/1.3 arial, sans-serif;
+        color: #334;
+        background: #fff;
+        box-shadow: 2px 3px 2px rgba(0, 0, 0, .4);
+    }
+`;
+
+//U SEDECOJ VARIJABLI CU SKLADISTITI TOOLTIP ELEMENT
+let tooltipElement;
+
+document.addEventListener('mouseover', function(ev){
+    const target = ev.target;
+    
+    //MOJ USLOV, KOJI JE, MOZDA PREOPSIRAN, ZATO GA NECU KORISTITI
+//  if(target.nodeName !== 'BUTTON' && !target.hasAttribute('data-tooltip')) return;
+
+    const tooltipText = target.dataset.tooltip;
+
+    if(!tooltipText) return;
+
+    //KREIRANJE TOOLTIP-A
+    
+    tooltipElement = document.createElement('div');
+    tooltipElement.classList.add('tooltip');
+    tooltipElement.innerHTML = tooltipText;     //OVDE JE DOBRO DA SE KORISTI SETTER innerHTML JER
+                                                //ONDA AKO SAM DEFINISAO TAGGOVE U VREDNOSTI
+                                                //data-     ATRIBUTA, HTML CE BITI DEFINISAN U TOOLTIP
+                                                //ELEMENTU
+
+    //OVAJ ELEMENT APPEND-UJEM NA body
+
+    document.body.append(tooltipElement);       //DA, body-JU SE MOZE I TAKO PRISTUPITI
+
+    //ELEMENT SE NE VIDI (ODNOSNO NALAZI SE ISPOD VIDLJIVOG DELA STRANE) ZBOG NJEGOVE FIKSNE POZICIJE (
+    //STIL KOJI JE DEFINISAN ZA NJEGOVU CSS KLASU)
+
+    //SADA CU SE BAVITI POZICIONIRANJEM TOOLTIP-A, IZNAD ODGOVARAJUCEG DUGMETA  (top-center)
+
+    const koordinate = target.getBoundingClientRect();   //NISAM RANIJE ZNAO DA OVOM METODOM MOGU 
+                                                         //PRISTUPITI OBJEKTU, CIJI SU PROPERTIJI
+    // console.log(koordinate);                             //KOORDINATE
+
+    // console.log(    target.offsetWidth  );  //OVIM GETTER-OM, MOGU PRISTUPITI SIRINI ELEMENTA  
+                                            //POSTOJI I offsetHeight
+    // console.log(    target.offsetHeight );
+
+    //STAMPACU GORNJU I LEVU KOORDINATU, KAKO BIH DOBIO PREDSTAVU GDE JE KOORDINATNI POCETAK
+
+    console.log(koordinate.left);       //-->   8   
+    console.log(koordinate.top);        //-->   OKO  182
+
+    //SCROLLUJUCI SHVATIO SAM DA SE VREDNOST ZA top MENJAJU (TO JE IZ SLEDECIH RAZLOGA)
+
+    //ODNOSNO           top         KORDINATA PREDSTAVLJA SLEDECE RAZMAK:
+    //                                              OD IVICE WINDOW-A, PA DO GORNJE IVICE ELEMENT-A
+    //                                              I AKO SE IVICA WINDOWA I ELEMENT PREKLAPAJU (AKO JE
+    //                                              TAKO SCROLL-OVANO),
+    //                                              ILI SE ELEMENT NALZAZI DALEKO IZNAD IVICE WINDOW-A 
+    //                                              (AKO JE, TAKO SCROLL-OVANO) OVA VREDNOST MOZE BITI I
+    //                                              NEGATIVNA
+    
+    //A VREDNOST ZA     left        PREDSTAVLJA RAZMAK IZMEDJU LEVE GRANICE WINDOW-A I LEVE GRANICE 
+    //                                                                                      ELEMENTA
+
+    //POMENUTI OBJEKAT, KOJI SKLADISTI KOORDINATE, IMAT AKODJE I SLEDECE KOORDINATE
+
+                            //              x           I           y
+
+    console.log("x", koordinate.x);         //-->   8 
+    console.log("y", koordinate.y);         //-->   OKO  182
+
+    //POSMATRAJUCI, KOJE SU IM VREDNOSTI, SHVATAM DA SU GOTOVO ISTE KAO I ONE ZA        top   I   left
+    
+    //PRISTUPICU I KOORDINATAMA TOOLTIP-A
+
+    const koordinateTooltipa = tooltipElement.getBoundingClientRect();  //OVO SAMO KORISTIM U CILJU NEKOG
+                                                                        //MOG UVERAVANJA KAKVE SU 
+                                                                        //KOORDINATE I DIMENIZIJE
+                                                                        //OVE VREDNOSTI MI NECE TREBATI
+                                                                        //U OVOM PRIMERU
+                                                                        //JER JA TOOLTIP POMERAM, A 
+                                                                        //OVAJ OBJEKAT SKLADISTI, NJEGOVE
+                                                                        //KOORDINATE, KADA SE ON NALAZI
+                                                                        //IZVAN VIDLJIVOG DELA STRANE,
+                                                                        //ODNOSNO IZVAN ONOG PROSTORA
+                                                                        //KOJI OBUHVATA MOJA STRANICA
+    console.log(koordinateTooltipa.left);       //-->   8
+    console.log(koordinateTooltipa.top);        //-->   OKO  22850
+    console.log("x", koordinateTooltipa.x)            //-->   8
+    console.log("y", koordinateTooltipa.y)            //-->   OKO  22850
+    //KAO STO MOGU VIDETI, POMENUTE VREDNOSTI GOVORI DA JE ELEMENT POZICIONIRAN DALEKO ISPOD IVICE WINDOW-A
+    //ODNOSNO, PRAVILNIJE BI BILO DA SAM REKAO ISPOD IVICE MOJE STRANICE (TO KAZEM JER MOZDA, KADA 
+    //UPOTREBIM REC WINDOW, TO ZNACI DA JE MOGUCE DOCI DO ELEMENTA SCROLLOVANJEM)
+    //DAKLE DO ELEMENTA NIJE MOGUCE DOCI SCROLLOVANJEM JER SE NALAZI DALEKO ISPOD DONJE IVICE
+    //SAME STRANICE
+
+    //POSTO SAM SE UPOZNAO, KAKVE TO KOORDINATE SKLADISTI, ILI REFERENCIRA OBJEKATA, KOJI JE POVRATNA
+    //VREDNOST          getBoundingClientRect           METODE
+    //MOGU SE POSVETITI DEFINISANJEM, NA KOJOJ POZICIJI TREBA DA SE NALAZI TOOLTIP, KADA KORISNIK, POMERI
+    //KURSOR UNUTAR DUGMETA
+
+    let left = koordinate.left + (target.offsetWidth - tooltipElement.offsetWidth)/2; //OVIM SE POSTIZE
+                                                                                        //D TOOLTIP
+                                                                                        //NE MORA DA
+                                                                                        //BUDE POZICIONIRAN
+                                                                                        //U ISTOJ LINIJI
+                                                                                        //KAO I BUUTON
+                                                                                        //U SMISLU
+                                                                                        //POZICIONIRANJA
+                                                                                        //OD LEVE STRANE
+                                //POMENUTO IMA SMISLA SAMO DEFINISATI AKO       JE      
+                                //      koordinate.left > tooltipElement.offsetWidth
+                                //ALI I NE BI IMALO SMISLA DA JE OVO DRUGO VECE
+                                //KADA POSMATRAM DIMENZIJE I POZICIJE, POSTAJE JASNIJE
+
+    if(left < 0) left = 0;  //AKO SE BUTTON, PREKLAPA SA LEVOM IVICOM WINDOWA, TO NE MORA I TOOLTIP,
+                            //ODNOSNO NEMA SVRHE DA U CELINI NE BUDE VIDLJIV TOOLTIP
+
+    let top = koordinate.top - tooltipElement.offsetHeight - 5;         //5 JE RAZMAK KOJI DELI TOOLTIP
+                                                                        //DA SE NE BI NASLANJAO NA
+                                                                        //BUTTON
+
+    if(top < 0){                                        //AKO SE GORNJA IVICA WINDOW-A, DUGME PREKLAPAJU
+                                                        //(AKO JE TAKO SCROLL-OVANO), STO ZNACI DA JE
+                                                        //KURSOROM MOGUCE UCI U OBLAST DUGMETA
+                                                        //ALI TADA SE TOOLTIP, NE SME PRIKAZATI IZNAD
+                                                        //DUGMETA, VEC TREBA DA SE PRIKAZE ISPOD            
+        top = koordinate.top + target.offsetHeight + 5;
+    }
+
+    tooltipElement.style.left = left + "px";
+    tooltipElement.style.top = top + "px";
+
+
+});
+
+document.addEventListener('mouseout', function(){
+    if(tooltipElement){
+        tooltipElement.remove();
+        tooltipElement = null;
+    }
+});
+
+
+
+
+
 
 
 
