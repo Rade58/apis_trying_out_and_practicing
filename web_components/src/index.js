@@ -6601,14 +6601,651 @@ document.addEventListener('mouseover', function(ev){
 });
 
 document.addEventListener('mouseout', function(){
-    if(tooltipElement){
-        tooltipElement.remove();
-        tooltipElement = null;
+    if(tooltipElement){                                 //AKO JE KREIRAN TOOLTIP
+        tooltipElement.remove();                        //KADA KURSOR IZADJE IZ OBLASTI BUTTON-A
+        tooltipElement = null;                          //NEKA SE UKLONI TOOLTIP, SA body-JA
+    }                                                   //I NEKE AS EUKLONI IZ MEMORIJE (ZATO JE 
+                                                        //VARIJABLI DODELJENA null KAO VREDNOST)
+});                                                     //JER KADA SE UKLONE SVE REFERENCE (U OVOM
+                                                        //SLUCAJU, POSTOJI SAMO JEDNA), ELEMENT JE
+                                                        //GARBAGE COLLECTED
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//          DISPATCHING CUSTOM EVENTS      "OTPREMANJE" CUSTOM EVENT-OVA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SADA CU SE POZABAVITI NECIM STO SE ZOVE GENERISANJE EVENT-OVA
+                //NAIME MOGU SE GENERISATI CUSTOM EVENT-OVI, KOJI SLUZE ZA KREIRANJE
+                //"GRAFICKIH KOMPONENTI"
+                        //NA PRIMER ROOT ELEMENT NEKOG MENU-A, MOGU TRIGGEROVATI EVENT-OVE, KOJI GOVORE
+                        //STA SE DOGODILO SA MENU-OM open (MENU OPEN)       SELECT(ITEM JE SELKTOVAN) ITD.
+                //A TAKODJE SE MOGU GENERISATI BUILT-IN EVENT-OVI, KAO STO JE click, mousedown ITD.
+                //STO MOZE BITI DOBR OZA TESTING
+
+//KORENA KLASA JESTE        Event
+
+//  ARGUMENTI, KOJI SE DODAJU, PRILIKOM INSTATICIRANJA JESU
+            //  TIP EVENTA:   KAO STO JE  'click'       ILI MOJ KAO STO JE      'hey-hello!'
+            //  OPTIONS OBJEKAT SA SLEDECIM PROPERTIJIMA:
+                    // bubbles:         BOOLEAN VREDNOST (AKO RAZMISLJAM O OVOME KAKO TREBA, MOZDA JE
+                    //                                          BOLJE DA JE OVAJ PROPERTI NAZVAN
+                    //                                              propagates)
+                        //ZASTO SAM TO REKAO? PA UPOZNAVAJICI SE SA OSOBINAMA EVENTOVA, MOGAO SAM 
+                        //TO ZAKLJUCITI
+                        //I ONO STO JE VAZNIJE, MISLIM DA JE OVAJ BOOLEAN ODLUCUJE DA SE NA Event INSTANCI 
+                        //MOZE PRIMENITI    stopPropagation
+                    // cancelable:       BOOLEAN VREDNOST
+                         //ODLUCUJE DA LI CE POSTOJATI MOGUCNOST PREVENTING-A "DEFAULT ACTION-A"
+
+        //PO DEFAULT-U, ODNOSNO KADA SE NE OBEZBEDI OPTIONS OBJEKAT, USVAJA SE SLEDECE:
+                                //          {bubbles: false, cancelable: false} 
+
+
+
+// SADA CU SE POZABAVITI            dispatchEvent           METODOM         (PRIMENJUJE SE NA ELEMENT
+//                                                                      A Event INSTANCA JOJ JE ARGUMENT) 
+
+// KREIRACU JEDNU Event INSTANCU, 'click' TIPA
+
+const someEvent = new Event('click');
+
+// DEFINISACU I HTML
+
+const html_primera_sa_eventovima = `
+    <button id="neko_dugme">Autoclick</button>
+`;
+
+//ZAKACICU EVENT LISTENER, ZA TO DUGME (ZA SLUCAJ Event-A ,'click' TIPA) 
+
+neko_dugme.addEventListener('click', function(ev){
+    //alert('click!');
+    
+    //STAMPACU I Event INSTANCU, ALI I NEKE NJENE KARAKTERISTIKE
+    
+    console.log(ev === someEvent);     //-->  true   (AKO FIZICKI NE KLIKNEM, VEC SE HANDLER IZVRSIO KAO POSLEDICA TRIGGERING-A, UZ POMOC dispatchEvent METODE) 
+                                        //-->   false   (AKO SAM FIZICKI KLIKNUO)
+
+    console.log(ev.bubbles);    //-->   false   (AKO FIZICKI NE KLIKNEM, VEC SE HANDLER IZVRSIO KAO POSLEDICA TRIGGERING-A, UZ POMOC dispatchEvent METODE)
+                                //-->   true    (AKO SAM FIZICKI KLIKNUO)
+   
+    console.log(ev.cancelable);    //-->   false   (AKO FIZICKI NE KLIKNEM, VEC SE HANDLER IZVRSIO KAO POSLEDICA TRIGGERING-A, UZ POMOC dispatchEvent METODE)
+                                //-->   true    (AKO SAM FIZICKI KLIKNUO)
+
+    //UZ POMOC SLEDECEG MOGU PROVERITI DA LI JE NEKI ELEMENT, USTVARI "PRAVI (REAL)" USER EVENT
+    //ILI DA LI JE SCRIPT GENERATED
+
+    console.log(ev.isTrusted);  //-->   false   (AKO FIZICKI NE KLIKNEM, VEC SE HANDLER IZVRSIO KAO POSLEDICA TRIGGERING-A, UZ POMOC dispatchEvent METODE)
+                                //-->   true    (AKO SAM FIZICKI KLIKNUO)
+
+});
+
+//SADA CU PRIMENITI         dispatchEvent           METODU, NAD GORNJIM ELEMENTOM
+
+neko_dugme.dispatchEvent(someEvent);
+
+//DAKLE, PRIMENOM POMENUTE METODE, NA GORE PRIKAZANI NACIN, JA SAM USTVARI DEFINISAO 
+//TRIGGER-OVANJE EVENT-A, TIPA 'click'; CIME SE IZVRSIO HANDLER (ALERT-OVALO SE NESTO) (SDA MOGU DA
+//BACIM OKO NA OBIM HANDLER,A I POGLEDAM, I KONZOLU I VIDIM STA SE TO STAMPALO, ODNOSNO DA VIDIM DA 
+//LI SE STAMPALO ONO STO SAM JA U OBIMU HANDLERA, COMMENTED OUT, PORED console.log POZIVA)
+// A POSLE TOGA CU 'FIZICKI' DA KLIKNEM NA DUGME, PA DA VIDIM DA LI SE, ONO DRUGO COMMENTED OUT
+// STAMPALO U KONZOLI
+
+//SVE STO SAM REKAO DA CE SE STAMPATI SE I STAMPALO
+//DAKLE MOGU ZAKLJUCITI DA SE PRIMENOM dispatchEvent METODE, HANDLER-U, PROSLEDILA Event INSTANCA
+//KOJU SAM JA KONSTRUISAO
+
+//A 'FIZICKIM' KLIKOM SE HANDLER-U PROSLEDILA Event INSTANCA 'click' TIPA, KOJA SE PO DEFAULT-U PROSLEDJUJE
+//HANDLER-U (SA true BUBBLING-OM, I true CANCELABLE-OM)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SADA CU KREIRATI JEDAN PRIMER, U KOJEM CU INSTANTICIRATI Event INSTANCU, KOJOJ CE bubbling BITI true
+//I U OVOM SLUCAJU, POSTO CE Event INSTANCA, IMATI MOGUCNOST BUBBLING-A, KADA BUDEM KACIO HANDLER,
+//KORISTICU PRINCIP EVENT DELEGATIONA
+
+//DAKLE, STO SE TICE HTML-A, IAMCU h1 ELEMENT
+
+const html_primera_gde_definisem_da_custom_element_ima_event_bubbling = `
+    <h1 id="neki_header">Hello from Ayohuasca land!</h1>
+`;
+
+//KACIM EVENT HANDLER NA document-U (U SLUCAJU Event INSTANCE, KOJA JE 'buyaa' TIPA) (TO SAMO MOZE BITI CUSTOM EVENT, KOJI JA INSTANTICIRAM DA BUDE TIPA "buyaa")
+
+document.addEventListener('buyaa', function(ev){
+    //alert("Buyaaaaaa bubbled from h1 to document");
+
+    console.log(ev.bubbles);        //-->   true    AKO JE TRIGGERING JAVASCRIPTOM (dispatchEvent MRTODOM)
+
+});                                     
+
+//INSTANTICIRAM Event OBJEKAT, KOJI CE BITI 'buyaa' TIAPA, I KOJI CE MOCI BUBBLE UP-OVATI
+
+const buyaaEvent = new Event('buyaa', {bubbles: true});
+
+//TRIGER-UJEM, ODNOSNO DISPATCH-UJEM POMENUTI EVENT, NA h1 ELEMENTU
+
+neki_header.dispatchEvent(buyaaEvent);
+
+//JOS DVE RECENICE
+// "We should use addEventListener for our custom events, because on<event> 
+// only exists for built-in events, document.onhello doesn’t work.
+// Must set bubbles:true, otherwise the event won’t bubble up."   from TUTORIAL author: Ilya Kantor    
+
+//NAIME MORAM RECI JOS NESTO STO JE VAZNO, A KADA SE RADI O 
+
+//KADA KREIRAM INSTANCE EVENTOVA, UMESTO DA Event OBJEKTE INSTANTICIRAM OVAKO
+//      new Event
+//NAJBOLEJE JE DA EVENT OBJEKTI BUDU INSTANCE SLEDECIH KLASA
+// 
+//                  UIEvent
+//                  FocusEvent
+//                  MouseEvent
+//                  WheelEvent
+//                  KeyboardEvent
+//                      ...            SA OSTALIM SE MOGU UPOZNATI OVDE  https://www.w3.org/TR/uievents/
+//
+
+//ZASTO TAKO?
+//PA NEKE BUILT IN KARAKTERITIKE KOJE IMAJU MouseEvent INSTANCE, NEMAJU Event INSTANCE
+
+//PRIKAZACU TO OPET, PUTEM PRIMERA
+
+//KREIRACU DVA EVENT OBJEKTA, JEDAN UZ POMOC Event KONSTRUKTORA, A DRUGI UZ POMOC MouseEvent KONSTRUKTORA
+//OBA EVENT-A, CE BITI TIPA 'click'
+
+//MEDJUTIM, U OPTIONS OBJECT ARGUMENT-U, JA CU DEFINISATI JOS NEKE KARAKTERISTIKE EVENT-A
+//  TO SU       clientY     I       clientx         
+//(POMENUTIM PROPERTIJIMA SE DEFINISE GDE CE SE NA STRANICI TRIGGER-OVATI EVENT)
+//ODNOSNO TE VREDNSOTI SU RAZMACI IZMEDJU GORNJE STRANE WINDOW-A I MESTA TRIGGER-A, ZATIM LEVE STRANE
+//WINDOW-A I MESTA TRIGGER-A
+
+const neki_event = new Event('click', {
+    bubbles: true,
+    cancelable: true,
+    clientX: 28,
+    clientY: 58
+});
+
+const neki_mouse_event = new MouseEvent('click',{
+    bubbles: true,
+    cancelable: true,
+    clientX: 18,
+    clientY: 48
+});
+
+//POKUSACU DA PRISTUPIM OVIM VREDNOSTIMA, UZ POMOC GETTER-A
+
+console.log(        neki_event.clientX              );            //-->     undefined
+console.log(        neki_event.clientY              );            //-->     undefined
+console.log(        neki_mouse_event.clientX        );            //-->     18
+console.log(        neki_mouse_event.clientY        );            //-->     48
+
+//ZASTO SU ODREDJENE VREDNOSTI UNDEFINED
+//PA ZATO STO       Event    INSTANCA NASLEDJUJE OD  MouseEvent     INSTANCE, VEC OBRNUTO         
+
+console.log(neki_mouse_event instanceof Event);       //-->   true
+console.log(neki_mouse_event instanceof MouseEvent);  //-->   true
+
+console.log(neki_mouse_event.__proto__ instanceof Event)  //--> true
+console.log(neki_mouse_event.__proto__ instanceof Object)  //--> true
+
+console.log(neki_event instanceof Event);       //-->   true
+console.log(neki_event instanceof MouseEvent);  //-->   false
+
+console.log(neki_event.__proto__ instanceof Object)  //--> true
+console.log(neki_event.__proto__ instanceof MouseEvent)  //--> false
+
+//MEDJUTIM, POSTOJI I WORKAROUND, MEDJUTIM, NE YNAM KOLIKO JE TO KORISNO
+//
+//A TO JE DA SE Event INSTANCI (DAKLE, INSTANTICIRANOM OBJEKTU)
+//DODELI VREDNOST ZA        clientX   ILI       clientY
+//NISAM SIGURAN, DA LI SU U OVOM SLUCAJU clientX   ILI   clientY        USTVAR ISETTER-I
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//U SLEDECEM PRIMERU SAMO TESTIRAM MOGUCNOSTI clientX  i clientY
+//(MALO CU SE ODALJITI OD TEME, KAKO BIH SE POZABAVIO, KONKRETNO POMENUTIM KARAKTERISTIKAMA 
+//clientX   I  clientY (U OBIMU HANDLER-A); KREIRACU, JOS JEDAN PRIMER         
+//A MORAM PROCITATI I SLEDECI CLANAK, KOJI SE BAVI SAMO KOORDINATAMA https://javascript.info/coordinates )
+
+//ONO STO KONKRETNO ZELIM DA URADIM
+
+//INSTATICIRAM MouseEvent, SA ZADATIM OPCIJAMA          clientX     clientY
+
+const misEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    clientX: 8,
+    clientY: 8
+});
+
+//DA DEFINISEM KACENJE HANDLERA, NA document, ZA SLUCAJ EVENTA, TIPA 'click'
+
+document.addEventListener('click', function(ev){
+    console.log(ev.clientX, ev.clientY);            //      8       8
+    console.log(ev.target, ev.currentTarget);       //paragraf    document
+});
+
+//DAKLE JA SAM DEFINISAO DA SE STAMPA TARGET. ZASTO?
+//ZELIM DA VIDIM, KOJI JE TARGET U ODNOSU NA      clientX           I       clientY 
+
+document.querySelector('.parag_neki').dispatchEvent(misEvent);
+
+//NAIME, ONO STO SAM PRIMETIO JESTE DA SAM SE JA PRERACUNAO U ODNOSU NA POMENUTE KORDINATE
+//NAIME, NECE BITI TARGETOVAN, ELEMENT, NA KOJEM SU SE SLUCAJNO NASLE KOORDINATE
+//MISLIM DA I NEMA NIKAKVOG SMISLA, JER SE VREDNOSTI OVIH KOORDINATA KORISTE, A NE DA ONE KORISTE NESTO NA STRANICI
+//(OVO SU NEKA, MOJE, MOZDA, USTVARI NAJVEROVATNIJE, NEPOTREBNA ZAPAZANJA)
+
+//POSTO SAM VIDEO STA SE STAMPALO U KONZOLI, NASTAVLJAM DALJE, TAKO STO CU SE POZABAVITI, KONKRETNO 
+                                //CustomEvent               KLASOM, ODNOSNO KONSTRUKTOROM
+
+//JER TU KLASU TREBAM DA KORISTIM, KADA INSTATICIRAM, MOJ CUSTOM EVENT
+//
+//KADA INSTATICIRAM CUSTOM EVENT, MOGU DODATI, JOS JEDA NPROPERTI, ONOM OPTIONS ARGUMENT OBJEKTU
+//TAJ NOVI PROPERTI SE ZOVE
+                        //              detail
+                        //I NJEGOVA VREDNOST, TREBA DA BUDE OBJEKAT, KOJI MOZE DA IMA BILO KOJE
+                        //CUSTOM INSFORMACIJE, KOJE ZELIM DA BUDU PROSLEDJENE ZAJEDNO SA EVENTOM, 
+                        //U HANDLER
+
+// TEHNICKI SE I MOZE BEZ OVOG PROPERTIJA, JER MOGU DA SE DEFINISU, BILO KOJI PROPERTIJI
+//  SA ZELJENIM VREDNOSTIMA, SAMOM INSTATICIRANOM EVENT OBJEKTU
+//  ALI, DA BI SE IZBEGLI, NEKI KONFLIKTI JE IPAK BOLJE TO URADITI SA detail  PROPERTIJEM,
+//   PRILIKOM INSTANTICIRANJA,
+
+
+const h1_u_html_u = `
+    <h1 id="neki_h">Hello I'm Stavros</h1>
+`;
+
+const nekiCustom = new CustomEvent('hello', {
+    detail: {
+        ime: "Stavros"
     }
 });
 
+neki_h.addEventListener('hello', function(ev){
+    console.log(ev.detail.ime);
+});
+
+neki_h.dispatchEvent(nekiCustom);
 
 
+
+//SADA CU SE POZABAVITI         preventDefault      METODOM
+//JASNO MI JE DA KADA IMAM CUSTOM EVENT, ODNOSNO EVENT GENERISAN SCRIPT-OM; DA BI PRIMENA POMENUTE
+//METODE DALA "EFEKTA", EVENT MORA BITI INSTANTICIRAN SA   cancelable  KARAKTERISTIKOM, SA VREDNOSCU true
+//                  cancelable: true        flag must be specified
+
+
+// ALI KADA JA INSTANTICIRAM EVENT OBJEKAT, I DEFINISEM DA ON BUDE, NEKOG CUSTOM TIPA (KOJI NIJE BUILT-IN)
+// (I DA BUDE CANCELABLE), POSTAVLJA SE PITANJE KAKVU TO DEFAULT AKCIJU, BROWSERA, PRIMENA preventDefault-A
+// MOZE DA SPRECI? TO CU SHAVATITI KADA BUDEM KREIRAO PRIMER
+
+//ALI KAKO DO, SAMOG EVENTA DOLAZI INFORMACIJA, DA JE ON PREVENTED, ODNOSNO DA JE CANCELED DEFAULT ACTION
+            
+
+            //I UZ POMOC POVRATNE VREDNOSTI     dispatchEvent       METODE
+                        //AKO JE POVRATNA VREDNOST PRIMENE OVE METODE   true, EVENT    NIJE   canceled
+                        //TO ZNACI DA NA NJEMU NIJE PRIMENJENA preventDefault METODA U OBIMU HANDLER-A
+
+                        //AKO JE POVRATNA VREDNOST PRIMENE OVE METODE   false, EVENT     JESTE  canceled
+                        //TO ZNACI DA NA NJEMU JESTE PRIMENJENA preventDefault METODA U OBIMU HANDLER-A
+
+//MORAM NEKEKO DA UPAMTIM, DA KADA JE POVRATNA VREDNOST dispatchEvent METODE       false       TADA JE
+//NAD EVENTOM, BILA PRIMENJENA preventDefault METODA
+
+//ZATO CU URADITI, JEDAN PRIMER, KOJI CU JA KREIRATI, KOJI JE NESTO PROSTIJI
+//PA CU URADITI PRIMER, KOJI JE U CLANKU, KOJI CITAM, JER JE TAJ PRIMER "NESTO SLOZENIJI"
+
+//U PRIMERU CE UCESTVOVATI SLEDECI HTML
+
+const html_za_trashing = `
+    <h4 id="smece_header">Ovo nema veze sa grabage kolektorom</h4>
+`;
+
+//DAKLE INSTANTICIRACU, JEDAN   CustomEvent   ,KOJI CE BITI CANACELABLE
+
+const trashEvent = new CustomEvent('trash', {cancelable: true});
+
+//ZAKACICU EVENT HANDLER, ZA h4 ELEMENT, (ZA SLUCAJ EVENTA, TIPA 'trash')
+//A U OBIMU HANDLERA CU SPRECITI DEFAULT ACTION
+
+smece_header.addEventListener('trash', function(ev){
+    console.log("Izbacile su se neke TRICE sa prozora sprata 26");
+    ev.preventDefault();
+});
+
+//SADA CU DA DEFINISEM NEKI DEFAULT ACTION, KOJI BI SE IZVRSAVAO, ONDA KADA NA MOJOJ CustomEvent INSTANCI
+//NIJE PREVENTED, TAJ DEFAULT ACTION; A KOJI SE NE BI IZVRSIO, KADA BI BIO PREVENTED
+
+//U OVOM SLUCJU NECU KORISTITI POVRATNU VREDNOST dispatchEvent METODE, VEC CU KORISTITI cancelable GETTER
+
+const isNotCanceled = smece_header.dispatchEvent(trashEvent);   //DAO SAM VARIJABLI OVAKVO IME JER JE
+                                                                //AKO JE DEFAULT ACTION PREVENTED
+                                                                //ONDA JE POVRATNA VREDNOST dispatchEvent 
+                                                                //METODE, USTVARI false
+
+if(isNotCanceled){
+    console.log("POMIJE SU BACENE I SA SPRATA 48");  //A OVO JE DEFAULT ACTION
+}                                              
+
+//I ZAISTA SE NECE DOGODITI DEFAULT ACTION, JER JE PREVENTED; ALI TO IZGLEDA CUDNO, MAKAR SADA, AKO
+//NE POZNAJEM ODREDJENE CINJENICE
+
+//PRVO CU RECI, ZASTO IZGLEDA CUDNO
+                
+                //S OBZIROM DA ZNAM OD RANIJE, ODNOSNO ZNAM DA KADA SAM RANIJE KACIO HANDLERE NA
+                //ELEMENTE, U SLUCAJU "BILT IN EVENT-OVA", ODNOSNO EVENTOVA, KOJI NISU CUSTOM
+                //, HANDLERI SU BILI QUEUED I CEKALI SU "ISPRED EVENT LOOP-A", NA SVOJ TRIGGERING,
+                // KOJI BI SE DESIO "NA NATURALNI NACIN" (BEZ UPOTREBE dispatchEvent METODE)
+
+//UPRAVO KADA SAM TO SPOMENUO, IZGLEDA CUDNO DODELJIVANJE VARIJABLI     isNotCanceled
+//I IZGLEDA CUDNO, KAKO SAM TU VREDNOST UPOTREBIO KAO USLOV, USLOVNE IZJAVE
+// JER BEZ OBZIRA, KOJA JE POVRATNA VREDNOST I KAKO SE IZVRSILA         dispatchEvent       METODA
+//JA ZNAM JEDNO
+
+    //PA TA DODELA JESTE BLOCKING CODE
+    //PA ZATIM I IF STATEMENT
+    //STO ZNACI DA AKO SE JEDNOM TOJ VARIJABLI DODELI true, TO JESTE true, U CURRENT CALLING STACKU
+    //A POSTO JE U ISTOM STACK-U I I IF IZJAVA, JA NE VIDIM, AKO SE HANDLER IZVRSAVA U NOVOM STACKU
+    //DA TO IMA BILO KAKVOG UTICAJA NA CURRENT STACK
+
+
+                //A IZGLEDA CUDNO AKO NE ZNAM JEDNU STVAR, A TO JE SLEDECE I VEOMA JE VAZNO
+
+//      *************    HANDLER USTVARI NIJE QUEUED        ********************
+
+//  I ZISTA JE TAKO
+//  DAKLE HANDLER NIJE ZAVRSIO U QUEUE-U, I NIJE "CEKAO NA TRIGGERING" EVENTA NA TAJ NACIN
+//  IZVRSIO SE ODMAH, NAKON POKRETANJA      dispatchEvent       METODE
+//  A KAO STO ZNAM U HANDLERU JE POZVANA preventDefault METODA
+//  DAJUCI NEOPHODNU INFORMACIJU EVENTU, A PREKO EVENTA I dispatchEvent METODI
+//  KAKO BI SE DISPATCH EVENT METODA, POTOPUNO IZVRSILA SA      false       RETURNRED VREDNOSCU
+
+//TEK ONDA, JER SAM TAKO DEFINISAO DEFAULT ACTION NIJE IZVRSEN, U ODNOSU NA TU POMENUTU RETURNED VREDNOST
+
+//OVO ME NAVODI DA KAZEM DA U SLUCAJU DEFINISANJA TOG DEFAULT BEHAVIOURA, JA MORAM VODITI RACUNA
+//GDE DEFINISEM DEFAULT BEHAVIOUR, ODNOSNO GDE DEFINISEM NJEGOVO POZIVANJE
+//DAKLE ONO MORA BITI U ISTOM STACK-U, KAO I POZIVANJE      dispatchEvent       METODE
+
+//MEDJUTIM, JAVLJA MI SE JOS JEDNA DILEMA, A KOJA GLASI
+
+//          STA JE TO ODLUCILO DA SE HANDLER NE SALJE U QUEUE?
+//
+//  DA LI JE O TOME ODLUCILO PROSLEDJIVANJE STRINGA TIPA, CUSTOM EVENTA, POZIVANJU       addEventListener
+//  METODE, ILI NESTO DRUGO?
+//
+//  NE MISLIM DA JE O TOME ODLUCIO dispatchEvent , JER ON VODI RACUNA O TRIGERING-U, BAR JA TAKO MISLIM
+//  OVO MORAM PROVERITI, PUTEM PRIMERA
+
+//NAIME, JA SAM U GORNJIM BELESKAMA NAPISAO DA addEventListener SALJE CALLBACK-OVE U QUEUE
+//TO NAIME NIJE TACNO (AddEventListener IH SAMO REGISTRUJE);
+// U QUEUE IH SALJE TRIGGERING SAMOG EVENTA (MORAM OPET DETALJNO PROCITATI
+//CLANAK "MODEL KONKURENTNOSTI I EVENT LOOP", KAKO BI OPET BOLJE RAZUMEO SAM QUEUEING)
+//ALI OVO NE MANJA PRICU VEZANU ZA dispatchEvent (ON JE SINHRON)
+
+
+//ODNOSNO, PRIMENICU        dispatchEvent   METODU NAD ELEMENTOM, ZA KOJEG JE ZAKACEN HANDLER
+//ALI U SLUCAJU BUILT IN TIPA EVENT, KAO STO JE 'click'
+
+//HTML PRIMERA:
+
+const htmlExample = `
+    <p class="parag_neki">Neki paragraf blah</p>
+`;
+
+//INSTANCITIRACU, JEDNU       MouseEvent      INSTANCU
+
+const neki_mouseEvent = new MouseEvent('click', {cancelable: true});
+
+//PROVERICU DA LI JE, EVENT, ZAISTA CANCELABLE, A UZ TO MOGU PROVERITI I DA LI ON BUBBLES UP (IAKO OVO
+//                                                                                            DRUGO NECE
+//                                                                                            IMATI NEKU
+//                                                                                           ULOGU U OVOM
+//                                                                                               PRIMERU)
+
+console.log(neki_mouseEvent.cancelable, neki_mouseEvent.bubbles);       //-->   true  false
+
+//A MOGU I DA PROVERIM DA LI JE 
+//VEC PRIMENJENA preventDefault METODA NAD EVENT-OM (NEMA SMISLA DA JESTE, JER ZNAM DA JE NISAM PRIMENIO OVDE
+// ALI CISTO POKAZUJEM DA TO MOGU DA PROVERIM)
+//NAIME, JA SAM TO I RANIJE RADIO, KORISTECI        defaultPrevented        PROPERTI
+
+console.log(neki_mouseEvent.defaultPrevented);      //-->   false
+
+//SADA CU ZAKACITI HANDLER, NA POMENUTI PARAGRAF (U SLUCAJU EVENTA, TIPA 'click'); U OBIMU DEFINISEM
+//SPRECAVANJE DEFAULT ACTION-A
+
+document.querySelector('.parag_neki').addEventListener('click', function(ev){
+    console.log("NEKI TEKST, KOJI SE STAMPA BLAH...");
+    
+    console.log(ev.defaultPrevented);   //-->   false
+
+    ev.preventDefault();
+    
+    console.log(ev.defaultPrevented);   //-->   true
+});
+
+
+//DEFINISACU NESTO STO CE SLUZITI KAO DEFAULT BEHAVIOUR
+
+const nekiDefaultBehaviour = function(isNotPrevented){
+    if(isNotPrevented !== false){
+        alert("Neki default behaviour");
+    }
+};
+
+//SADA CU DA TRIGGERUJEM neki_mouseEvent, UZ POMOC dispatchEvent METODE
+//UZ TO "HVATAM" POVRATNU VREDNOST, dispatchEvent PRIMENE
+
+const isNotPrevented = document.querySelector('.parag_neki').dispatchEvent(neki_mouseEvent);
+
+//SADA CE TA POVRATNA VREDNOST DA ODLUCI, DA LI CE SE IZVRSITI DEFAULT ACTION, U ODNOSU NA TO, DA LI JE
+//POZVAN-A preventDefault METODA, U OBIMU HANDLER-A
+
+nekiDefaultBehaviour(isNotPrevented);
+
+//DOBRO, JA SAM U OVOM SLUCAJU OPET PROVEZBAO TAJ "DISPATCHING", I SVE OSTALO STO DOLAZI UZ TO
+//ALI ONO STO SAM ZELO DA VIDIM, ODNOSNO STO JE BILO PRESUDNO DA VIDIM JESTE, DA LI CE SE 
+//EVENT HANDLER POSLATI NA QUEUE
+
+//NECE
+
+//DAKLE,
+//BILO DA JE REC O INSTANTICIRANOM CustomEventu, ILI NEKOM DRUGOM (MouseEvent, Event..) 
+//KADA SE NA ELEMENTU PRIMENI dispatchEvent METODA, POTPUNO JE SIGURNO (BAR JA TAKO MISLIM),
+// DA CE SE HANDLER POZVATI, U SKLOPU IZVRSENJA dipatchEvent METODE, A KADA SE HANDLER IZVRSI
+//dispatchEvent CE SE MOCI RETURNOVATI (DAKLE OVO JE SVE BLOCKING), JER NJEGOVA POVRATNA VREDNOST
+//ZAVISI OD TOGA, DA LI SE U HANDLERU PRIMENILA preventDefault METODA
+
+//A ZASTO SAM KORISTIO        defaultPrevented    TOKOM OVOG PRIMERA?
+
+console.log(      neki_mouseEvent.defaultPrevented     );       //-->   true
+
+//PITAM SE DA LI JE DOBRO DA UMESTO POVRATNE VREDNOSTI      dispatchEvent   METODE (KOJA SE 
+//PRIMENJUJE NA ELEMENTU), KORISTIM, USTVARI VREDNOST          defaultPrevented    PROPERTIJA (NISAM 
+//SIGURAN DA LI JE ON PROPERTI ILI GETTER; MISLI MDA JE IPAK PROPERTI), ZA ODLUCIVANJE, DA LI CE SE ILI
+//ILI NECE (DAKLE KAO USLOV), EXECUTE-OVATI, NEKI DEFAULT BEHAVIOUR, ODNOSNO DEFAULT ACTION, KOJI SAM ZADAO
+//ZA SADA CU NASTAVITI DALJE BEZ DODATNOG OBJASNJENJA; A DOBRO JE I DA SAM SE PODSETIO defaultPrevented-A 
+
+//KREIRACU SADA JEDAN PRIMER, KOJI SAM VIDEO U CLANKU
+
+//PRIME SE SASTOJI I OD pre TAGA, KOJI GOTOVO RANIJE NISAM KORISTIO
+//ON NEMA NEKU BITNOST ZA OVAJ PRIMER, ALI DOBRO JE DA ZNAM NJEGOVE ODLIKE
+
+//TAJ TAG JE IZMEDJU OSTALOG preSTILIZOVAN, ODNOSNO PRESTYLED SA SLEDECIM CSS PROPERTIJEM I SLEDECOM
+//VREDNOSCU TOG CSS PROPERTIJA
+
+//          whitespace: pre
+
+//OVO ZNACI DA AKO BUDEM DEFINISAO HTML TAG, I AKO NJEGOV NESTED TEXT BUDEM IMAO KONTINUALNI (MOJE RECI) 
+//WHITESPACE (VISE OD JEDNOG WHITESPACE-A) ILI AKO NESTED TEXT TAGA SASTOJI OD VISE REDOVA, ILI AKO 
+//IMAM PRAZNIH REDOVA, U SLUCAJU VREDNOSTI POMENUTOG CSS PROPERTIJA, TAJ TEKST KADA BUDE RENDERED NA WEB
+//STRANICI SE OCE SASTOJATI OD TIH PRAZNIH REDOVA I WHITESPACE-OVA
+
+//ODNOSNO TEKST NECE BITI WRAPPED, KAKO BI SE NUTRALIZOVALA TA, NEPOTREBNA PRAZNA MESTA
+
+//TEKST PARGRAFA 
+
+const pragr = `
+
+<p>Neki tekst     PARAGRAFA     je         ovo 
+
+    ili on ide ovako          tako
+  </p>
+
+`;
+
+//BI NAKO NRENDERINGA BIO WRAPPEDI BIO OVAKAV       Neki tekst PARAGRAFA je ovo ili on ide ovako tako     
+
+//E TO SE NECE DOGODITI, U SLUCAJU      pre     TAGA
+
+//DAKLE, SADA KRECEM SA PRIMEROM, TAKO STO CU PRVO KREIRATI JEDAN       pre     ELEMENT
+
+const preElement = document.createElement('pre');
+
+//TEKST, KOJI SAM REKAO DA SE NECE WRAPP-OVATI, MOGU DEFINISATI U TEMPLATE STRING-U (OVO RADIM ZBOG
+//KORISNOSNE OSOBINE TEMPLATE STRING-A, KOJU NE MORAM POMINJATI)
+
+const preText = `
+    /\\_/\\_/\\
+    |   Y   |
+   ß\\  °  ° /ß
+     |  ˘˘ |
+    /  __   \\
+    \\       /
+     \\  ^^ /
+      ¤¤¤¤¤¤
+      {>°<}
+`;
+
+//MORAO SAM DA IMAM DVA BACKLASHA U STRINGU, DA BIH MOGAO DA SE RENDERUJE JEDAN NA STRANICI 
+
+//NESTOVACU OVAJ TEKST U pre ELEMENT, KOJI CU ONDA ZAKACITI U DOM
+
+preElement.textContent = preText;
+
+document.querySelector('.kont_pre').appendChild(preElement);
+
+//SADA MOGU NA STRANICI VIDETI RENDEROVAN "LIK" NA STRANICI, NAPRAVLJEN OD RAZNIH KARAKTERA
+
+//A ONO STO, USTVARI ZELIM DA DEFINISEM JESTE DA POMENUTI ELEMENT SAKRIJE SA STRANICE, NAKON NEKOLIKO SEKUNDI
+//POSLE RELOADA STRANICE; A DA OVAKVO PONASANJE BUDE DEFAULT ACTION, KOJI SE DOGADJA NAKON TRIGGER-INGA
+//CUSTOM EVENTA
+
+//NAIME, JA SAM INSTANTICIRANJE CUSTOM EVENTA, ZATIM NJEGOV DISPATCHING, ZAJEDNO SA DEFAULT ACTION-OM
+//MOGAO DEFINISATI U OBIMU, JEDNE FUNKCIJE, OVAKO
+
+const hide = function(){
+    const hideEvent = new CustomEvent('hide', {cancelable: true});
+
+    if(!preElement.dispatchEvent(hideEvent)){
+        console.log("Default action prevented!");       //default action prevented
+    }else{
+        preElement.hidden = true;   //default actions
+    }
+
+}
+
+//ZAKACICU HANDLER ZA pre ELEMENT (U SLUCAJU CUSTOM EVENTA, TIPA 'hide')
+
+preElement.addEventListener('hide', function(ev){
+    //MOGU DEFINISATI I confirm DIALOG, KOJI MI MOZE DATI OPCIJU DA SPRECIM ILI DOPUSTIM DEFAULT ACTION
+    //ALI TO CE MI STALNO SMETATI, KADA NASTAVIM KODIRANJE U OVOM DOKUMENTU
+    
+    // if(confirm("Do you want to prevent default behaviour that will hide drawing?")){
+    //     ev.preventDefault();
+    // }
+    
+    //ev.preventDefault();
+    
+});
+
+//POSTO SAM REKAO DA ZELIM DA SE ELEMENT SAKRIJE (ILI NE) NAKON NEKOLIKO SEKUNDI, TRIGGEROVACU CUSTOM 
+//EVENT, NAKON NEKOLIKO SEKUNDI
+
+setTimeout(function(){
+    hide();
+}, 4000);
+
+
+//POSTO SAM ODRADIO OVAJ PRIMER, POZBAVICU SE JOS NEKIM PRIMERIMA, A KONKRETNO CU SE POZABAVITI JEDNIM
+//PROBLEMOM, A TO JE
+//****************************************************************************
+//TRIGGEROVANJE CUSTOM EVENT-OVA, U OBIMAIMA HANDLERA, KOJE SAM ZAKACIO ZA ELEMENT, KAKO BI SE POMENUTI
+//(U SLUCAJU NEKOG BUILT IN EVENTA)
+
+//ODNOSNO ONO STO POSMATRAM OVDE JESTE OPET TA ASINHRONOST KOJU DOVODI TRIGGEROVANJE BUILT IN EVENTOVA, I
+//SINHRONOST dispatchEvent METODE
+
+//JA SAM SE TIME BAVIO U PREDHODNIM PRIMERIMA, ALI IPAK CU URADITI, JOS NEKOLIKO PRIMERA
+
+//NECU DAVATI DODATNE KOMENTARE ZA SLEDECE PRIMERE, U CILJU USTEDE VREMENA
+
+const neki_menu_html = `
+    <button id="some_menu">Menu</button>
+`;
+
+some_menu.addEventListener("click", function(){
+    console.log(400000);
+
+    some_menu.dispatchEvent(new CustomEvent('menu-open', {//ZAPAMTI, OVO JE
+                                                            //BLOCKING 
+        bubbles: true                                       //DAKLE "U SKLOPU OVOGA" (dispatchEvent IZVRSENJA)
+                                                            // SE IZVRSA DONJI
+    }));                                                    //HANDLER SINHRONO
+    //DAKLE POKRENUO SE dispatchEvent, PA HANDLER, KOJI SAM DOLE ZAKACIO, PA SE IZVRSAVA HANDLER
+    //PA NA OSNOVU TOGA     dispatchEvent   MOZE DA RETURN-UJE VREDNOST
+    //TEK ONDA SE IZVRSAVA DALJI CODE, U OBIMU OVOG HANDLER-A, U KOJEM PISEM OVAJ KOMENTAR
+
+    console.log(800000);                                                        
+});
+
+document.addEventListener('menu-open', function(ev){
+    console.log(50000);
+});
+
+//DAKLE TREBALO BI DA SE STAMPA OVIM REDOSLEDOM
+
+400000
+50000
+800000
+
+//KLINUCU NA DUGME I PROVERITI U KONZOLI PROVERICU TO  U KONZOLI
+
+//I DA KAD SAM PROVERIO, VIDIM DA JE ZAISTA TAKO
+
+//POMENUTU SITUACIJU BIH MOGAO POPRAVITI TAKO STO BIH DISPATCHING DEFINISAO U OBIMU CALLBACK-A then METODE
+//Promise-OVOG PROTOTIPA, ILI U OBIMU HANDLER-A setTimeout METODE
+
+const neki_menu_html2 = `
+    <button id="some_menu2">Menu</button>
+`;
+
+some_menu2.addEventListener("click", function(){
+    console.log(400000);
+
+    new Promise((res, rej) => {
+        res();
+    })
+    .then(function(){
+        some_menu2.dispatchEvent(new CustomEvent('menu-openaru', {                                                            
+            bubbles: true
+        }));                                                    
+    });
+
+    console.log(800000);                                                        
+});
+
+document.addEventListener('menu-openaru', function(ev){
+    console.log(50000);
+});
+
+//DAKLE TREBALO BI DA SE STAMPA OVIM REDOSLEDOM
+
+400000
+800000
+50000
+
+//VIDIM I JESTE TAKO, NAKON STO SAM KLIKNUO NA DUGME I PROVERIO U KONZOLI
 
 
 
@@ -7278,19 +7915,19 @@ const noviNiz1 = Array.from({length: 8}, function(_,i){
     return i;
 });
 
-console.log(noviNiz1);
+// console.log(noviNiz1);
 
 const array1 = [8,5,12,1,4,6,8,2];
 
 const array2 = array1.sort(function(a,b){
-    console.log('sort', a , b);
+    //console.log('sort', a , b);
     return a-b;
 });
 
 const array3 = array1.sort();
-console.log(array1 === array2)
-console.log(array2);
-console.log(array3);
+// console.log(array1 === array2)
+// console.log(array2);
+// console.log(array3);
 
 const array8 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
 
@@ -7367,13 +8004,13 @@ const insertionSort = function(array){
     
 };
 
-const array6 = insertionSort(array4);
+// const array6 = insertionSort(array4);
 
-const array18 = quickSort(array4);
+// const array18 = quickSort(array4);
 
-console.log(array6);
+//console.log(array6);
 
-console.log(array18);
+// console.log(array18);
 
 
 const mergeSort = function(array){
@@ -7419,7 +8056,7 @@ const mergeSort = function(array){
 const array9 = [42, 58, 2, 1, 18, 26, 5, 462, 521, 68, 12, 842, 521, 11, 2];
 
 
-console.log(mergeSort(array9));
+//console.log(mergeSort(array9));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7459,6 +8096,42 @@ console.log(`
 `); */
 
 
+
+
+
+//JOS JEDNA VEZBA, VEZANA ZA KOORDINATE
+
+const misovEvenrt = new MouseEvent('click', {bubbles: true, cancelable: true});
+
+document.body.addEventListener('click', function(ev){
+    console.log(ev.target);
+    ev.target.classList.contains('neki_pgf')
+    ?
+    console.log("koordinata x:", ev.clientX, "koordinata y:", ev.clientY)
+    :
+    console.log('body');
+});
+
+new Promise((res, rej) => {
+    res();
+}).then(function(){
+    document.querySelector('.neki_pgf').dispatchEvent(misovEvenrt);
+});
+
+
+//VEZBA VEZANA ZA EVENT-OVE
+
+let nekiHolder = 1;
+
+new Promise((res, rej) => {
+    res();
+}).then(() => {
+    nekiHolder = 0;
+});
+
+if(nekiHolder){
+    console.log("***********************************", nekiHolder, "******************");
+}
 
 
 
