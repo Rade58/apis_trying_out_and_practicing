@@ -5302,9 +5302,9 @@ window.customElements.define('button-modals', class extends HTMLElement {
             //DAKLE SLEDECE CE SE IZVRSITI, KADA DO document, NIJE BUBBLED UP EVENT, KOJEM JE PREVENTED
             //DEFAULT (ODNOSNO EVENT KOJI SE PROPAGIRA, OD BUTTON-A PA OVAMO)
             
-            const openContextMenu = confirm("Are you sure you want to open context menu?");
+            // const openContextMenu = confirm("Are you sure you want to open context menu?");
 
-            !openContextMenu?ev.preventDefault():null;   //OVDE SAM UPOTREBIO TERNARY, IAKO JE LOSA PRAKSA AKO TERNARY NIJE ASSGNMENT
+            // !openContextMenu?ev.preventDefault():null;   //OVDE SAM UPOTREBIO TERNARY, IAKO JE LOSA PRAKSA AKO TERNARY NIJE ASSGNMENT
             //DAKLE, AKO KORISNIK U CONFIR DIALOGU PRITISNE: NE; CONTEXT MENU NECE BITI OTVOREN 
         });
     }
@@ -7247,24 +7247,429 @@ document.addEventListener('menu-openaru', function(ev){
 
 //VIDIM I JESTE TAKO, NAKON STO SAM KLIKNUO NA DUGME I PROVERIO U KONZOLI
 
+//NAKON OVE PRICE O CUSTOM EVENTOVIMA, PRKOPIRACU JOS JEDNU RECENICU IZ CLANKA
+
+    //We shouldn’t generate browser events as it’s a hacky way to run handlers. 
+    //That’s a bad architecture most of the time.
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//              OSNOVE      MOUSE EVENT-OVA
+//
+//MOUSE EVENTOVI NE DOLAZE SAMO OD "MOUSE MANIPULATORS"-A, VEC SU TAKODJE EMULATED NA TOUCH UREDJAJIMA
+//
+//      TIPOVI MOUSE EVENT-OVA
+//MOUSE EVENT-OVI SE MOGU PODELITI U DVE KATEGORIJE:
+//              'simple'            'complex'
+
+//                  SIMPLE EVENT-OVI SU:
+//
+//      mousedown/mouseup       MOUSE DUGME JE KLIKNUTO/PUSTENO NA ELEMENTU
+//
+//      mouseover/mouseout      POINTER MOUSE-A JE USAO/IZASAO U/IZ OBLAST/OBLASTI ELEMENTA
+//
+//      mousemove               SVAKO POMERANJE POINTERA MISA, PREKO ELEMENTA, TRIGGERUJE OVAJ EVENT
+//
+//POSTOJI JOS DRUGIH TIPOVA EVENTOVA, KOJIMA CU SE POZABAVITI KASNIJE
+
+//                  COMPLEX EVENT-OVI SU:
+//
+//      click           TRIGGER-UJE SE NAKON  STO SU SE   mousedown  I mouseup   TRIGGER-OVALI NA ELEMENTU 
+//                      (ALI VAZI SAMO ZA TRIGGERINGU NA LEVOM DUGMETU MISA)                      
+
+//      contextmenu     TRIGGER-UJE SE NAKON STO SE TRIGGEROVAO mousedown NA DESNOM DUGMETU MISA 
+//                      (ALI VAZI SAMO ZA TRIGGERINGU NA LEVOM DESNOM MISA)                          
+
+//      dblclick        TRIGGER-UJE SE NAKON DUPLOG click TRIGGERING-A NA ELEMENT-U
+//                      ALI (BAR JA TAKO MISLIM, ODNOSNO NA OSNOVU TESTA U CLANKU), NE SME PROCI
+//                      VISE OD JEDNE SEKUNDE OD TRIGGERINGA PRVOG clicka DO TRIGGERING-A DRUGOG click-A,
+//                      DA BI SE TRIGGER-OVAO
+//                      (ALI VAZI SAMO ZA TRIGGERINGU NA LEVOM DUGMETU MISA)
 
 
 
 
-//PRE NEGO STO NASTAVIM BAVLJENJE SA EVENT-OVIMA
-//NEKI EVENT-OVI SE CAK I NE RAZMNOZAVAJU (PROPAGATE), IZ SHADOW DOM-A
+//DAKLE KOMPLEKSNI EVENT-OVI SU SAGRADJENI OD ONIH SIMPLE ELEMENATA, TAKO DA SE TEORETSKI GLEDANO, MOZE
+//I BEZ NJIH; ALI KOPLEKSNI EVENT-OVI, IPAK POSTOJE, I TO JE DOBRO, ZATO STO SU CONVINIENT
 
-//EVENTOVI, KOJI ZAISTA PRELAZE SHADOW BOUNDARY JESU SLEDECI (DACU I KRATKO OBJASNJENJE KADA SE
-//TRIGGER-UJU):
-//  Focus Events: blur, focus, 
-//                focusin (TRIGERUJE SE NEPOSREDNO PRE NEGO STO CE ELEMENT DOBITI focus) (NEMA BUBBLE UP-A)
-//                focusout (TRIGGERUJE SE NEPOSREDNO NAKON STO ELEMENT IZGUBI focus) (NEMA BUBBLE UP-A)
-//  Mouse Events: click, dblclick,
-//                mouseenter (TRIGGERUJE SE KADA JE POINTER POMEREN PREKO ELEMENTA, KOJI IMA ZAKACEN
-//                            LISTENER) (NE BUBBLE UP-UJE SE)
-//                          IAKO JE SLICAN KAO mouseover, KOJI SE BUBBLE-UP-UJE, mouseenter SE NE SALJE
-//                           DSCENDANTIMA (POTOMCIMA), KADA SE POINTER POMERI SA DESCENTANTOVOG FIZICKI
-//                              PROSTORA, NA ELEMNTOV 
+
+//          EVENTS ORDER       (REDOSLED EVENT-OVA)
+
+//NAIME JEDNO DELOVANJE, ODNOSNO AKCIJA, MOZE TRIGGER-OVATI VISE EVENT-OVA
+//DAKLE, AKO POSMATRAM  KLIK
+//ON PRVO TRIGGER-UJE    mousedown    KADA JE DUGME PRITISNUTO; PA   mouseup    I   click   KADA SE DUGME
+// PUSTI
+//DAKLE KADA JEDNA AKCIJA INSTANTICIRA VISE EVENT-OVA, NJIHOV REDOSLED JESTE FIKSIRAN
+//STO ZNACI DA SU HANDLERI QUEUED, REDOSLEDOM, KOJI VEZAN ZA SLEDECI REDOSLED EVENTOVA
+//U SLUCAJU EVENTOVA KOJE SAM NAVEO HANDLERI SE SALJU OVIM REDOSLEDOM U QUEUE, KOJI ODGOVARA REDOSLEDU
+//SLEDECEG TRIGGERING-A EVENT-OVA
+//
+//          mousedown   -->     mouseup     -->     click
+
+
+//     POSTO JE SVAKO DUGME NUMERISANO, NJEGOVOM KARAKTERISTICNOM BROJ USE MOZE PRISTUPITI
+//              PUTEM           which           PROPERTIJA, ALI TO ZNAM I OD RANIJE
+//
+//POSTO SAM RANIJE REKAO DA     click          SE MOZE TRIGGEROVATI SAMO LEVIM DUGMETOM MISA, I POSTO SAM
+//REKAO DA                      contextmenu    MOZE TRIGGEROVATI SAMO DESNIM DUGMETOM
+//U CLANKU JE IZVEDEN ZAKLJUCAK DA ONDA NEMA SMISLA PRATITI which ZA TE KOMPLEKSNE EVENTOVE
+
+//ALI DRUGACIJA JE SITUCIJA TRACKING-OM which PROPERTIJA ZA     mousedown   I    mouseup         
+//JER SE ONI MOGU TRIGGEROVATI
+//KORISCENJEM SVA TRI DUGMETA MISA
+//                                  ev.which === 1          LEVO DUGME
+//                                  ev.which === 2          SREDNJE DUGME
+//                                  ev.which === 3          DESNO DUGME
+
+//KAZU DA JE SREDNJE DUGME EGZOTICNO I DA SE RETKO KORISTI
+
+        
+
+            //          MODIFIERS:           shift           alt         ctrl        meta
+
+//ZASTO SPOMINJEM TU DUGMAD, KOJA SU NA TASTATURI?
+
+//PA ZATO STO SVAKI MOUSE EVENT NOSI I INFORMACIJU, DA LI JE TOKOM TRIGGERING-A TIH EVENTOVA
+//BIO PRITISNUT I NEKI MODIFIER
+
+//TU INFORMACIJU NOSE SLEDECI PROPERTIJI    MouseEvent  INSTANCE:
+
+//      shiftKey        altKey      ctrlKey         metaKey (Cmd U SLUCAJU Mac-A)
+
+/* Pažnja: na Mac-u je obično Cmd umesto Ctrl
+Na Vindovs i Linuk postoje modifikacioni tasteri Alt, Shift i Ctrl. Na Mac-u postoji još jedan: 
+Cmd, odgovara               metaKey                 PROPERTIJU
+
+U većini slučajeva kada Vindovs / Linuk koristi Ctrl, na Mac-u ljudi koriste Cmd. Dakle, 
+kada korisnik Vindovs pritisne Ctrl + Enter ili Ctrl + A, Mac korisnik bi pritiskao 
+Cmd + Enter ili Cmd + A i tako dalje, većina aplikacija koristi Cmd umesto Ctrl.
+
+Dakle, ako želimo da podržimo kombinacije poput Ctrl + click, onda za Mac ima smisla koristiti 
+Cmd + klik. To je udobnije za Mac korisnike.
+
+Čak i ako želimo da primoramo Mac korisnike da pritisnu Ctrl + klik - to je malo teško. 
+Problem je: levi klik sa Ctrlom se tumači kao desnim klikom na Mac i generiše događaj contextmenu, 
+a ne klik na Vindovs / Linuk.
+
+Dakle, ako želimo da korisnici svih operativnih sistema budu ugodni, onda zajedno sa ctrlKei trebamo 
+koristiti metaKei.
+
+Za JS-kod to znači da treba proveriti SLEDECE               (event.ctrlKey || event.metaKey)
+*/
+/* Kombinacije tastature su dobre kao dodatak radnom toku. Tako da ako posetioc ima tastaturu - it works. 
+I ako vaš uređaj nema - onda postoji i drugi način da se to isto uradi.
+*/
+
+//URADICU I JEDAN PRIMER, U KOJEM CE UCESTVOVATI, NEKI OD POMENUTIH MODIFIER PROPERTIJA
+
+const html_dugme_blah = `
+    <button id="dugme_neko">Alt + Shift + Click Me!</button>
+`;
+
+dugme_neko.addEventListener('click', function(ev){
+    if(ev.altKey && ev.shiftKey){
+        console.log("Blah blah blah blah blah blah");
+    }
+});
+
+
+//          KOORDINATE:             clientX    clientY                  pageX     pageY
+//
+//  SVI MOUSE EVENTOVI IMAJU KORDINATE, KOJE DOLAZE SA DVA FLAVOURA
+//
+//     1)  RELATIVNE SA     Window:         clientX         clientY         
+//
+//     2)  RELATIVNE SA     Document:       pageX           pageY
+//
+//  MISLIM DA JE SUVISNO KOMENTARISANJE, O OVIM KOORDINATAMA, JER SAM SE SANJIMA SUSRETAO, RANIJE,
+//  POPRILICNO JE SUGESTIVNO  TO STO SAM NAVEE "U ODNOSU NA WINDOW I U ODNOSU NA DOCUMENT"
+  
+//GDE SE NALAZE KOORDINATNI POCECI U OBA SLUCAJA, POPRILICNO JE JASNO DA JE TO GORNJI LEVI UGAO
+//MEDJUTIM U JEDNOM SLUCAJU TAJ KOORINATNI POCETAK "SE POMERA", A U DRUGOM NE
+
+
+// NAIME, U SLUCAJU          clientX       I       clientY           KOORDINATNI POCETAK SE UVERK NALAZI
+// U GORNJEM LEVOM UGLU, I NIKAD SE NE POMERA
+//ODNOSNO, KOLIKO GOD DA SCROLL-UJEM STRANICU, ODNOSNO, MA KOJI DEO STRANICE, JA PREGLEDAO, MOCI CU
+//I AKO KLIKNEM NA      NEKI DEO TE STRANICE, DUZINE DO KOORDINATE KLIKE CE BITI MERENE OD NJEGA PA
+//DO GORNJE STRANE BRWOWSEROWOG WINDOW-A (Window    INSTANCE) (ODNOSNO TO JE window) PA DO MESTA KLIKA
+//I OD LEVE IVICE window-A, PA DO MESTA, ODNOSNO TACKE KLIKA
+
+//TAKAV SLUCAJ NIJE SA      pageX       I       pageY
+//JER TAMO, KOORDINATNI POCETAK NEMA VEZA SA Window-OM, VEC SA POCETKOM STRANICE, TAKO DA AKO MOJA
+//STRANICA JESTE POPRILICNO DUGACKA, I AKO SAM SCROLLOVAO POPRILICNO,   pageY   CE BITI JAKO VELIKI BROJ
+//JER PREDSTAVLJA RAZDALJINU IZMEDJU TRENUTNOG MESTA NA KOJE SAM KLIKNUO (NA PRIMER NEKI 58MI PARAGRAF)
+// I GORNJE IVICE MOJE STRANICE (MOJA STRANICA JE       document)
+//ISTO JE I U SLUCAJU     pageX       SAMO STO SE TU RADI O DUZINI IZMEDJU TACKE KLIKA ILEVE IVICE STRANE
+//AKO DOPUSTIM DA IMAM TAKVU STRANICU, ODNOSNO DA JE MOGUC I NJEN HORIZONTALNI SCROLL 
+//("DESICE SE DA KOORDINATNI POCETAK BUDE IZVAN MOG EKRANA")
+
+//A STA AKO IMAM iframe ELEMENT?
+//PA TADA SU KOORDINATE RELATIVNE SA TIM iframe-OM, A NE MOJOM STRANICOM (NARAVNO, DOK VRSIM "MOUSE
+//INTERAKCIJU" U TOM IFRAME ELEMENTU)
+
+//MOGU OPET KREIRATI JEDAN PRIMER
+
+const input_element_html = `
+    <input 
+        class="text_oblast" 
+        style="width: 580px; height: 348px;"
+        type="textarea"
+        value="Pomeraj kursor preko mene"
+    >
+`;
+
+document.querySelector('.text_oblast').addEventListener('mousemove', function(ev){
+    
+    const pageKoordinate = `x: ${ev.pageX}, y: ${ev.pageY}`;
+    const clientKoordinate = `x: ${ev.clientX}, y: ${ev.clientY}`;
+
+    const value = `
+    page coordinates: ${pageKoordinate}   ¤¤¤¤   client coordinates: ${clientKoordinate}
+    `;
+
+    ev.target.value = value;
+});
+
+//SADA POMERAJUCI KURSOR PREKO INPUT-A, MOGU VIDETI KAKO SE MENJAJU VREDNOSTI ZA KOORDINATE, U VREDNOSTI
+//INPUT ELEMENTA
+
+//OVO SAM SAMO DODAO DA NESTO DRUGO BUDE VREDNOST INPUTA, KADA KURSOROM IZADJEM IZ TEXTAREA-A
+document.querySelector('.text_oblast').addEventListener('mouseout', function(ev){
+    ev.target.value = "pomeraj kursor preko mene!"
+});
+
+
+/////NASTAVLJAM DFALJE TAKO STO CU RECI SLEDECE
+
+            //          KADA TRIGGERUJEM    dblclick    NA NEKOM TEKST, TAJ TEKST CE BITI SELEKTOVAN
+
+//POMENUTA STVAR MOZE BITI VEOMA DISTURBING; ODNOSNO AKO JA ZELIM DA "RUKUJEM PONASANJEM" EVENT-OVA, OVA
+//"EXTRA" SELEKCIJA NE IZGLEDA DOBRO
+//
+//KREIRACU PRIMER, JEDAN PRIMER GDE CE BITI POKAZANO TO SELEKTOVANJE, PA CU ZATIM POGLEDATI I NACINE
+//KAKO BIH MOGAO PREVAZICI TAKVU SITUACIJU
+
+const neki_b_tag = `
+    <b class="neki_b">Klikni me duplo</b>
+`;
+
+document.querySelector('.neki_b').addEventListener('dblclick', function(ev){
+    console.log('desio se double click');
+});
+
+//SADA, KADA DOUBLE KLIKNEM NA TEKST, ONA REC NA KOJU SAM KLIKNUO CE SE SELECTOVATI, I TO ZAJEDNO SA
+//WHITESPACE-OM, OKO NJE
+
+//POSTOJI CSS NACIN, KOJIM MOGU ZAUSTAVITI SELEKTOVANJE
+
+//TO SE, NAIME POSTIZE          user-select         CSS PROPERTIJEM, KADA MU DODELIM VREDNOST       none
+
+//POKAZACU I TO SLEDECIM PRIMEROM
+
+const htmlMogTeksta = `
+    <p>
+        Ovo je neki, podebljani
+        <b class="unselectable">Unselectable tekst</b>
+        , koji je poprilicno tekstualan
+    </p>
+`;
+
+const cssZaUnselectable = `
+    .unselectable {
+        -webkit-user-select: none;          /*POSTO GA VECINA BROWSERA PODRZAVA SA PREFIKSIMA*/
+        -moz-user-select: none;             /* DODAO SAM OVE PREFIKSE */
+        -ms-user-select: none;
+        user-select: none;
+    }
+`;
+
+//I UPALILO JE KADA DOUBLE KLIKNEM NA ONO STO OBUHVAT b; ZAISTA SE TEKST NIJE SELEKTOVAO
+
+//MEDJUTIM, OVO JE POTENCIJALNI PROBLEM, JER JE, POMENUTI TEKST, POSTAO TRULY UNSELECTABLE; NAKON STO
+//SELEKTUJEM CEO PARAGRAF VIDECU DA JE SVE IZ PARAGRAFA SELEKTOVANO, OSIM ONOGA STO OBUHVATA b ELEMENT
+//I KADA KOPIRAM TU SELEKCIJU, PA JE PROSLEDIM NA NEKO MESTO, VIDECU DA U ONOME STO JE PROSLEDJENO NECE
+//BITI ONO STO JE PRIPADALO b ELEMENTU; DAKLE, b JE POSTALO TRULY UNSELECTABLE
+
+//A DA LI STVARNO ZELI MDA BUDE TAKO?
+
+//NAIME, U VECINI SLUCAJEVA JA TO NE ZELIM; JER KORISNIK MOZE IMATI VALIDNE RAZLOGE DA PREKOPIRA MOJ
+//TEKST
+
+//TAKO DA PREDHODNO CSS RESENJE, I NIJE TAKO DOBRO RESENJE
+
+//DOBRO DA NASTAVIM SA TRAZENJEM BOLJEG RESENJA
+
+//NAIME, POMENUTO SELEKTOVANJE TEKSTA JESTE, DEFAULT BEHAVIOUR; ODNOSNO DEFAULT ACTION JEDNOG EVENT-A
+//A TO JE           mousedown
+
+        //MOZDA JE VAZNO DA PONOVO TESTIRAM mousedown EVENT I POGLEDAM DEFAULT AKCIJE, KOJE SE TADA
+        //EXECUTE-UJU
+                ////////////////////////////////////////////////////////////////////
+//  1)   DAKLE AKO PRITISNEM LEVI TASTER MISA TRIGGEROVAO SAM      mousedown       EVENT, I AKO NE PUSTIM,
+//POMENUTI TASTER, I AKO NASTAVIM DA POMERAM KURSOR VIDECU DA SE TEKST SELEKTUJE NA STRANICI;(DOBRO JE DA
+//UOCIM DA JE MOJE POMERANJE KURSORA, USTVARI mousemove EVENT)
+//TAKO DA MOGU DA ZAKLJUCIM DA JE OVO NEKI DEFAULT ACTION NASTAO KADA SAM VEZAO TRIGGEROVANJE 
+//      mousedown-A   I  TRIGGEROVANJE      mousemove-A  (BAR JA TAKO MISLIM)
+//ONO STO JA MISLIM, JESTE DA JE TO DEFAULT ACTION NASTAO USLED mousemove TRIGGERINGA
+
+//  2)  A AKO KRENEM SA DOUBLE KLIKOM; ODNOSNO AKO TRIGGERUJEM      mousedown   I PUSTIM (CIME SE 
+//TRIGERRUJE mouseup) PA NAKON NJEGA click, I AKO NE CEKAM DA PRODJE SEKUND I OPET KLIKNEM 
+// LEVI TASTER MISA, OPET CE SE TRIGGEROVATI   mousedown
+//U OVOM TRENUTKU IZVRSICE SE DEFAULT ACTION (POSLEDICA TOG DRUGOG mousedown EVENTA), CIME CE SE
+//SELEKTOVATI TRENUTNA REC NA KOJU SAM KLIKNUO (ZAJEDNO SA WHITESPACE-OM)
+//PUSTAM TASTER, I TADA JE TRIGGEROWAN mouseup, NAKON KOGA JE ODMAH TRIGGEROVAN   click, PA ONDA     
+//  dblclick
+
+//DAKLE, IMAM DVA SLUCAJA, U KOJIMA SE JAVLJA DEFAULT BEHAVIOUR; POSTO U PRVOM BAS NISAM SIGURAN, CIJI JE
+//TO DEFAULT BEHAVIOUR, ODRADICU JEDAN PRIMER
+
+//ALI POSLE OVOG PRIMERA URADICU I JEDAN ZA DRUGI SLUCAJ
+
+const neki_paragraf_html = `
+    <div class="neki_kontejner1" 
+    style="border: pink solid 2px; width: 380px; height: 180px; text-align: center; padding: 58px">    
+        <p>
+            This is ayohuasca dmt drink from the region of Amazon, and it solves mental problems.
+        </p>
+    </div>
+`;
+
+//ZASTO SAM GORNJI PARAGRAF STAVIO U PREVELIKI CONTAINER ELEMENT I CENTRIRAO GA NA SREDINU, POSTACE MI
+//JASNO KASNIJE KADA BUDEM VRSIO TRIGGERING     mousedown-A     I      mouseover-A
+
+const nekiKontejner1 = document.querySelector('.neki_kontejner1');
+
+//KACIM HANDLER NA PARAGRAF, ZA SLUCAJ      mousedown       EVENT-A
+
+nekiKontejner1.querySelector('p').addEventListener('mousedown', function(ev){
+    console.log('mousedown TRRIGERED');
+});
+
+nekiKontejner1.addEventListener('mousemove', function(ev){
+    console.log('mousemove TRRIGERED');
+    ev.preventDefault();
+
+    console.log(ev.bubbles);
+});
+
+//STA CE SE SADA DOGODITI KADA  TRIGGERUJEM  mousedown NA TEKSTU PARAGRAFA (ALI NE SMEM DA PUSTIM TASTER
+//DAKLE NE SMEM DA TRIGGER-UJEM mouseup); I POCINJEM POMERANJE KURSORA, PRVO PREKO PARAGRAFA, PA PREKO
+//NJEGOVOG CONTAINERA; I ZAISTA PRI TOME SE NIJE DOGODIO DEFAULT ACTION, ODNOSNO, NIJE SE IZVRSILA
+//SELEKCIJA TEKSTA; MEDJUTIM POSTO JA I DALJE POMERAM MIS, I IZLAZIM I PREKO GRANICA KONTEJNERA
+
+//CIM SAM IZASAO IZ GRANICA KONTEJNERA TEKST SE SELEKTOVAO OD ONOG MESTA GDE SAM POCEO  mouseover
+//DAKLE U CONTAINERU BIO JE SPRECEN DEFAULT ACTION      mouseover EVENT-A; A POSTO SE OVAJ EVENT ZAISTA
+//RAZMNOZAVA (PROPAGATE), NJEGOV DEFAULT BEHAVIOUR JE SPRECEN I KADA STIZE DO PARAGRAFA
+
+//MEDJUTIM IZVAN CONTAINERA, TRIGGEROVAN JE mouseover  EVENT, KOJI SE NE RAZMNOZAVA DO, 
+//POMENUTOG KONTEJNERA (U KOJEM JE PARAGRAF), CIJI DEFAULT
+//BEHAVIOUR NIJE SPRECEN (NEMA KONTEJNERA, ZA KOJI JE SPRECEN DEFAULT ACTION)
+//I ZATO, POSTO PRE PRELASKA GRANICE, NISAM PUSTIO TASTER MISA, TEKST JE 
+//SELEKTOVAN I AKO SADA PUSTIM TASTER MISA, TEKST CE OSTATI SELEKTOVAN
+
+//DOBRO, POSTO SAM SAZNAO DA JE U OVOM SLUCAJU DEFAULT BEHAVIO DOSAO OD mouseover-A
+//POZABAVICU SE POMENUTIM DRUGIM SLUCAJEM U KOJEM JE EVIDENTNO DA PRILIKOM DOUBLE KLIKA NA
+//TEKST, ONAJ DRUGI PO REDU         mousedown       IZAZIVA DEFAULT ACTION, KOJIM SE SELEKTUJE
+//REC I WHITESPACE OKO NJE
+
+//DAKLE, KREIRAM NOVI PRIMER, NOVI PARAGRAF, I U NJEMU NESTED NOVI b ELEMENT
+
+const html_paragraf2 = `
+    <p class="neki-paragraf2">
+        Ovo je neki tekst o necemu, opisuje kako ovo i ono
+        <b>Klikni na neku od podebljanih reci</b>
+        Jer bo se bum se i tulumbe blah
+    </p>
+`;
+
+const noviParagraf2 = document.querySelector('.neki-paragraf2');
+
+//ZAKACICU HANDLER NA PARAGRAF (ZA SLUCAJ dblclik EVENT-A)
+
+noviParagraf2.addEventListener('dblclick', function(ev){
+    console.log('DUPLI KLIK SE DESIO');
+});
+
+//SADA CU ZAKACITI HANDLER NA b ELEMENT (ZA SLUCAJ   mousedown   EVENT-A);
+//A U OBIMU TOG HANDLERA CU SPRECITI DEFAULT ACTION KOJI mousedown IZAZIVA
+
+noviParagraf2.querySelector('b').addEventListener('mousedown', function(ev){
+    console.log('mousedown TRIGGEROVAN');
+    ev.preventDefault();
+});
+
+//ITERPRETIRACU STA SE DOGODILO TOKOM DUPLOG KLIKA
+//PRVO JE TRIGGER-OVAN  mousedown (NA KOJEM JE PRIMENJENA preventDefault METODA, ALI TAJ mousedown MI 
+//NIJE BITAN); ZATIM SE TRIGGEROVAO mouseup, PA click, PA SE NAKON TOGA TRIGGEROVAO NOVI mousedown EVENT,
+//CIJI DEFAULT ACTION JESTE SPRECEN, STO MI JESTE BITNO, ODNOSNO, SPRECENO JE DA SE SELEKTUJE TEKST b
+//ELEMENTA; I ONO STO CE DALJE BITI TRIGGEROVANO MI NIJE VISE BITNO ZA OVAJ PRIMER
+
+//DAKLE SADA SAM PUSTIO TASTERE; I UDAHNUCU I IZDAHNUTI NA PAR SEKUNDI
+
+//ZATIM CU URADITI JOS NESTO, I MISLIM DA CE MI OVO BITI BITNO
+//TRIGGEROVACU mousedown NA TEKSTU, PA CU POKUSATI DA GA PREVUCEM, ODNOSNO TRIGGEROVACU I mousemove 
+//TEKST SE NECE PREVUCI MA GDE POMERAO KURSOR MISA, IZVAN b ELEMENTA, NISTA NECE OMOGUCITI NJEGOV SELECT
+
+//OVO ZNACI DA SAM JA PREVENTUJUCI DEFAULT PONASANJE mousedown-A, SPRECIO, I ONO STO BIH SPRECIO DA SAM
+//PREVENTOVAO DEFAULT ACTION    mousemove-A (A ZNAM DA U OVOM PRIMERU NISAM PREVENTOVAO DEFAULT ACTION
+//MOUSEMOVE-A)
+
+//OVO ME DOVODI NA SLEDECI ZAKLJUCAK
+
+        //PRILIKOM TRIGGERINGA NA TEKSTU     mousedown   NAKON KOJEG SLEDI      mousemove
+        //IZAZIVAJU DEFAULT ACTION SELEKTOVANJA TEKSTA
+        //BILO NA KOJEM OD NJIH DA PRIMENIM preventDefault, SPRECIO SAM DEFAULT PONASANJE BROWSER-A
+
+        //ALI AKO SE DOGADJA KOMPLEKSNI EVENT, A TO JE dblclick, TADA SAMO IMA SMISLA DA SE SPRECI
+        //DEFAULT ACTION mousedown EVENTA (U OVOM SLUCAJU NEMA TRIGGERINGA mousemove-A, STO MISLIM DA
+        //JE SASVIM JASNO)
+
+//MEDJUTIM
+//SADA CU TRIGGEROVATI mousedown NA DELU TEKSTA PARAGRAFA, KOJI NE PRIPADA b ELEMENTU, TRIGGEROVACU
+//      mousemove       EVENT POMERANJEM KURSORA; KOJI CU POMERITI I PREKO TEKSTA b ELEMENTA, I GLE
+//"CUDA", PORED TOGA STO SE SELEKTOVAO I DEO PARAGRAFA, KOJI NE PRIPADA b, SELEKTOVALO SE I ONOLIKO
+// TEKSTA b ELEMENTA, DA KOJEG SAM STIGAO KURSOROM
+
+//ZASTO SE OVO DOGODILO?
+
+//PA mousedown JE TRIGGEROVAN TAMO GDE NIJE SPRECEN NJEGOV DEFAULT ACTION, I DALJIM TRIGGERINGOM
+//mousemove EVENTA, PREKO ONOG ELEMENTA, GDE TAKODJE NIJE SPRECEN DEFAULT ACTION, DOGODIO SE POMENUTI
+//DEFAULT ACTION
+
+//POKUSACU DA SPRECIM I TO TAKO STO CU PRIMENITI preventDefault METODU NAD mousemove EVENT-OM, KOJI SE 
+// TRIGGER-UJE NA b ELEMENTU
+
+noviParagraf2.querySelector('b').addEventListener('mousemove', function(ev){
+    console.log("MOVING ACROSS b");
+    ev.preventDefault();
+});
+
+//OVO NIJE IMALO SMISLA; ODNOSNO TEKST SE IDALJE SELKTUJE KADA TRIGGERUJEM mousedown IZVAN b,
+//PA KADA TRIGGERUJEM  mouseover , I NASTAVIM NJEGOVO TRIGGEROVANJE I PREKO b, TEKST b-A, CE SE OPET
+//SELEKTOVATI
+
+//ZASTO TO?
+
+//PA PO MOM MISLJENJU ZATO STO JE SPRECAVANJE DEFAULT ACTIONA, JEDINO MOGUCE KADA SE NA ISTOM 
+// ELEMENTU TRIGGERUJE PRVO mousedown PA mousemove
+
+//MORAM OVO DODATNO ISPITATI; ILI JE PREDHODNA RECENICA SASVIM DOVOLJNO OBJASNJEJE, U SLUCAJU OVAKVE
+// SITUACIJE; NISAM SIGURAN
+
+//MOZDA ZATO STO U OVOM SLUCAJU NISAM IMAO PROPAGATION mousedown NA ELEMENTU, NA KOJEM JE POSTOJAO
+//PROPAGATION mouseover-A
+
+//ISPITACU OVO IPAK DODATNO, JER MISLIM DA MI NESTO PROMICE U OVOM SLUCAJU
+
+//NAIME, SDA CU POKAZATI JOS DVE STVARI; A TO SU
+
+                //SPRECAVANJE SAME SELEKCIJE, POST-FACTUM (NAKON STO SE SELEKCIJA DOGODILA)
+                //ILI UPROSTENO RECENO, VRACANJE SELEKCIJE NA NULTU TACKU
+
+                //SPRECAVANJE KOPIRANJA TEKSTA
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -8134,4 +8539,19 @@ if(nekiHolder){
 }
 
 
+/* 
+let keyEventBlah;
 
+document.addEventListener('keydown', function(ev){
+    keyEventBlah = ev;
+    console.log(keyEventBlah);
+});
+
+document.addEventListener('click', function(ev){
+    console.log("broj dugmeta", ev.which);
+});
+
+document.addEventListener('contextmenu', function(ev){
+    console.log("broj dugmeta", ev.which);
+});
+ */

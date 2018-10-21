@@ -326,4 +326,9 @@ some-practice-element {
     box-shadow: 2px 3px 2px rgba(0, 0, 0, .4);
 }
 
-
+.unselectable {
+    -webkit-user-select: none;          /*UZEO SAM U OBZIR SVE VRSTE BROWSER-A*/
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
