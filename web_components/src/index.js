@@ -7641,11 +7641,11 @@ noviParagraf2.querySelector('b').addEventListener('mousedown', function(ev){
 
 noviParagraf2.querySelector('b').addEventListener('mousemove', function(ev){
     console.log("MOVING ACROSS b");
-    ev.preventDefault();
+    ev.preventDefault();            //NEMA NIKAKVOG EFEKTA
 });
 
 //OVO NIJE IMALO SMISLA; ODNOSNO TEKST SE IDALJE SELKTUJE KADA TRIGGERUJEM mousedown IZVAN b,
-//PA KADA TRIGGERUJEM  mouseover , I NASTAVIM NJEGOVO TRIGGEROVANJE I PREKO b, TEKST b-A, CE SE OPET
+//PA KADA TRIGGERUJEM  mousemove, I NASTAVIM NJEGOVO TRIGGEROVANJE I PREKO b, TEKST b-A, CE SE OPET
 //SELEKTOVATI
 
 //ZASTO TO?
@@ -7657,22 +7657,265 @@ noviParagraf2.querySelector('b').addEventListener('mousemove', function(ev){
 // SITUACIJE; NISAM SIGURAN
 
 //MOZDA ZATO STO U OVOM SLUCAJU NISAM IMAO PROPAGATION mousedown NA ELEMENTU, NA KOJEM JE POSTOJAO
-//PROPAGATION mouseover-A
+//PROPAGATION mousemove-A
 
 //ISPITACU OVO IPAK DODATNO, JER MISLIM DA MI NESTO PROMICE U OVOM SLUCAJU
 
-//NAIME, SDA CU POKAZATI JOS DVE STVARI; A TO SU
+//NAIME, SADA CU POKAZATI JOS DVE STVARI; A TO SU
 
                 //SPRECAVANJE SAME SELEKCIJE, POST-FACTUM (NAKON STO SE SELEKCIJA DOGODILA)
                 //ILI UPROSTENO RECENO, VRACANJE SELEKCIJE NA NULTU TACKU
 
                 //SPRECAVANJE KOPIRANJA TEKSTA
 
+//OPET CU KREIRATI NOVI PRIMER, KOJI CE SE SASTOJATI OD JEDNOG PARAGRAFA, JEDNOG NESTED b 
+//ELEMENATA U TOM PARAGRAFU; I JEDNOG NESTED i ELEMENTA U TOM PARAGRAFU
+
+const nekiParagraf_markup = `
+    <div style="border: pink solid 2px; padding: 38px;">
+        Ovo je neki tekst pre paragrafa.
+        <p class="paragraf_elem">
+            Ovo je, neki tekst paragrafa, koji je sastavljen od reci i sledi neki
+            <b>tekst, koji je veoma podebljan</b>,
+            a nakon pomenutog teksta, seledi jedan tekst,
+            <i>koji je, iznimno italijanski namesten</i>,
+            i koji objasnjava, ama bas nista.
+        </p>
+        A ovo je neki tekst posle paragrafa.
+    </div>
+`;
+
+//TEK CE MI KASNIJE BITI JASNO, ZASTO SAM U OVOM SLUCAJU DEFINISAO, DA PARAGRAF BUDE U JEDNOM
+//KONTEJNERU, U KOJEM SU MU SIBLINGS-I NEKI TEXT NODE ELEMENTI (ALI IPAK KADA SAM VIDEO REZULTATE
+//NA KRAJU PRIMERA, SHVATIO SAM DA JE OVO BILO SUVISNO)
+
+const paragraf_Element = document.querySelector('.paragraf_elem');
+
+//PRE NEGO STO SE POZABAVIM KAKO TO DA POST-FACTUM "NEUTRALIZUJEM" SELEKCIJU, MORAM RECI STA CU TOM
+//PRILIKOM KORISTITI
+
+//NAIME U TOM SLUCAJU SE KORISTI        window.getSelection       METODA, CIJA POVRATNA VREDNOST JESTE
+//      Selection       INSTANCA
+
+//POMENUTA INSTANCA IMA SVE PODATKE, O ONOME STA JE TRENUTNO SELEKTOVANO NA STRANICI
+//I DAJE MNOGO INFORMACIJA O TOME U KOM JE ELEMENTU POCELA SELEKCIJA, ODNOSNO REFERENCIRA
+//ELEMENT U KOJEM JE POCELA SELEKCIJA (anchorNode), ZATIM ONAJ U KOJEM SE ZAVRSILA SELEKCIJA (focusNode)
+//ZA OSTALE PROPERTIJE NEKI KAZU DA SU DUPLIKATI (ODNOSNO REFERENCIRAJU OVE, ISTE NODE-OVE)
+//ODNOSNO ZBOG NAMINGA, KOJI JE BIO RAZLICIT OD BROWSERA DO BROWSERA, U ODREDJENIM BROWSER-IMA JE
+//ZADRZANI I ADDITIONAL PROPERTIJI...
+
+// A user may make a selection from left to right (in document order) or right to left 
+// (reverse of document order). The anchor is where the user began the selection and the focus 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+//MEDJUTIM NECU ULAZITI DUBOKO U OBJASNJAVANE OVOG OBJEKTA, JER BI SE TEK TREBAO SA NJIM UPOZNATI
+//PRECIZNIJE, AKO ZA TO BUDE BILO POTREBE
 
+//JEDINO CU DODATI, DA Selection INSTANCA IMA MOGUCNOST DA SE ONO STO JE SELEKTOVANO, NEPRECIZNO RECENO:
+//UNSELECT-UJE; I ZA TO SE KORISTI METODA:
+                                          //      removeAllRanges   
+                                          //POSTOJI I METODA        removeRange A TU SE MORAJU UNOSITI                     
+                                                                    //    PARAMETRI (ALI O SVEMU TOME CU
+                                                                    //  ONDA KADA SE NEKAD BUDEM BAVIO
+                                                                    //  POMENUTOM   Selection INSTANCOM)
+//JOS JEDNA DIGRESIJA:
+        //NE MORA SAMO TEKST BITI SELEKTOVAN NA STRANICI, U TO SE UBRAJAJU I ELEMENT
+                            //ALI MENE U OVOM SLUCAJU SAMO ZANIMA TEKST
+
+//DEFINISACU DA SE TAKVA INSTANCA STAMPA, U SLUCAJU TRIGGERINGA mouseup EVENTA; A ZASTO SAM IZABRAO TAJ
+//EVENT JESTE PROSTO JE PUSTANJEM DUGMETA MISA IMACU SELEKCIJU, PA CU U KONZOLI PRISTUPITI OBJEKTU
+//I VIDETI NJEGOVE POSTAVKE (ALI NECU SE BAVITI SA TIM VREDNOSTIMA OVDE, NAIME SAMO CU IH PREGLEDATI
+//I MOZDA MALO PORAZMISLITI NA STA SE ODNOSE ODREDJENE VREDNOSTI)
+
+//ONO STO JOS NISAM REKA OJESTE DA OVAJ OBJEKAT IMA I INFORMACIJU O TACNOJ POZICIJI CARET-A
+
+paragraf_Element.addEventListener('mouseup', function(ev){
+    console.log(        window.getSelection()     );
+});
+
+//KADA SAM TO URADIO, MOGU ZANEMARITI, OVAJ PREDHODNI CODE, I NASTAVITI DALJE
+
+//SADA CU DEFINISATI DA SE ZAUSTAVI SELEKTOVANJE (POST-FACTUM, KAO STO SAM PROCITAO U CLANKU)
+
+//TO CU URADITI PRVO U SLUCAJU      mousemove EVENTA; NA b ELEMNTU, KOJI JE NESTED U PARAGRAFU
+//TO MI ZVUCI POTPUNO LOGICNO, JER KADA SE POMERA KURSOR (PRE TOGA SE NARAVNO mousedown TRIGGERUJE),
+// mousemove SE TRIGGERUJE, A KAO DEFAULT ACTIO DOGADJA SE SLEKETOVANJE
+
+//ALI OVOG PUTA SE NE MORA VODITI RACUNA GDE CE SE TRIGGEROVATI   mousedown  (IZ VEC POMENUTIH RAZLOGA)
+
+paragraf_Element.querySelector('b').addEventListener('mousemove', function(ev){
+    const selekcija = window.getSelection();
+    
+    console.log(selekcija);
+    
+    selekcija.removeAllRanges();
+});
+
+//DAKLE, 'SKIDANJE', SELEKCIJE ZAVISI OD RIGGEROVANJA mousemove EVENTA NA b ELEMENTU; I MA GDE JE POCELA
+//SELEKCIJA, KADA KURSOR NAIDJE NA b ELEMENT (NJEGOV TEKST); SVA SELEKCIJA SE "PONISTAVA" 
+
+//MEDJUTIM, SELEKCIJA JE I DALJE MOGUCA, ALI KAO DEFAULT ACTION, O KOJEM SAM VEC GOVORIO, A TAJ ACTION
+//JESTE SELEKCIJA, KOJA SE DOGADJA NAKON TRIGGER-OVANJA DRUGOG mousedown EVENTA; TOKOM DOUBLE CLICK-A
+
+//MEDJUTIM , I TA SELEKCIJA CE BITI REMOVED KADA POMERIM KUSRSOR DALJE (OPET TRIGGERING mousemove-A)
+//ALI POSTO JA NE ZELIM NIKAKVU SELEKCIJ KOJA BI SE DOGODILA NA b ELEMENTU; JA CU ONDA DODATI JOS JEDAN
+//HANDLER
+
+//I TO GA KACIM, ZA SLUCAJ dblclick EVENTA; I U OBIMU HANDLERA DEFINISEM REMOVING SELECTIONA
+//ZASTO TAD?
+//PA OPET CU DATI OBJASNJENJE 
+//DAKLE KROZ DOUBLE CLICK IMAM SLEDECA TRIGGEROVANJA
+
+//  mousedown - mauseup - click -  mousedown - (DEFAULT ACTION: SELEKCIJA) -  mouseup - click - dblclick
+
+//I SADA KAD POSMATRAM OVO TRIGGEROVANJE, VIDIM DA SAMO IMA SMISLA DA SE SLUSA ZA   dblclick-OM; I DA SE 
+//NAKON NJEGOVOG TRIGGERING-A UKLONI TA SELEKCIJA (POST-FACTUM) (DAKLE TO JE JEDINI NACIN DA SE UKLONI
+//TA SELEKCIJA, NASTALA KAO DEFAULT ACTION, NAKON DRUGOG   mousedown-A)
+
+//                  paragraf_Element.querySelector('b').addEventListener('dblclick', function(ev){
+//                      window.getSelection().removeAllRanges();
+//                  });
+
+//MEDJUTIM, MISLIM DA SAM POGRESIO; NISAM BAS POGRESIO NEGO SAM MOGAO DA SELEKCIJU UKLONIM I PRE
+//ODNOSNO NAKON TRIGGER-OVANJA          mouseup     EVENTA
+
+//SADA, KADA SE SELEKTUJE REC, KADA IZVRSIM DOUBLE CLICK, VIDECU ODMAH I UKLANJANJE TE SELEKCIJE
+
+//MEDJUTIM, POSTOJI JOS JEDAN DEFAULT ACTION, KOJI KAO REZULTAT IMA SELEKTOVANJE CELOG TEKSTA
+//TAJ DEFAULT ACTION SE DOGADJA, KAO POSLEDICA TRIGGERING-A, mosedown EVENTA, ALI ONOG mousedown EVENTA,
+//TRIGGEROVANOG ODMAH NAKON TRIGGEROVANJA dblclick
+//POKUSACU DA POST-FACTUM UKLONIM SELEKCIJI I U SLUCAJU TOG EVENT-A
+//MEDJUTIM POGRESIO BIH KADA BIH SELEKCIJU UKLANJAO ZA SLUCAJ       mousedown EVENTA
+//JER KAO STO KAZEM         SELEKCIJA SE DOGODILA KAO DEFAULT ACTION NAKON TRIGGERA  mousedown-A
+
+//JER SE DEFAULT ACTION DOGADJA NAKOM MOUSEDOWN-A; STO BI ZNACILO DA UKLANJAM NESTO CEGA NEMA
+//I ONDA BI SE TO (SELEKCIJA) DOGODILO, A NE BI BILO NISTA DEFINISANO DA GA UKLONI
+
+//JOS CU JEDNOM STVORITI NEKU LISTU EVENT-OVA I DEFAULT AKCIJA, KOJE SE DESAVAJU TOKOM DOUBLE KLIKA, I 
+//KLIKOVA POSLE DOUBLE KLIKA
+
+//  mousedown - mauseup - click -  mousedown - (DEFAULT ACTION: SELEKCIJA) -  mouseup - click - dblclick -
+//  - mousedown (DEFAULT ACTION: SELEKCIJA, CELOKUPNOG TEKSTA PARAGRAFA)
+// I SADA KADA PUSTIM MIS, JASNI JE DA CE BITI TRIGGERED            mouseup     EVENT
+
+//DAKLE, NE VIDIM NI JEDAN RAZLOG ZASTO NE BIH MOGAO DA DEFINISEM DA SE UKLONI SELEKCIJA (NASTALA
+//KAO DEFAULT ACTION NAKON TRIGGERING-A mousedown-A (TRECEG PO REDU TOKOM "TRIPPLE KLIKA")) (ALI I ONA 
+//SELEKCIJA NASTALA NAKON TRIGGERINGA DRUGOG mousedown-A); TAKO STO BIH DEFINISAO UKLANJANJE SELEKCIJE
+//NAKON TRIGGERING-A,   mouseup     EVENT-A
+
+paragraf_Element.querySelector('b').addEventListener('mouseup', function(ev){
+    window.getSelection().removeAllRanges();
+});
+
+//I ZAISTA, SADA, TOKOM "TRIPPLE CLICK-A", TOKOM PUSTANJA TASTERA MISA, PO TRECI PUT, VIDECU UKLANJANJE
+//SELEKCIJE, SA CELOG PARAGRAFA
+//A ONO GORNJE KACENJE HANDLERA (U KOJEM UKLANJAM SELEKCIJU) (HANDLER JE ZA SLUCAJ   dblclick-A   )
+//MISLIM DA JE SUVISNO, I ZATO SAM GA COMMENT - OUT, KOKO NE BI VAZILO
+//JER UKLANJANJE SELEKCIJE PO    mouseup-U, RESAVA SVE PROBLEME, VEZANE ZA SELEKTOVANJE TEKSTA
+
+//SADA CU SE POZABAVITI, SA ONIM STO SAM I REKAO DA CU SE POZABAVITI, A TO JE
+                    //PREVENTING, ODNOSNO SPRECAVANJE KOPIRANJA TEKSTA
+
+                    //U TOM SLUCAJU MORAM KORISTITI         copy        EVENT
+
+                    //A DEFAULT ACTION, KOJI NASTAJE, KAO NJEGOVA POSLEDICA JESTE KOPIRANJE SELEKCIJE U
+                    //CLIPBOARD
+
+//POSTO JE REC O DEFAULT PONASANJU, SAVRSENO MI JE JASNO KAKO MOGU DA SPRECIM TAJ DEFAULT ACTION
+
+//POTREBNO JE DODATI DA SE EVENTOVI, CIJI SU TIPOVI     'copy'   'cut'   'paste'    MOGU INSTANTICIRATI
+//KORISCENJEM       ClipboardEvent      KONSTRUKTORA
+
+//NAIME, UZ POMOC POMENUTIH EVENTOVA, MOZE SE PODESAVATI, STA SE SALJE U CLIPBOARD, ALI JA NECU SAD O TOME
+//JER O TOME MOGU PROCITATI NA MDN WEB STRANICI https://developer.mozilla.org/en-US/docs/Web/Events/copy
+//A SADA DA SE POZABAVIM PREVENTING-OM, KOPIRANJA
+
+//POSTO VEC IMAM i ELEMENT U PRIMERU, DEFINISACU SPRECAVANJE KOPIRANJA TEKSTA, TOG ELEMENTA
+
+paragraf_Element.querySelector('i').addEventListener('copy', function(ev){
+    ev.preventDefault();
+});
+
+//AKO SELEKTUJEM SAMO TEKST KOJI JE OBUHVACEN OD i; I AKO OTVORIM CONTEXTMENU, I TAMO IZABEREM COPY
+//ILI AKO NAKON SELEKCIJE TEKSTA PRITISNEM SLEDECE      ctrl+C     ; TEKST NECE OTICI U CLIPBOARD
+//ALI AKO SELEKTOVANJE POCNEM IZVAN  i ELEMENTA, ON CE BITI KOPIRAN U CLIPBOARD, ZAJEDNO SA DRUGIM TEKSTOM
+//NA KOJEM JE POCELA SELEKCIJA
+
+
+//SADA CU ODRADITI, JEDAN PRIMER
+
+//LISTA CIJI ELEMENTI SE NE MOGU SELEKTOVATI (NECU KORISTITI CSS (user-select))
+//KLIKOM NA JEDAN DODAJE MU SE POZADINA, A KLIKOM NA DRUGI DRUGOM SE DODAJE POZADINA, A ONOM 
+//PREDHODNO KLIKNUTOM SE ODUZIMA
+//AKO PRITISNEM ctrl + KLIK (ILI Cmd + KLIK, ZA MACK) MOGUCE JE SELEKCIJA VISE LIST ITEMA
+//I AKO OPET ODLUCIM DA KLIKNEM NA JEDAN ELEMENT (BEZ Cmd-A ILI Ctrl-A), SAMO SE ON SELEKTUJE
+
+const html_selectable_liste = `
+    <div id="selectable_list">
+        izaberi neku opciju:
+        <ul>
+            <li>Stavros Halkias</li>
+            <li>Adam Friedland</li>
+            <li>Nick Mullen</li>
+            <li>Tim Dillon</li>
+            <li>Ian Findace</li>
+            <li>Louis J. Gomez</li>
+        </ul>
+    </div>
+`;
+
+const css_za_selectable_list = `
+    .selected_option {
+        background-color: pink;
+    }
+
+    #selectable_list ul li:hover {
+        cursor: pointer;
+    }
+`;
+
+let selectedItems = [];
+
+selectable_list.querySelector('ul').addEventListener('mousedown', function(ev){
+    const target = ev.target;
+
+    if(target.nodeName === 'LI'){
+       ev.preventDefault(); 
+    }else{
+        return;
+    }
+
+    console.log(ev.ctrlKey, ev.metaKey);
+
+    const isCtrlOrMetaPressed = ev.ctrlKey || ev.metaKey?true:false;
+
+    if(target instanceof HTMLLIElement && isCtrlOrMetaPressed){
+        target.classList.add('selected_option');
+        selectedItems.push(target);
+    }
+
+
+    if(target instanceof HTMLLIElement && !isCtrlOrMetaPressed){
+
+        if(selectedItems.length){
+            for(let item of selectedItems){    
+                item.classList.remove('selected_option');
+            }
+            selectedItems = [];
+        }
+
+        target.classList.add('selected_option');
+        selectedItems.push(target);
+    }
+    
+});
+
+
+//MOJ PRIMER FUNKCIONISE KAKO TREBA, ALI MU TREBA, NEKI REFACTORING, ALI TAKODJE MISLIM DA MOZDA IMAM;
+//NEPOTREBAN PUSHING U NIZ, NIZ KOJI SM TREBAO KORISTITI JESTE MOZDA, ONAJ KOJI BI BIO POVRATNA VREDNOST
+//      querySelectorAll('li')
+//MOZDA CU IPAK REFAKTORISATI, OVAJ CODE (I SMANJITI BROJ USLOVNIH IZJAVA ILI UKLONITI NEPOTREBNE USLOVE
+//IZ USLOVNIH IZJAVA)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -8555,3 +8798,19 @@ document.addEventListener('contextmenu', function(ev){
     console.log("broj dugmeta", ev.which);
 });
  */
+
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////////// 
+//JOS JEDNA PROVERA KOJA POKAZUJE DA SE NAKON mousedown-A N INPUT DOGADJA FOCUS KAO DEFAULT 
+    //BEHAVIOUR
+document.querySelector('input[name=neki_unos]').addEventListener('mousedown', function(ev){
+    ev.preventDefault();
+});
+
+document.querySelector('input[name=neki_unos]').addEventListener('focus', function(ev){
+    
+    console.log("FOCUSED!");
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+

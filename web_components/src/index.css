@@ -332,3 +332,11 @@ some-practice-element {
     -ms-user-select: none;
     user-select: none;
 }
+
+#selectable_list ul li:hover {
+    cursor: pointer;
+}
+
+.selected_option {
+    background-color: pink;
+}
