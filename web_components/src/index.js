@@ -7916,6 +7916,68 @@ selectable_list.querySelector('ul').addEventListener('mousedown', function(ev){
 //      querySelectorAll('li')
 //MOZDA CU IPAK REFAKTORISATI, OVAJ CODE (I SMANJITI BROJ USLOVNIH IZJAVA ILI UKLONITI NEPOTREBNE USLOVE
 //IZ USLOVNIH IZJAVA)
+//DAKLE PONOVO RADIM ISTI PRIMER, ALI ZELIM DA MI CODE BUDE BOLJI
+
+const html_selectable_liste2 = `
+    <div id="selectable_list2">
+        izaberi neku opciju:
+        <ul>
+            <li>Stavros Halkias</li>
+            <li>Adam Friedland</li>
+            <li>Nick Mullen</li>
+            <li>Tim Dillon</li>
+            <li>Ian Findace</li>
+            <li>Louis J. Gomez</li>
+        </ul>
+    </div>
+`;
+
+const css_za_selectable_list2 = `
+    .selected_option {
+        background-color: pink;
+    }
+
+    #selectable_list2 ul li:hover {
+        cursor: pointer;
+    }
+`;
+
+
+selectable_list2.querySelector('ul').addEventListener('mousedown', function(ev){
+    
+    if(ev.target.nodeName === 'LI'){
+       ev.preventDefault(); 
+    }else{
+        return;
+    }
+
+    const target = ev.target;
+    const isCtrlOrMetaPressed = ev.ctrlKey || ev.metaKey?true:false;
+
+    if(isCtrlOrMetaPressed){
+        target.classList.add('selected_option');
+        selectedItems.push(target);
+    }else{
+        
+        for(let item of target.closest('ul').querySelectorAll('li')){    
+            item.classList.remove('selected_option');
+        }
+
+        target.classList.add('selected_option');
+        selectedItems.push(target);
+    }
+    
+});
+
+//A NA OVOJ STRANICI, MOGU VIDETI, JOS JEDAN NACIN, KOJI JE ORIGINALNI (ODNOSNO KOJI JE BIO SA CLANKOM
+//KOJI SAM CITAO)       http://plnkr.co/edit/Ube5FsM6H0aq3Fjo3iRZ?p=preview
+
+//U CLANKU, JE UPRAVO ONAJ DEO SA PETLJOM BIO U OBIMU, ODVOJENE FUNKCIJE, DOK SAM JA SVE RADIO U HANDLERU
+//ISTO TAKO U PRIMERU SU KORISCENA DVA EVENT-A; ODNOSNO DVA EVENT HANDLERA ZA SLUCAJ DVA MouseEvent-A
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//SADA CU SE UPOZNATI SA DRUGOM VRSTOM EVETOVA
+///OVO SU EVENT
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

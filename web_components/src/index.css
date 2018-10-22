@@ -337,6 +337,10 @@ some-practice-element {
     cursor: pointer;
 }
 
+#selectable_list2 ul li:hover {
+    cursor: pointer;
+}
+
 .selected_option {
     background-color: pink;
 }
