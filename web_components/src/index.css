@@ -344,3 +344,100 @@ some-practice-element {
 .selected_option {
     background-color: pink;
 }
+
+#smajli_kontejner {
+    box-sizing: border-box;   /* OVAJ PROPERTI NIJE PODRZAN U IE6 IE7 */
+    border: 1px solid pink;
+    width: 420px;
+    padding: 10px;
+    
+}
+
+#log {
+    width: 362px;
+    height: 280px;
+    display: block;
+    margin-left: 18px;
+}
+
+[class^=smile-] {           /* KAZU DA SU ATTRIBUTE SELEKTORI SA ^ SPORI*/
+    display: inline-block;
+    width: 110px;
+    height: 110px;
+    border-radius: 55px;
+    border-width: 8px;
+    border-style: solid;
+    margin-bottom: 25px;
+    margin-right: 12px;
+    margin-left: 8px;
+    text-align: center;
+    
+    
+    border-color: pink;
+}
+
+[class^="oko"] {                  /* POKUSAVAM DA SE PODSETIM I NEKIH DRUGIH ATTRIBUTE SELEKTORA */                     
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 5px;
+    margin-top: 28px;
+    margin-left:8px;
+    margin-right: 8px;
+
+    background-color: pink;
+}
+
+.usta {
+    display: block;
+    width: 38px;
+    height: 10px;
+    margin: 18px auto;
+
+    background-color: pink;
+}
+
+#smajli_kontejner div:nth-child(1) .usta{
+    border-bottom-left-radius: 608px;
+    border-bottom-right-radius: 608px;
+}
+#smajli_kontejner div:nth-child(2) .usta{
+    border-radius: 9px;
+}
+#smajli_kontejner div:nth-child(3) .usta{
+    border-top-left-radius: 608px;
+    border-top-right-radius: 608px;
+}
+.smile-olive {
+    background-color: #3ba34d;
+    border-color: olive;
+}
+
+.smile-orange {
+    background-color: #f88048;
+    border-color: orange;
+}
+
+.smile-tomato {
+    background-color: #ff3a3a;
+    border-color: tomato;
+}
+
+.smile-olive div {
+    background-color: olive;
+}
+.smile-orange div {
+    background-color: orange;
+}
+.smile-tomato div {
+    background-color: tomato;
+}
+
+.color_neue {
+    background-color: #f664b2;
+}
+
+.smile-olive .color_neue, .smile-orange  .color_neue, .smile-tomato .color_neue {
+    background-color: #f664b2;
+}
+

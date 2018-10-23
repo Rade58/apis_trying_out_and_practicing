@@ -7983,7 +7983,227 @@ selectable_list2.querySelector('ul').addEventListener('mousedown', function(ev){
 //REC JE O SLEDECIM EVENT-OVIMA
 
 //           mouseover        mouseout                     mouseenter      mouseleave
-            
+
+//MOZDA SAM I RANIJE REKAO DA SE    mouseover   TRIGGER-UJE, KADA KURSOR UDJE U OBLAST ELEMENTA,
+//ODNOSNO KADA KURSOR PREDJE GRANICU I IZ NEKOG DRUGOG ELEMENTA, UDJE U POMENUTI ELEMENT (OVO JE NEKO
+//MOJE OBJASNJENJE, KOJE JE ZA MENE PRECIZNIJE)
+
+//      mouseout    SE TRIGGER-UJE, KADA KURSOR, PREDJE GRANICU I IZADJE IZ OBLASTI MOG ELEMENTA; I UDJE U OBLAST
+//NEKOG DRUGOG ELEMENTA
+
+//MOZDA SU OVA MOJA OBJASNJENJA POMALO OPSIRNA I TIME SE MOZDA MOZE IZGUBITI LOGICNOST
+
+//NAIME POTREBNO JE DA POSMATRAM JEDAN ELEMENT I KAZEM DA CE SE KADA KURSOR KRENE I UDJE U NJEGOVU OBLAST
+//TRIGGER-OVATI     mouseover       ; A KADA KURSOR IZADJE IZ OBLASTI MOG ELEMENTA, ONDA CE SE TRRIGGER-
+///OVATI    mouseout
+
+//ONO STO ZNAO O OVIM ELEEMNTIMA OD RANIJE JESTE DA ONI BUBBLE-UJU UP, ODNOSNO ONI PROPAGATE-UJU
+
+//A ONO STO JE NOVINA ZA MENE, U POGLEDU OVIH EVENTOVA JE SLEDECE
+
+        //NAIME OVI EVENT-OVI SU SPECIJALNI JER IMAJU               relatedTarget
+
+        //KREIRACU ODREDJENI HTML, KAKO BI NA NAJBOLJI NACIN PRIKAZO OSOBINE, POMENUTIH EVENT-OVA
+
+const neki_elemnti_preko_kojih_cu_prelaziti_kursorem = `
+<div id="kont_hov" style="border: olive solid 4px; padding: 18px; width: 280px;">
+    <div id="box1" style="width: 128px; height: 108px; border: tomato solid 2px; margin: 16px"></div>
+    <div id="box2" style="width: 108px; height: 86px; border: orange solid 2px; margin: 18px"></div>
+</div>
+`;
+
+//OBJASNICU OVIM PRIMEROM, STA USTVARI REFERENCIRA          relatedTarget       PROPERTI
+
+kont_hov.addEventListener('mouseover', function(ev){
+    console.log('**********************************');
+    console.log(ev.target);   //ELEMENT NA KOJI JE KURSOR DOSAO          
+    console.log(ev.relatedTarget);      //ELEMENT IZ/SA KOJEG JE KURSOR IZASAO, I DOSAO NA target ELEMENT
+    console.log(ev.currentTarget);  //ELEMENT NA KOJEM JE HANDLER-ZAKACEN
+    console.log('**********************************');
+});
+
+kont_hov.addEventListener('mouseout', function(ev){
+    console.log('**********************************');
+    console.log(ev.target);         //ELEEMNT SA KOJEG JE KURSOR OTISAO
+    console.log(ev.relatedTarget);      //ELEMENT U KOJI JE KURSOR USAO, ODLAZECI SA/OD target ELEMENTA
+    console.log(ev.currentTarget);  //ELEMENT NA KOJEM JE HANDLER-ZAKACEN
+    console.log('**********************************');
+});
+
+//MEDJUTIM, PROPERTI    currentTarget       MOZE IMATI I VREDNOST           null
+//TO SE DOGADJA KADA JE, U SLUCAJU TRIGGERING-A         mouseover-A    KURSOR DOSAO SA window-A 
+//(SA BROWSER-OVOG WINDOW-A)
+// I TO SE DOGADJA, KADA JE, U SLUCAJU TRIGGERING-A     mouseout-A     KURSOR OTISAO NA window 
+
+//SADA CU ODRADITI, JEDAN PRIMER, KOJI JE OPET, JEDAN PRIMER IZ CLANKA, KOJI CITAM
+//A TO JE PRIMER SA SMAJLIJIMA
+
+//DEFINISACU PRVO HTML
+
+const html_smajlija = `
+    <div id="smajli_kontejner">
+        <div class="smile-olive">
+            <div class="oko-levo"></div>
+            <div class="oko-desno"></div>
+            <div class="usta"></div>
+        </div>
+        <div class="smile-orange">
+            <div class="oko-levo"></div>
+            <div class="oko-desno"></div>
+            <div class="usta"></div>
+        </div>
+        <div class="smile-tomato">
+            <div class="oko-levo"></div>
+            <div class="oko-desno"></div>
+            <div class="usta"></div>
+        </div>
+        <br>
+        <textarea id="log">Informacije o eventovima ce biti prikazane ovde</textarea>
+    </div>
+`;
+
+const css_smajlija = `
+
+    /*JEDNA STVAR NE VEZNA ZA OVAJ PRIMER ALI VEZNA ZA CSS; KAD JE ELEMENT display:inline
+    TO ZNACI DA NEMA SMISLA DEFINISATI NJEGOVU SIRINU, JER TO NECE IMATI EFEKTA, JER JE TAKAV
+    ELEMENT SIROK KOLIKO I NJEGOVA SADRZINA*/
+
+    #smajli_kontejner {
+        box-sizing: border-box;   /* OVAJ PROPERTI NIJE PODRZAN U IE6 IE7 */
+        border: 1px solid pink;
+        width: 420px;
+        padding: 10px;
+        
+    }
+    
+    #log {
+        width: 362px;
+        height: 280px;
+        display: block;
+        margin-left: 18px;
+    }
+    
+    [class^=smile-] {           /* KAZU DA SU ATTRIBUTE SELEKTORI SA ^ SPORI*/
+        display: inline-block;
+        width: 110px;
+        height: 110px;
+        border-radius: 55px;
+        border-width: 8px;
+        border-style: solid;
+        margin-bottom: 25px;
+        margin-right: 12px;
+        margin-left: 8px;
+        text-align: center;
+        
+        
+        border-color: pink;
+    }
+    
+    [class^="oko"] {                  /* POKUSAVAM DA SE PODSETIM I NEKIH DRUGIH ATTRIBUTE SELEKTORA */                     
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 5px;
+        margin-top: 28px;
+        margin-left:8px;
+        margin-right: 8px;
+    
+        background-color: pink;
+    }
+    
+    .usta {
+        display: block;
+        width: 38px;
+        height: 10px;
+        margin: 18px auto;
+    
+        background-color: pink;
+    }
+    
+    #smajli_kontejner div:nth-child(1) .usta{
+        border-bottom-left-radius: 608px;
+        border-bottom-right-radius: 608px;
+    }
+    #smajli_kontejner div:nth-child(2) .usta{
+        border-radius: 9px;
+    }
+    #smajli_kontejner div:nth-child(3) .usta{
+        border-top-left-radius: 608px;
+        border-top-right-radius: 608px;
+    }
+    .smile-olive {
+        background-color: #3ba34d;
+        border-color: olive;
+    }
+    
+    .smile-orange {
+        background-color: #f88048;
+        border-color: orange;
+    }
+    
+    .smile-tomato {
+        background-color: #ff3a3a;
+        border-color: tomato;
+    }
+    
+    .smile-olive div {
+        background-color: olive;
+    }
+    .smile-orange div {
+        background-color: orange;
+    }
+    .smile-tomato div {
+        background-color: tomato;
+    }
+    
+    .color_neue {
+        background-color: #f664b2;
+    }
+    
+    .smile-olive .color_neue, .smile-orange  .color_neue, .smile-tomato .color_neue {
+        background-color: #f664b2;
+    }
+`;
+
+//CSS IZ ORIGINALNOG PRIMERA JE BIO DRUGACIJI, A JA SAM IMAO DRUGACIJU IDEJU, TAKO DA SAM NA SVOJ NACIN
+//DEFINISAO CSS BEZ MNOGO POSMATRANJA CSS PRIMERA, KOJEG MOGU NACI OVDE http://plnkr.co/edit/TIlPIqwHoLfPBnQ0R7ic?p=preview
+
+const crossingHandler = function(ev){
+
+    if(!ev.relatedTarget) return;
+
+    const tipEventa = ev.type;
+    const target = ev.target;
+    const relatedTarget = ev.relatedTarget;
+
+    const suroundingLeave = !relatedTarget.closest('#smajli_kontejner') && tipEventa === 'mouseover'
+    ?
+    true
+    :
+    false;
+
+    const textareaLeave = relatedTarget instanceof HTMLTextAreaElement && tipEventa === 'mouseover'
+    ?
+    true
+    :
+    false;
+
+    // tipEventa === 'mouseover'?console.log(relatedIsSurounding):null;
+    // tipEventa === 'mouseover'?console.log(relatedIsTextarea):null;
+
+    if(tipEventa === 'mouseover'){
+        target.classList.add('color_neue');
+    }
+
+    if(tipEventa === 'mouseout'){
+        target.classList.remove('color_neue');
+    }
+
+};
+
+smajli_kontejner.addEventListener('mouseover', crossingHandler);
+smajli_kontejner.addEventListener('mouseout', crossingHandler);
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
