@@ -353,7 +353,7 @@ some-practice-element {
     
 }
 
-#log {
+#dnevnik {
     width: 362px;
     height: 280px;
     display: block;
@@ -376,7 +376,7 @@ some-practice-element {
     border-color: pink;
 }
 
-[class^="oko"] {                  /* POKUSAVAM DA SE PODSETIM I NEKIH DRUGIH ATTRIBUTE SELEKTORA */                     
+[class^="oko"] {                    
     width: 10px;
     height: 10px;
     display: inline-block;
@@ -440,4 +440,80 @@ some-practice-element {
 .smile-olive .color_neue, .smile-orange  .color_neue, .smile-tomato .color_neue {
     background-color: #f664b2;
 }
+
+
+#prelaz_o1 {
+    border: pink solid 2px;
+    width: 68%;
+}
+
+
+
+#prelaz_o1 div {
+    border: tomato solid 2px;
+    width: 50%;
+    height: 100px;
+    display: inline-block;
+
+}
+
+#prelaz_o1 > div {
+    border: olive solid 2px;
+    width: 86%;
+    height: 280px;
+    margin: 28px;
+    padding: 28px;
+    text-align: center;
+    display: block;
+}
+
+
+
+#so_kon {
+    border: orange solid 4px;
+    overflow: none;
+}
+
+#so_kon > textarea {
+    display: block;
+    width: 58%;
+    height: 38vw;
+}
+
+#so_kon > input {
+    display: block;
+    margin-left: 42%;
+}
+
+#so_kon > div, #so_kon > textarea {
+    margin-right: 0px;
+    margin-left: auto;
+}
+
+.maslina {
+    border: olive solid 1px;
+    width: 58%;
+    height: 280px;
+    text-align: center;
+    background-color: olive;
+}
+
+.maslina div {
+    border: tomato solid 1px;
+    display: inline-block;
+    width: 84%;
+    margin-top: 4px;
+    height: 50%;
+    padding-top: 8%;
+    background-color: tomato;
+}
+
+
+
+
+
+
+
+
+
 

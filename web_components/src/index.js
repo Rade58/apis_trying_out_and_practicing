@@ -7983,6 +7983,7 @@ selectable_list2.querySelector('ul').addEventListener('mousedown', function(ev){
 //REC JE O SLEDECIM EVENT-OVIMA
 
 //           mouseover        mouseout                     mouseenter      mouseleave
+//U SKLOPU OVOG DELA CU SE POZABAVITI I SA    mousemove
 
 //MOZDA SAM I RANIJE REKAO DA SE    mouseover   TRIGGER-UJE, KADA KURSOR UDJE U OBLAST ELEMENTA,
 //ODNOSNO KADA KURSOR PREDJE GRANICU I IZ NEKOG DRUGOG ELEMENTA, UDJE U POMENUTI ELEMENT (OVO JE NEKO
@@ -8058,7 +8059,7 @@ const html_smajlija = `
             <div class="usta"></div>
         </div>
         <br>
-        <textarea id="log">Informacije o eventovima ce biti prikazane ovde</textarea>
+        <textarea id="dnevnik">Informacije o eventovima ce biti prikazane ovde</textarea>
     </div>
 `;
 
@@ -8076,7 +8077,7 @@ const css_smajlija = `
         
     }
     
-    #log {
+    #dnevnik {
         width: 362px;
         height: 280px;
         display: block;
@@ -8099,7 +8100,7 @@ const css_smajlija = `
         border-color: pink;
     }
     
-    [class^="oko"] {                  /* POKUSAVAM DA SE PODSETIM I NEKIH DRUGIH ATTRIBUTE SELEKTORA */                     
+    [class^="oko"] {                     
         width: 10px;
         height: 10px;
         display: inline-block;
@@ -8170,26 +8171,29 @@ const css_smajlija = `
 
 const crossingHandler = function(ev){
 
-    if(!ev.relatedTarget) return;
+    
 
-    const tipEventa = ev.type;
-    const target = ev.target;
-    const relatedTarget = ev.relatedTarget;
+    if(!ev.relatedTarget) return;         //OVO NE VALJA, I ZATO SAM GA COMMENTED OUT
+                                            //AKO SE RELOADUJE STRANICA I AKO SE KURSOR NADJE NA ELEMENTU
+    const tipEventa = ev.type;              
+    const target = ev.target;                           //NE BI SE DESILA TA PROMENA BOJE, JER BI TADA  
+    const relatedTarget = ev.relatedTarget;             //relatedTarget   BIO     null 
+                                                        //JER KUSRSOR NIJE DOSAO NIOTKUDA NA ELEMENT
+                                                        // VEC JE BIO TU NA RELOADU
+                                                        //A SADA, KADA SE MIS POMERI, IAKO JE 
+                                                        //KURSOR VEC BIO NA ELEMENTU, DESICE TRIGGER-OVACE
+                                                        //SE    mouseover
 
-    const suroundingLeave = !relatedTarget.closest('#smajli_kontejner') && tipEventa === 'mouseover'
-    ?
-    true
-    :
-    false;
+                                                        //MEDJUTIM, TAKODJE SE MOZE DOGODITI DO POJAVE
+                                                        //ERROR-A
+                                                        //U CODE-U, KOJI JE VEZAN ZA DEFINISANJE DODELE VREDNOSTI
+                                                        //ZA VALUE      dnavnik-A (TEXTAREA)
+                                                        //TADA BI SE DOGODILO POKUSAJ PRISTUPA NEKOM
+                                                        //PROPERTIJU NA     null   VREDNOSTI
+                                                        //I KAO POSLEDICA BI SE DESIO ERROR
+                                                        //ZATO SAM IPAK IZABRAO DA ZADRZIM POMENUTI CODE
 
-    const textareaLeave = relatedTarget instanceof HTMLTextAreaElement && tipEventa === 'mouseover'
-    ?
-    true
-    :
-    false;
-
-    // tipEventa === 'mouseover'?console.log(relatedIsSurounding):null;
-    // tipEventa === 'mouseover'?console.log(relatedIsTextarea):null;
+    if(target instanceof HTMLTextAreaElement && tipEventa === 'mouseover') return;
 
     if(tipEventa === 'mouseover'){
         target.classList.add('color_neue');
@@ -8199,10 +8203,214 @@ const crossingHandler = function(ev){
         target.classList.remove('color_neue');
     }
 
-};
+    //U CLANKU NIJE KORISCEN REGEXP; VEC GA JA SAMO OVDE VEZBAM
+
+    const fruitRelated = /(olive|orange|tomato)/.exec(relatedTarget.className);
+    const fruit = /(olive|orange|tomato)/.exec(target.className);
+
+    console.log(fruit);
+
+    const fruitClassRelated = fruitRelated?fruitRelated.input:null;
+    const fruitClass = fruit?fruit.input:null;
+
+    
+
+    dnevnik.value += `--------------` +
+                    `\n${tipEventa} **` + 
+                    `relatedTarget = ${fruitClassRelated || relatedTarget.id || relatedTarget.nodeName}` +
+                    `** target = ${fruitClass || target.id || target.nodeName} \n---------------`
+
+    dnevnik.scrollTop = dnevnik.scrollHeight;    //OVO JE KORISCENO U CLANKU, I JA NE MOGU SADA DA SE  
+                                                    //BAVIM TIME, JER CU SE U OVOM DOKUMENTU POSEBNO
+                                                    //BAVITI SCROLLOVANJEM,M A POSTO JE TRENUTNA TEMA
+                                                    // EVENTOVI, KOJI NEMAJU VEZE SA CROLLOM
+};                                                  //ONDA CU OVO ZANEMARITI; ALI CU SE OVIM DRUGOM PRILIKOM
+                                                    //POSEBNO POZABAVITI
+                                                    // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTop
+
+                                                    //KASNI JAM SAZNAO JEDE DA OVAKAV ASSIGNING scrollTop
+                                                    //PROPERTIJU, CINI DA SCROLL ELEMENT, UVEK BUDE NA DNU 
+                                                    //ODNOSNO DA SE PRIKAZUJE KRAJ UNOSA
+                                                    //DA NISAM TO DODAO, MORAO BI DA SCROLLUJEM DA VIDIM
+                                                    //STA JE POSLEDNJE UNESENO
+
 
 smajli_kontejner.addEventListener('mouseover', crossingHandler);
 smajli_kontejner.addEventListener('mouseout', crossingHandler);
+
+
+//SADA CU DODATI NESTO STO SE TICE      EVENT FREQUENCY     (EVEN UCESTALOST)
+// ODNOSNO OVO SE NAJVISE TICE     mousemove    EVENTA, S KOJI MSAM SE BAVIO I RANIJE
+
+// Event mousemove se pokreće kada se miš kreće. Ali to ne znači da svaki piksel vodi do eventa
+
+// Pregledač proverava položaj miša s vremena na vreme. I ako primećuje promene onda aktivira event
+
+// To znači da ako posjetilac brzo premješta miš, onda se elementi DOM-a mogu preskočiti
+
+//POTPUNO ISTO VAZI I ZA       mouseover    I     mouseout
+
+//ZATO CU ZAMISLITI NA IMAM NESTED NEKOLIKO DIV-OVA (SIBLINGSA), NA PRIMER 6;
+//PRVI OD NJIH IMA     ID       #from           A POSLEDNJI IMA         #to
+//MOGU ZAMISLITI DA SU I INLINE-BLOCK (MADA MOGU DA BUDU I BLOCK ALI OVAKO SE LEPSE VIDI), 
+//A DA IZMAEDJU NJIH IMA RAZMAKA 
+
+// Ako se miš brzo kreće od #from do #to elemenata, tada se može preskočiti 
+// srednji <div> (ili neki od njih).              mouseout           Event pokrenuti na        #from      
+// a BRZIM POMERANJEM SE DESIO DA JE, SLEDECI            mouseover       TRIGGERED NA        #to     
+
+// U praksi to je korisno, jer ako može biti mnogo elemenata U SREDINI. Mi zaista ne želimo da 
+// procesiramo in I out IZ svakog.
+
+// S druge strane, treba imati na umu da ne možemo pretpostaviti da se miš polako kreće sa jednog
+// elementa na drugi. Ne, može "skočiti".
+
+// Naročito je moguće da kursor skoči iz središta stranice iznad prozora. I relatedTarget = null, jer je
+//  došao od "nikuda":
+
+//KAKO BIH TO VIDEO KREIRACU, JEDAN PRIMER
+//DVA ELEMENTA, JEDAN NESTED U DRUGOM; ELEMENT KONTEJNER JE SMESTEN TIK UZ DESNU STRANICU BROWSER-OVOG
+//WINDOW-A (NIJE TAKO BITNO); NA ODREDJENIM MESTIMA, RAZMAK IZMEDJU IVICA, NESTED ELEMENT I ELEMENTA 
+//KONTEJNER-A, JE VEOMA MALI; MENI DOVOLJAN KAKO BI IMAO SLUCAJ DA KURSOR 'PRESKOCI' NEKI ELEMENT
+//ODNOSNO DA NE DODJE DO TRIGGERINGA, NEKOG OD 
+                //      mouseover
+                //      mouseout
+                //      mousemove
+
+//JA USTAVRI PRAVIM MALU 'APLIKACIJU'; KOJOJ JE CILJ DA PROCITA KOLIKO SE PUTA POMENUTI EVENT-OVI
+//TRIGGER-OVALI NA DVEME DIV ELEMENTIMA, PRI RAZLICITIM BRZINAMA POMERANJA KURSORA
+
+const html_for_cursor_skippings = `
+    <div id="so_kon">
+        <div class="maslina">
+            <div class="paradajz">Neki tekst</div>
+        </div>
+        <input id="clear_dugme" type="button" value="clear me">
+        <textarea id="neki_dnevnik"></textarea>
+    </div>
+`;
+
+const style_for_so_kont = `
+    #so_kon {
+        border: orange solid 4px;
+        overflow: none;
+    }
+
+    #so_kon > textarea {
+        display: block;
+        width: 38%;
+        height: 38vw;
+    }
+
+    #so_kon > input {
+        display: block;
+        margin-left: 62%;
+    }
+
+    #so_kon > div, #so_kon > textarea {
+        margin-right: 0px;
+        margin-left: auto;
+    }
+
+    .maslina {
+        border: olive solid 1px;
+        width: 38%;
+        height: 280px;
+        text-align: center;
+        background-color: olive;
+    }
+
+    .maslina div {
+        border: tomato solid 1px;
+        display: inline-block;
+        width: 84%;
+        margin-top: 4px;
+        height: 50%;
+        padding-top: 8%;
+        background-color: tomato;
+    }
+`;
+
+//DAKLE, IMACU LOG DEO, ODNOSNO DNEVNIK TRIGGER-OVANJA, KAO I U GORNJOJ 'APLIKACIJI SA SMAJLIJIMA'
+
+//MEDJUTIM, ZELIM DA NACIN LOGOVANJA BUDE DA AKO KURSOR MIRUJE VISE OD POLA MINUTE, DA SE POCNE SA NOVIM
+//UNOSOM, ODNOSNO DA SE IZNOVA POCNE SA BROJANJEM EVENT-OVA
+//KAD KAZEM BROJANJE, MISLIM SAMO NA    mousemove       EVENT, OSTALI, NEK SE BELEZE REDNO
+//NEKA TU BUDU I INFORMACIJE O          target-U      
+
+
+let lastMovmentTime = 0;
+let mouseMovements = 0;
+let lastMessage = "";
+
+
+const handlerCross = function(ev){
+
+
+    const currentTime = new Date();    
+    let interval = 0;
+
+    if(lastMovmentTime){
+        interval = currentTime - lastMovmentTime;    
+    }
+
+    let intervalString = "";
+
+    if(interval > 500){
+        mouseMovements = 0;
+        intervalString = "\n----------------";
+    }
+
+    //console.log(interval);
+
+    const target = ev.target;
+    const tipEventa = ev.type;
+
+    let baseString = intervalString + `\nevent: ${tipEventa} element: ${target.className}`;
+
+    let movingString;
+
+    if(tipEventa === 'mousemove'){
+        mouseMovements++;
+        if(mouseMovements === 1){
+            movingString = baseString + ' x 1';
+            lastMessage = lastMessage + movingString;
+        }else{
+            let fronString = lastMessage.slice(0, lastMessage.lastIndexOf('x') + 1); 
+            movingString = ` ${mouseMovements}`;
+            lastMessage = fronString + movingString;
+        }
+    
+    }else{
+        mouseMovements = 0;
+        lastMessage += baseString;
+    }
+
+    lastMovmentTime = currentTime;
+
+    neki_dnevnik.value = lastMessage;
+    neki_dnevnik.scrollTop = neki_dnevnik.scrollHeight;
+};
+
+const cleaningHandler = function(ev){
+
+    ev.stopPropagation();           //OVO RADIM ZBOG TOGA STO SAM RANIJE U CODE-U, ZA DRUGE ELEMENTE
+                                    //(KOJI SU ANCESTOR ELEMENTI BUTTONA), ZAKACIO HANDLERE
+                                    //MOZDA CAK NA body ILI document
+    console.log(`--------${ev.target}-------`);
+    neki_dnevnik.value = "";
+    lastMessage = "";
+};
+
+document.querySelector('.maslina').addEventListener('mouseover', handlerCross);
+document.querySelector('.maslina').addEventListener('mouseout', handlerCross);
+document.querySelector('.maslina').addEventListener('mousemove', handlerCross);
+
+clear_dugme.onclick = cleaningHandler;
+
+//HANDLERE SAM MOGAO ZAKACITI I NA JEDNOSTAVNIJI NACIN, KORISCENJEM   " onHandler "   SINTAKSE
+
+document.querySelector('.maslina')
 
 
 //////////////////////////////////////////////////////////////////////
@@ -9101,5 +9309,53 @@ document.querySelector('input[name=neki_unos]').addEventListener('focus', functi
     console.log("FOCUSED!");
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+document.querySelector('#prelaz_o1 > div').addEventListener('mouseover', function(ev){
+    console.log(ev.type < 10);
+    console.log("usao u OLIVE");
+});
+
+document.querySelector('#prelaz_o1 > div').querySelector('div').addEventListener('mouseover', function(ev){
+    console.log("usao u TOMATO");
+});
+
+
+let type = "neki_tekst";
+while(type < 11) console.log(type);
+
+let oneOrOther = false;
+
+let vreme1;
+
+let vreme2;
+
+so_kon.onclick = function(ev){
+
+    if(!vreme1){
+        vreme1 = new Date();
+    }
+
+    if(vreme1 && oneOrOther){
+        vreme2 = new Date();
+    }
+
+    if(vreme2 && !oneOrOther){
+        vreme1 = new Date();
+    }
+
+    const razlikaVremena = vreme1 && vreme2?Math.abs(vreme2 - vreme1):vreme1||vreme2;
+
+    oneOrOther = !oneOrOther;
+
+    console.log(razlikaVremena);
+    return razlikaVremena;
+};
+
+
+
+
+
+
 
 
