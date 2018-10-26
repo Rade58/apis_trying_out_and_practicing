@@ -3987,6 +3987,8 @@ window.customElements.define('jobly-bobly', class extends HTMLElement {
         prviSlot.addEventListener('slotchange', ev => {
             console.log(ev.composedPath());
             console.log(++this._a);
+
+            document.body.scrollTop = document.body.scrollHeight;
         });
 
         //U DOKUMENTACIJI SAM PROCITAO DA SE GORE PROSLEDJENI HANDLER, NECE INVOCIRATI, TOKOM 
@@ -8351,7 +8353,8 @@ const handlerCross = function(ev){
     let interval = 0;
 
     if(lastMovmentTime){
-        interval = currentTime - lastMovmentTime;    
+        interval = currentTime - lastMovmentTime;
+        console.log(typeof interval === 'number');      //-->true    
     }
 
     let intervalString = "";
@@ -8360,8 +8363,6 @@ const handlerCross = function(ev){
         mouseMovements = 0;
         intervalString = "\n----------------";
     }
-
-    //console.log(interval);
 
     const target = ev.target;
     const tipEventa = ev.type;
@@ -8410,12 +8411,967 @@ clear_dugme.onclick = cleaningHandler;
 
 //HANDLERE SAM MOGAO ZAKACITI I NA JEDNOSTAVNIJI NACIN, KORISCENJEM   " onHandler "   SINTAKSE
 
-document.querySelector('.maslina')
+//          document.querySelector('.maslina').onmousemove = document.querySelector('.maslina').onmousemove = document.querySelector('.maslina').onmousemove = handlerCross;
+//ALI KAO STO MOGU VIDETI NISAM TO URADIO
+
+//NECU DODATNO KOMENTARISATI PRIMER, ZADAO MI JE NESTO VISE MUKA NEGO STO JE TREBAO
+
+//ONO STO CU SAMO DODATI JESTE DA CU U DVENIKU (TEXTAREA) VIDETI DA JE MOGUCE, AKO JE BRZ KURSOR, TO
+// PRESKAKANJE POMENUTIH EVENT-OVA 
+
+//  ONO STO SAM JOS SAZNAO U OVOJ LEKCIJA, A STO JE NE VEZANO ZA TEMU JESTE JEDNA ODLIKA    Date
+//INSTANCI
+// NAIME, MOGUCE JE ODUZETI JEDNU Date INSTANCU OD DRUGE, CIME SE DOBIJA RAZLIKA U VREMENU, ODNOSNO 
+// VREMENSKI INTERVAL (MORAM JOS ISPITATI, KAKO JE OVO MOGUCE); ODNOSNO NUMBER KOJI JE KAO TAKAV MOGUCE
+//KORISTITI
+
+// MEDJUTIM SADA CU SE POZABAVITI JEDNOM CINJENICOM, A KOJU SAM I SAM PRIMETIO, JESTE DA SE
+
+                        // mouseout     TRIGGERUJE, ZA PARENT ELEMENT, KADA KURSOR ULAZI U PARENT-OV, 
+                                        //  CHILD ELEMENT
+
+//DAKLE, KAD GOVORIM O TOM PARENTU, KURSOR JE JOS U NJEMU; ALI ONO STO SE DOGODILO JESTE TRIGGEROVAN 
+//TO IZGLEDA CUDNO, ALI SE MOZE OBJASNITI
+
+//NAIME PO BROWSER-OVOJ LOGICI, KURSOR MISA, MOZE SE NALAZITI SAMO IZNAD JEDNOG ELEMENTA U BILO KOM
+// VREMENU 
+
+//NAIME KADA POSMATRAM ELEMENT, AKO JE ON, MOST NESTED, ODNOSNO "NAJDUBLJU DESCENDANT"; ON JE TAKODJE TOP
+//ODNOSNO NAJGORNJI, PO JEDNOM KRITERIJUMU, KOJI SAM KORISTIO I RANIJE, A TO JE         
+
+                                                                    //                  z-index
+// 
+// DAKLE, KADA KURSOR ODE NA DESCENDANT ELEMENT, ON JE, USTVARI NAPUSTIO PARENT ELEMENT
+//                                                                     TOLIKO JE JEDNOSTAVNO 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//OVDE OSTAJEM DUZAN JEDAN PRIMER ZA KOJI CU JOS VIDETI DA LI GA TREBAM KREIRATI (MISLIM DA JE DOBRO
+//URADITI GA, JER IMA ODREDJENI ODLIKE (MISLIM NA IZABRANU SINTAKSU, KOJE SE TREBA PODSETITI), KOJE SE
+//  KONKRETNO NISU BITNE ZA SADASNJU TEMU)
 
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+
+const html_parent_child_primera = `
+    <div class="ins_elem">
+        <div class="rose" onmouseover="coralHandler(event)" onmouseout="coralHandler(event)">
+            <div class="coral"></div>
+        </div>
+        <input type="button" value="clear" onclick="clHandler(event)">
+        <textarea></textarea>
+    </div>
+`;
+
+// KAO STO SE VIDI I HTML-A, HANDLERE SAM ZAKACIO INLINE
+// ONO STO JE INTERESANTNO, JESTE DA SAM HANDLER-E POZVAO, I DA SAM IM PROSLEDIO    event   KAO ARGUMENT
+// VALJDA SE, TOJ VARIJABLOJ PROSLEDJUJE Event INSTANCA, PRILIKOM INVOKACIJE
+
+const stilovi_parent_child_primera = `
+    .ins_elem {
+        border: pink solid 2px;
+        width: 84%;
+        padding: 12px;
+    }
+
+    .ins_elem > div {
+        background-color: lightcoral;
+        height: 28vw;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+    .ins_elem > div div {
+        background-color: mistyrose;
+        width: 56%;
+        height: 56%;
+        margin: 12% auto;
+
+    }
+
+    .ins_elem input[type=button] {
+        display: block;
+    }
+
+    .ins_elem > * {
+        width: 62%;
+    }
+
+    .ins_elem textarea {
+        height: 28vw;
+    }
+`;
+
+const coralHandler = function(ev){
+    const target = ev.target;
+    const evType = ev.type;
+    const elemClass = target.className
+    const text = `\n[ ${evType} ----> ${elemClass} ]`;
+    const tekstOblast = target.closest('.ins_elem').querySelector('textarea');
+    tekstOblast.value = tekstOblast.value + text;
+    tekstOblast.scrollTop = tekstOblast.scrollHeight;
+};
+
+const clHandler = function(ev){
+    ev.target.closest('.ins_elem').querySelector('textarea').value = "";
+};
+
+
+//OVAKVE OSOBINE POMENUTIH EVENTOVA, KADA SE KORISTE, PRILOKOM NEKIH KOMPLEKSNIJIH STVARI, MOGU
+//IZAZVATI NEKE SIDE-EFFECTS; I ZATO CU SE UPOZNATI SA JOS DVA TIPA EVENT-OVA, ZA KOJE SAM CUO
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// DAKLE SADA CU SE POZABAVITI            mouseenter          I           mouseleve           EVENT-IMA
+
+//ZA RAZLIKU OD PREDHODNIH POMENUTIH VRSTA, OVA DVA EVENTA:
+
+                        //  NE BUBBLE-UJU  UP
+                        //  I TRANZICIJE UNUTAR ELEMENTA (O CEMU JE GOVORIO PREDHODN PRIMER)
+                                    //ZAISTA SE NE UZIMAJU U OBZIR
+                                    //ODNOSNO OVO EVENT-OVI SE NE TRIGGERUJU, PRILIKOM POMERANJA
+                                    //KURSORA U/IZ PARENT/A IZ/U CHILD/A  
+
+//  ZBOG POMENUTOGA, OVI EVENTOVI SU INTUITIVNO, VEOMA JASNI
+
+// Kada pokazivač (KURSOR) ulazi u element -            mouseenter    se aktivira, a zatim nije važno gde 
+// ide dok je unutar elementa.  mouseleave pokreće samo kada ga kursor napusti.
+
+// Ako napravimo isti primer KAO I PREDHODNI, ali stavimo mouseenter/mouseleave na orange <div> i uradimo
+//  isto - vidimo da se EVENTOVI pokreću samo prilikom unosa i napuštanja ORANGE <div>
+//  Nema dodatnih događaja kada idete na OLIVE i natrag. Deca su ignorisana
+
+const html_parent_child_primera2 = `
+    <div class="lins_elem">
+        <div class="rose" onmouseenter="coralHandler2(event)" onmouseleave="coralHandler2(event)">
+            <div class="coral"></div>
+        </div>
+        <input type="button" value="clear" onclick="clHandler2(event)">
+        <textarea></textarea>
+    </div>
+`;
+
+const stilovi_parent_child_primera2 = `
+    .lins_elem {
+        border: pink solid 2px;
+        width: 84%;
+        padding: 12px;
+    }
+
+    .lins_elem > div {
+        background-color: lightcoral;
+        height: 28vw;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+    .lins_elem > div div {
+        background-color: mistyrose;
+        width: 56%;
+        height: 56%;
+        margin: 12% auto;
+
+    }
+
+    .lins_elem input[type=button] {
+        display: block;
+    }
+
+    .lins_elem > * {
+        width: 62%;
+    }
+
+    .lins_elem textarea {
+        height: 28vw;
+    }
+`;
+
+const coralHandler2 = function(ev){
+    const target = ev.target;
+    const evType = ev.type;
+    const elemClass = target.className
+    const text = `\n[ ${evType} ----> ${elemClass} ]`;
+    const tekstOblast = target.closest('.lins_elem').querySelector('textarea');
+    tekstOblast.value = tekstOblast.value + text;
+    tekstOblast.scrollTop = tekstOblast.scrollHeight;
+};
+
+const clHandler2 = function(ev){
+    ev.target.closest('.lins_elem').querySelector('textarea').value = "";
+};
+
+// I U OVOM SLUCAJU KACIO SAM HANDLERE INLINE (ODNOSNO POZIVAO SAM IH INLINE, PROSLEDJUJUCI IM event
+// VARIJABLU) 
+
+//MEDJUTIM ONO STO JE VAZNIJE JESTE STA SE DOGADJA U SLUCAJU TRIGGERINGA, POMENUTIH EVENT-OVA
+                                        //                      mouseenter      mouseleave
+
+// POSTO HANDLERE NISAM KACIO NA CHILD ELEMENT, NISTA SE NIJE DOGODILO PRILIKOM ULASKA U CHILD ELEMENT
+// A KAO STO SAM REKAO, OVI EVENT-OVI NE BUBBLE-UJU UP, ODNOSNO NE PROPAGATE-UJU, TAK ODA EVENT DELEGATION
+// NIJE MOGUC
+
+// A POSTO SAM HANDLER ZAKACIO NA PARENTA, TRIGGEROVALI SU SE EVENTOVI, NA ENTER/LEAVE IZ TOG ELEMENTA
+// I KAO STO SAM REKAO, PRI ULASKU U CHILD ELEMENT, NEMA TRIGGERINGA mouseleave-A ZA PARENT; JER SE TO NE
+// SMATRA ULASKOM U NOVI ELEMENT I IZLASKOM IZ PARENTA
+
+// Eventovi mouseenter/leave su veoma jednostavni, i jednostavni za korištenje. But they don't Bubble up 
+// Dakle, ne možemo koristiti delegiranje eventova sa njima.
+
+// Zamislite da želimo da handle-ujemo enter/leave za ćelije tabele; I DA POSTOJE STOTINE CELIJA TABELE
+
+// Prirodno rešenje bi bilo - da postavite HANDLER na <table> i procesirate EVENT-OVE tamo. 
+// Međutim, mouseenter/leave, NE BUBLLE-UJU UP. Dakle, ako se takav EVENT dešava na <td>,
+// onda bi ga HANDLER ZAKACEN ZA TAJ <td> , JEDINO MOGAO UHVATITI
+
+// Handlere for mouseenter/leave na <table> samo SE TRIGGERUJE prilikom ulaska / napuštanja CELE TABELE
+// Nemoguće je dobiti bilo kakve informacije o tranzicijama unutar nje
+
+// NEMA PROBLEMA, KORISTICU     mouseover/out
+
+const html_tabele_1 = `
+<div class="table_kont_one">
+    <table>
+        <tr>
+            <th colspan="3">Feng Shui <em>Bagua</em> tabela(chart): Smer, Element, Boja, Znacenje </th>            
+        </tr>
+        <tr>
+            <td class="sz">
+                <strong>Severozapad</strong><br>
+                Metal<br>
+                Srebro<br>
+                Starci
+            </td>
+            <td class="s">
+                <strong>Sever</strong><br>
+                Voda<br>
+                Plavo<br>
+                Promena
+            </td>
+            <td class="si">
+                <strong>Severoistok</strong><br>
+                Zemlja<br>
+                Zuta<br>
+                Smer
+            </td>
+            </tr>
+        <tr>
+            <td class="z">
+                <strong>Zapad</strong><br>
+                Metal<br>
+                Zlato<br>
+                Mladost
+            </td>
+            <td class="c">
+                <strong>Centar</strong><br>
+                Sve<br>
+                Purpurno<br>
+                Harmonija
+            </td>
+            <td class="i">
+                <strong>Istok</strong><br>
+                Drvo<br>
+                Plava<br>
+                Buducnost
+            </td>
+        </tr>
+        <tr>
+            <td class="jz">
+                <strong>Jugozapad</strong><br>
+                Zemlja<br>
+                Braun<br>
+                Spokojstvo
+            </td>
+            <td class="j">
+                <strong>Jug</strong><br>
+                Vatra<br>
+                Narandzasta<br>
+                Slava
+            </td>
+            <td class="ji">
+                <strong>Jugoistok</strong><br>
+                Drvo<br>
+                Zelena<br>
+                Romansa
+            </td>
+        </tr>
+    </table>
+    <input class="ciscenje" type="button" value="clear">
+    <textarea class="oblast_logovanja"></textarea>
+</div>
+`;
+
+const stilovi_tabele_1 = `
+    .table_kont_one {
+        border: 4px solid bisque;
+        width: 92%;
+        padding: 18px;
+    }
+
+    .table_kont_one table {
+        width: 94%;
+        margin: auto;
+        border-collapse: separate;
+        border-spacing: 8px;
+    }
+
+    .table_kont_one textarea {
+        width:94%;
+        display: block;
+        margin: auto;
+        height: 22vw;
+    }
+
+    .table_kont_one input {
+        display: block;
+        width: 18%;
+        margin-top: 18px;
+        margin-right: 79%;
+        margin-left: auto;
+    }
+
+    .table_kont_one td {
+        text-align: center;
+        padding: 18px;
+        line-height: 1.8em;
+        color: blanchedalmond;
+    }
+
+    .table_kont_one .sz {
+        background-color: silver;
+        color: #292f38;
+    }
+    .table_kont_one .s {
+        background-color: royalblue;
+    }
+    .table_kont_one .si {
+        background-color: yellow;
+        color: #292f38;
+    }
+    .table_kont_one .z {
+        background-color: gold;
+        color: #292f38;
+    }
+    .table_kont_one .c {
+        background-color: darkviolet;
+    }
+    .table_kont_one .i {
+        background-color: deepskyblue
+    }
+    .table_kont_one .jz {
+        background-color: saddlebrown
+    }
+    .table_kont_one .j {
+        background-color: orangered;
+    }
+    .table_kont_one .ji {
+        background-color: springgreen;
+    }
+
+    .table_kont_one .fuchsia {
+        background-color: fuchsia;
+    }
+`;
+
+const hoversOverOut = function(ev){
+
+    
+
+    const target = ev.target;
+    const evType = ev.type;
+    const previousClassName = target.className;     //OVO, AKO SE REFAKTORISE CODE, JESTE SUVISNO 
+    
+    //KORISTICU     className      ; MADA ZNAM DA JE UZ POMOC     classList     JEDNOSTAVNIJE
+
+    target.className = evType === 'mouseover'
+    ?
+    previousClassName + " fuchsia"
+    :
+    previousClassName.slice(0, previousClassName.lastIndexOf('f') - 1);
+
+    //KORISTIO SAM RegExp U OVOM PRIMERU, KAKO BIH GS PROVEZBAO OPET, STO MORAM URADITI POSEBNO
+    //ODNOSNO MORAM RegExp-U POSVETITI SVU PAZNJU U BUDUCNOSTI
+
+    const fuchsiaArray = /(\D+) fuchsia$/ig.exec(previousClassName);  //"fuchsia" at back
+    let classString = fuchsiaArray?fuchsiaArray[1]:previousClassName;     //"fuchsia" excluded
+                                                                            //or className that doesn't
+                                                                            //have "fuchsia" in it
+    // RegExp SAM KORISTIO DA BIH IMAO CIST STRING, BEZ DODATNE fuhsia KLASE, DA BIH TAKAV STRIN, BEZ
+    // POMENUTOGA DODAO PORUCI KOJA SE DODAJE VREDNOSTI DNEVNIKA, ODNOSNO textarea-A
+
+    classString = classString === ' fuchsia'?null:classString;  //PREVIDEO, ODNOSNO 
+                                                                //DEFINISAO RegExp; 
+                                                                //I ZATO SAM OVO DODAO
+                                                                // JER NE ZELIM DA OPET REDEFINISEM
+                                                                //CEO PRIMER
+
+                                                                //ODNOSNO OVO STO SAM DEFINISAO
+                                                                //U SLUCAJU KADA SU TARGET-I, ONI ELEMENTI
+                                                                //KOJI NISU CELIJE TABELE (table ELEMENT,
+                                                                //I strong ELEMENT KOJI JE DESCENDANT CELIJE
+                                                                //A TAKODJE I th ELEMENT), DA IM SE NE LOGUJE
+                                                                //KLASA (JER KADA DOBIJU BOJU, NJIHOVA 
+                                                                //KLASA JE fucshia; A JA ZELIM DA SE UMESTO
+                                                                //TE KLASE LOGUJE NJIHOV nodeName)
+
+    const message = `\n[ ${evType} ----> ${classString || target.nodeName} ]`;
+    const dnevnik = target.closest('.table_kont_one').querySelector('textarea');
+
+    dnevnik.value = dnevnik.value + message;
+    dnevnik.scrollTop = dnevnik.scrollHeight;
+};
+
+document.querySelector('.table_kont_one > table').onmouseover = 
+document.querySelector('.table_kont_one > table').onmouseout = hoversOverOut;
+
+document.querySelector('.table_kont_one > input').onclick = function(ev){
+    ev.target.closest('.table_kont_one').querySelector('textarea').value = "";
+};
+
+// NA SLEDECOJ STRANICI, OVAJ PRIMER, ODNOSNO HANDLERI SU DEFINISANI DRUGACIJE (MOZDA PROSTIJE)
+// http://plnkr.co/edit/Lkv2FMFbAXK1FK8jHuat?p=preview
+
+// hoversOverOut HANDLER RADI kada se KURSOR  PREDJE SA JEDNOG ELEMENTA NA DRUGI
+// ALI JA ZELIM DA HANDLE-UJEM TRANZICIJE, IZ/U    TABLE DATA ELEMENT, KAO CELINE 
+// I DA HIGHLIGHT-UJEM TABLE DATA ELEMENT KAO CELINU
+
+//U OVOM SLUCAJU, JASNO JE DA KADA KURSOROM UDJEM U PROSTOR IZMEDJU CELIJA, ILI KADA PREDJEM PREKO 
+//TABLE HEADERA, DA CE SE I TADA DESITI TRIGGERING, POMENUTIH EVENT-OVA IZ POMENUTIH RAZLOGA
+//A DESICE SE I HIGHLIGHTING NESTED ELEMENATA (strong ELEMENT), POMENUTOG TABLE DATA ELEMENTA
+
+//JA TO NE ZELIM
+
+        // Jedno od rešenja:
+
+// Zapamtite trenutno istaknutu <td> u varijabli.
+// onmouseover - ignorišite EVENT ako smo još u trenutnom <td>.
+// onmouseout - ignorišite ako nismo izašli iz trenutnog <td>.
+// To BI FILTRIRALO "dodatne" EVENT-OVE kada se krećemo između dece <td>.
+
+
+//DAKLE, KOPIRAM PREDHODNI PRIMER OVDE, PA CU IZMENITI NJEGOV CODE, KAKKO BI ODGOVARAO, ONOME STA ZELIM
+//ODNOSNO ONOME STO JE NAVEDENO
+
+const html_tabele_2 = `
+<div class="table_kont_two">
+    <table>
+        <tr>
+            <th colspan="3">Feng Shui <em>Bagua</em> tabela(chart): Smer, Element, Boja, Znacenje </th>            
+        </tr>
+        <tr>
+            <td class="sz">
+                <strong>Severozapad</strong><br>
+                Metal<br>
+                Srebro<br>
+                Starci
+            </td>
+            <td class="s">
+                <strong>Sever</strong><br>
+                Voda<br>
+                Plavo<br>
+                Promena
+            </td>
+            <td class="si">
+                <strong>Severoistok</strong><br>
+                Zemlja<br>
+                Zuta<br>
+                Smer
+            </td>
+            </tr>
+        <tr>
+            <td class="z">
+                <strong>Zapad</strong><br>
+                Metal<br>
+                Zlato<br>
+                Mladost
+            </td>
+            <td class="c">
+                <strong>Centar</strong><br>
+                Sve<br>
+                Purpurno<br>
+                Harmonija
+            </td>
+            <td class="i">
+                <strong>Istok</strong><br>
+                Drvo<br>
+                Plava<br>
+                Buducnost
+            </td>
+        </tr>
+        <tr>
+            <td class="jz">
+                <strong>Jugozapad</strong><br>
+                Zemlja<br>
+                Braun<br>
+                Spokojstvo
+            </td>
+            <td class="j">
+                <strong>Jug</strong><br>
+                Vatra<br>
+                Narandzasta<br>
+                Slava
+            </td>
+            <td class="ji">
+                <strong>Jugoistok</strong><br>
+                Drvo<br>
+                Zelena<br>
+                Romansa
+            </td>
+        </tr>
+    </table>
+    <input class="ciscenje" type="button" value="clear">
+    <textarea class="oblast_logovanja"></textarea>
+</div>
+`;
+
+const stilovi_tabele_2 = `
+    .table_kont_two {
+        border: 4px solid bisque;
+        width: 92%;
+        padding: 18px;
+    }
+
+    .table_kont_two table {
+        width: 94%;
+        margin: auto;
+        border-spacing: 8px;
+    }
+
+    .table_kont_two textarea {
+        width:94%;
+        display: block;
+        margin: auto;
+        height: 22vw;
+    }
+
+    .table_kont_two input {
+        display: block;
+        width: 18%;
+        margin-top: 18px;
+        margin-right: 79%;
+        margin-left: auto;
+    }
+
+    .table_kont_two td {
+        text-align: center;
+        padding: 18px;
+        line-height: 1.8em;
+        color: blanchedalmond;
+    }
+
+    .table_kont_two .sz {
+        background-color: silver;
+        color: #292f38;
+    }
+    .table_kont_two .s {
+        background-color: royalblue;
+    }
+    .table_kont_two .si {
+        background-color: yellow;
+        color: #292f38;
+    }
+    .table_kont_two .z {
+        background-color: gold;
+        color: #292f38;
+    }
+    .table_kont_two .c {
+        background-color: darkviolet;
+    }
+    .table_kont_two .i {
+        background-color: deepskyblue;
+    }
+    .table_kont_two .jz {
+        background-color: saddlebrown;
+    }
+    .table_kont_two .j {
+        background-color: orangered;
+    }
+    .table_kont_two .ji {
+        background-color: springgreen;
+    }
+
+    .table_kont_two .fuchsia {
+        background-color: fuchsia;
+    }
+
+`;
+
+
+//OVA FUNKCIJA JE SKROZ PROBLEMATICNA ZATO CU POKUSATI I TRECI PUT DA ODRADIM OVAJ PRIMER, TAKO DA MOGU
+//PRESKOCITI, REVIEWING SLEDEC CODE-A I PRECI NA NOVI, ODNOSNO ISTI OVAKAV PRIMER, U KOJEM SAM OTKLONIO
+//GRESKU
+
+const hoversHandl = function(ev){
+
+    //SLEDECE DVE PRVE USLOVNE IZJAVE return-UJU HANDLER, U SLUCAJU TRIGGERING-A mouseover/out
+    //EVENT-OVA, PRI IZLASKU/ULASKU KUSRSORA NA/SA NESTED ELEMENATA, OD 'TD' TARGET-A (U PITANJU JE JEDAN 
+    // NESTED ELEMENT A TO JE strong; U OVOM SLUCAJU)
+    //MEDJUTIM JA SAM DEFINISAO CODE, U SLUCAJU BILO KOJEG NESTED-A
+
+    //MOZDA BI SE POMENUTO TREBALO I REFACTORISATI
+
+    if(ev.traget && ev.relatedTarget){
+        if(ev.type === 'mouseover' && ev.target.nodeName !== 'TD' && ev.relatedTarget.nodeName !== 'TD') return;
+    }
+
+    //if(ev.type === 'mouseover' && !currentElement) return;
+        
+        //MORAM JOS RADITI NA OVOM PRIMERU; I KONKRETNO MORAM
+                                            //KORISTITI     contains    METODU JER SAM TO VIDEO U TUTORIJLU 
+    if(ev.type === 'mouseout' && ev.relatedTarget &&
+        ev.target.nodeName === 'TD' && ev.relatedTarget.nodeName !== 'TD')
+    {
+        if(ev.relatedTarget.closest('TD')){
+            return;
+        }
+    }
+    
+    if(ev.type === 'mouseover' && ev.relatedTarget &&
+        ev.target.nodeName === 'TD' && ev.relatedTarget.nodeName !== 'TD')
+    {
+        if(ev.relatedTarget.closest('TD')){
+            return;
+        }
+    
+    }
+    
+    //AKO SE TRIGGERUJE 'mouseover', NA BILO KOJEM ELEMENTU TABELE, A DA TAJ ELEMENT NIJE NIJE
+    //  'TD', RETURN-OVACE SE FUNKCIJA  (KAD SAM OVO DEFINISAO, IMAO SAM NA UMU, PRVENSTVENO table I
+    //I PRVI RED TABELE; NE ZELIM DA PRATIM mouseover ZA TE ELEMENTE)
+
+    if(ev.type === 'mouseover' && ev.target.nodeName !== 'TD') return;
+    if(ev.type === 'mouseleave' && ev.target.nodeName !== 'TD') return;
+    
+    const target = ev.target;
+    const evType = ev.type;
+    const previousClassName = target.className;
+
+    currentElement = evType === 'mouseout'?target:null;
+    
+    let classString;
+
+    target.className = evType === 'mouseover'
+    ?
+    previousClassName + " fuchsia"
+    :
+    previousClassName.slice(0, previousClassName.lastIndexOf('f') - 1);
+    
+
+    const fuchsiaArray = /(\D+) fuchsia$/ig.exec(previousClassName);
+    classString = fuchsiaArray?fuchsiaArray[1]:previousClassName;    
+
+    classString = classString === ' fuchsia'?null:classString;
+    
+
+    const message = `\n[ ${evType} ----> ${classString || target.nodeName} ]`;
+    const dnevnik = target.closest('.table_kont_two').querySelector('textarea');
+
+    dnevnik.value = dnevnik.value + message;
+    dnevnik.scrollTop = dnevnik.scrollHeight;
+};
+
+document.querySelector('.table_kont_two > table').onmouseover = 
+document.querySelector('.table_kont_two > table').onmouseout = hoversHandl;
+
+document.querySelector('.table_kont_two > input').onclick = function(ev){
+    ev.target.closest('.table_kont_two').querySelector('textarea').value = "";
+};
+
+//////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//DAKLE OPET RADIM ISTI PRIMER (BAGUA CHART)
+
+const html_tabele_3 = `
+<div class="table_kont_three">
+    <table>
+        <tr>
+            <th colspan="3">Feng Shui <em>Bagua</em> tabela(chart): Smer, Element, Boja, Znacenje </th>            
+        </tr>
+        <tr>
+            <td class="sz">
+                <strong>Severozapad</strong><br>
+                Metal<br>
+                Srebro<br>
+                Starci
+            </td>
+            <td class="s">
+                <strong>Sever</strong><br>
+                Voda<br>
+                Plavo<br>
+                Promena
+            </td>
+            <td class="si">
+                <strong>Severoistok</strong><br>
+                Zemlja<br>
+                Zuta<br>
+                Smer
+            </td>
+            </tr>
+        <tr>
+            <td class="z">
+                <strong>Zapad</strong><br>
+                Metal<br>
+                Zlato<br>
+                Mladost
+            </td>
+            <td class="c">
+                <strong>Centar</strong><br>
+                Sve<br>
+                Purpurno<br>
+                Harmonija
+            </td>
+            <td class="i">
+                <strong>Istok</strong><br>
+                Drvo<br>
+                Plava<br>
+                Buducnost
+            </td>
+        </tr>
+        <tr>
+            <td class="jz">
+                <strong>Jugozapad</strong><br>
+                Zemlja<br>
+                Braun<br>
+                Spokojstvo
+            </td>
+            <td class="j">
+                <strong>Jug</strong><br>
+                Vatra<br>
+                Narandzasta<br>
+                Slava
+            </td>
+            <td class="ji">
+                <strong>Jugoistok</strong><br>
+                Drvo<br>
+                Zelena<br>
+                Romansa
+            </td>
+        </tr>
+        <input class="ciscenje" type="button" value="clear">
+        <textarea class="oblast_logovanja"></textarea>
+    </table>
+</div>
+`;
+
+const stilovi_tabele_3 = `
+    .table_kont_three {
+        border: 4px solid bisque;
+        width: 92%;
+        padding: 18px;
+    }
+
+    .table_kont_three table {
+        width: 94%;
+        margin: auto;
+        border-spacing: 8px;
+    }
+
+    .table_kont_three textarea {
+        width:94%;
+        display: block;
+        margin: auto;
+        height: 22vw;
+    }
+    
+    .table_kont_three input {
+        display: block;
+        width: 18%;
+        margin-top: 18px;
+        margin-right: 79%;
+        margin-left: auto;
+    }    
+
+    .table_kont_three td {
+        text-align: center;
+        padding: 18px;
+        line-height: 1.8em;
+        color: blanchedalmond;
+    }
+
+    .table_kont_three .sz {
+        background-color: silver;
+        color: #292f38;
+    }
+    .table_kont_three .s {
+        background-color: royalblue;
+    }
+    .table_kont_three .si {
+        background-color: yellow;
+        color: #292f38;
+    }
+    .table_kont_three .z {
+        background-color: gold;
+        color: #292f38;
+    }
+    .table_kont_three .c {
+        background-color: darkviolet;
+    }
+    .table_kont_three .i {
+        background-color: deepskyblue;
+    }
+    .table_kont_three .jz {
+        background-color: saddlebrown;
+    }
+    .table_kont_three .j {
+        background-color: orangered;
+    }
+    .table_kont_three .ji {
+        background-color: springgreen;
+    }
+
+    .table_kont_three .fuchsia {
+        background-color: fuchsia;
+    }
+`;
+
+//NE ZNAM DA LI JE DOBRO DEFINISATI HANDLER, KOJI SE KACI NA ISTI ELEMENT U SLUCAJU mouseover/out EVENT-
+// OVA, JER JE U CLANKU KORISTIO DVA ODVOJENA, ALI POKUSACU OPET DEFINISANJE JEDNOG HANDLER-A
+
+//ONO STO MORAM URADITI, JESTE DEFINISANJE DAVANJA CSS KLASE KOJA DAJE NOVI BACKGROUND COLOR
+//STO SE TREBA DOGODITI NAKO NTRIGGERING-A      mouseover-A     NA TD  ELEMENTU
+
+//I ODUZIMANJA TE KLASE, NAKON TRIGGERING-A     mouseout-A EVENTA NA TD ELEMENT
+
+//POMENUTE EVENT-OVE, TREBA IGNORISATI ZA ANCESTORE, POMENUTOG TD-A
+
+//A TREBA NA PRAVI NACIN DEFINISATI DA SE BACKGROUND NE MENJA KADA SE TRIGGERUJE mouseover/out NA
+//DESCENDANTIMA, POMENUTOG 'TD' ELEMENTA
+
+//I TREBA DA NA PRAVI NACIN, VIDIM, KAKO BI PREVAZISAO SITUACIJE, KADA SE KURSOR POMERA BRZO
+//ODNOSNO KADA SE 
+
+//ODNOSNO PROBLEM MOZE NASTATI PRI BRZOM IZLASKU IZ DESCENDANTA, POMENUTOG 'TD' ELEMENTA
+//TADA SE MOZE DESITI, DA KURSOR BUDE PREBRZ, I NE REGISTRUJE SE, ODNOSNO NE TRIGGERUJE SE
+//  mouseout        ZA  TD  ELEMENT
+//TADA ELEMENT IMA I DALJE ONU CSS KLASU KOJA MU JE DALA NOVI BACKGROUND COLOR; UMESTO DA JE
+//IZGUBI, I DA OPET IMA SVOJ DEFAULT BACKGROUND COLOR
+
+// AUTOR CLANKA JE GOVORIO DA JE U OVOKVOJ SITUACIJI POTREBNO SKLADISTITI 'TD', KOJI DOBIJE NOVI COLOR
+// NAKON TRIGGERING-A        mouseover       EVENTA
+
+// U TOM SLUCAJU JA BIH MORAO DEFINISATI DA SE NAKON STO SE, NA DRUGIM ELEMENTIMA (TU SE UBRAJA
+//  I NEKI DRUGI TD) TRIGGERUJE     mouseover EVENT , DA SE TADA, UKLONI POMENUTA BACKGROUND KLASA ZA
+// SKLADISTENI TD ELEMENT
+
+//OVAJ GORNJI BLOKOVI TEKSTA SU KONFUZAN; JER TEK KADA SAM URADIO PRIMER, I KADA SAM GA ISKOMENTARISAO 
+// DOLE STVARI SU POSTALE JASNIJE
+
+
+//SLEDECA VARIJABLA SKLADISTI ELEMENT, KOJI IMA CSS KLASU .fuchsia
+
+let trenutniTDFuchsia;
+
+//SADA CU DEFINISATI HANDLER
+
+const floatingHandler = function(ev){
+    const lastTDisFus = trenutniTDFuchsia?true:false;      //AKO POSTOJI ELEMENT KOJI IMA KLASU .fuchsia
+                                                            //ODNOSNO AKO GLOBALNA VARIJABLA SKLADISTI
+                                                            // 'TD' KOJI IMA fuchsia BACKGROUND
+                                                            //KASNIJE SAM VIDEO DA JE OVO SUVISNO
+                                                            //ODNOSNO ZA SVE POTREBE U OVOJ FUNKCIJI
+                                                            // MOGAO SAM KORISTITI, ODNOSNO REFERENCIRATI
+                                                            // SAMU GLOBALNU VARIJABLU
+                                                            //JER ONA MOZE IMATI TD ELEMENT, KAO VREDNOST
+                                                            // ILI null (NA POCETKU undefined)
+    const target = ev.target;
+    const relatedTarget = ev.relatedTarget;
+    const tipEventa = ev.type;
+
+    //OVIM SLEDECIM TERNARY-JEVIMA DOLAZIM DO TOGA, DA: AKO POSTOJE I TARGET I RELATED TARGET
+    //JA VIDIM DA LI ONI IMAJU ANCESTOR/DESCENDANT ODNOS
+
+    //POSTO SE MOZE DESITI DA   relatedTarget BUDE null JA SAM PRVO DEFINISAO OVE TERNARYJE, ODNOSNO
+    // NJIHOVE USLOVE
+
+    //NISAM SIGURAN DA LI SAM MORAO I DA PROVERAVAM I target, ALI I TO CU KASNIJE VIDETI
+
+    const relatedContainsTarget = relatedTarget && target?relatedTarget.contains(target):false;
+    const targetContainsRelataed = relatedTarget && target?target.contains(relatedTarget):false;
+
+    //UMESTO DA KORISTIM contains METODU, MOGAO SAM SAM DA PROVERIM DA LI ELEMENTI IMAJU ODNOS
+    //ANCESTOR/DESCENDANT I DA LI JE ANCESTOR, USTVARI 'TD', U ISTO VREME, KORISCENJEM NECEGA DRUGOG
+    //U TOM SLUCAJU BIH KORISTIO while LOOP, NA SPECIFICAN NACIN; ALI TO CU POKUSATI KASNIJE
+    // MISLIM DA UPRAVO TAKAV CODE STOJI IZA DEFINICIJE, POMENUTE    contains    METODE
+
+    if(
+        relatedContainsTarget && relatedTarget.nodeName === 'TD' ||
+        targetContainsRelataed && target.nodeName === 'TD'
+    ){
+        // DAKLE AKO I TARGET I RELATED TARGET; BEZ OBZIRA NA TIP EVENTA, IMAJU ANCESTOR/DESCENDANT ODNOS
+        // I DA JE PRI TOME 'TD' ANCESTOR; ONDA NE ZELIM DA SE BILO STA RADI; ONOSNO NE ZELIM NIKAKVO
+        // DAVANJE NOVOG BACKGROUND COLOR-A, ILI MENJANJE VREDNOSTI, POMENUTE GLOBALNE VARIJABLE
+
+        //ZATO RETURN-UJEM FUNKCIJU
+        return;
+
+    }else{
+        //A U SUPROTNOM, AKO GORNJE NIJE ISPUNJENO; OVDE CU DEFINISATI STA SE TO DOGADJA
+        //PRI TRANZICIJAMA KURSORA KOJE NEMAJU VEZE SA NESTED ELEMENTIMA 'TD'-A
+
+        //AKO RAZMISLIM NA STA TREBAM OBRATITI PAZNJU, VIDECU DA MI JE  PRACENJE    'mouseover'
+        // EVENTA NAJBITNIJE
+
+        // JER AKO SE mouseover TRIGGERUJE NA 'TD' ZELIM DA MU SE DODA NOVI BACKGROUND, A DA SE;
+        // TAJ 'TD' SA NOVIM FUCHSIA BACKGROUND-OM DODELI KAO VREDNOST, POMENUTOJ GLOBALNOJ VARIJABLOJ
+
+        //OVO CE INVOCIRATI TO DODAVAJE, KADA NI JEDAN 'TD' NIJE IMAO, OD RANIJE,
+        // POMENUTU FUSCHIA BACKROUND BOJU
+
+        if(tipEventa === 'mouseover' && target.nodeName === 'TD' && !lastTDisFus){
+            target.classList.add('fuchsia');
+            trenutniTDFuchsia = target;
+
+            return;
+        }
+
+        // A OVO KADA JEDAN OD PREDHODNO PREDJEDJENIH 'TD'-OVA JESTE IMAO POMENUTU ROZIKASTU BOJU
+        // TU BOJU JE POTREBNO SKINUTI SA TOG PREDHODNOG ELEMENTA, DODATI FUCHSIA TARGETU (NOVOM TD-U),
+        // ZATIM JE POTREBNO TAJ NOVI TD DODELITI GLOBALNOJ VARIJABLOJ KAO VREDNOST
+        
+        if(tipEventa === 'mouseover' && target.nodeName === 'TD' && lastTDisFus){
+            trenutniTDFuchsia.classList.remove('fuchsia');
+            target.classList.add('fuchsia');
+            trenutniTDFuchsia = target;
+
+            return;
+        }
+
+        //ZATIM, JA I DALJE NE MORAM DA PRATIM  mouseout IZ 'TD' ELEMENTA
+        //VEC CU DA DEFINISEM STA SE TO DESAVA KADA SE DESI mouseover NA ELEMENTIMA KOJI NISU
+        //  'TD'
+        //PA TADA JE POTREBNO DA SE ODUZME FUSCHIA BACKGROUND, ONOM ELEMENTU, KOJI JU JE IMAO
+        // I POTREBNO JE DA GLOBALNA VARIJABLA VISE NE REFERENCIRA, TAJ ELEMENT
+
+        if(tipEventa === 'mouseover' && target.nodeName !== 'TD' && lastTDisFus){
+            trenutniTDFuchsia.classList.remove('fuchsia');
+            trenutniTDFuchsia = null;
+
+            return;
+        }
+
+        // SADA SE MOGU POSVETITI, STA SE TO TREBA DOGODITI, KADA SE TRIGGERUJE mouseout NA 'TD' TARGET-U
+        //  MORAM IMATI NA UMU DA TAKAV ELEMENT, VEC PREDHODNO IMA TU ROZIKASTU NOVU BOJU, JER SE NA 'TD'
+        // VEC RANIJE TRIGGER-OVAO  mouseover , A GORE SAM DEFINISAO (PRVA DVA USLOVA U OVOM BLOKU); DA SE
+        //TADA, POMENUTA BOJA FUCSHIA DODA
+        //E PA NA mouseout, ONA TREBA DA SE UKLONI TAKO STO CU ELEMENTU, KOJEM SAM NA mouseover DODAO BOJU,
+        //  SADA NJU NA mouseout ODUZETI, I GLOBALNOJ VARIJABLOJ DODELITI null KAO VREDNOST
+
+        if(tipEventa === 'mouseout' && target.nodeName === 'TD' && lastTDisFus){
+            trenutniTDFuchsia.classList.remove('fuchsia');
+            trenutniTDFuchsia = null;
+
+            return;
+        }
+
+    }
+   
+};
+
+document.querySelector('.table_kont_three > table').onmouseover = 
+document.querySelector('.table_kont_three > table').onmouseout = floatingHandler;
+
+document.querySelector('.table_kont_three > input').onclick = function(ev){
+    ev.target.closest('.table_kont_three').querySelector('textarea').value = "";
+};
+
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -9352,7 +10308,7 @@ so_kon.onclick = function(ev){
     return razlikaVremena;
 };
 
-
+document.body.scrollTop = document.body.scrollHeight;
 
 
 
