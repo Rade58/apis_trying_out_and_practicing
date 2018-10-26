@@ -9286,8 +9286,42 @@ const floatingHandler = function(ev){
 
     //UMESTO DA KORISTIM contains METODU, MOGAO SAM SAM DA PROVERIM DA LI ELEMENTI IMAJU ODNOS
     //ANCESTOR/DESCENDANT I DA LI JE ANCESTOR, USTVARI 'TD', U ISTO VREME, KORISCENJEM NECEGA DRUGOG
-    //U TOM SLUCAJU BIH KORISTIO while LOOP, NA SPECIFICAN NACIN; ALI TO CU POKUSATI KASNIJE
+    //U TOM SLUCAJU BIH KORISTIO while LOOP, NA SPECIFICAN NACIN; 
     // MISLIM DA UPRAVO TAKAV CODE STOJI IZA DEFINICIJE, POMENUTE    contains    METODE
+
+    // DAKLE SELEDECI CODE NIJE NESTO STO JE UTICE NA BILO STA U OVOM PRIMERU
+    // NA POCETKU SAM REKAO DA CU POKAZATI STA SE TO MOZE KORISTITI UMESTO Node.prototype.contains
+    // METODE (ODNOSNO OVAKAV CODE SE VEROVATNO KRIJE IZA 'KULISA' contains METODE)
+
+    ////////
+    //PROVERA DA LI target IMA ANCESTORA KOJI JE 'TD'
+    let targetHasTDAncestor;
+    let tempAncestor = target;
+    while(tempAncestor = tempAncestor.parentNode){
+        console.log('nothing');
+        if(tempAncestor.nodeName === 'TD'){
+            targetHasTDAncestor = true;
+            console.log("Target Has TD Ancestor: ", targetHasTDAncestor);
+            break;
+        }
+    }
+     //PROVERA DA LI target IMA ANCESTORA KOJI JE 'TD'
+    if(relatedTarget){
+        let relatedTargetHasTDAncestor;
+        let tempAncestor2 = relatedTarget;
+        while(tempAncestor2 = tempAncestor2.parentNode){
+            console.log('nothing');
+            if(tempAncestor2.nodeName === 'TD'){
+                relatedTargetHasTDAncestor = true;
+                console.log("Realated Target Has TD Ancestor: ", relatedTargetHasTDAncestor);
+                break;
+            }
+        }
+    }
+
+    /////////////
+    //SAD CU SE VRATITI NA MOJ PRIMER, I IPAK CU KORISTITI VREDNOSTI U CIJEM NASTAJANJU JE UCESTVOVALA
+    //contains METODA, JER SAM S NJOM POCEO
 
     if(
         relatedContainsTarget && relatedTarget.nodeName === 'TD' ||
@@ -9369,6 +9403,12 @@ document.querySelector('.table_kont_three > table').onmouseout = floatingHandler
 document.querySelector('.table_kont_three > input').onclick = function(ev){
     ev.target.closest('.table_kont_three').querySelector('textarea').value = "";
 };
+
+//OVAJ PRIMER JE AUTOR, POTPUNO DRUGACIJE URADIO
+// I U NJEGOVOM PRIMERU SE U GLOBALNOJ VARIJABLOJ SKLADISTI 'TRENUTNO ROZIKASTI ELEMENT';
+// ALI ON JE DEFINISAO DVA HANDLERA, ZA RAZLIKU OD MENE, JEDAN ZA mouseover, A DRUGI ZA mouseout
+// I ON IMA, ZNATNO MANJE USLOVNIH IZJAVA
+// OSTAVICU OVDE LINK DO NJEGOVE VERZIJE  http://plnkr.co/edit/S4efBBUJsdcYo4kKF81E?p=preview
 
 
 
@@ -10309,9 +10349,4 @@ so_kon.onclick = function(ev){
 };
 
 document.body.scrollTop = document.body.scrollHeight;
-
-
-
-
-
 
