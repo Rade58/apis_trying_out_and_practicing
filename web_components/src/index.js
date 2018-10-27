@@ -9476,16 +9476,20 @@ const css_for_house_example = `
     }
 `;
 
+//GLOBALNA VARIJABLA, CIJA JE NAMENA DA SKLADISTI TRENUTNO PRIKAZANI TOOLTIP
 let trenutniTooltip = null;
 
+//HANDLER KOJI CU KAZITI ZA #kuca   ZA SLUCAJ   mouseover/out
 const giveTakeTooltip = function(ev){
+    //target SAM DEKLARISAO KAO VARIJABLU, A NE KONSTANTU, ZATO STO SAM U JEDNOM SLUCAJU, VIDEO DA JE
+    //KORISNO DA OVA VARIJABLA PROMENI VREDNOST, ODNOSNO DA DRUGI ELEMENT POSTANE REFERENCIRAN OD STRANE
+    // target VARIJABLE
     let target = ev.target;
+    // OSTALE REFERENCE, KOJE SU MI POTREBNE A KOJIMA PRISTUPAM PREKO INSTANCE EVENTA
     const relatedTarget = ev.relatedTarget;
-
     const tipEventa = ev.type;
-
     const koords = ev.target.getBoundingClientRect();
-
+    // PRILICNO SUGESTIVAN NAZIV OVE METODE
     const hisAncestorIsHouseOrHeIsHouse = function(element){
         while(element){
             if(element.id === 'kuca'){
@@ -9495,12 +9499,14 @@ const giveTakeTooltip = function(ev){
         }
         return false;
     };
-
+    //ISTO TAKO, NAZIV SLEDECE METODE JE ISTO SUGESTIVAN
+    //POZIVANJEM OVE METODE SE OTKACUJE TOLLTIP OBJEKAT IZ DOMA (TACNIJE SA body ELEMENTA, JER body
+    // TREBA DA BUDE, NJEGOV PARENT) 
     const removingTooltip = function(){
         trenutniTooltip.remove();
         trenutniTooltip = null;
     };
-
+    // IMENA SLEDECIH KONSTANTI SU POPRILICNO SUGESTIVNA
     const targetIsAnchor = target && target.nodeName === 'A' && hisAncestorIsHouseOrHeIsHouse(target)
         ?
         true
@@ -9525,36 +9531,37 @@ const giveTakeTooltip = function(ev){
         :
         false;
 
+    //PREDHODNI TERNARY-JI TREBA DA SE REFAKTORISU, I SAMO JEDNO POZIVANJE  hisAncestorIsHouseOrHeIsHouse
+    //JE SASVIM DOVOLJNO, A JA IH IMAM MNOGO (TO JE PREVISE while LOOP-OVA)
+    
+    //PRVO DEFINISEM STA TREBA DA BUDE IZVRSENO TRIGGERING-OM       mouseover EVENTA 
     if(tipEventa === 'mouseover'){
 
-        /* const pageX = ev.pageX;
-        const pageY = ev.pageY; */
-
-        //console.log(pageY);
-
-        if(targetIsHouse || targetIsParagraph){
-
-            if(targetIsParagraph){
-                target = target.closest('#kuca');
-            }
-
+        if(targetIsHouse || targetIsParagraph){     //U SLUCAJU KADA SU TARGETI ILI #house  ILI    p
+                                                    //MENI USTVARI SAMO TREBA #kuca KOJA JE                   
+            if(targetIsParagraph){                  //PARAGRAFOV ANCESTOR
+                target = target.closest('#kuca');   //I ZATO, KADA JE target NEKI OD PARAGRAFA, JA
+            }                                       //TADA ZELIM DA SE SVE POTREBNO IZVRSI ZA NJEGOVOG
+                                                    //ANCESTORA, #kucu, JER SE TOOLTIP PRIKAZUJE ZA #kuca
             if(trenutniTooltip){
-                removingTooltip();
-            }
+                removingTooltip();  //AKO POSTOJI STARI TOOLTIP, KOJI JE PRIKAZAN
+            }                       //TREBA SE OTKACITI SA body-JA I NJEGOVA REFERENCA 'UNISTITI'
 
-            trenutniTooltip = document.createElement('div');
-            trenutniTooltip.textContent = target.dataset['tool'];
-            trenutniTooltip.classList.add('tool');
-            document.body.append(trenutniTooltip);
+            trenutniTooltip = document.createElement('div');        //KREIRANJE NOVOG TOOLTIPA
+            trenutniTooltip.textContent = target.dataset['tool'];   //DODELJIVANJE TOOLTIP-U TEKSTA, KOJEG SKLADISTI data-tool VARIJABLA target-A
+            trenutniTooltip.classList.add('tool');      //STILIZOVANJE TOOLTIP-A
+            document.body.append(trenutniTooltip);      //KACENJE TOOLTIPA NA BODY
 
-            const koordinateTargeta = target.getBoundingClientRect();
-            const yFromWin = koordinateTargeta.y;
-            const xFromWin = koordinateTargeta.x;
-            const targetHeight = koordinateTargeta.height;
-            const targetWidth = koordinateTargeta.width;
-            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
-            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
+            const koordinateTargeta = target.getBoundingClientRect();       
+            const yFromWin = koordinateTargeta.y;       //POTREBAN MI JE RAZMAK OD GORNJE IVICE window-A, DO GORNJE IVICE target-A
+            const xFromWin = koordinateTargeta.x;       //I RAZMAK OD LEVE IVICE window-A, DO LEVE IVICE target-A
+            const targetHeight = koordinateTargeta.height;  //VISINA target-A
+            const targetWidth = koordinateTargeta.width;    //SIRINA target-A
+            //UMESTO STO SAM PRISTUPAO OBJEKTU, U SLEDECA DVA SLUCAJ, MOGAO SAM KORISTITI offsetWidth I offsetHeight
+            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height; //VISINA TOOLTIP-A
+            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;   //SIRINA TOOLTIP-A
 
+            // POZICIONIRANJE TOOLTIP-A
             if(yFromWin > tooltipHeight){
                 trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
             }else{
@@ -9566,11 +9573,47 @@ const giveTakeTooltip = function(ev){
             }else{
                 trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
             }
+
+            return;
 
         }
         
-        if(targetIsRoof){
+        if(targetIsRoof){               //NEMA POTREBE OVO OBJASNJAVATI; JER JE CODE ISTI KAO I GORE
+                                        //SAMO STO JE OVO SLUCAJ, KADA JE target, USTVARI #krov ELEMENT
+            if(trenutniTooltip){            //CEO CODE SVA TRI BLOKAS, ODNOSNO ZA SLCAJ TRI ELEMENTA (ZA KOJE SE PRIKAZUJE TOOLTIP)
+                removingTooltip();          //JE TREBAO DA BUDE UCAUREN U JEDNU FUNKCIJU I DA SE,                                 
+            }                               //TAKAV KORISTI, ODNOSNO POZIVA U OBIMAMIAMA, SVAKE OD OVIH
+                                            // if BLOKOVA
+            trenutniTooltip = document.createElement('div');
+            trenutniTooltip.textContent = target.dataset['tool'];
+            trenutniTooltip.classList.add('tool');
+            document.body.append(trenutniTooltip);
 
+            const koordinateTargeta = target.getBoundingClientRect();
+            const yFromWin = koordinateTargeta.y;
+            const xFromWin = koordinateTargeta.x;
+            const targetHeight = koordinateTargeta.height;
+            const targetWidth = koordinateTargeta.width;
+            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
+            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
+
+            if(yFromWin > tooltipHeight){
+                trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+            }else{
+                trenutniTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+            }
+
+            if(xFromWin < 0){
+                trenutniTooltip.style.left = "4px"
+            }else{
+                trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+            }
+
+            return;
+        }
+
+        if(targetIsAnchor){             //NEMA POTREBE OVO OBJASNJAVATI; JER JE CODE ISTI KAO I GORE
+                                        //SAMO STO JE OVO SLUCAJ, KADA JE target, USTVARI <a> ELEMENT
             if(trenutniTooltip){
                 removingTooltip();
             }
@@ -9599,58 +9642,195 @@ const giveTakeTooltip = function(ev){
             }else{
                 trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
             }
-        }
 
-        if(targetIsAnchor){
-
-            if(trenutniTooltip){
-                removingTooltip();
-            }
-
-            trenutniTooltip = document.createElement('div');
-            trenutniTooltip.textContent = target.dataset['tool'];
-            trenutniTooltip.classList.add('tool');
-            document.body.append(trenutniTooltip);
-
-            const koordinateTargeta = target.getBoundingClientRect();
-            const yFromWin = koordinateTargeta.y;
-            const xFromWin = koordinateTargeta.x;
-            const targetHeight = koordinateTargeta.height;
-            const targetWidth = koordinateTargeta.width;
-            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
-            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
-
-            if(yFromWin > tooltipHeight){
-                trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
-            }else{
-                trenutniTooltip.style.top = yFromWin + targetHeight + 4 + "px";
-            }
-
-            if(xFromWin < 0){
-                trenutniTooltip.style.left = "4px"
-            }else{
-                trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
-            }
+            return
 
         }
-    }else{
-        if(trenutniTooltip && !hisAncestorIsHouseOrHeIsHouse(relatedTarget)){
+    }else{      //KADA SE TRIGGER-UJE mouseout EVENT
+        //U SLUCAJU mouseovera POTREBNO JE SAMO VODITI RACUNA KADA relatedTarget NE PRIPADA #kuca-A
+        // I TADA TREBA UKLONITI TAJ TOLTIP, I UNISTITI, NEGOVU REFERENCU
+        if(trenutniTooltip && !hisAncestorIsHouseOrHeIsHouse(relatedTarget)){    
             removingTooltip();
         }
+
+        return;
     }
 };
 
 kuca.addEventListener('mouseover', giveTakeTooltip);
 kuca.addEventListener('mouseout', giveTakeTooltip);
 
-
-// const relatedContainsTarget = relatedTarget && target?relatedTarget.contains(target):false;
-// const targetContainsRelated = relatedTarget && target?target.contains(relatedTarget):false;
-// const targetIsHouse = target && target.closest('#kuca') && target.id === 'kuca'?true:false;
-// const targetIsAnchor = target && target.closest('#kuca') && target.nodeName === 'A'?true:false;
-// const targetIsRoof = target && target.closest('#kuca') && target.id === 'krov'?true:false;
+// PRIMER JE DRUGACIJE URADJEN U CLANKU, SA ZNATNO MANJE CODE-A; OSTAVICU LINK DO NJEGOVOG CODE-A
+// http://plnkr.co/edit/jhXLvR2Ct0LIjyYAs3Z2?p=preview
 
 
+// PREDHODNI ('NOVI') PRIMER REFACTORED
+
+const html_for_house_example2 = `
+<div data-tool="Ovo je enterijer kuce" id="house">
+    <div data-tool="Ovo je krov kuce" id="roof"></div>
+    <p> Nekada je postojala majka svinja koja je imala tri male svinje. </p>
+    <p>Tri male svinje su postale toliko velike da im je njihova majka rekla: "Vi ste preveliki 
+    da više živite ovde. Morate ići i sami graditi kuće, ali pobrinite se da vas vuk ne uhvati. "</p>
+    <p>Tri male svinje su se pokrenule. "Pobrinućemo se da nas vuk ne uhvati", rekli su. </p>
+    <p> Ubrzo su upoznali čoveka. 
+        <a 
+        href="https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B8_%D0%BF%D1%80%D0%B0%D1%81%D0%B5%D1%82%D0%B0"
+        data-tool="Read on ..."
+        > 
+            Hoveruj kursorom preko mene 
+        </a> 
+    </p>
+</div>
+`;
+
+const css_for_house_example2 = `
+    #house {
+        border: pink solid 2px;
+        margin-top: 58px;
+        margin-left: 28px;
+        width: 420px;
+        box-sizing: border-box;
+    }
+
+    #roof {             /*OVDE JE PRISUTNO, VEOMA INTERESANTNA UPOTREBA BORDER-A*/
+        width: 0;
+        height: 0;
+        border-left: 209px solid transparent; 
+        border-right: 209px solid transparent;
+        border-bottom: 28px solid firebrick;
+        margin-top: -29px;
+    }
+
+    #house p {
+        text-align: justify;
+        margin: 12px 4px;
+    }
+
+    /*tooltip*/
+
+    .tool_klasa {
+        position: fixed;
+        display: inline;
+        z-index: 100;
+        text-align: center;
+        font: italic 14px/1.3 sans-serif; /*MORAM SAZNATI, KAKAV JO OVO RAZLOMAK PRI DEFINISANJU VELICINE FONTA*/
+        border: 2px solid blanchedalmond;
+        background-color: mistyrose;
+        color: #1d1d08;
+        padding: 8px 18px;
+    }
+`;
+
+let tempTooltip = null;
+
+const addRemoveTooltip = function(ev){
+    
+    let target = ev.target;
+    
+    const tipEventa = ev.type;
+
+    const hisAncestorIsHomeOrHeIsHome = function(element){
+        while(element){
+            if(element.id === 'house'){
+                return true;
+            }
+            element = element.parentNode;
+        }
+        return false;
+    };
+    
+    const removingTooltip = function(){
+        tempTooltip.remove();
+        tempTooltip = null;
+    };
+    
+    const hisAncestorIsHouseOrHeIsHouse = hisAncestorIsHomeOrHeIsHome(target);
+
+
+    if(tipEventa === 'mouseover'){
+
+        let targetIsAnchor, targetIsHouse, targetIsRoof, targetIsParagraph;
+
+        if(hisAncestorIsHouseOrHeIsHouse){
+
+            targetIsAnchor = target.nodeName === 'A' && hisAncestorIsHouseOrHeIsHouse?true:false;
+            targetIsHouse = target.id === 'house' && hisAncestorIsHouseOrHeIsHouse?true:false;
+            targetIsRoof = target.id === 'roof' && hisAncestorIsHouseOrHeIsHouse?true:false;
+            targetIsParagraph = target.nodeName === 'P' && hisAncestorIsHouseOrHeIsHouse?true:false;
+        }
+
+        const removeOldAddNewTooltip = function(target){
+            if(tempTooltip){
+                removingTooltip();
+            }
+    
+            tempTooltip = document.createElement('div');
+            tempTooltip.textContent = target.dataset['tool'];
+            tempTooltip.classList.add('tool_klasa');
+            document.body.append(tempTooltip);
+    
+            const koordinateTargeta = target.getBoundingClientRect();
+            const yFromWin = koordinateTargeta.y;
+            const xFromWin = koordinateTargeta.x;
+            const targetHeight = koordinateTargeta.height;
+            const targetWidth = koordinateTargeta.width;
+            const tooltipHeight = tempTooltip.offsetHeight;
+            const tooltipWidth = tempTooltip.offsetWidth;
+    
+            if(yFromWin > tooltipHeight){
+                tempTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+            }else{
+                tempTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+            }
+    
+            if(xFromWin < 0){
+                tempTooltip.style.left = "4px"
+            }else{
+                tempTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+            }
+        };
+
+        if(targetIsHouse || targetIsParagraph){
+
+            if(targetIsParagraph){
+                target = target.closest('#house');
+            }
+            
+            removeOldAddNewTooltip(target);
+
+            return;
+        }
+        
+        if(targetIsRoof){               
+            
+            removeOldAddNewTooltip(target);
+
+            return;
+        }
+
+        if(targetIsAnchor){             
+            
+            removeOldAddNewTooltip(target);
+
+            return;
+
+        }
+
+    }else{
+
+        const relatedTarget = ev.relatedTarget;
+
+        if(tempTooltip && !hisAncestorIsHomeOrHeIsHome(relatedTarget)){
+            removingTooltip();
+        }
+
+        return;
+    }
+};
+
+house.addEventListener('mouseover', addRemoveTooltip);
+house.addEventListener('mouseout', addRemoveTooltip);
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
