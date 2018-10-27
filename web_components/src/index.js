@@ -9305,7 +9305,7 @@ const floatingHandler = function(ev){
             break;
         }
     }
-     //PROVERA DA LI target IMA ANCESTORA KOJI JE 'TD'
+     //PROVERA DA LI relatedTarget IMA ANCESTORA KOJI JE 'TD'
     if(relatedTarget){
         let relatedTargetHasTDAncestor;
         let tempAncestor2 = relatedTarget;
@@ -9409,6 +9409,246 @@ document.querySelector('.table_kont_three > input').onclick = function(ev){
 // ALI ON JE DEFINISAO DVA HANDLERA, ZA RAZLIKU OD MENE, JEDAN ZA mouseover, A DRUGI ZA mouseout
 // I ON IMA, ZNATNO MANJE USLOVNIH IZJAVA
 // OSTAVICU OVDE LINK DO NJEGOVE VERZIJE  http://plnkr.co/edit/S4efBBUJsdcYo4kKF81E?p=preview
+
+
+//SADA CU URADITI, JOS PAR PRIMERA, VEZANIH ZA OVE EVENT-OVE, KOJI SE TRIGGERUJU, POMERANJEM KURSORA
+
+//PRVI PRIMER, KOJI CU RADITI JE TOOLTIP PRIMER
+//PRE NEGO STO KRENEM U DEFINISANJE HTML-A; MORAM RECI DA KAKO BI PRIMER BIO DEFINISAN KAKO TREBA,
+// POTREBNO JE DA BUDE MOGUCE SCROLLOVANJE, NA NACIN DA SE ELEMENTI OVOG PRIMERA BUDU MOGLI POMERENI 
+// GORE, I DA SE BUDU MOGLI 'SAKRITI IZNAD WINDOW-OVE GORNJE IVICE' TAKO DA CU UNESTI MNOGO <br> <hr>
+// ELEMENATA, A NEGDE U SREDINU (USTVARI BLIZE POCETKU, JER JE BITNO DA NAKON HTML MOG PRIMERA
+// BUDE NEKI EKSTENZIVNI SADRZAJ (HTML)) TOG UNOSA, DEFINISACU HTML MOG PRIMERA
+
+const html_for_house_example = `
+<div data-tool="Ovo je enterijer kuce" id="kuca">
+    <div data-tool="Ovo je krov kuce" id="krov"></div>
+    <p> Nekada je postojala majka svinja koja je imala tri male svinje. </p>
+    <p>Tri male svinje su postale toliko velike da im je njihova majka rekla: "Vi ste preveliki 
+    da više živite ovde. Morate ići i sami graditi kuće, ali pobrinite se da vas vuk ne uhvati. "</p>
+    <p>Tri male svinje su se pokrenule. "Pobrinućemo se da nas vuk ne uhvati", rekli su. </p>
+    <p> Ubrzo su upoznali čoveka. 
+        <a 
+        href="https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B8_%D0%BF%D1%80%D0%B0%D1%81%D0%B5%D1%82%D0%B0"
+        data-tool="Read on ..."
+        > 
+            Hoveruj kursorom preko mene 
+        </a> 
+    </p>
+</div>
+`;
+
+const css_for_house_example = `
+    #kuca {
+        border: pink solid 2px;
+        margin-top: 58px;
+        margin-left: 28px;
+        width: 420px;
+        box-sizing: border-box;
+    }
+
+    #krov {             /*OVDE JE PRISUTNO, VEOMA INTERESANTNA UPOTREBA BORDER-A*/
+        width: 0;
+        height: 0;
+        border-left: 209px solid transparent; 
+        border-right: 209px solid transparent;
+        border-bottom: 28px solid firebrick;
+        margin-top: -29px;
+    }
+
+    #kuca p {
+        text-align: justify;
+        margin: 12px 4px;
+    }
+
+    /*tooltip*/
+
+    .tool {
+        position: fixed;
+        display: inline;
+        z-index: 100;
+        text-align: center;
+        font: italic 14px/1.3 sans-serif; /*MORAM SAZNATI, KAKAV JO OVO RAZLOMAK PRI DEFINISANJU VELICINE FONTA*/
+        border: 2px solid blanchedalmond;
+        background-color: mistyrose;
+        color: #1d1d08;
+        padding: 8px 18px;
+    }
+`;
+
+let trenutniTooltip = null;
+
+const giveTakeTooltip = function(ev){
+    let target = ev.target;
+    const relatedTarget = ev.relatedTarget;
+
+    const tipEventa = ev.type;
+
+    const koords = ev.target.getBoundingClientRect();
+
+    const hisAncestorIsHouseOrHeIsHouse = function(element){
+        while(element){
+            if(element.id === 'kuca'){
+                return true;
+            }
+            element = element.parentNode;
+        }
+        return false;
+    };
+
+    const removingTooltip = function(){
+        trenutniTooltip.remove();
+        trenutniTooltip = null;
+    };
+
+    const targetIsAnchor = target && target.nodeName === 'A' && hisAncestorIsHouseOrHeIsHouse(target)
+        ?
+        true
+        :
+        false;
+
+    const targetIsHouse = target && target.id === 'kuca' && hisAncestorIsHouseOrHeIsHouse(target)
+        ?
+        true
+        :
+        false;
+
+    const targetIsRoof = target && target.id === 'krov' && hisAncestorIsHouseOrHeIsHouse(target)
+        ?
+        true
+        :
+        false;
+
+    const targetIsParagraph = target && target.nodeName === 'P' && hisAncestorIsHouseOrHeIsHouse(target)
+        ?
+        true
+        :
+        false;
+
+    if(tipEventa === 'mouseover'){
+
+        /* const pageX = ev.pageX;
+        const pageY = ev.pageY; */
+
+        //console.log(pageY);
+
+        if(targetIsHouse || targetIsParagraph){
+
+            if(targetIsParagraph){
+                target = target.closest('#kuca');
+            }
+
+            if(trenutniTooltip){
+                removingTooltip();
+            }
+
+            trenutniTooltip = document.createElement('div');
+            trenutniTooltip.textContent = target.dataset['tool'];
+            trenutniTooltip.classList.add('tool');
+            document.body.append(trenutniTooltip);
+
+            const koordinateTargeta = target.getBoundingClientRect();
+            const yFromWin = koordinateTargeta.y;
+            const xFromWin = koordinateTargeta.x;
+            const targetHeight = koordinateTargeta.height;
+            const targetWidth = koordinateTargeta.width;
+            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
+            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
+
+            if(yFromWin > tooltipHeight){
+                trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+            }else{
+                trenutniTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+            }
+
+            if(xFromWin < 0){
+                trenutniTooltip.style.left = "4px"
+            }else{
+                trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+            }
+
+        }
+        
+        if(targetIsRoof){
+
+            if(trenutniTooltip){
+                removingTooltip();
+            }
+
+            trenutniTooltip = document.createElement('div');
+            trenutniTooltip.textContent = target.dataset['tool'];
+            trenutniTooltip.classList.add('tool');
+            document.body.append(trenutniTooltip);
+
+            const koordinateTargeta = target.getBoundingClientRect();
+            const yFromWin = koordinateTargeta.y;
+            const xFromWin = koordinateTargeta.x;
+            const targetHeight = koordinateTargeta.height;
+            const targetWidth = koordinateTargeta.width;
+            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
+            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
+
+            if(yFromWin > tooltipHeight){
+                trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+            }else{
+                trenutniTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+            }
+
+            if(xFromWin < 0){
+                trenutniTooltip.style.left = "4px"
+            }else{
+                trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+            }
+        }
+
+        if(targetIsAnchor){
+
+            if(trenutniTooltip){
+                removingTooltip();
+            }
+
+            trenutniTooltip = document.createElement('div');
+            trenutniTooltip.textContent = target.dataset['tool'];
+            trenutniTooltip.classList.add('tool');
+            document.body.append(trenutniTooltip);
+
+            const koordinateTargeta = target.getBoundingClientRect();
+            const yFromWin = koordinateTargeta.y;
+            const xFromWin = koordinateTargeta.x;
+            const targetHeight = koordinateTargeta.height;
+            const targetWidth = koordinateTargeta.width;
+            const tooltipHeight = trenutniTooltip.getBoundingClientRect().height;
+            const tooltipWidth = trenutniTooltip.getBoundingClientRect().width;
+
+            if(yFromWin > tooltipHeight){
+                trenutniTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+            }else{
+                trenutniTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+            }
+
+            if(xFromWin < 0){
+                trenutniTooltip.style.left = "4px"
+            }else{
+                trenutniTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+            }
+
+        }
+    }else{
+        if(trenutniTooltip && !hisAncestorIsHouseOrHeIsHouse(relatedTarget)){
+            removingTooltip();
+        }
+    }
+};
+
+kuca.addEventListener('mouseover', giveTakeTooltip);
+kuca.addEventListener('mouseout', giveTakeTooltip);
+
+
+// const relatedContainsTarget = relatedTarget && target?relatedTarget.contains(target):false;
+// const targetContainsRelated = relatedTarget && target?target.contains(relatedTarget):false;
+// const targetIsHouse = target && target.closest('#kuca') && target.id === 'kuca'?true:false;
+// const targetIsAnchor = target && target.closest('#kuca') && target.nodeName === 'A'?true:false;
+// const targetIsRoof = target && target.closest('#kuca') && target.id === 'krov'?true:false;
 
 
 
