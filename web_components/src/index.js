@@ -9662,6 +9662,11 @@ kuca.addEventListener('mouseout', giveTakeTooltip);
 
 // PRIMER JE DRUGACIJE URADJEN U CLANKU, SA ZNATNO MANJE CODE-A; OSTAVICU LINK DO NJEGOVOG CODE-A
 // http://plnkr.co/edit/jhXLvR2Ct0LIjyYAs3Z2?p=preview
+//U OVOM SLUCAJU (IZ CLANKA) PRIMER JE JEDNOSTAVNIJI; JER JA MISLIM DA JA IMAM PRETRAN BROJ USLOVA 
+//I USLOVNIH IZJAVA; U SUSTINI, POTREBNO JE SAMO PROVERITI DA LI ELEMENT, ILI NJEGOV ANCESTOR IMAJU
+// data-tool KLASU (UZ POMOC closest    METODE   I ATRIBUT SELEKTORA) (ZANEMARITI TAGOVE)
+
+// JA I DALJE NECU KORISTITI CODE IZ CLANKA, VEC CU SAMO REFAKTORISSATI CODE MOG PRIMERA
 
 
 // PREDHODNI ('NOVI') PRIMER REFACTORED
@@ -9831,6 +9836,220 @@ const addRemoveTooltip = function(ev){
 
 house.addEventListener('mouseover', addRemoveTooltip);
 house.addEventListener('mouseout', addRemoveTooltip);
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+
+// SADA CU ODRADITI NOVI PRIMER, A TO JE PRIMER, KOJI SE U CLANKU ZOVE "SMART TOOLTIP"
+// ODNOSNO, POTREBNO JE DEFINISATI DA SE TOOLTIP PRIKAZE NA ELEMENTU, TEK ONDA, KASDA KURSOR PRESTANE
+// DA SE KRECE I ZADRZI SE NA ELEMENTU
+// ONO CEGA NE SME BITI JESTE BLINKING, ODNOSNO PRIKAZIVANJE I SKLANANJANJE TOOLTIPA, TOKOM POMERANJA
+// KURSORA, PREKO ELEMENTA, VEC SAMO KAD SE KURSOR ZADRZI MIRAN NA ELEMENTU
+
+// IDEJA, KAKO OVO DA NAPRAVIM JESTE 
+        //IGNORISANJE   mousemove EVENTA; ODNOSNO, DOK GOD SE TRIGERUJE mousemove TREBALO BI DA 
+        // GLOBALNA VARIJABLA UVEK BUDE null
+
+// MOZDA POSTOJI VISE NACINA DA SE DEFINISE DA SE TOOLTIP PRIKAZE NAKON STO ELEMENT STANE
+// A JA IMAM IDEJU DA KORISTIM Date INSTANCE, ODNOSNO DA AKO JE VREMENSKA RAZLIKA IZMEDJU DVA SUSEDNA
+// TRIGGERING-A mousemove-A PREVELIKA, ODNOSNO AKO NAKON ODREDJENOG INTERVALA, NEMA NOVOG TRIGGERING-A
+// mousemove-A, DA SE TADA 'UHVATI' mouseover I DA SE PRIKAZE TOOLTIP
+
+window.customElements.define('smart-tooltip', class extends HTMLElement {
+    constructor(){
+        super();
+        
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        
+        const slotForElement = document.createElement('slot');
+        
+        const styleElement = document.createElement('style');
+
+        const styleText = `
+            :host {
+                box-sizing: border-box;
+                display: block;
+                border: pink solid 2px;
+            }
+            
+            /* STIL ZA DEFAULT SLOTTED (AKO JE SLOTTED ELEMENT, div) */
+            ::slotted(div) {
+                border: olive solid 2px;
+                margin: 18px;
+                text-align: justify;
+            }
+        `;
+
+        slotForElement.name = 'element';
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(slotForElement);
+
+        this._tempTooltip = null;
+
+        this.removingTooltip = this.removingTooltip.bind(this);
+        this.removeOldAddNewTooltip = this.removeOldAddNewTooltip.bind(this);
+        this.hoveringHandler = this.hoveringHandler.bind(this);
+        this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
+
+        this.onMovingHandler = this.onMovingHandler.bind(this);
+
+        this.timerHandler = this.timerHandler.bind(this);
+
+        this.timerGapEnoughHandler = this.timerGapEnoughHandler.bind(this);
+
+        this.timerNumber = null;
+        this._timerFunctionRemoved = null;
+
+    }
+
+    connectedCallback(){
+
+        this.shadowRoot.querySelector('[name=element]').addEventListener(
+            'mousemove', 
+            this.onMovingHandler
+        );
+
+        /*this.shadowRoot.querySelector('[name=element]').addEventListener(
+            'mouseover', 
+            this.hoveringHandler
+        );*/ 
+        
+        this.shadowRoot.querySelector('[name=element]').addEventListener(
+            'mouseout',
+            this.onMouseOutHandler
+        );
+
+        this.shadowRoot.querySelector('[name=element]').addEventListener(
+            'time-gap-enough', 
+            this.timerGapEnoughHandler
+        );
+
+    }
+
+    //EVENT HANDLERS//////////////////////////////
+
+    onMovingHandler(ev){
+        if(this.timerNumber){
+            window.clearInterval(this.timerNumber);
+            this._timerFunctionRemoved = true;
+        }
+
+        this._initialMovingTime = new Date();
+
+        this.timerNumber = window.setInterval(this.timerHandler, 100);
+
+    }
+
+    hoveringHandler(ev){
+        this.removeOldAddNewTooltip(ev.target);
+    };
+
+    timerHandler(){
+        const currentTime = new Date();
+
+        if(currentTime - this._initialMovingTime > 600){
+            this.shadowRoot.querySelector('[name=element]').dispatchEvent(
+                new CustomEvent('time-gap-enough',{
+                    bubbles: true, cancelable: true
+                })
+            );
+        }
+
+        console.log('something');
+    }
+
+    ////////////////////Handler for custom event///////////////////////////////////
+    timerGapEnoughHandler(ev){
+        
+        for(let node of ev.target.assignedNodes()){
+            if(node.hasAttribute('data-tooltipsy')){
+                this.removeOldAddNewTooltip(node);
+                break;
+            }
+        }
+
+    }
+    
+    /////////////////////////////////////////////////////////////
+
+    removingTooltip(){
+        this._tempTooltip.remove();
+        this._tempTooltip = null;
+    }
+
+    removeOldAddNewTooltip(target){
+
+        target = target.closest('[data-tooltipsy]');
+
+        if(this._tempTooltip){
+            this.removingTooltip();
+        }
+
+        this._tempTooltip = document.createElement('div');
+        this._tempTooltip.textContent = target.dataset['tooltipsy'];
+        
+        //OVO MORA OVAKO JER TOOLTIP TREBA DA BUDE APPENDOVAN NA body, A NE MOGU MU APLICIRATI STILOVE IZ 
+        // SHADOW ROOT-A
+        const tooltipsyStyles = [
+            ["position", "fixed"],
+            ["display", "inline"],
+            ["zIndex", "100"],
+            ["font", "italic 14px/1.3 sans-serif"],
+            ["border", "2px solid blanchedalmond"],
+            ["backgroundColor", "mistyrose"],
+            ["color", "#1d1d08"],
+            ["padding", "8px 18px"],
+        ];
+
+        for(let i = 0; i < tooltipsyStyles.length; i++){
+            this._tempTooltip.style[tooltipsyStyles[i][0]] = tooltipsyStyles[i][1]; 
+        }
+
+        document.body.append(this._tempTooltip);
+
+        const koordinateTargeta = target.getBoundingClientRect();
+        const yFromWin = koordinateTargeta.y;
+        const xFromWin = koordinateTargeta.x;
+        const targetHeight = koordinateTargeta.height;
+        const targetWidth = koordinateTargeta.width;
+        const tooltipHeight = this._tempTooltip.offsetHeight;
+        const tooltipWidth =this._tempTooltip.offsetWidth;
+
+        if(yFromWin > tooltipHeight){
+            this._tempTooltip.style.top = yFromWin - tooltipHeight - 4 + "px";
+        }else{
+            this._tempTooltip.style.top = yFromWin + targetHeight + 4 + "px";
+        }
+
+        if(xFromWin < 0){
+            this._tempTooltip.style.left = "4px";
+        }else{
+            this._tempTooltip.style.left = xFromWin + targetWidth/2 - tooltipWidth/2 + "px";
+        }
+
+        window.clearInterval(this.timerNumber);
+        
+    }
+
+    onMouseOutHandler(ev){
+        // console.log(ev.relatedTarget)
+        if(ev.relatedTarget){
+            if(!ev.relatedTarget.closest('[name=element]') && this._tempTooltip){
+                this._tempTooltip.remove();
+                this._tempTooltip = null;
+                
+            }
+        }
+
+        if(this.timerNumber){
+            window.clearInterval(this.timerNumber);
+        }
+    }
+
+});
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
