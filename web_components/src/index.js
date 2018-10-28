@@ -9931,6 +9931,11 @@ window.customElements.define('smart-tooltip', class extends HTMLElement {
     //EVENT HANDLERS//////////////////////////////
 
     onMovingHandler(ev){
+        if(this._tempTooltip){
+            this._tempTooltip.remove();
+            this._tempTooltip = null;
+        }
+
         if(this.timerNumber){
             window.clearInterval(this.timerNumber);
             this._timerFunctionRemoved = true;
