@@ -9954,7 +9954,7 @@ window.customElements.define('smart-tooltip', class extends HTMLElement {
     timerHandler(){
         const currentTime = new Date();
 
-        if(currentTime - this._initialMovingTime > 600){
+        if(currentTime - this._initialMovingTime > 480){
             this.shadowRoot.querySelector('[name=element]').dispatchEvent(
                 new CustomEvent('time-gap-enough',{
                     bubbles: true, cancelable: true
@@ -9968,12 +9968,12 @@ window.customElements.define('smart-tooltip', class extends HTMLElement {
     ////////////////////Handler for custom event///////////////////////////////////
     timerGapEnoughHandler(ev){
         
-        for(let node of ev.target.assignedNodes()){
-            if(node.hasAttribute('data-tooltipsy')){
-                this.removeOldAddNewTooltip(node);
+        for(let node of ev.target.assignedNodes()){         //OVO JE MORALO OVAKO (MISLIM NA PRISTUPANJE slot-OVLJEVIM, SLOTTED ELEMENTIMA)
+            if(node.hasAttribute('data-tooltipsy')){        //ZBOG PROBLEMA SA CUSTOM EVENT-OVIMA
+                this.removeOldAddNewTooltip(node);          //I SLOTOVIMA (OVO BI TEK TREBALO OBJASNITI)
                 break;
             }
-        }
+        }                                                   
 
     }
     
@@ -10054,6 +10054,140 @@ window.customElements.define('smart-tooltip', class extends HTMLElement {
     }
 
 });
+
+//TREBAO SAM SE VRATITI NA PREDHODNI PRIMER, I DOBRO IZKOMENTARISATI, SAV CODE, OVOG CUSTOM ELEMENTA
+
+// U PRIMERU IZ CLANKA, OVAJ TOOLTIP JE DEFINISAN DRUGACIJE; A UZ TO, NIJE KORISCEN CustomEventRegistry
+// OSTAVICU, RESENJE OVDE
+// MENI SE LICNO NE SVIDJA, JER SAM PRIMETIO DA KAD SE PREDJE PREKO CHILD ELEMENATA, ILI KAD SE KURSOR
+//  OSTAVI DA STOJI, PREKO CHILD ELEMENATA (ONOG ELEMENATA ZA KOJI TREBA DA SE PRIAKZE TOOLTIP),
+//  DA SE TADA TOOLTIP VISE NE PRIKAZUJE; ALI IPAK CU OSTAVITI LINK OVOG PRIMERA; 
+// http://plnkr.co/edit/2DeX3W61SFZa8OqqzjI0?p=preview
+// AKO NEKAD KASNIJE BUDEM ZELO DA GA REVIEW-JUJEM
+
+//OVIMN PRIMEROM(MOJIM PRIMER-OM, ODNOSNO MOJOM VERZIJOM) SAM ZAVRSIO SA UPOZNAVANJEM SA
+//  mousemove, mouseover/out, mouseenter/leave 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//SADA CU SE POZABAVITI, NECIM SA CIME SA RANIJE NISAM SUSRETAO, A TO JE
+//          
+//POVLACENJE I PUSTANJE, ODNOSNO          Drag'n'Drop    SA MOUSE EVENT-OVIMA
+
+//OSNOVNI Drag'n'Drop ALGORITAM IZGLEDA OVAKO:
+            // 1.CATCHING   mousedown-A  NA ELEMENTU, KOJI JE DRAGGGABLE 
+            // 2.PRIPREMANJE ELEMENTA ZA POMERANJE (MOZDA PRAVLJENJE NJEGOVE KOPIJE ILI BILO STA)
+            // 3.ONDA ON mousemove , POMERANJE TOG TOG DRAGGABLE ELEMENTA, 
+                    //      PODESAVAJUCI MU             position     NA     absolute
+                    //      I PROMENOM VREDNOSTI ZA      left      I       top
+            // 4.I ON mouseup (PUSTANJE DUGMETA)-OBAVLJANJE SVIH ACTIONA VEZANIH ZA ZAVRSETAK Drag'n'Drop-A
+
+//URADICU JEDAN PRIMER
+//U OVOM SLUCAJU CU KORISTITI iframe ELEMNT
+const iframe_za_dargendrop_primer = `
+<div id="drag_drop">
+    <iframe style="width: 78%; height: 468px;"></iframe>
+    <div>
+      Icons made by 
+        <a href="http://www.freepik.com" title="Freepik">Freepik</a> from 
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>is licensed by 
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+          CC 3.0 BY
+        </a>
+    </div>
+    <div>Icons made by 
+      <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from 
+      <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by 
+      <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+        CC 3.0 BY
+      </a>
+    </div>
+</div>
+`;
+//PRE NEGO STO POCNEM SA IZGRADNJOM DRAG'N'DROP ALGORITMA; PRIKACICU, NEKE FOTOGRAFIJE U PRIKAZANI ifrmae
+const pictureOne = document.createElement('picture');
+const picUrl1 = './img/baseball.svg';
+const source1 = document.createElement('source');
+const pictureTwo = document.createElement('picture');
+const picUrl2 = './img/baseball_glove.svg';
+const source2 = document.createElement('source');
+const defaultImg = document.createElement('img');
+defaultImg.src = './img/default.ico';
+defaultImg.style.width = "10vw";
+defaultImg.alt="Baseball";
+
+source1.srcset = picUrl1;
+source2.srcset = picUrl2;
+pictureOne.appendChild(source1);
+pictureTwo.appendChild(source2);
+pictureOne.classList.add('ball');
+pictureTwo.classList.add('glove')
+pictureOne.appendChild(defaultImg.cloneNode());
+pictureTwo.appendChild(defaultImg.cloneNode());
+
+//  POSTO SE RANIJE NISAM SUSRETAO SA iframe-OM, DOBRO JE DA KAZEM, KAKO SE MOZE PRISTUPITI NJEGOVOM
+//  NJEGOVOM        window.document    OBJEKTU  
+//  NAIME, NJEGOVOJ Document INSTANCI, PRISTUPAM, PUTEM     
+                                        //      contentWindow    ILI    contentDocument   GETTER-A
+//
+//      contentWindow   NIJE RADILO U SLUCAJU   CHROME-A, ZATO KORISTIM     contentDocument
+const iframesDocument = document.querySelector('#drag_drop iframe').contentDocument;
+
+console.log(iframesDocument);
+
+// ZAKACICU SADA ELEMENTE U iframe-OV body
+iframesDocument.body.appendChild(pictureTwo);
+iframesDocument.body.appendChild(pictureOne);
+
+////////////////////////////Drag'n'Drop 'Algorithm'//////////////////////////////////////////////
+
+let pickedUp = false;
+
+iframesDocument.querySelector('.ball').addEventListener('mousedown', function(ev){
+
+    pickedUp = true;
+
+    const picture = ev.target.closest('picture');
+    
+    picture.style.position = "absolute";
+
+    const coordsAndSizes = picture.getBoundingClientRect();
+    const centerXcorection = coordsAndSizes.x - coordsAndSizes.width/2;
+    const centerYcorection = coordsAndSizes.y - coordsAndSizes.height/2;
+
+
+
+    ev.preventDefault();        //SPRECAVA DEFAULT AKCIJU, KOJA JE VEC UGRADJENA I VAZI DRAGGING SLIKA
+});
+
+const draggingHandler = function(ev){
+    
+    const ball = ev.currentTarget.querySelector('.ball');
+
+    console.log(ball);
+    console.log(window.getComputedStyle(ball).position === 'absolute');
+    
+    if(window.getComputedStyle(ball).position === 'absolute' && pickedUp){
+        const cursorCoordX = ev.pageX;
+        const cursorcoordY = ev.pageY;
+        const ballCoordsAndSizes = ball.getBoundingClientRect();
+        const halfWidth = ballCoordsAndSizes.width/2;
+        const halfHeight = ballCoordsAndSizes.height/2;
+        ball.style.left = cursorCoordX - halfWidth + 'px';
+        ball.style.top = cursorcoordY - halfHeight + 'px';
+    }
+
+};
+
+iframesDocument.querySelector('body').addEventListener('mousemove', draggingHandler);
+
+iframesDocument.querySelector('.ball').addEventListener('mouseup', function(ev){
+    if(ev.currentTarget.nodeName === 'PICTURE'){
+        pickedUp = false;
+    }
+});
+
+
+
 
 
 //////////////////////////////////////////////////////////////////////
