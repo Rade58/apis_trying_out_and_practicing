@@ -10140,36 +10140,36 @@ iframesDocument.body.appendChild(pictureOne);
 
 ////////////////////////////Drag'n'Drop 'Algorithm'//////////////////////////////////////////////
 
-let pickedUp = false;
+let pickedUp = false;       //false TREBA DA BUDE NAKON TRIGGERINGA mouseup EVENTA NA ELEMENTU 
 
 iframesDocument.querySelector('.ball').addEventListener('mousedown', function(ev){
 
-    pickedUp = true;
-
+    pickedUp = true;    //POMENUTA GLOBALNA VARIJABLA, CE ODLUCITI DA LI CE ELEMENT DOBITI NOVO
+                        //  POZICIONIRANJE (KADA SE TRIGGERUJE 'mousemove', NA NJEGOVOM KONTEJNERU)
     const picture = ev.target.closest('picture');
-    
-    picture.style.position = "absolute";
+    picture.style.position = "absolute";   //POZICIONIRA SE U ODNOSU NA IVICE PARENT NODE-A
 
-    const coordsAndSizes = picture.getBoundingClientRect();
-    const centerXcorection = coordsAndSizes.x - coordsAndSizes.width/2;
-    const centerYcorection = coordsAndSizes.y - coordsAndSizes.height/2;
-
-
-
-    ev.preventDefault();        //SPRECAVA DEFAULT AKCIJU, KOJA JE VEC UGRADJENA I VAZI DRAGGING SLIKA
+    ev.preventDefault();        //SPRECAVA DEFAULT AKCIJU, KOJA JE VEC UGRADJENA I PRILIKOM
+                                //TRIGGERING-A, mousedown-A, NA SLICI (NJEN DUPLIKAT (CLONE) SE POMERA
+                                // TI ONDA PRILIKOM POMERANJA KURSORA A IMACI CRNI ZNAK ZA 
+                                // NA SEBI (PREDPOSTAVLJAM NEKO UPOZORENJE))
+                                // E PA JA SAM TO UKLONIM PRIMENOM preventDefault METODE
+                                // MOGAO SAM I DA return-UJEM false U OVOM SLUCAJU (I TO BI SPRECILO DEFAULT
+                                // POMENUTI ACTION)
 });
 
+// HANDLER ZA mousemove (NA DOKIMENTU, ALI JA CU GA ZAKACITI NA body)
 const draggingHandler = function(ev){
     
     const ball = ev.currentTarget.querySelector('.ball');
-
-    console.log(ball);
-    console.log(window.getComputedStyle(ball).position === 'absolute');
     
     if(window.getComputedStyle(ball).position === 'absolute' && pickedUp){
         const cursorCoordX = ev.pageX;
         const cursorcoordY = ev.pageY;
         const ballCoordsAndSizes = ball.getBoundingClientRect();
+        // KADA SE ELEMENT PICKED UP KURSOR CE BITI NA SREDINI ELEMENTA PRILIKOM NJEGOVOG
+        // DRAGGING-A (OVO CU DA POPRAVIM U NEKO MDRUGOM PRIMERU, A ONO STO ZELIM JESTE DA KADA SE 
+        // ELEMENT POCNE POVLACITI, DA SE POVLACI U ONOJ TACKI U KOJOJ JE mousedown TRIGGER-OVAN  RANIJE)
         const halfWidth = ballCoordsAndSizes.width/2;
         const halfHeight = ballCoordsAndSizes.height/2;
         ball.style.left = cursorCoordX - halfWidth + 'px';
@@ -10186,7 +10186,202 @@ iframesDocument.querySelector('.ball').addEventListener('mouseup', function(ev){
     }
 });
 
+// PRE NEGO STO POCNEM SA PRIMEROM MORAM RECI DA JE VEOMA VAZNO DA SE, JEDNOM PRILIKOM U BUDUCNOSTI
+// POZABAVIM KOORDINATAMA, ALI VEOMA DETALJNO
 
+// SADA CU URADITI ONO STO SAM OBECAO (ONO STO ZELIM JESTE DA KADA SE 
+// ELEMENT POCNE POVLACITI, DA SE POVLACI U ONOJ TACKI U KOJOJ JE mousedown TRIGGER-OVAN  RANIJE)
+// ZA TU POTREBU CU ISKORISTI DRUGI picture NESTED U body-JU iframe-A
+// POKUSACU DA U OVOM SLUCAJU NAPRAVIM CUSTOM ELEMNT, ODNOSNO DA KADA SE SLOTT-UJE BILO KOJI ELEMENT
+// U MOJ CUSTOM TAG, DA TADA TAJ ELEMNT, POSTANE DRAGGABLE, PO PARENTU, MOG CUSTOM ELEMENTA
+
+window.customElements.define('draggable-element-inside', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+        const styleText = `
+            :host {
+                /*SAMO U CILJU NEKIH PROVERA (ZA OVAJ PRIMER MI JE styleElement BIO I SUVISAN)*/
+                /* display: block;
+                border: olive solid 2px;
+                width: 100%;
+                height: 10vw; */
+                
+                /* display: inline;
+                border: pink solid 1px; */
+            }
+        `; 
+        
+        styleElement.textContent = styleText;
+        slotElement.name = 'draggable';
+        
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(slotElement);
+        
+        this._isPickedUp = false;    //false TREBA DA BUDE NAKON TRIGGERINGA mouseup EVENTA NA ELEMENTU
+                                     // true DOZVOLJAVA DA SE ON mousemove, PODESE NOVE KOORDINATE
+                                     // ZA ELEMENT 
+        
+        // OVAJ OBJEKAT CE SKLADISTITI VREDNOSTI, PREUZETE NAKON TRIGGERING-A mousedown-A, A KOJE SU
+        // POTREBNE ZA PODESAVANJE POZICIONIRANJA, TRIGGER-OVANJEM mousemove-A (NA PARENT-U, I KADA KAZEM
+        // PARENT, NE MISLIM NA this, VEC NA this-OV PARENT)
+        // DAKLE, ZA VREDNOSTI, DODATE x I y OVOG OBJEKTA, TRIGGERING-OM mousemove-A, TREBA ODUZETI OD
+        // ODGOVARAJUCE KOORDINATE pageX/pageY; DA BI IZGLEDALO DA ELEMENT POVLACIM IZ TACKE ELEMENTA 
+        // NA KOJOJ SAM RANIJE TRIGGER-OVAO mousedown
+        this._minusBy = {x: 0, y: 0};
+
+        this.pickItUp = this.pickItUp.bind(this);
+        this.moveIt = this.moveIt.bind(this);
+        this.dropIt = this.dropIt.bind(this);
+    }
+
+    connectedCallback(){
+        //MOGU DEFINISATI, KOJI CE ELEMENTI BITI SLOTTED I U connectedCallback-U
+        // NEKA TO BUDE BILO KOJI, JE REPREZENTOVAN OD NESTED TAGA, U TAGU CASTOM ELEMENTA
+        this.childNodes[0].setAttribute('slot', 'draggable');
+
+        //KACENJE ON mousedown HANDLER-A NA SLOT
+        this.shadowRoot.querySelector('slot[name=draggable]').addEventListener(
+            'mousedown',
+            this.pickItUp
+        );
+
+        // KACENJE ON mousemove EVENT HANDLERA NA PARENT ELEMENT MOG CUSTOM ELEMENTA (DA SE NE RADI
+        // O CUSTOM ELEMENTU, KACIO BIH EVENT HANDLER, NA PARENTA ONOG ELEMENTA ZA KOJI ZELIM DA BUDE
+        // DRAGGABLE, A SADA IMAM this (CUSTOM EL.) IZMEDJU DRAGABLLE-A(SLOTTED-A) I body-JA)
+        // ZELIM NARAVNO DA SE SLOTTED ELEMENT, POMERA, 'PO POVRSINI' body-JA (MOZDA NE BIH TREBALO DA 
+        // GOVORIM body VEC DA GOVORIM 'ELEMENT, PREKO CIJE POVRSINE SE VRSI POZICIONIRANJE')
+        this.parentNode.addEventListener('mousemove', this.moveIt);
+        
+        // KACENJE ON mouseup HANDLERA NA DRGGASBLE ELEMENTU
+        this.shadowRoot.querySelector('slot[name=draggable]').addEventListener('mouseup', this.dropIt);
+    }
+
+    //ON mousedown  HANDLER
+
+    pickItUp(ev){
+        const element = ev.target.closest('[slot=draggable]');
+
+        // KADA KORISNIK KLIKNE NA ELMENT, I POMERI KURSOR, ZELIM DA KURSOR I SLOTTED
+        // BUDU KONSTANTNO 'ZALEPLJENI' U TOJ 'INICIJALNOJ' TACKI, U KOJOJ SE TRIGGER-OVAO
+        // mousedown NA SLOTTED-U; ODNOSNO NAKON TRIGGERINGA mousemove-A, PREKO BODY-JA iframe-A, JA 
+        // ZELIM DA SE ELEMENT POMERA TAKO (DA DOBIJA TAKVO POZICIONIRANJE UZ KORISCENJE KOORDINATA),
+        // DA KURSOR I ELEMENT BUDU DODIRNUTI U ISTOJ ONOJ TACKI SLOTTEDA, U KOJOJ SE DESIO mousedown
+
+        // POTREBNO JE OCITATI KOORDINATE; ALI IMA JEDAN PROBLEM
+        // KADA PODESIM DA NEKEI ELEMENT BUDE POZICIONIRAN APSOLUTNO, NJEMU SE MENJAJU NEKE KARAKTERISTIKE
+        // ZA KOJI PIKSEL, ON SE SPUSTI DOLE (MISLIM DA OVO IMA VEZE SA MARGINOM ALI MORAM D PROVERIM)
+        // ZATIM, PROMENI MU SE I SIRINA ZA KOJI PIKSEL (MISLIM DA SE SMANJI, I TO N EZNAM ZASTO, A MORAM
+        // SAZNATI)
+
+        // DAKLE ELEMENT POZICIONIRAM APSOLUTNO
+        element.style.position = "absolute";
+
+        // A KADA BUDE BIO POVLACEN PREKO DRUGIH ELEMENATA, ZELIM DA ON BUDE ONAJ ELMEMENT KOJI CE BITI
+        // PREKO
+        // ZATO DEFINISEM z-index
+
+        element.style.zIndex = 1000;
+    
+        // ZATIM CU PROCITATI KORDINATE KURSORA
+        const pageX = ev.pageX;
+        const pageY = ev.pageY;
+
+        // I PRISTUPAM I KOORDINATMA I VELICINAMA ELEMENTA
+        const elementCoordAndSizes = element.getBoundingClientRect();
+        // RANIJE SAM IMAO PROBLEMA SA KOORDINATAMA (JER SAM IM PRISTUPAO, ONDA KADA ELEMENT NIJE BIO
+        // POZICIONIRAN APSOLUTNO), TAKO DA SAM IH OVDE STMAPAO (I ONO STO BI TREBALO DA BUDE JESTE
+        // DA SU KOORDINATE KURSORA UVEK VECE OD KOORDINATA ELEMENTA (RANIJE SAM IMAO PROBLEMA BAS U TOM
+        // POGLEDU, JER JE BILO SUPROTNO))
+
+        // DAKLE, POTREBNA MI JE RAZLIKA IZMEDJU KOORDINATA KURSORA I ELEMENTOVIH KOORDINATA
+        // ZA TE VREDNOSTI TOKOM POMERANJA KURSORA PREKO this-OVOG PARENT-A, TREBA ODUZETI OD KUSRSOR
+        // EVE KOORDINATE, DA BI IZGLEDALO KAKO POVLACIM ELEMENT, ZA ONU TACKU NA KOJOJ SAM TRIGGER-OVAO
+        // mousedown
+        const xValue = pageX - elementCoordAndSizes.x;
+        const yValue = pageY - elementCoordAndSizes.y;
+        // DAKLE, VREDNOSTI, DODATE xValue-U I yValue-U, TRIGGERING-OM mousemove-A, TREBA ODUZETI OD
+        // ODGOVARAJUCE KOORDINATE pageX/pageY; DA BI IZGLEDALO DA ELEMENT POVLACIM IZ TACKE ELEMENTA 
+        // NA KOJOJ SAM RANIJE TRIGGER-OVAO mousedown
+        // KADA NACRTAM SLIKU STVARI POSTAJU JASNIJE
+        
+        //DAKLE, POMENUTE VREDNOSTI DAJEM PODOBJEKTU INSTANCE CUSTOM ELEMENTA, KAKO BIH KASNIJE KORISTIO
+        // U ON mousemove HANDLERU 
+        this._minusBy.x = xValue;
+        this._minusBy.y = yValue;
+
+        // TICAJUCI SE NAREDNOG (ON mousemove) HANDLERA (ONOG KOJI KACIM NA this-OV PARENT, 
+        // U SLUCAJU mousemove-A) KOJEG CU DEFINISATI NAKON OVOG HANDLERA, MORAM RECI SLEDECE
+        // ZA xValue I yValue JE POTREBNO POMERITI SLOTTED ELEMENT, 'UNAZAD', TOKOM POVLACENJA PREKO 
+        // this-OVOG PARENT-A, KAKO BI IMAO UTISAK DA 'DRAGG-UJEM' ELEMENT, "ZALEPIVSI KURSOR ZA NJEGA 
+        // U ZELJENOJ TACKI (TO SAM VEC REKAO NEKOLIKO PUTA ALI POSTO SAM IMAO PROBLEMA SA OVIM PRIMEROM
+        // NAPISAH OVAJ KOMENTAR VISE PUTA A DA TO TEK PRIMECUJEM SADA, ALI NEMA VEZE)
+
+        //SPRECAVAM DEFAULT ACTION, KOJI SE DESAVA NAKON TRIGGERINGA mousedown-A NA SLIKAMA (MISLIM DA 
+        // SAM, RANIJE OBJASNIO O CEM USE RADI)
+        if(element.nodeName === 'PICTURE' || element.nodeName === 'IMG') ev.preventDefault();
+        
+        // I U OVOM TRENUTKU ELEMENT JE 'POKUPLJEN' DA BI SE MOGAO DRAGG-OVATI (VREDNOST SLEDECEG
+        // PROPERTIJA CUSTOM ELEMENT-A, CE TO UPRAVO 'MOCI RECI' OBIMU ON mousemove HANDLER-A)
+        this._isPickedUp = true;
+
+    }
+
+    // ON mousemove HANDLER
+
+    moveIt(ev){
+
+        if(this._isPickedUp){
+
+            const element = ev.currentTarget.querySelector('[slot=draggable]');
+            // PRISTUPAM OPET KOORDINATAMA KURSORA
+            const pageX = ev.pageX;
+            const pageY = ev.pageY;
+            
+            // A APSOLUTNO POZICIONIRANI SLOTTED ELEMENT, DALJE POZICIONIRAM NA SLEDECI NACIN
+
+            // DAKLE ODUZIMAM ONE VREDNOSTI, ZA KOJE SAM VEC RANIJE DAO OBJASNJENJE ZASTO IH ODUZIMAM
+            // I DAO SAM OBJASNJENJE, KAKO SAM IH PROIZVEO, ODNOSNO IZRACUNAO
+
+            element.style.left = pageX - this._minusBy.x + "px";
+            element.style.top = pageY - this._minusBy.y + "px";
+
+        }
+
+    }
+
+    // ON mouseup HANDLER
+
+    dropIt(ev){
+        // TRIGGERING-OM mouseup-A NA ELEMENTU KOJI POZICIONIRAM; TREBA DA PRESTANE TO POZICIONIRANJE
+        // I TO CU POSTICI SLEDECIM (STO CE DATI INFORMACIJU OBIMU ON mousemove HANDLERA, ZAKACENOG
+        // ZA this-OV PARENT), DA POZICIONIRANJE NE TREBA DA SE OBAVI
+        this._isPickedUp = false;
+    }
+
+    // OVIM SAM NARAVNO ZAVRSIO DEFINISANJE, ODNOSNO REGISTROVANJE NOVOG CUSTOM ELEMENTA
+    // TREBALO BI OBAVITI REFACTORING CODE-A, ALI ZA TO JA NEMAM VREMENA
+
+});
+
+//KREIRANJE INSTANCE MOG CUSTOM ELEMENTA
+const draggableElement = document.createElement('draggable-element-inside');
+
+//KLONIRANJE JEDNE OD SLIKA KOJU SAM POSTAVIO U IFRAME (ZAPAMTI DA SE cloneNode PRIMENJUJE NA 
+// ELEMENTU, KOJI ZELIM DA KLONIRAM)
+const dokumentIframea = document.querySelector('iframe:first-of-type').contentDocument;
+const glovePictureCloned = dokumentIframea.querySelector('.glove').cloneNode();
+//POSTO SE KLONIRANJEM NE KLONIRA I SADRZINA, NEKOG ELEMENTA, PRISTUPICU innerHTML ELEMENTU, KOJIEG KLONIRAM
+// I ONO STO DOBIJEM DODELICU innerHTML-U, KLON-A
+glovePictureCloned.innerHTML = dokumentIframea.querySelector('.glove').innerHTML;
+
+// SADA CU OVAJ KLON ELEMENT NEST-OVATI U MOJ CUSTOM ELEMENT, KOJI CINI DA EELMENT BUDE DRAGGABLE
+draggableElement.appendChild(glovePictureCloned);
+// PA CU MOJ CUSTOM ELEMENT, NESTOVATI U body ELEMENT, iframe-A (NALAZICE SE PORED DVA POSTOJECA ELEMENTA
+// OD KOJIH SAM JEDAN, RANIJE UCINIO DRGGABLE-IM)
+dokumentIframea.body.appendChild(draggableElement);
 
 
 
@@ -11127,4 +11322,19 @@ so_kon.onclick = function(ev){
 };
 
 document.body.scrollTop = document.body.scrollHeight;
+
+
+
+const nekiDivEl = document.querySelectorAll('.neki_d_el');
+
+nekiDivEl[0].addEventListener('mousedown', function(ev){
+    console.log("KOORDINATA Y -----> ", ev.pageY);
+    console.log(ev.currentTarget.getBoundingClientRect());
+}); 
+
+nekiDivEl[1].addEventListener('mousedown', function(ev){
+    console.log("KOORDINATA Y -----> ", ev.pageY);
+    console.log(ev.currentTarget.getBoundingClientRect());
+}); 
+
 
