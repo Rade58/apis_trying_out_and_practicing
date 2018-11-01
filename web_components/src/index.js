@@ -10103,7 +10103,7 @@ const iframe_za_dargendrop_primer = `
     </div>
 </div>
 `;
-//PRE NEGO STO POCNEM SA IZGRADNJOM DRAG'N'DROP ALGORITMA; PRIKACICU, NEKE FOTOGRAFIJE U PRIKAZANI ifrmae
+//PRE NEGO STO POCNEM SA IZGRADNJOM DRAG'N'DROP - A; PRIKACICU, NEKE FOTOGRAFIJE U PRIKAZANI ifrmae
 const pictureOne = document.createElement('picture');
 const picUrl1 = './img/baseball.svg';
 const source1 = document.createElement('source');
@@ -10195,6 +10195,29 @@ iframesDocument.querySelector('.ball').addEventListener('mouseup', function(ev){
 // POKUSACU DA U OVOM SLUCAJU NAPRAVIM CUSTOM ELEMNT, ODNOSNO DA KADA SE SLOTT-UJE BILO KOJI ELEMENT
 // U MOJ CUSTOM TAG, DA TADA TAJ ELEMNT, POSTANE DRAGGABLE, PO PARENTU, MOG CUSTOM ELEMENTA
 
+// TEK SAM KASNIJE SHVATIO DA SAM OVAJ PRIMER DEFINISAO, ZA PREDUMISLJAJEM DA NEMA NIKAKVE SADRZINE
+// PRE ELEMENTA (ODNOSNO, TO SAM ZANEMARIO)
+// ALI CE SLEDECI CUSTOM ELEMENT I DALJE FUNKCIONISATI, AKO IZA DRAGGABLE ELEMENTA, NE NALAZI 
+// MNOSTVO ELEMENATA, KOJI CE IZAZVATI SCROLLING STRANICE, U TOM SLUCAJU KOORDINATE CE BITI POGRESNE I 
+// KOORDINATAMA MORAJU DA SE DODAJU VREDNOSTI, ZA KOLIKO SE SCROLLOVALA STRANICA, ALI POSTO POSLE
+// OVE KOMPONENTE, PLANIRAM DA DEFINISEM, JOS JEDAN PRIMER U KOJEM CU, ISPRAVITI OVU GRESKU
+// I U TOM PRIMERU CU OPET KORISTITI iframe, ALI U TOM SLUCAJU MNOSTVO ELEMENATA CE BITI DATO
+// body-JU iframe-A, I TO MNOSTVO ELEMENATA CE PREDHODITI ONIM ELEMENTYIMA, KOJE KASNIJE ZELIM DA UCINIM
+// DRAGGABLEIMA (TADA CU STVORITI USLOVE, KOJI NISU IDEALNI KAO U OVOM PRIMERU)
+
+
+// MISLIM DA SAM NAPRAVIO KARDINALNU GRESKU U OVOM PRIMERU, MESAJUCI, ODNOSNO KORISTECI U MATEMATICKIM
+// OPERACIJAM ONE KOORDINATE KOJE SU RELATIVNE NA page (document) I ONE KOJE SU RELATIVNE NA 
+// client (window)     (NARAVNO U SLUCAJU iframe-OVIH Document I Window INSTANCI)
+
+// ALI SVE JE ISPALO TACNO, ZATO STO NA STRANICI, ODNOSNO iframe-U, NIJE BIO PRISUTAN SCROLLING, ODNOSNO
+// NISAM IMAO TAKO 'DUGACKU' STRANICU, JER JE ONA STALA U FRAME iframe-A
+
+// ALI OVO JE POGRESNO, DAKLE, OVO JE POGRESNO I OVAJ PRIMER NE BIH NI TREBAO RAZMATRATI JER JE OPASAN 
+// PO ZNANJE
+
+/////////////////////////////////////////////OVAJ PRIMER RADI ALI NE VALJA///////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 window.customElements.define('draggable-element-inside', class extends HTMLElement {
     constructor(){
         super();
@@ -10359,6 +10382,7 @@ window.customElements.define('draggable-element-inside', class extends HTMLEleme
         // I TO CU POSTICI SLEDECIM (STO CE DATI INFORMACIJU OBIMU ON mousemove HANDLERA, ZAKACENOG
         // ZA this-OV PARENT), DA POZICIONIRANJE NE TREBA DA SE OBAVI
         this._isPickedUp = false;
+
     }
 
     // OVIM SAM NARAVNO ZAVRSIO DEFINISANJE, ODNOSNO REGISTROVANJE NOVOG CUSTOM ELEMENTA
@@ -10382,6 +10406,322 @@ draggableElement.appendChild(glovePictureCloned);
 // PA CU MOJ CUSTOM ELEMENT, NESTOVATI U body ELEMENT, iframe-A (NALAZICE SE PORED DVA POSTOJECA ELEMENTA
 // OD KOJIH SAM JEDAN, RANIJE UCINIO DRGGABLE-IM)
 dokumentIframea.body.appendChild(draggableElement);
+
+// U OVOM PRIMERU SAM POSTIGAO USPESNO POZICIONIRANJE, VEZANO ZA DRAG AND DROP 
+// SADA CU NASTAVITI BAVLJENJE SA DRAG'N'DROP-OM
+
+/////////////////////////////////////////////PREDHODNI PRIMER RADI ALI NE VALJA//////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// NE BIH GA TREBAO RAZMATRATI ZBOG POGRESNE STVARI KOJE SAM URADIO U POGLEDU KORDINATA
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// MEDJUTIM PREDPOSLEDNJI PRIMER, TREBALO JE DA BUDE DRAG'N'DROP ALGORITAM, ODNOSNO SAV CODE JE TREBAO
+// DA BUDE U ISTOJ FUNKCIJI, ODNOSNO TREBAO SAM IMATI, JEDAN ON mousedown HANDLER, I U NJEGOVOM OBIMU
+// TREBAO SAM DEFINISATI SVAKO DRUGO KACENJE EVENT LISTENERA (ZA mousemove I mouseup), I UKLANJANJE
+// LISTENER-A, KADA ONI VISE NISU POTREBNI
+
+// POSTO UU BODY-JU iframe-A IMAM JOS JEDAN ELEMENT, UCINICU GA DRAGGABLE-OM, UZ KORISCENJE POMENUTOG
+// ALGORITMA
+
+// NE ZNAM DA LI MOZE DOCI DO NEKOG OVERRIDING-A, PRILIKOM STILIZOVANJA, JER IMAM DVA ELEMENTA, KOJI
+// IMAJU ISTU KLASU (JEDAN OD NJIH JE KLON ONOG DRUGOG), 
+// MEDJUTIM JEDAN OD NJIH JE ELEMENT, KOJI JE SMESTEN U SHADOW ROOT, DRUGOG ELEMENTA; ALI BEZ OBZIRA
+// NA TO STO JE U SHADOW ROOT-U, NJEMU JE MOGUCE PRISTUPITI IZVAN SHADOW ROOT-A, I MOGUCE MU JE APLICIRATI 
+// STILOVE FROM IZVAN GRANICA SHADOW ROOT-A
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// IPAK CU KRIRATI, POTPUNO NOVI IFRAME, U KOJEM CU NESTOVATI GOMILU LINE I TEMATSKIH BREAK-OVA, KOJI CE
+// PREDHODITI ELEMENTU ILI ELEMENTIMA, KOJE ZELIM DA UCINIM DRAGGABLE-IMA
+// TO CE MI POMOCI DA BOLJE DEFINISEM DRAGING AND DROPPING, ODNOSNO KOORDINATE
+// JER VEC SAM REKAO DA KORDINATE MOGU BITI POGRESNE JER U OBZIR NISAM UZEO PRISUSTVO VLIKOM
+// BROJA ELEMENATA; U TOM SLUCAJU, MORAM 'DUZINU SCROLLA' KORISTITI, U MOJIM KORDINATAMA
+
+//U OVOM PRIMERU ISPRAVLJENA JE POGRESNA STVAR, KOJU SAM PRAVIO U PROSLOM PRIMERU
+// A TO JE:   KORISCENJE ZAJDNO ONIH VREDNOSTI, ODNOSNO KOORDINATA, KOJE SU RELATIVNE NA document 
+// I KOJE SU RELATICNE NA window
+
+const pocetni_html_novog_drag_drop_primera = `
+<div style="border: olive solid 4px; padding: 18px; width: 86%;">
+    AKO IMAM DILEMU GDE SU IVICE iframe, RECI CU DA SU ONE, ROZE BOJE, DAKLE TU ODMAH ISPOD JESTE iframe
+    <iframe class='halloween' style="width: 100%; height: 78vw; border: #e673a8 solid 2px">
+    </iframe>
+    <div>
+        Icons made by 
+        <a href="https://www.flaticon.com/authors/payungkead" title="Payungkead">Payungkead</a> from
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+            CC 3.0 BY
+        </a>
+    </div>
+    <div>
+        Icons made by 
+        <a href="http://www.freepik.com" title="Freepik">Freepik</a> from 
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by 
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+            CC 3.0 BY
+        </a>
+    </div>
+  </div>   
+`;
+
+// DODACU NEKOLIKO ELEMENATA U body, NOVOG iframe-A
+
+const pictureSpook = document.createElement('picture');
+const sourceSpook = document.createElement('source');
+const imgDefa = defaultImg.cloneNode();
+pictureSpook.classList.add('spook');
+imgDefa.removeAttribute('style');
+
+imgDefa.style.width = "14%";
+sourceSpook.srcset = './img/spooky.svg';
+pictureSpook.appendChild(sourceSpook);
+pictureSpook.appendChild(imgDefa);
+
+document.querySelector('.halloween').contentDocument.body.appendChild(pictureSpook);
+
+const pictureFrank = document.createElement('picture');
+const sourceFrank = document.createElement('source');
+const imgDefaF = defaultImg.cloneNode();
+pictureFrank.classList.add('frank');
+imgDefaF.removeAttribute('style');
+
+imgDefaF.style.width = "18%";
+sourceFrank.srcset = './img/frankenstein.svg';
+pictureFrank.appendChild(sourceFrank);
+pictureFrank.appendChild(imgDefaF);
+
+document.querySelector('.halloween').contentDocument.body.appendChild(pictureFrank);
+
+const pictureDevice = document.createElement('picture');
+const sourceDevice = document.createElement('source');
+const imgDefaD = defaultImg.cloneNode();
+pictureDevice.classList.add('device');
+imgDefaD.removeAttribute('style');
+
+imgDefaD.style.width = "12%";
+sourceDevice.srcset = './img/device.svg';
+pictureDevice.appendChild(sourceDevice);
+pictureDevice.appendChild(imgDefaD);
+
+document.querySelector('.halloween').contentDocument.body.appendChild(pictureDevice);
+
+
+
+// ZABORAVIO SAM DA DODAM LINE I THEMATIC BREAKS PRE SAMOG PICTURE ELEMENTA
+// MOGU TO I SADA URADITI
+
+for(let i = 0; i < 28; i++){
+    document.querySelector('.halloween').contentDocument.body.insertAdjacentElement(
+        'afterbegin',
+        document.createElement('hr')
+    );
+    document.querySelector('.halloween').contentDocument.body.insertAdjacentElement(
+        'afterbegin',
+        document.createElement('br')
+    );
+}
+
+// POSTO SAM SVE TO URADIO, OPET CU DEFINISATI, ODNOSNO REGISTROVATI, NOVI CUSTOM ELEMENT
+
+// ONO STO CU URADITI U OVOM PRIMERU, JESTE DA CU DEFINISATI WEB KOMPONENTU, NA TAKAV NACIN DA CU
+// CU UVESTI MOGUCNOST DA CUSTO MELEMENT BUDE NESTED I U NEKOM DRUGOM CONTAINERU, KOJI NIJE BODY
+// ALI JE CHILD BODY-JA
+// ZASTO TO RAZMATRAM?
+// PA KADA SE SLOTTED ELEMENT POZICIONIRA APSOLUTNO, PA KADA MU SE BUDU 'DAVALE NOVE KOORDINATE', TOKOM
+// DRAGGING-A, JA USTVARI TOM ELEMENTU ZADAJEM, ZA KOLIKO PIKSELA CE SE ON NALAZITI OD LEVE IVICE I OD 
+// GORNJE IVICE SVOG CONTAINER-A
+// AKO JE ELEMENT, NESTED U BODY-JU, TU NEMA NEKAKVIH PROBLEMA, U POGLEDU KOORDINATA, ALI MISLIM DA BI IH
+// MOGLO BITI, AKO JE CUSTOM ELEMENT USTVARI NESTED U JOS JEDNOM NESTED ELEMENT-U body-JA
+
+window.customElements.define('draggable-element', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+        const styleText = ``;
+
+        styleElement.textContent = styleText;
+        slotElement.name = "dragg";
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(slotElement);
+
+        // BINDING this U EVENT HANDLERIMA
+        this.pickItUp = this.pickItUp.bind(this);
+        this.moveIt = this.moveIt.bind(this);
+        this.dropItDown = this.dropItDown.bind(this);
+
+        // 'STATE' PROPERTIJI I OBJEKTI
+
+        this._backBy = {x: 0, y: 0};
+        this._fromPageToParent = {x: 0, y: 0};
+        this._isPickedUp = false;
+    }
+
+    connectedCallback(){
+        // UMESTO DAVANJA slot ATRIBUTA U HTML-U (slot ATRIBUT DAJEM PVOM NESTED ELEMENTU LIGHT DOM-A)
+        this.children[0].setAttribute('slot', 'dragg');
+
+        // UOPSTE NECU PRISTUPATI ELEMENTIMA LIGHT DOM-A DIREKTNO (ODNOSNO JEDNOM ELEMENTU KOJI
+        // JE SLOTTED), JER ZELIM DA KACIM HANDLERE NA slot ELEMENT
+        // TO JE NAIME MOGUCE; JER EVENT-OVI, PROPAGATE-UJU IZMEDJU SLOTA I SLOTTED-A
+        // MOZDA JE CAK POGRESNO SPOMINJATI PROPAGATION, JER
+                    // KADA SE NA PRIMER ZAKACI ON click HANDLER NA SLOT, TADA JE PRISUTNO SLEDECE:
+                                // target   JE   SLOTTEDOV NESTED ELEMENT, ILI SAM SLOTTED (SVE U 
+                                // (ZAVISNOSTI GD SAM KLIKNUO)
+                                // ZATIM EVENT BUBBLE-UJE UP, DO SLOT-A
+
+        // OVO JE SAMO PROVERA KOJU SAM OBAVIO U CILJU DA PRIKAZEM DA STVARNO EVENT-OVI PROPAGATE
+        // IZMEDJU SLOTA I SLOTTED-A (SADA TO MOGU DA COMMENT OUT)
+        /* this.shadowRoot.querySelector('[name=dragg]').addEventListener('mousedown', function(ev){
+            console.log(ev.target, ev.currentTarget);
+        });
+        
+        this.shadowRoot.querySelector('[name=dragg]').assignedNodes()[0].addEventListener('mousedown', function(ev){
+            console.log(ev.target, ev.currentTarget);
+        }); */
+
+        // KACENJE HANDLERA
+
+                    // NA slot (name="dragg"), U SLUCAJU 'mousedown'-A
+        this.shadowRoot.querySelector('[name=dragg]').addEventListener('mousedown', this.pickItUp);
+                    // NA this-OV PARENT, U SLUCAJU 'mousemove'-A
+        this.parentNode.addEventListener('mousemove', this.moveIt);
+                    // NA slot (name="dragg"), U SLUCAJU 'mouseup'-A
+        this.shadowRoot.querySelector('[name=dragg]').addEventListener('mouseup', this.dropItDown);
+
+    }
+
+    // EVENT HANDLER-I
+    pickItUp(ev){
+
+        ev.preventDefault();
+
+        const draggable = ev.target.closest('[slot=dragg]');
+        // DA UCINIM OVAJ ELEMENT, POZICIONIRANIM APSOLUTNO
+        // KAO STO ZNAM TO HOCE MALO PROMENITI VREDNOSTI ELEMENTA
+        // ALI TO NECE UTICATI NA 'POREDAK KOORDINATA' (KAD TO KAZEM MISLIM DA CE I DALJE 
+        // ODREDJENI PROPERTIJI SKLADISTITI VREDNOSTI KOORDINATA
+        //     JEDNE KOJE SU RELATIVNE NA  Window   INSTANCU I DRUGE RELATIVNE NA Document INSTANCU)
+
+        draggable.style.position = "absolute";
+        
+        // KOORDINATAMA ELEMENTA CU PRISTUPITI I NA SLEDECI NACIN
+        const draggableCoordsAndSizes = draggable.getBoundingClientRect();
+
+        const offsetLeft = draggable.offsetLeft;
+        const offsetTop = draggable.offsetTop;
+        
+        // POSTO OVOM PRILIKOM ZELIM DA 'UPOREDIM' (DA SAMO STAMPAM), SVE KOORDINATE MISA SA SVIM 
+        // KOORDINATAMA ELEMENT PRISTUPICU I SVIM KOORDINATAMA MISA
+        const clientX = ev.clientX;
+        const clientY = ev.clientY;
+        const pageX = ev.pageX;
+        const pageY = ev.pageY;
+        
+        console.log("DRAGABLE ELEMENT----->", 'client: ', clientX, clientY, 'page: ', pageX, pageY);
+        console.log("OFFSET VALUES----->", 'left and top: ', offsetLeft, offsetTop);
+        console.log(draggableCoordsAndSizes);
+
+        // NAKON STO SAM POGLEDAO SVE TE VREDNOSTI, ODNOSNO KOORDINATE ELEMENTA, MOGU ZAKLJUCITI SLEDECE:
+
+        // offsetTop        I       offsetLeft      SU KOORDINATE KOJE 'SE MERE' OD ELEMENTA, PA DO
+        
+        // IVICA page-A, ODNOSNO ONE DAJU VREDNOSTI ZA 'SLUCAJ ISTOG KOORDINATNOG POCETKA' 
+        // (POCETAK STRANICE), KAO I ONE VREDNOSTI KOORDINATA KURSORA; TO SU:     
+        //                                                                      pageX      I      pageY   
+
+        // I ONO STO JE JAKO BITNO JESTE SLEDECE:    OBJEKAT, POVRATNA VREDNOST  
+                            //                                                  getBoundingClientRect
+
+        // METODE SADRZI VREDNOSTI, KOJE SE ODNOSE NA RAZMAK IZMEDJU IVICA ELEMENTA (top, left, bottom,
+        // right) I IVICA BROWSER-OVOG window-A
+
+        // ODNOSNO ONE DAJU VREDNOSTI ZA 'SLUCAJ ISTOG KOORDINATNOG POCETKA' 
+        // (POCETAK Window INSTANCE), KAO I ONE VREDNOSTI KOORDINATA KURSORA; TO SU:     
+        //                                                                     clientX      I    clientY
+
+        // NAIME, DOBRO BI BILO DA ZAPAMTIM SVE OVO VEZANO ZA, POMENUTE PROPERTIJE I NA STA SE ODNOSE
+        // VREDNOSTI, POMENUTIH PROPERTIJA (I KURSORA)
+
+        // KAKO BI PRONASAO RAZLIKU IZMEDJU KOORDINATE KURSORA I KOORDINATE ELEEMNTA 
+        // (KOJA MI NARA VNO TREBA DA BIH KASNIJE TRIGGERINGOM 'mousemove' IZGLEDALO DA POVLACIM
+        // ELEMENT, U TACKI U KOJOJ JE TRIGGEROVAN mousedown)
+        // MOGU KORISTITI I KOORDINATE, RELATIVNE NA Window INSTANCU (A RANIJE SAM REKAO KOJE SU TO 
+        // VREDNOSTI)
+
+        this._backBy.x = clientX - draggableCoordsAndSizes.x;
+        this._backBy.y = clientY - draggableCoordsAndSizes.y;
+
+        // U OVOM SLUCAJU, NAKO NTRIGGERING-A mousemove-A NA PARENT-U, this-A, BICE POTREBNA I RAZLIKA
+        // IZMEDJU KOORDINATA PARENTA this, I STRANICE, ODNOSNO page-A 
+        
+        
+
+        this._isPickedUp = true;
+
+    }
+
+    moveIt(ev){
+        if(this._isPickedUp){
+            const draggable = ev.currentTarget.querySelector('[slot="dragg"]');
+
+            console.log
+
+            // OCIGLEDNO OVE VREDNOSTI NISU POTREBNE
+            const x = ev.pageX - ev.currentTarget.offsetLeft;
+            const y = ev.pageY - ev.currentTarget.offsetTop;
+            // JER IZGLEDA DA SE OPET KOORDINATE RACUNAJU DRUGACIJE
+
+            // NAIME, OVO JE DOBRO, ALI ONO STO SE SADA DESAVA JESTE RESIZING ELEMENTA, TOKOM POMERANJA
+            // NE ZNAM ZASTO?
+            draggable.style.left = ev.pageX - this._backBy.x + "px";
+            draggable.style.top = ev.pageY  - this._backBy.y + "px";
+        }
+    }
+
+    dropItDown(ev){
+        if(ev.target.closest('[slot=dragg]')){
+            this._isPickedUp = false;
+        }
+    }
+
+});
+
+
+
+const pictureViking = document.createElement('picture');
+const sourceViking = document.createElement('source');
+const imgDefaV = defaultImg.cloneNode();
+pictureViking.classList.add('viking');
+imgDefaV.removeAttribute('style');
+
+imgDefaV.style.width = "16%";
+sourceViking.srcset = './img/viking.svg';
+pictureViking.appendChild(sourceViking);
+pictureViking.appendChild(imgDefaV);
+
+const draggableViking = document.createElement('draggable-element');
+// ELEMENT, KOJI ZELIM DA BUDE DRAGGABLE NEST-UJEM U LIGHT DOM INSTANCE, MOG CUSTOM ELEMENTA
+draggableViking.appendChild(pictureViking);
+// ALI MOJ NOVI CUSTOM draggable-element NESTUJEM U JEDAN KONTEJNER, KOJI CE BITI MALO POVECI
+const nekiDivKontejner = document.createElement('div');
+nekiDivKontejner.style.width = "100%";
+nekiDivKontejner.style.height = "78vw";
+nekiDivKontejner.style.border = "1px solid tomato";
+
+nekiDivKontejner.appendChild(draggableViking);
+
+// ZATIM CU TAJ CONTAINER NESTOVATI U body, MOG iframe-A
+document.querySelector('.halloween').contentDocument.body.appendChild(nekiDivKontejner);
+
+//SLEDECI CODE SU SAMO NEKE PROVERE, MOGU SE ZANEMARITI
+console.log(window.getComputedStyle(draggableViking));
+console.log(pictureViking.parentNode);
+console.log(draggableViking.parentNode);
+
+
 
 
 
