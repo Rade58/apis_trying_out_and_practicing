@@ -10420,7 +10420,7 @@ dokumentIframea.body.appendChild(draggableElement);
 // TREBAO SAM DEFINISATI SVAKO DRUGO KACENJE EVENT LISTENERA (ZA mousemove I mouseup), I UKLANJANJE
 // LISTENER-A, KADA ONI VISE NISU POTREBNI
 
-// POSTO UU BODY-JU iframe-A IMAM JOS JEDAN ELEMENT, UCINICU GA DRAGGABLE-OM, UZ KORISCENJE POMENUTOG
+// POSTO U BODY-JU iframe-A IMAM JOS JEDAN ELEMENT, UCINICU GA DRAGGABLE-OM, UZ KORISCENJE POMENUTOG
 // ALGORITMA
 
 // NE ZNAM DA LI MOZE DOCI DO NEKOG OVERRIDING-A, PRILIKOM STILIZOVANJA, JER IMAM DVA ELEMENTA, KOJI
@@ -10439,7 +10439,7 @@ dokumentIframea.body.appendChild(draggableElement);
 
 //U OVOM PRIMERU ISPRAVLJENA JE POGRESNA STVAR, KOJU SAM PRAVIO U PROSLOM PRIMERU
 // A TO JE:   KORISCENJE ZAJDNO ONIH VREDNOSTI, ODNOSNO KOORDINATA, KOJE SU RELATIVNE NA document 
-// I KOJE SU RELATICNE NA window
+// I KOJE SU RELATIVNE NA window
 
 const pocetni_html_novog_drag_drop_primera = `
 <div style="border: olive solid 4px; padding: 18px; width: 86%;">
@@ -10465,7 +10465,8 @@ const pocetni_html_novog_drag_drop_primera = `
   </div>   
 `;
 
-// DODACU NEKOLIKO ELEMENATA U body, NOVOG iframe-A
+// DODACU NEKOLIKO ELEMENATA U body, NOVOG iframe-A  (MOZDA SAM OVO URADIO BEZ IKAKAVE POTREBE SADA
+// ALI MOZDA CE MI OVI ELEMNTI POSLUZITI ZA NEKU MANIPULACIJU, U NEKOM KASNIJEM PRIMER-U)
 
 const pictureSpook = document.createElement('picture');
 const sourceSpook = document.createElement('source');
@@ -10479,19 +10480,6 @@ pictureSpook.appendChild(sourceSpook);
 pictureSpook.appendChild(imgDefa);
 
 document.querySelector('.halloween').contentDocument.body.appendChild(pictureSpook);
-
-const pictureFrank = document.createElement('picture');
-const sourceFrank = document.createElement('source');
-const imgDefaF = defaultImg.cloneNode();
-pictureFrank.classList.add('frank');
-imgDefaF.removeAttribute('style');
-
-imgDefaF.style.width = "18%";
-sourceFrank.srcset = './img/frankenstein.svg';
-pictureFrank.appendChild(sourceFrank);
-pictureFrank.appendChild(imgDefaF);
-
-document.querySelector('.halloween').contentDocument.body.appendChild(pictureFrank);
 
 const pictureDevice = document.createElement('picture');
 const sourceDevice = document.createElement('source');
@@ -10540,7 +10528,12 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         const shadowRoot = this.attachShadow({mode: 'open'});
         const slotElement = document.createElement('slot');
         const styleElement = document.createElement('style');
-        const styleText = ``;
+        const styleText = `
+            /* :host {
+                display: inline-block;
+                border: pink solid 4px;
+            } */
+        `;
 
         styleElement.textContent = styleText;
         slotElement.name = "dragg";
@@ -10552,11 +10545,16 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         this.moveIt = this.moveIt.bind(this);
         this.dropItDown = this.dropItDown.bind(this);
 
-        // 'STATE' PROPERTIJI I OBJEKTI
+        // BINDING METODE, CIJA POVRATNA VREDNOST, CE BITI ONAJ ANACESTOR ELEMENT, POZICIONIRAN RELATIVNO 
+        // ILI APSOLUTNO ILI body ELEMENT (NA TAJ ELEMENT CU KACITI ON mousemove HANDLER)
+        
+        this.absOrRelOrBodyPicker = this.absOrRelOrBodyPicker.bind(this);
 
+        // 'STATE' PROPERTIJI I OBJEKTI
         this._backBy = {x: 0, y: 0};
-        this._fromPageToParent = {x: 0, y: 0};
         this._isPickedUp = false;
+
+        this.klasa = null;
     }
 
     connectedCallback(){
@@ -10586,26 +10584,76 @@ window.customElements.define('draggable-element', class extends HTMLElement {
 
                     // NA slot (name="dragg"), U SLUCAJU 'mousedown'-A
         this.shadowRoot.querySelector('[name=dragg]').addEventListener('mousedown', this.pickItUp);
-                    // NA this-OV PARENT, U SLUCAJU 'mousemove'-A
-        this.parentNode.addEventListener('mousemove', this.moveIt);
+            // NA this-OV PARENT, U SLUCAJU 'mousemove'-A STO JE POGRESNO, ODNOSNO
+            // ZBOG OVOGA JE DOSLO DA NEKIH NEZELJENIH SITUACIJA, KOJE SAM OBJASNIO U SAMOM OBIMU HANDLERA
+            //                  this.parentNode.addEventListener('mousemove', this.moveIt);
+                    // I ZATO SE ODLUCIH DA HANDLER KACIM            
+                    // NA PRVI APSOLUTE ILI RELATIVE POZICIONIRAN ANCESTOR, A U ODSUSTVU TAKVOG
+                    // KACICU HANDLER NA body ELEMENT
+        
+        this.absOrRelOrBodyPicker().addEventListener('mousemove', this.moveIt);
+        
+        
+
                     // NA slot (name="dragg"), U SLUCAJU 'mouseup'-A
         this.shadowRoot.querySelector('[name=dragg]').addEventListener('mouseup', this.dropItDown);
 
+        console.log(document.defaultView);
+        console.log(window === document.defaultView);
+        console.log(window.getComputedStyle(this));
+
+        this.closest('body').scrollTop = this.closest('body').scrollHeight;
     }
 
     // EVENT HANDLER-I
-    pickItUp(ev){
+    pickItUp(ev){           //ZA mousedow
 
         ev.preventDefault();
 
         const draggable = ev.target.closest('[slot=dragg]');
+
         // DA UCINIM OVAJ ELEMENT, POZICIONIRANIM APSOLUTNO
         // KAO STO ZNAM TO HOCE MALO PROMENITI VREDNOSTI ELEMENTA
         // ALI TO NECE UTICATI NA 'POREDAK KOORDINATA' (KAD TO KAZEM MISLIM DA CE I DALJE 
         // ODREDJENI PROPERTIJI SKLADISTITI VREDNOSTI KOORDINATA
         //     JEDNE KOJE SU RELATIVNE NA  Window   INSTANCU I DRUGE RELATIVNE NA Document INSTANCU)
 
+        //NAKON TRIGGERING-A mousemove-A, MORAM PRISTUPITI PRAVOM ELEMENTU, A AKO MU PRISTUPIM
+        //PUTEM slot ATRIBUTA TO NECE VALJATI, JER AKO IMA VISE         draggable-element
+        // ELEMENATA U ISTOM KONTEJNERU, MOZE ISPASTI DA KADA BUDEM PRATIO mousemove PREKO KONTEJNERA
+        // A U OVOM SLUCAJU SE ZADESILO DA JE TO html ELEMENT
+        // I KADA BI querySelectorom PRISTUPIO SLOTTED-U, MOGLO BI SE DESITI DA SE SELEKTUJE PRVI SLOTED
+        // TIME BI SE DEFINISALO DA SE EVENT HANDLEROM, ZAKACENIM ZA NEKI OUTER ELEMENT, A TO KACENJE SE
+        // DOGODILO U JEDNOM CUSTOM ELEMENTU, USTVARI PRISTUPA SLOTTED ELEMENTU DRUGE INSTANCE TOG CUSTOM
+        // ELEMENTA, STO MI SE I DOGODILO, PA SAM DEFINISAO SLEDECI PROPERTI
+
+        this.klasa = draggable.classList[0];
+
+        // MEDJUTIM JA MISLIM I DA JE SLEDECI PROPERTI LOSE RESENJE
+        // JER KAD SAM VEC DEFINISEM CUSTOM ELEMENT, TREBAO BIH KORISTITI METODE I PROPERTIJE
+        // VEZANE, UPRAVO ZA NJEGA, DA IZBEGNEM OVAJ OVERRIDING
+
+
+    // MEDJUTIM ZABORAVIO SAM JEDNU BITNU STVAR VEZANU ZA APSOLUTNO POZICIONIRAN ELEMENT
+    // NJEGOVE DIMENIZIJE I KOORDINATE POSTAJU 
+                                
+                            // RELATIVNE NE KONKRETNO NA PARENT, VEC NA PRVI 'absolute' ILI 'relative'
+                            // POZICIONIRAN ANCESTOR ELEEMENT
+                    //DA TAJ ELEMENT MOZE BITI PARENT, 
+                    // U PRIMERU (OVDE VEC GOVORIM O INSTANCI MOG CUSTOM ELEMNTA, I ELEMENTU NESTOVANOM
+                    // U NJEGA KOJI JE POSTAO SLOTTED I DRAGGABLE, I KOJEG REFERENCIRA  pictureViking  
+                    // KONSTANTA; ONO STO HOCU DA KAZEM JEESTE DA JE U MOM PRIMERU CUSTOM ELEMENT
+                    // SA NJIM I SLOTTED picture, NESTOVANI U JEDNO CONTAINER-U, U body-JU iframe-A, A TAJ 
+                    // POMENUTI CONTAINER NIJE POZICIONIRAN  NI absolute A NI relative ),
+            // A NI JEDAN ANCESTOR NEMA ZADATO POZICIONIRANJE KOJE JE  relative ILI absolute
+            // KAD TO KAZIM MISLIM NA BILO KOJO CONTAINER, IZMEDJU      draggable-A I html-A (STRANICE)
+            
+            // E UPRAVO PRI TAKVOJ SITUACIJI, ELEMNT CE BITI POZICIONIRAN U ODNOSU NA   html-A
+            // ODNOSNO U ODNOSU NA page
+
         draggable.style.position = "absolute";
+
+        draggable.style.zIndex = 6000;
         
         // KOORDINATAMA ELEMENTA CU PRISTUPITI I NA SLEDECI NACIN
         const draggableCoordsAndSizes = draggable.getBoundingClientRect();
@@ -10646,7 +10694,7 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         // VREDNOSTI, POMENUTIH PROPERTIJA (I KURSORA)
 
         // KAKO BI PRONASAO RAZLIKU IZMEDJU KOORDINATE KURSORA I KOORDINATE ELEEMNTA 
-        // (KOJA MI NARA VNO TREBA DA BIH KASNIJE TRIGGERINGOM 'mousemove' IZGLEDALO DA POVLACIM
+        // (KOJA MI NARAVNO TREBA DA BIH KASNIJE TRIGGERINGOM 'mousemove' IZGLEDALO DA POVLACIM
         // ELEMENT, U TACKI U KOJOJ JE TRIGGEROVAN mousedown)
         // MOGU KORISTITI I KOORDINATE, RELATIVNE NA Window INSTANCU (A RANIJE SAM REKAO KOJE SU TO 
         // VREDNOSTI)
@@ -10654,30 +10702,95 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         this._backBy.x = clientX - draggableCoordsAndSizes.x;
         this._backBy.y = clientY - draggableCoordsAndSizes.y;
 
-        // U OVOM SLUCAJU, NAKO NTRIGGERING-A mousemove-A NA PARENT-U, this-A, BICE POTREBNA I RAZLIKA
+        // U OVOM SLUCAJU, NAKON TRIGGERING-A mousemove-A NA PARENT-U, this-A, BICE POTREBNA I RAZLIKA
         // IZMEDJU KOORDINATA PARENTA this, I STRANICE, ODNOSNO page-A 
         
-        
-
         this._isPickedUp = true;
 
     }
 
     moveIt(ev){
         if(this._isPickedUp){
-            const draggable = ev.currentTarget.querySelector('[slot="dragg"]');
+            // DAKLE SADA BIRAM MOJ SLOTTED ELEMENT UZ POMOC NJEGOVE KLASE, JER DA SAM TO URADIO UZ POMOC
+            // ATRIBUT SELEKTORA, GDE BIH SELEKTOVAO ELEMENT SA ATRIBUTOM slot, MOGLO BI SE DESITI
+            // DA SE IZABERE SLOTTED ELEEMNT POGRESNE INSTANCE MOG CUSTOM ELEMNTAA (AKO IMA
+            // VISE CUSTOM-A, U ISTOM CONTAINERU, STO CE U OVOM PRIMERU I BITI SLUCAJ, JER PLANIRAM
+            // U ISTI CONTAINER DA NESTUJE VISE INSTANCI draggable-element -A)
+            
+            //      const draggable = ev.currentTarget.getElementsByClassName(this.klasa)[0];
 
-            console.log
+            // ZASTO SAM ISKOMENTARISAO PREDHODNI CODE?
 
-            // OCIGLEDNO OVE VREDNOSTI NISU POTREBNE
-            const x = ev.pageX - ev.currentTarget.offsetLeft;
-            const y = ev.pageY - ev.currentTarget.offsetTop;
-            // JER IZGLEDA DA SE OPET KOORDINATE RACUNAJU DRUGACIJE
+
+            // STA AKO SE DESI DA 'VUKUCI' DRAGGABLE ELEMENT, NAIDJEM NA NEKI DRUGI ELEMNT
+            // ODNOSNO target, ODNOSNO currentTarget A DA TAJ ELEMENT JESTE USTVARI ELEMENT, KOJI 
+            // NIJE PARENT ILI ANCESTOR, MOM DRAGGABLE-U
+
+            // TADA NI PREDHODNA SELEKCIJA, NECE BITI KOREKTNA
+            // I ZATO, KADA DEFINISEM WEB KOMPONENTU, SHVATAM, DA JA NE TREBAM MNOGO PAZNJE DA OBRACAM NA SELEKTOVANJE
+            //  I NA KORISCENJE RAZNIH TRAVERING KOJIM SE PRISTUPA ELEMENTIMA IZVAN KOMPONENTE,
+            // ILI AKO U KOMPONENTI DEFINISEM DA NEKI SPOLJASNJI ELEMNT PRISTUPA
+            // DELOVIMA, MOJE KOMPONENTE JER NA TAJ NACIN SIGURNO MOZE 
+            // DOCI DO GRESKI, KA OSTO BI BILA POMENUTA
+
+            // ZATO, JA CU DRAGGABLE ELEMENTU PRISTUPITI IZ MOJE KOMPONENTE, ODNOSNO, PREKO slota
+
+            const draggable = this.shadowRoot.querySelector('[name=dragg]').assignedNodes()[0];
+
+            // MEDJUTIM CAK, IAKO JE PREDHODNO IZRECENO, MOZDA DOBRA PRAKSA, IPAK ONA
+            // NIJE BILA RESENJE MOG PROBLEMA
+
+
+            // PROBLEM SAM NASAO U ELEMENT-U, NA KOJEM SAM PRVOBITNO ZAKACIO, POMENUTI HANDLER, A ZAKACIO
+            // SAM GA NA parentNode  MOG CUSTOMA, ODNOSNO this-A
+
+            // NA TAKAV NACIN, KADA IZADJEM KUSRSOROM IZ GRANICA TOG parentNode-A
+            // I AKO BRZO POMERAM KURSOR, NECE SE REGISTROVATI mousemove U JEDNOM TRENUTKU
+            
+            // ODNOSNO mousemove SE NECE REGISTROVATI NA MOM DRAGGABLE-U, A TO ZNACI DA ON NECE BUBBLE-OVATI
+            // UP DO CONTAINER-A, ZA KOJEG JE ZAKACEN HANDLER, VEC CE SE DOGODITI DA POMERANJEM
+            //  PREKO NEKOG POTPUNO DRUGOG ELEMNTA, NEMA VISE PROPAGATIONA, ODNOSNO, NEMA VISE
+            // TRIGGERINGA, mousemove-A, NA POMENUTOM CONTAINERU
+
+            // A TO ZNACI DA SE OVAJ HANDLER NECE IZVRSAVATI
+
+            // POPRAVKA ZA TO JE VRACANJE NA connectedCallback I SKIDANJE OVOG HANDLER-A, SA PARENT-A, 
+            // this-A ODNOSNO UKLANJANJE TOG CODE-A
+
+            // A NA KOJI ELEMENT BI BILO DOBRO DA ZAKACIM, OVAJ HANDLER
+
+            // PA UZIMAJUCI U OBZIR SVU SITUACIJU, KOJA JE PRISUTNA U POGLEDU APSOLUTNOG POZICIONIRANJA
+            // DRAGGABLE-A; NAJBOLJE BI BILO DA OVAJ ON mousemove HANDLER ZAKACIM NA
+            // PRVI ELEMENT, KOJI BI IMAO position: relative || absolute
+            // A AKO NE PRONADJEM TAKAV this.ELEMENT_NODE, NAJBOLJE BI BILO DA HANDLER ZKACIM NA body
+
+            // MORAM SAGRADITI FUNKCIJU, KOJA CE POMNUTU PROVERU IZVRSITI U connectedCallback-U
+            // I KADA SE PRONADJE ELEMENT, ZAKACITI MU OVAJ ON mousemove HANDLER
+
+            // DAKLE        draggable JE POSITIONED APSOLUTNO, STO ZNACI U ODNOSU NA PRI APSOLUTNO ILI
+            // RELATIVE POZICIONIRAN ANCESTOR
+
+            // KAO STO SAM I REKAO TAKAV ANCESTOR U MOM PRIMERU, JESTE      html      ODNOSNO      page
+            // ZATO KORISTIM I KORDINATE, KOJE SU RELATIONAL NA TAJ ELEMNT
+            // ODNOSNO POCETAK STRANICE
+
+            draggable.style.left = ev.pageX - this._backBy.x + "px";
+            draggable.style.top = ev.pageY - this._backBy.y + "px";
 
             // NAIME, OVO JE DOBRO, ALI ONO STO SE SADA DESAVA JESTE RESIZING ELEMENTA, TOKOM POMERANJA
             // NE ZNAM ZASTO?
-            draggable.style.left = ev.pageX - this._backBy.x + "px";
-            draggable.style.top = ev.pageY  - this._backBy.y + "px";
+
+            // OTKRIO SAM GDE JE PROBLEM
+            // PROBLEM MOZE NASTATI, AKO JE ELEMENTOVA SIRINA DEFINISANA U PROCENTIMA
+            // TO JE KOD MENE SLUCAJ JER SAM JA U INSTANCU CUSTOM ELEMENTA (NJEGOCOG TAGA), 
+            // NEST-OVAO SLIKU, CIJA SIRINA JESTE U PROCENTIMA
+            
+            // TADA JE SIRINA ELEMENTA RELATIVNA NA html, ODNONO page
+            // A JA NECU ZA SADA DA PREDPOSTAVLJAM, ZASTO SIRINA ELEMNTA, RELATIVNA (U PROCENTIMA)
+            // NA html TAG MENJA SVOJE DIMENZIJE TOKOM POMERANJA
+            // MOZDA DA SAM html TAGU ZADAO VREDNOST SIRINE, MOZDA BI TO PROMENILO STVARI
+
+            // ALI POSTO MI NIJE CILJ DA MODIFIKUJEM html , TO NECU URADITI
         }
     }
 
@@ -10687,17 +10800,54 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         }
     }
 
+    // METODA ZA IZBOR ELEMENTA NA KOJEM ZELIM DA ZAKACIM ON mousemove HANDLER
+
+    absOrRelOrBodyPicker(){
+        let el = this;
+        while(true){
+
+            console.log(el);
+            if(el.nodeName === 'BODY'){
+                break;
+            }
+
+            let positioning = window.getComputedStyle(el)['position'];
+                
+            if(positioning === 'relative' || positioning === 'absolute'){
+                
+                return el;
+            
+            }
+
+            el = el.parentNode;
+        }
+
+        return this.closest('body');
+    }
+
 });
 
-
+// KREIRACU ELEMENT, KOJI ZELIM DA STAVIM U LIGHT DOM INSTANCE draggable-element-A
 
 const pictureViking = document.createElement('picture');
 const sourceViking = document.createElement('source');
 const imgDefaV = defaultImg.cloneNode();
 pictureViking.classList.add('viking');
 imgDefaV.removeAttribute('style');
-
+// OVU VREDNOST SIRINE SAM ZADAO U PROCENTIMA
+// OVO CE IZAZVATI PROBLEM, JER KADA BUDEM DRAGGOVAO ELEMENT, MENJACE SE NJEGOVA SIRINA
+// A JA TO NIKAKO NE ZELIM
+// NAIME, OVA VREDNOST U PROCENTIMA ZNACI DA ELEMENT TREBA DA IMA SIRINU, KOJA JE 14 PROCENATA OD SIRINE
+// NJEGOVOG CONTAINER-A
+// ALI, POSTO U PROCESU DRAGGING-A, MOJ ELEMENT POSTAJE APSOLUTNO POZICIONIRAN, STO ZNACI DA CE ISKOCITI
+// IZ NORMALNOG TOKA STRANICE
+// OVA VREDNOST SE VISE NECE ODNOSITI NA PROCENTE SIRINE CONTAINERA
 imgDefaV.style.width = "16%";
+// MOZDA NISAM REKAO ALI KADA DEFINISEM SIRINU          picture         ELEMENTA
+// JA USTVARI ZADAJEM SIRINU NA NJEGOVOM PLACHOLDER     img     ELEMENTU
+// TO SAM URADIO U SLUCAJU       picture    ELEEMNT, KOJI REFERENCIRA         pictureViking
+// SIRINU MOGU DEFINISATI I     sizes   PROPERTIJEM     source ELEMENTA
+// ALI TO CU TEK URADITI ZA SLUCAJ DRUGOG       picture     ELEMENTA     
 sourceViking.srcset = './img/viking.svg';
 pictureViking.appendChild(sourceViking);
 pictureViking.appendChild(imgDefaV);
@@ -10716,11 +10866,63 @@ nekiDivKontejner.appendChild(draggableViking);
 // ZATIM CU TAJ CONTAINER NESTOVATI U body, MOG iframe-A
 document.querySelector('.halloween').contentDocument.body.appendChild(nekiDivKontejner);
 
-//SLEDECI CODE SU SAMO NEKE PROVERE, MOGU SE ZANEMARITI
-console.log(window.getComputedStyle(draggableViking));
-console.log(pictureViking.parentNode);
-console.log(draggableViking.parentNode);
+// I ZAISTA, KADA BUDEM DRAGG-OVAO ELEEMNT, ON SE HOCE POMERATI, ALI CE SE DESITI DA SE I RESIZE-UJE
+// ZBOG ONE SIRINE U PROCENTIMA, KOJU SAM DEFINISAO
+// POSTO NE ZELIM DA POPRAVLJAM   POSTAVKE    picture  ELEMNTA, KOJI REFERENCIRA  pictureViking KONSTANTA
+// JA CU KREIRATI NOVI    picture   ELEMENT, KOJI CU NESTOVATI U ISTI CONTAINER, KOJI OBUHVATA pictureViking
+// ali sirinu, odnosno sirine , POMENUTOG  NOVOG picture ELEMNTA, JA CU DEFINISATI UZ POMOC 
 
+                    //          sizes       ATRIBUTA        source      ELEMENTA, POMENUTOG
+                                                                        // NOVOG picture TAG-A
+//OPET POGRESNO,
+
+            //NAIME     sizes       ATRIBUT MORAM OBNOVITI, A ON IMA VEZE KADA SE UCITAVA VISE SLIKA
+            // RAZLICITIH DIMENZIJA ZA JEDAN picture TAG
+
+            // POSTO U OVOM SLUCAJU IMAM, SAMO JEDNU SLIKE, OPET CU DODELITI NOVU SIRINU
+            // img PLACEHOLDER-U, picture ELEMENTA
+            // ALI NOVA SIRINA CE BITI FIKSNA (NAIME, NECU KORISTITI RELATIVNE DIMENZIJE KAO STO JE 
+            // PROCENAT); NAIME KORISTICU PIKSELE
+
+// GORE U KOMENTARIMA, SAME KOMPONENTE, OBJASNIO SAM, ZASTO JE SIRINA PROMENLJIVA TOKOM POMERANJA
+// PA ZATO STO JE ELEMENT U OVOM PRIMERU POZICIONIRAN RELATIVNO NA html, JER IZMEDJU    pictureViking-A
+// I html   NEMA position: relative|| absolute      POZICIONIRANOG CONTAINER-A, I ZATO SE
+// DIMENZIJE I KOORDINATE, UZIMAJU U ODNOSU NA TAJ ELEMNT
+
+//ALI DOSTA SAM O TOME REKA, DAKLE DEFINISACU NOVI ELEMENT, KOJI CU NESTOVATI U INSTANCU MOG CUSTOMA
+// MISLIM NA 
+//                              draggable-element
+
+// I ONDA CU TU INSTANCU NESTOVATI, U BODY  iframe-A, I SADA POSTO SAM OTKLONIO NEDOUMICU U POGLEDU 
+// 'relative' POSITIONING-A, NIJE BITNO GDE CU NESTOVATI U BODY-JU POMENUTI CUSTOM, ALI NEMA VEZE,
+// NESTOVACU GA U ISTI CONTAINER UNUTAR BODY-JA, GDE SAM NESTOVAO I PREDHODNU INSTANCU
+
+const draggableFrank = document.createElement('draggable-element');
+
+const pictureFrank = document.createElement('picture');
+const sourceFrank = document.createElement('source');
+const imgDefaF = defaultImg.cloneNode();
+
+imgDefaF.removeAttribute('style');
+pictureFrank.classList.add('frank');
+
+imgDefaF.style.width = "68px";
+sourceFrank.srcset = './img/frankenstein.svg';
+pictureFrank.appendChild(sourceFrank);
+pictureFrank.appendChild(imgDefaF);
+
+draggableFrank.appendChild(pictureFrank);
+
+document.querySelector('.halloween').contentDocument.body.querySelector('div').appendChild(draggableFrank);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+// HITNO ODRADITI ONU FUNKCIJU, KOJA PROVERAVA DA LI JE NKI ELEMNT APSOLUTNO ILI RELATIVNO POZICIONIRAN
+// IMAO SAM PROBLEMA, SA KORISCENJEM break-A, ILI JE TO BIO PROBLEM SA instanceof OPERATOROM
+// ILI SA DODELOM U USLOVU while LOOP-A; MORAM TO PROVERITI
 
 
 
