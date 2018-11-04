@@ -10951,7 +10951,9 @@ document.querySelector('.halloween').contentDocument.body.querySelector('div').a
                                                     //    U KOJEM SE  EXECUTE-OVAO
                                                     // STO ZANACI DA PETLJA NASTAVLJA SA ITERATION-IMA
                                                     // KOJI SU JOJ PREOSTALI
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OVO CE KONACNO BITI USPESAN PRIMER VEZAN ZA DRAG'N'DROP
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// DAKLE RADIM, PONOVO GOTOVO ISTI PRIMER CUSTOM ELEMNTA  ///////////////
 // DAKLE, PONOVO ZELIM DA NAPRAVIM CUSTOM ELEMENT, CIJI CE SLOTTED IMATI TAKVU FUNKCIONALNOST, DA BUDE
@@ -10961,19 +10963,19 @@ document.querySelector('.halloween').contentDocument.body.querySelector('div').a
 
 // NAIME, POSTO JE U RANIJIM PRIMERIMA, NASTAO PROBLEM PRILIKOM POZICIONIRANJA picture TAGOVA
 // JA CU SE U OVOM PRIMERU BAZIRATI NA POZICIONIRANJE ELEMENATA, KOJI NISU KAO picture ALI CU TAKODJE
-// KONDICIONALNO DEFINISATI I KAKO BI SE POZICIONIRALA SLIKA (DOVEDENA picture TAGOM)
+// KONDICIONALNO DEFINISATI I KAKO BI SE POZICIONIRALA SLIKA ('DOVEDENA' picture TAGOM)
 
 // JA MISLIM DA JE picture TAG I SAM PROBLEMATICAN ZBOG TOGA STO SE NJEMU DIREKTNO NE MOGU DEFINISATI NEKI
 // STILOVI, JER JE TO NEOPHODNO ODRADITI NA SMOM, CHILD img TAGU picture-A
 // img USTVARI OVERFLLOWING, SVOJ picture PARENT
 
 // DA ZA POZICIONIRANJE picture TAGA JE JEDINO BITNO RECI DA NJEGOV NESTED SADRZINA (img) NE ODREDJUJE
-// NJEGOVU VISINU, KOJA JE MANJA OD SADRZINOVE VISINE (img-OVE VISINE, I TU MOGU NASTATI PROBLEMI,
+// NJEGOVU VISINU, KOJA JE MANJA OD SADRZINOINE VISINE (img-OVE VISINE, I TU MOGU NASTATI PROBLEMI,
 // PRI POZICIONIRANJU)
 
-//                      ODMAH, JEDAN MOGUCI PROBLEM, NAKON TRIGGERINGA mouseup-A, NA ELEMNTU
+//                      ODMAH, JEDAN MOGUCI PROBLEM - NAKON TRIGGERINGA mouseup-A, NA ELEMNTU
 // DAKLE, KLIKNUO SAM NA img I TO NEGDE PRI VRHU, A KOORDINATE ELEMENTA SU picture-OVE, ODNOSNO
-// VECE SU OD KOORDINATR (KOORDINATA ELEMNTA NE MOZE, ODNOSNO NE SME DA BUDE VECA OD KOORDINATE KURSORA)
+// VECE SU OD KOORDINA KURSORA (KOORDINATA ELEMNTA NE MOZE, ODNOSNO NE SME DA BUDE VECA OD KOORDINATE KURSORA)
 
 // DAKLE KADA BUDEM DEFINISAO NOVI CUSTOM ELEMNT, IMACU POMENUTO NA UMU
 
@@ -11049,6 +11051,9 @@ window.customElements.define('drag-drop', class extends HTMLElement {
         this.olderZIndex = this.olderZIndex.bind(this);
         this.absOrRelAncestorOrBody = this.absOrRelAncestorOrBody.bind(this);
 
+        // METODA U KOJU SAM UKAPSULIO SAV CODE KOJI SE TREBA NACI U connectedCallback-U
+        this._onConnected = this._onConnected.bind(this);
+
         // SKLADISTI KORDINATE RAZLIKE IZMEDJU KURSOREVIH CLIENT KOORDINATA I DRAGGABLE-OVIH CLIENT KOORD.
         this._backBy = {x: 0, y: 0};
         // DEFINISAO SAM SLEDECU VREDNOST, KOJA TREBA DA SKLADISTI Date MOUNTINGA (POTREBNO ZA JEDNU METODU
@@ -11060,7 +11065,22 @@ window.customElements.define('drag-drop', class extends HTMLElement {
 
     }
 
+    // ONO STO CE BITI KRUCIJALNO U OVOM SLUCAJU JESTE, KAPSULJENJE CELOG CODE-A 
+    //  connectedCallback-A, U JEDNU    FUNKCIJU
+    // IZ RAZLOGA EXTENDING-A, OVE KOMPONENTE, STO JA MOZDA ZELIM URADITI U BUDUCNOSTI, NAJBOLJE JE
+    // (JASNO JE, DA BI CEO CODE connectedCallbacka BIO UNREACHABLE, DRUGOJ KOMPONENTI, KOJA BI
+    // EXTEND-OVALA OVU)
+    // DRUGO RESENJE ZA OVAKVU SITUACIJU BI BILO DA SAM SAV CODE, NAMENJEN connectedCallback-U
+    //  DEFINISAO U KONSTRUKTORU
+
     connectedCallback(){
+        this._onConnected();
+    }
+
+    // FUNKCIJA U KOJOJ JE SAV CODE, NAMENJEN connectedCallback-U
+
+    _onConnected(){
+
         // OVO CU KORISTITI KAO VREDNOST, KAKO BI PODESIO DA zIndex ZAVISI OD VREMENA
         // KOLIKO JE TO DOBRO NE ZNAM, ILI IMA EFEKTA, ALI POSTO ZURIM SAMO CU TO URADITI
         this._dateOfMounting = new Date();
@@ -11092,8 +11112,8 @@ window.customElements.define('drag-drop', class extends HTMLElement {
 
             // ON mouseup
         this.shadowRoot.querySelector('[name=draggable]').addEventListener('mouseup', this.dropItDown);
-        
-    }   
+
+    }
 
     // EVENT HANDLERI
     pickItUp(ev){
@@ -11114,7 +11134,7 @@ window.customElements.define('drag-drop', class extends HTMLElement {
         
     ///////KOORDINATE PREUZETE, PRE APSOLUTNOG POZICIONIRANJA draggable-A 
        ///// // CLIENT KOORDINATE DRAGGABLE-A
-        const clientDraggable = draggable.getBoundingClientRect()
+        const clientDraggable = draggable.getBoundingClientRect();
         const elClientX = clientDraggable.x;
         const elClientY = clientDraggable.y;
 
@@ -11139,7 +11159,7 @@ window.customElements.define('drag-drop', class extends HTMLElement {
 
         // DAKLE KADA SE ELEMENTU PODESI position: absolute, ONDA ON MA GDE SE NALAZIO U CONTAINER-U, 
         // 'ON SKOCI NA VRH CONTAINER-A' (U OVOM SLUCAJU TO JE this-OV CONTAINER)
-        // KAKO BI GA JA VRATIO NA SVOJU POCETNU POZICIJU, KORISTIM ONE PAGEKOORDINATE, OCITANE
+        // KAKO BI GA JA VRATIO NA SVOJU POCETNU POZICIJU, KORISTIM ONE PAGE KOORDINATE, OCITANE
         // PRE SETTING UP-A APSOLUTNOG POZICIONIRANJA
 
         draggable.style.left = Math.round(elPageX) + "px";
@@ -11157,7 +11177,7 @@ window.customElements.define('drag-drop', class extends HTMLElement {
     }
 
     moveIt(ev){
-        // AKO JE PREDHODNO TRIGGEROVAN mousedown
+        // AKO JE PREDHODNO TRIGGEROVAN mousedown, IZVRSICE SE SLEDECE U OVOM if BLOKU
         if(this._isPickedUp){
             const pageX = ev.pageX;
             const pageY = ev.pageY;
@@ -11286,7 +11306,137 @@ document.querySelector('div > .some_frame').contentDocument.body.querySelector('
 document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableFrankeru);
 document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableMonster);
 
+// DAKLE, OVO KONACNO JESTE BIO USPESAN PRIMER U POGLEDU DRAG'N'DROP-A, ALI ONO STO JA NISAM URADIO
+// JESTE DA         DRAG'N'DROP-OVA FUNKCIONALNOST, BUDE 'UKAPSULJENA', U JEDNOJ FUNKCIJI
+// ODNOSNO, DA SVE BUDE JEDAN DRAG'N'DROP ALGORITAM
 
+// POSTO JE SAV CODE, KOJI JE DONOSIO DRAG'N'DROP EFEKAT, U SLUCAJU PREDHODNE KOMPONENTE, DEFINISAN
+// DA SE IZVRSI POZIVANJEM JEDNE KLASINE METODE, KADA EKSTENDUJEM PREDHODNU KLASU, 
+// NOVA KLASA NECE IMATI EXECUTED CODE, KOJI DONOSI DRAG'N'DROP, ALI CE IMATI SVE NEOPHODNE METODE,
+// KOJIMA TO MOGU POSTICI, ALI JA TO ZELIM DA POSTIGNEM NA NACIN DA DEFINISE, JEDAN DRAG'N'DROP 
+// ALGORITAM, DAKLE JEDNU FUNKCIJU
+// MOZDA ISKORISTIM, ODREDJENE METODE U KOJE IMA PREDHODNA KOMPONENTA, A KOJE, MOJA NOVA KOMPONENTA
+// NASLEDJUJE
+
+// ///////////////////////////////////JA USTVARI ZELIM DA DEFINISEM DRAG'N'DROP ALGORITAM, JER 
+// JE U CLANKU DEFINISAN DRAG'N'DROP ALGORITAM, A POSTO SAM MISLIO DA MOGU ISKORISTITI
+// I METODE PREDHODNE KOMPONENTE, ODLUCIH SE DA EXTENDUJEM TU KOMPONENTU SLEDECOM
+// U KOJOJ BI ISKORISTIO TE METODE
+// ALI TE METODE NISU BAS REUSABLE, KAKO SAM MISLIO
+// MEDJUTIM STA JE TU JE, POSTO ZELIM DA PROVEZBAM EXTENDOVANJE, JA CU IPAK EXTENDOVATI PREDHODNU KLASU
+// ALI CU U SKLOPU NOVE KOMPONENTE, KREIRATI, NOVU METODU, KOJA CE USTVARI BITI DRAG'N'DROP
+// ALGORITAM, UCAUREN U ON mousedown LISTENER
+
+window.customElements.define('draggable-dropable', class extends window.customElements.get('drag-drop') {
+    constructor(){
+        super();
+        // METODA SE NE MOZE POZIVATI U KONSTRUKTORU
+        // ZATO STO U DEFINICI METODE (COMMENTED OUT, NENO POZIVANJE, DOLE) 
+        // METODI REFERENCIRAM SLOTTED (DAKLE, IMAM JE SMISLA POZVATI SAMO U connectedCallback-u)
+
+        // this._onConnected();
+
+        // BINDING this-A U DRAG'N'DROP ALGORITMA, JER JE ON HANDLER ON mousedown
+        this.dragDropAlorythm = this.dragDropAlorythm.bind(this); 
+    }
+
+    connectedCallback(){
+        // this._onConnected();             //OVDE DAKLE FUNKCIONISE, ALI NE TREBA MI ONA U OVOM SLUCAJU
+                                            // TREBAJU MI DRUGE METODE, PROTOTIPA drag-drop INSTANCI
+                                            // A KOJE SU POZVANE U _onConnected
+                                            // MEDJUTIM MISLIM DA POMENUTE METODE, NISU BAS POGODNE ZA
+                                            // REUSE, ODNOSNO NE MOGU UCESTVOVATI U DRAG'N'DROP
+                                            // ALGORITMU
+
+        this.children[0].setAttribute('slot', 'draggable');    
+    
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener(
+            'mousedown',
+            this.dragDropAlorythm
+        );
+    
+    }
+    // RANIJE SAM MISLIO DA MOGU ISKORISTITI METODE ONE KOMPONENTE IZ KOJE OVA KOMPONENTA EXTENDS
+    // ALI PREVARIO SAM SE, JER TE METODE, NISU BAS TAKVE, DA IH MOGU 
+
+    //ZATO DEFINISEM POTPUNO, NOVI ON mousedown HANDLER; A UNJEMU CE SE NALAZITI I KACENJE, ALI I
+    // SKIDANJE onmousemove ALI I onmouseup HANDLER
+
+    // DAKLE IDEJA JE DA ELEMENT POSTANE DRAGGABLE TRIGGERINGOM mousedown
+    // ZATIM U OBIMU mousedown HANDLERA, JA DEFINISEM DA JE TO OKIDAC DA TAJ ELEEMNT POSTANE
+    // I DRAGGABLE, ODNOSNO MOVABLE (PREKO ANCESTORA O KOJIM SAM GOVORIO, TOKOM DEFINISANJA I 
+    // GORNJE KOMPONENTE); A ZATIM DA TRIGGERINGOM mouseup (DEFINICIJA KACENJA HANDLERA ISTO U OBIMU
+    // SLEDECE METODE), ONESPOSOBIM mousemove, (I UNISTIM REFERENCU I NA mousemove, ALI I NA mouseup) 
+
+    dragDropAlorythm(ev){
+
+        ev.preventDefault();
+
+        let draggable = ev.target.closest('[slot=draggable]');
+        
+        if(draggable.nodeName === 'PICTURE'){
+            draggable = draggable.querySelector('img');
+        }
+
+        const pageDragXBefAbs = draggable.pageX;
+        const pageDragYBefAbs = draggable.pageY;
+
+        const cursorClientX = ev.clientX;
+        const cursorClientY = ev.clientY;
+
+        const clientDragX = draggable.getBoundingClientRect().x;
+        const clientDragY = draggable.getBoundingClientRect().y;
+
+        const moveBackByX = cursorClientX - clientDragX;
+        const moveBackByY = cursorClientY - clientDragY;
+
+        draggable.style.position = "absolute";
+        // OVDE MOGU ISKORISTITI ODREDJENE METODE, KOJE NASLEDJUJE OVA KLASA (VEZANO ZA z-index)
+        draggable.style.zIndex = this.olderZIndex(new Date());
+
+        draggable.style.left = Math.round(pageDragXBefAbs) + "px";
+        draggable.style.top = Math.round(pageDragYBefAbs) + "px";
+
+        // I OVDE MOGU ISKORISTITI NASLEDJENU METODU, KOJU SAM DEFINISAO U 
+        // KAO METODU PREDHODNE KOMPONENTE, I KOJA BIRA this-OV APSOLUTNO ILI RELATIVNO
+        // POZICIONIRANI ELMENT, A AKO NI JEDAN ANCESTOR NIJE, TAKO POZICIONIRAN, BIRA SE body TAG
+        
+        const elementForMovingAcross =  this.absOrRelAncestorOrBody();
+
+        console.log(elementForMovingAcross, draggable);
+        
+        elementForMovingAcross.onmousemove = function(ev){
+            
+            const pageX = ev.pageX;
+            const pageY = ev.pageY;
+            
+            draggable.style.left = Math.round(pageX - moveBackByX) + "px";
+            draggable.style.top = Math.round(pageY - moveBackByY) + "px";
+        };
+
+        draggable.onmouseup = function(ev){
+            elementForMovingAcross.onmousemove = null;
+            ev.currentTarget.onmouseup = null;
+        }
+
+        
+
+    }
+
+});
+
+
+const movingElement = document.createElement('div');
+movingElement.style.width = "128px";
+movingElement.style.height = "58px";
+movingElement.style.border = "8px solid pink"
+movingElement.style.backgroundColor = "transparent";
+const draggableDroppableEl = document.createElement('draggable-dropable');
+draggableDroppableEl.appendChild(movingElement);
+document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentElement(
+    'afterbegin',
+    draggableDroppableEl
+);
 
 
 //////////////////////////////////////////////////////////////////////
