@@ -11337,7 +11337,13 @@ window.customElements.define('draggable-dropable', class extends window.customEl
         // this._onConnected();
 
         // BINDING this-A U DRAG'N'DROP ALGORITMA, JER JE ON HANDLER ON mousedown
-        this.dragDropAlorythm = this.dragDropAlorythm.bind(this); 
+        this.dragDropAlorythm = this.dragDropAlorythm.bind(this);
+        
+        // 
+        this.changingCursorOnOverAndOut = this.changingCursorOnOverAndOut.bind(this);
+
+        this._cursorIsInside = false;
+
     }
 
     connectedCallback(){
@@ -11354,8 +11360,20 @@ window.customElements.define('draggable-dropable', class extends window.customEl
             'mousedown',
             this.dragDropAlorythm
         );
+
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener(
+            'mouseover',
+            this.changingCursorOnOverAndOut
+        );
+
+        // OVO SLEDECE JE SUVISNO, ZATO JE I COMMENTED OUT
+        // this.shadowRoot.querySelector('[name=draggable]').addEventListener(
+        //     'mouseout',
+        //     this.changingCursorOnOverAndOut
+        // );
     
     }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
     // RANIJE SAM MISLIO DA MOGU ISKORISTITI METODE ONE KOMPONENTE IZ KOJE OVA KOMPONENTA EXTENDS
     // ALI PREVARIO SAM SE, JER TE METODE, NISU BAS TAKVE, DA IH MOGU 
 
@@ -11397,13 +11415,15 @@ window.customElements.define('draggable-dropable', class extends window.customEl
         draggable.style.left = Math.round(pageDragXBefAbs) + "px";
         draggable.style.top = Math.round(pageDragYBefAbs) + "px";
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // PROMENA KURSORA NA mousedown
+        draggable.style.cursor = 'grabbing';  //OVAJ KURSOR INDICIRA DA JE NESTO UGRABLJENO (UHVACENO)
+
         // I OVDE MOGU ISKORISTITI NASLEDJENU METODU, KOJU SAM DEFINISAO U 
         // KAO METODU PREDHODNE KOMPONENTE, I KOJA BIRA this-OV APSOLUTNO ILI RELATIVNO
         // POZICIONIRANI ELMENT, A AKO NI JEDAN ANCESTOR NIJE, TAKO POZICIONIRAN, BIRA SE body TAG
         
         const elementForMovingAcross =  this.absOrRelAncestorOrBody();
-
-        console.log(elementForMovingAcross, draggable);
         
         elementForMovingAcross.onmousemove = function(ev){
             
@@ -11415,16 +11435,48 @@ window.customElements.define('draggable-dropable', class extends window.customEl
         };
 
         draggable.onmouseup = function(ev){
+            draggable.style.cursor = 'grab'; //OVAKAV KURSOR INDICIRA DA JE NESTO GRABBABLE
             elementForMovingAcross.onmousemove = null;
             ev.currentTarget.onmouseup = null;
         }
 
+    }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // OVDE CU DEFINISATI I HANDLER, KOJI SE TICE KURSORA, ODNOSNO, NJEGOVE PROMENE, NAKON
+    // TRIGGERING-A mouseover; A I VRACANJA KURSORA NA STARO NAKON TRIGGERINGA mouseout-A
+    changingCursorOnOverAndOut(ev){
         
+        if(ev.target.hasAttribute('slot') && ev.type === 'mouseover'){
+            const draggable = ev.target;
+
+            if(ev.relatedTarget === null || !ev.relatedTarget.closest('[slot=draggable]')){
+                draggable.style.cursor = 'grab'; //OVAKAV KURSOR INDICIRA DA JE NESTO GRABBABLE
+            }
+        }
+
+        // MOZDA JE SLEDECA USLOVNA IZJAVA VISAK (KADA SAM MALO RAZMISLIO, SHAVATIO SAM DA NE MORAM
+        // KACITI OVU FUNKCIJU, I U SLUCAJU mouseout TIPA EVENTA, JER NISAM KORISTIO EVENT DELEGATION
+        // U SMISLU DA SAM KACIO HANDLER NA SLOTOV, ODNOSNO SLOTTED-OV PARENT ELEMENT)
+        /* if(ev.target.hasAttribute('slot') && ev.type === 'mouseout'){
+            const draggable = ev.target;
+
+            if(ev.relatedTarget !== null){
+
+                if(ev.relatedTarget.querySelector('[slot=draggable]')){
+                    draggable.style.cursor = 'auto';
+                }
+
+            }else{
+                draggable.style.cursor = 'auto';
+            }
+        } */
 
     }
 
-});
+    // METODA ZA 
 
+});
 
 const movingElement = document.createElement('div');
 movingElement.style.width = "128px";
