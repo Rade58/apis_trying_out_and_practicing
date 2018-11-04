@@ -10441,6 +10441,19 @@ dokumentIframea.body.appendChild(draggableElement);
 // A TO JE:   KORISCENJE ZAJDNO ONIH VREDNOSTI, ODNOSNO KOORDINATA, KOJE SU RELATIVNE NA document 
 // I KOJE SU RELATIVNE NA window
 
+
+
+// MNOGO TEKSTA, MALO STA JE FUNKCIONISALO, KAKO SAM ZELEO
+// MISLIM UGLAVNOM JE SVE FUNKCIONISALO, ALI RAZMISLAM DA OPET ODRAQDIM SLICAN ILI GOTOVO ISTI PRIMER
+// SLEDECI PRIMER, IMA DOBRU DOZU KOMENTARA, KOJI JESU KOREKTNI ALI, POSTOJ ODREDJENE GRESKE
+// ZATO SAM ODLUCIO DA KREIRAM, POTPUNO NOVI PRIMER
+
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////////
+// GLAVNI PROBLEMI, KOJI SU NASTALI U OVOM PRIMERIMA DRAGGABLE ELEMENTA SU NASTALI, JER SAM KORISTIO 
+// EKSPERIMENTALNI picture TAG, KOJI SAM NESTOVAO U LIGHT DOM A TAJ  picture BI BIVAO SLOTTED 
+
 const pocetni_html_novog_drag_drop_primera = `
 <div style="border: olive solid 4px; padding: 18px; width: 86%;">
     AKO IMAM DILEMU GDE SU IVICE iframe, RECI CU DA SU ONE, ROZE BOJE, DAKLE TU ODMAH ISPOD JESTE iframe
@@ -10464,37 +10477,6 @@ const pocetni_html_novog_drag_drop_primera = `
     </div>
   </div>   
 `;
-
-// DODACU NEKOLIKO ELEMENATA U body, NOVOG iframe-A  (MOZDA SAM OVO URADIO BEZ IKAKAVE POTREBE SADA
-// ALI MOZDA CE MI OVI ELEMNTI POSLUZITI ZA NEKU MANIPULACIJU, U NEKOM KASNIJEM PRIMER-U)
-
-const pictureSpook = document.createElement('picture');
-const sourceSpook = document.createElement('source');
-const imgDefa = defaultImg.cloneNode();
-pictureSpook.classList.add('spook');
-imgDefa.removeAttribute('style');
-
-imgDefa.style.width = "14%";
-sourceSpook.srcset = './img/spooky.svg';
-pictureSpook.appendChild(sourceSpook);
-pictureSpook.appendChild(imgDefa);
-
-document.querySelector('.halloween').contentDocument.body.appendChild(pictureSpook);
-
-const pictureDevice = document.createElement('picture');
-const sourceDevice = document.createElement('source');
-const imgDefaD = defaultImg.cloneNode();
-pictureDevice.classList.add('device');
-imgDefaD.removeAttribute('style');
-
-imgDefaD.style.width = "12%";
-sourceDevice.srcset = './img/device.svg';
-pictureDevice.appendChild(sourceDevice);
-pictureDevice.appendChild(imgDefaD);
-
-document.querySelector('.halloween').contentDocument.body.appendChild(pictureDevice);
-
-
 
 // ZABORAVIO SAM DA DODAM LINE I THEMATIC BREAKS PRE SAMOG PICTURE ELEMENTA
 // MOGU TO I SADA URADITI
@@ -10530,9 +10512,9 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         const styleElement = document.createElement('style');
         const styleText = `
             /* :host {
-                display: inline-block;
+                
                 border: pink solid 4px;
-            } */
+            }  */
         `;
 
         styleElement.textContent = styleText;
@@ -10651,9 +10633,9 @@ window.customElements.define('draggable-element', class extends HTMLElement {
             // E UPRAVO PRI TAKVOJ SITUACIJI, ELEMNT CE BITI POZICIONIRAN U ODNOSU NA   html-A
             // ODNOSNO U ODNOSU NA page
 
-        draggable.style.position = "absolute";
+        /* draggable.style.position = "absolute";
 
-        draggable.style.zIndex = 6000;
+        draggable.style.zIndex = 6000; */
         
         // KOORDINATAMA ELEMENTA CU PRISTUPITI I NA SLEDECI NACIN
         const draggableCoordsAndSizes = draggable.getBoundingClientRect();
@@ -10668,7 +10650,7 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         const pageX = ev.pageX;
         const pageY = ev.pageY;
         
-        console.log("DRAGABLE ELEMENT----->", 'client: ', clientX, clientY, 'page: ', pageX, pageY);
+        console.log("CURSOR----->", 'client: ', clientX, clientY, 'page: ', pageX, pageY);
         console.log("OFFSET VALUES----->", 'left and top: ', offsetLeft, offsetTop);
         console.log(draggableCoordsAndSizes);
 
@@ -10699,12 +10681,38 @@ window.customElements.define('draggable-element', class extends HTMLElement {
         // MOGU KORISTITI I KOORDINATE, RELATIVNE NA Window INSTANCU (A RANIJE SAM REKAO KOJE SU TO 
         // VREDNOSTI)
 
+
+       /*  this._backBy.x = clientX - draggableCoordsAndSizes.x;
+        this._backBy.y = clientY - draggableCoordsAndSizes.y; */
+
+        
+        // U OVOM SLUCAJU, NAKON TRIGGERING-A mousemove-A NA PARENT-U, this-A, BICE POTREBNA I RAZLIKA
+        // IZMEDJU KOORDINATA PARENTA this, I STRANICE, ODNOSNO page-A
+        
+        // MEDJUTIM, OPET MISLIM DA SAM NAPRAVIO GRESKU, A TO JE DA SAM KOORDINATE, ELEMENTU, TREBAO 
+        // ZADATI I OVDE, JER PRIMETIO SAM KADA TRIGGER-UJEM, mousedown NA ELEMNTU, PRVO STO SE DOGODI JESTE
+        // SLEDECE: 
+        
+                    //ISKAKANJE IZ NORMALNOG TOKA, JER JE ELEMENT POSTAO APSOLUTAN
+                    // AKO MU PREDHODI, NEKI SIBLINGS, KOJI JE UZ TO VISI OD NJEGA, ZNACI DA CE ELEMENT
+                    // ODSKOCITI NAGORE, KAKO BI BIO UZ IVICU, SVOG CONTAINERA
+
+        // ZATO BI BILO DOBRO DA MU KOORDINATE ZADAM I NA OVOM MESTU
+
+        const elPageX = draggable.offsetLeft;
+        const elPageY = draggable.offsetTop;
+
+
+        draggable.style.position = "absolute";
+
+        draggable.style.left = Math.round(elPageX) + "px";
+        draggable.style.top = Math.round(elPageY) + "px";
+
+
         this._backBy.x = clientX - draggableCoordsAndSizes.x;
         this._backBy.y = clientY - draggableCoordsAndSizes.y;
 
-        // U OVOM SLUCAJU, NAKON TRIGGERING-A mousemove-A NA PARENT-U, this-A, BICE POTREBNA I RAZLIKA
-        // IZMEDJU KOORDINATA PARENTA this, I STRANICE, ODNOSNO page-A 
-        
+
         this._isPickedUp = true;
 
     }
@@ -10920,9 +10928,363 @@ document.querySelector('.halloween').contentDocument.body.querySelector('div').a
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
-// HITNO ODRADITI ONU FUNKCIJU, KOJA PROVERAVA DA LI JE NKI ELEMNT APSOLUTNO ILI RELATIVNO POZICIONIRAN
+
+// HITNO ODRADITI ONU FUNKCIJU, KOJA PROVERAVA DA LI JE NEKI ELEMNT APSOLUTNO ILI RELATIVNO POZICIONIRAN
 // IMAO SAM PROBLEMA, SA KORISCENJEM break-A, ILI JE TO BIO PROBLEM SA instanceof OPERATOROM
 // ILI SA DODELOM U USLOVU while LOOP-A; MORAM TO PROVERITI
+
+// MISLIM DA NIJE BIO PROBLEM ZBOG POGRESNOG KORISCENJA NEKIH OD OPERATORA PETLJE, VEC CINJENICA
+// DA SAM U iframe-U
+
+// MISLIM DA MORAM NAUCITI, KAKO DA REFERENIRAM         Window   INSTANCU, JEDNOG iframe-A
+
+// MOZDA JE GRESKA NASTALA, JER STALNO ZABORAVLJAM CINJENICE VEZANE ZA LOOPING
+// ZABORAVLJAM NA PRIMER SLEDECE OPERATORE:
+
+
+        //          break         OPERATOR         ,USTVARI PREKIDA POTPUNO LOOPING PETLJE
+                                                    // OD ONOG MOMENTA KADA JE EXECUTED 
+
+
+        //          continue      OPERATOR         ,SA KOJIM SE SUSRECEM PRVI PUT, USTVARI, PREKIDA
+                                                   // NE CELU PETLJU, VEC SAMO TRENUTNI KORAK, 
+                                                    //    U KOJEM SE  EXECUTE-OVAO
+                                                    // STO ZANACI DA PETLJA NASTAVLJA SA ITERATION-IMA
+                                                    // KOJI SU JOJ PREOSTALI
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// DAKLE RADIM, PONOVO GOTOVO ISTI PRIMER CUSTOM ELEMNTA  ///////////////
+// DAKLE, PONOVO ZELIM DA NAPRAVIM CUSTOM ELEMENT, CIJI CE SLOTTED IMATI TAKVU FUNKCIONALNOST, DA BUDE
+// DRGGABLE ELEMENT, ODNOSNO DA SE S NJIM MOZE OBAVLJATI drag'n'drop RADNJA
+
+// DEFINISACU SADA NOVI iframe
+
+// NAIME, POSTO JE U RANIJIM PRIMERIMA, NASTAO PROBLEM PRILIKOM POZICIONIRANJA picture TAGOVA
+// JA CU SE U OVOM PRIMERU BAZIRATI NA POZICIONIRANJE ELEMENATA, KOJI NISU KAO picture ALI CU TAKODJE
+// KONDICIONALNO DEFINISATI I KAKO BI SE POZICIONIRALA SLIKA (DOVEDENA picture TAGOM)
+
+// JA MISLIM DA JE picture TAG I SAM PROBLEMATICAN ZBOG TOGA STO SE NJEMU DIREKTNO NE MOGU DEFINISATI NEKI
+// STILOVI, JER JE TO NEOPHODNO ODRADITI NA SMOM, CHILD img TAGU picture-A
+// img USTVARI OVERFLLOWING, SVOJ picture PARENT
+
+// DA ZA POZICIONIRANJE picture TAGA JE JEDINO BITNO RECI DA NJEGOV NESTED SADRZINA (img) NE ODREDJUJE
+// NJEGOVU VISINU, KOJA JE MANJA OD SADRZINOVE VISINE (img-OVE VISINE, I TU MOGU NASTATI PROBLEMI,
+// PRI POZICIONIRANJU)
+
+//                      ODMAH, JEDAN MOGUCI PROBLEM, NAKON TRIGGERINGA mouseup-A, NA ELEMNTU
+// DAKLE, KLIKNUO SAM NA img I TO NEGDE PRI VRHU, A KOORDINATE ELEMENTA SU picture-OVE, ODNOSNO
+// VECE SU OD KOORDINATR (KOORDINATA ELEMNTA NE MOZE, ODNOSNO NE SME DA BUDE VECA OD KOORDINATE KURSORA)
+
+// DAKLE KADA BUDEM DEFINISAO NOVI CUSTOM ELEMNT, IMACU POMENUTO NA UMU
+
+const html_potreban_u_vezi_droppable_primera = `
+<div style="border: olive solid 4px; padding: 18px; width: 86%;">
+    AKO IMAM DILEMU GDE SU IVICE iframe, RECI CU DA SU ONE, ROZE BOJE, DAKLE TU ODMAH ISPOD JESTE iframe
+    <iframe class='some_frame' style="width: 100%; height: 78vw; border: #e673a8 solid 2px"></iframe>
+    <div>
+        Icons made by 
+        <a href="https://www.flaticon.com/authors/payungkead" title="Payungkead">Payungkead</a> from
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+            CC 3.0 BY
+        </a>
+    </div>
+    <div>
+        Icons made by 
+        <a href="http://www.freepik.com" title="Freepik">Freepik</a> from 
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by 
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+            CC 3.0 BY
+        </a>
+    </div>
+</div>   
+`;
+
+// DODACU iframe-U, ODNOSNO NJEGOVOM, body-JU, KLON JEDNOG CONTAINERA, KOJEG SAM KORISTIO I U PROSLOM
+// PRIMERU (NISTA NIJE SPECIJALNO U VEZI NJEGA, SMAO ZELIM ISTE DIMENZIJE I U CILJU USTEDE VREMENA
+// NE ZELIM DA PRAVIM NOVI CONTAINER)
+
+document.querySelector('div > .some_frame').contentDocument.body.appendChild(nekiDivKontejner.cloneNode());
+
+// DODACU BODY-JU IFRAME-A, NEKE LINE I THEMATIC BREAKOVE  (INSERTOVACU IH PRE GORE POMENUTOG CONTAINER-A)
+
+for(let i = 0; i < 28; i++){
+    document.querySelector('.some_frame').contentDocument.body.insertAdjacentElement(
+        'afterbegin',
+        document.createElement('hr')
+    );
+    document.querySelector('.some_frame').contentDocument.body.insertAdjacentElement(
+        'afterbegin',
+        document.createElement('br')
+    );
+}
+
+
+// SADA MOGU POCETI SA DEFINISANJEM NOVE WEB COMPONENTE, KOJA CE REPREZENTOVATI ISTO ONO, KAO I PROSLA
+// WEB KOMPONENTA A TO JE 'CONTAINER' ZA DRAGGABLE ELEMENT, ODNOSNO CONTAINER, KOJI SLOTTED ELEMENT
+// CINI DRAGGABLE-IM
+
+window.customElements.define('drag-drop', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+        const styleText = ``;
+
+        slotElement.name = "draggable";
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(slotElement);
+
+        // BINDINZI
+        this.pickItUp = this.pickItUp.bind(this);
+        this.moveIt = this.moveIt.bind(this);
+        this.dropItDown = this.dropItDown.bind(this);
+
+        this.documentSelector = this.documentSelector.bind(this);
+        this.olderZIndex = this.olderZIndex.bind(this);
+        this.absOrRelAncestorOrBody = this.absOrRelAncestorOrBody.bind(this);
+
+        // SKLADISTI KORDINATE RAZLIKE IZMEDJU KURSOREVIH CLIENT KOORDINATA I DRAGGABLE-OVIH CLIENT KOORD.
+        this._backBy = {x: 0, y: 0};
+        // DEFINISAO SAM SLEDECU VREDNOST, KOJA TREBA DA SKLADISTI Date MOUNTINGA (POTREBNO ZA JEDNU METODU
+        // KOJA PODESAVA z-index)
+        this._dateOfMounting = null;
+        // SLEDECI PROPERTI TREBA DA SKLADISTI INFORMACIJU, DA LI JE DRAGGABLE PICKED UP, ILI NIJE
+        // ODNOSNO, DA LI JE ILI NIJE, NA NJEMU TRIGGEROVAN mousedown 
+        this._isPickedUp = false;
+
+    }
+
+    connectedCallback(){
+        // OVO CU KORISTITI KAO VREDNOST, KAKO BI PODESIO DA zIndex ZAVISI OD VREMENA
+        // KOLIKO JE TO DOBRO NE ZNAM, ILI IMA EFEKTA, ALI POSTO ZURIM SAMO CU TO URADITI
+        this._dateOfMounting = new Date();
+
+        // DA NE MORA DA SE DODAJE SLOT ATRIBUT ELEMENTU U LIGHT DOM-U
+        this.children[0].setAttribute('slot', 'draggable');
+
+        // PODESAVANJE SCROLL-A, body ELEMENTA, UVEK POKAZUJE KRAJ SADRZINE
+        // (OVDE CU UPOTREBITI, JEDNU METODU, KOJU SAM KREIRAO, 
+        // I NAMENIO JE ZA NESTO DRUGO, ALI OVDE ZELIM DA JE ISPROBAM) (DA body ELEMENT SAM MOGAO SELEKTOVATI
+        // UZ POMOC closest METODE, ALI IPAK ZELIM DA ISPROBAM METODU)
+        const bodyElement = this.documentSelector().body;
+        bodyElement.scrollTop = Math.round(bodyElement.scrollHeight);
+
+      // KACENJE HANDLER-OVA
+            // ON mousedown
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener('mousedown', this.pickItUp);
+
+            // ON mousemove
+        // MORAM IZABRATI PRVI DRAGGABLE-OV ANCESTOR, KOJI IMA      position: absolute || relative
+        // A AKO NEMA TAKVOG ELEMENTA, IZABRATI body (ZA IZABRANI ELEMENT, KACIM ON mousemove HANDLER)
+        // DA BIH PRONASAO POMENUTI ELEMENT, NA KOJEG CU KACITI HANDLER, KORISTIM METODU
+        //          this.absOrRelAncestorOrBody  ,KOJU SAM KREIRAO
+        // ZASTO OVO RADIM I NE KACIM HANDLER NA this-OV PARENT (ZBOG NEZELJENE SITUACIJE, KADA BIH
+        // MOUSEMOVE-OM POZICIONIRAO ELEMENT IZVAN TOG CONTAINERA, I KADA BI BRZO POMERAO KURSOR
+        // MOGLO BI DOCI DO PRESKAKANJA REGISTRACIJE TRIGGERINGA mousemove-A OD STRANE BROWSER-A
+        // TADA, BI DOSLO DO TOGA DA SE PREKINE POZICIONIRANJE DRAGGABLE ELEMENTA)
+        this.absOrRelAncestorOrBody().addEventListener('mousemove', this.moveIt);
+
+            // ON mouseup
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener('mouseup', this.dropItDown);
+        
+    }   
+
+    // EVENT HANDLERI
+    pickItUp(ev){
+        
+        ev.preventDefault();
+        
+        let draggable = ev.target.closest('[slot=draggable]');
+
+        //AKO JE SLOTTED ELEMNT, USTVARI picture TAG, NE ZELIM DA MANIPULISEM S NJIM VEC SA img ELMENTOM
+        // KOJI JE NESTED U picture-U
+        if(draggable.nodeName === 'PICTURE'){
+            draggable = draggable.querySelector('img');
+        }
+
+        // CLIENT KOORDINATE KURSORA
+        const clientX = ev.clientX;
+        const clientY = ev.clientY;
+        
+    ///////KOORDINATE PREUZETE, PRE APSOLUTNOG POZICIONIRANJA draggable-A 
+       ///// // CLIENT KOORDINATE DRAGGABLE-A
+        const clientDraggable = draggable.getBoundingClientRect()
+        const elClientX = clientDraggable.x;
+        const elClientY = clientDraggable.y;
+
+        // PAGE KOORDINATE DRAGGABLE-A
+        const elPageX = draggable.offsetLeft;
+        const elPageY = draggable.offsetTop;
+
+
+    //////////////////////////////////////////////////////
+        // RAZLIKA IZMEDJU CLIENT KURSOR KOORD. I CLIENT DRAGGABLE COORD. (POTREBNO ZA EFEKAT
+        // 'VUCENJA U IZABRANOJ TACKI' (OVE VREDNOSTI CE SE KORISTITI U OBIMU ON mousemove HANDLER-A))
+        this._backBy.x = clientX - elClientX;
+        this._backBy.y = clientY - elClientY;
+
+        // APSOLUTNO POZICIONIRANJE DRAGGABLE-A
+        draggable.style.position = "absolute";
+        
+        // PODESAVANJE z-index , UZ POMOC FUNKCIJE KOJA KORISTI Date OBJEKAT (ODNOSNO SEKUNDE)
+        // KORISTIM METODU, KOJU SAM JA NAPRAVIO, KOJA MERI RAZLIKU U VREMENU, OD MOUNTINGA METODE
+        // DO OVOG KLIKA, I ONDA SE DODAJE 100 I TO JE VREDNOST zIndex-A 
+        draggable.style.zIndex = this.olderZIndex(new Date());
+
+        // DAKLE KADA SE ELEMENTU PODESI position: absolute, ONDA ON MA GDE SE NALAZIO U CONTAINER-U, 
+        // 'ON SKOCI NA VRH CONTAINER-A' (U OVOM SLUCAJU TO JE this-OV CONTAINER)
+        // KAKO BI GA JA VRATIO NA SVOJU POCETNU POZICIJU, KORISTIM ONE PAGEKOORDINATE, OCITANE
+        // PRE SETTING UP-A APSOLUTNOG POZICIONIRANJA
+
+        draggable.style.left = Math.round(elPageX) + "px";
+        draggable.style.top = Math.round(elPageY) + "px";
+
+        // IMAJ NA UMU I DA KADA ELEMNT, KOJI JE NAJVISI, I KOJI SE POZICIONIRA APSOLUTNO, ISKACE IZ
+        // NORMALNE POZICIJE, I TADA CE RED U KOJEM SE NALAZIO, BITI VISOK, KAO INJEGOV SLEDECI 
+        // NAJVISI SIBLING, KOJI JE PO VISINI MANJI OD APSOLUTNO POZICIONIRANOG ELEMENTA, ALI PO
+        // VISINI VECI OD OSTALIH SIBLINGS-A
+
+        // JOS DA OBZNANIM INSTANCI, DA JE DRAGGABLE, PICKED UP
+
+        this._isPickedUp = true;
+        
+    }
+
+    moveIt(ev){
+        // AKO JE PREDHODNO TRIGGEROVAN mousedown
+        if(this._isPickedUp){
+            const pageX = ev.pageX;
+            const pageY = ev.pageY;
+            let draggable = this.shadowRoot.querySelector('[name=draggable]').assignedNodes()[0];
+
+            if(draggable.nodeName === 'PICTURE'){
+                draggable = draggable.querySelector('img');
+            }
+
+            draggable.style.left = Math.round(pageX - this._backBy.x) + "px";
+            draggable.style.top = Math.round(pageY - this._backBy.y) + "px";
+        }
+    }
+
+    dropItDown(ev){
+        this._isPickedUp = false;
+    }
+
+    //METODE
+    documentSelector(){
+
+        let element = this;
+        
+        if(element.nodeName === '#document') return element;
+
+        while(element = element.parentNode){
+            if(element.nodeName === '#document') return element;
+        }
+    }
+
+    olderZIndex(neueDate){
+        return Math.round((neueDate - this._dateOfMounting)/10);
+    }
+
+    absOrRelAncestorOrBody(){
+        let el = this;
+
+        if(el.nodeName === '#document' || el.nodeName === 'BODY') return el.body || el;
+
+        while(el = el.parentNode){
+            
+            if(
+                window.getComputedStyle(el)['position'] === 'absolute' || 
+                window.getComputedStyle(el)['position'] === 'relative' 
+            ){
+                return el;
+            }
+
+            if(el.nodeName === '#document' || el.nodeName === 'BODY') return el.body || el;
+        }
+    }
+
+});
+
+
+
+// KREIRACU CETIRI ELEMENTA, KOJA CU NESTOVATI U ONAJ CONTAINER, KOJI SE NALAZI U BODY-JU iframe-A
+// BITNO MI JE DA TA DVA ELEMENTA NEMAJU SIRINE U RELATIVNIM JEDINICAMA I BITNO MI JE DA TA DVA ELEMENTA
+// IMAJU RAZLICITE VISINE  (OPET JE REC O 4 SLIKE, CETIRI .svg FAJLA)
+
+// ELEMNTE, KOJI ZELIM DA KREIRAM, JESU OPET DVA picture TAGA
+// OVI TAGOVI JESU EKSPERIMENTALNI, ZATO SE I MENI U PREDHODNOM  PRIMERU, JAVIO UPRAVO JEDAN PROBLEM
+// O KOJEM SAM I GOVORIO (VEZANOM ZA picture I img)
+// PROBLEM SE, USTVARI JAVIO U POGLEDU POZICIONIRANJA
+
+// ZATO CE, OSTALA DVA ELEMENTA, OD POMENUTA CETIRI, BITI SAMO img TAGOVI
+
+const pictureSpook = document.createElement('picture');
+const sourceSpook = document.createElement('source');
+const imgDefa = defaultImg.cloneNode();
+pictureSpook.classList.add('spook');
+imgDefa.removeAttribute('style');
+imgDefa.style.width = "60px";
+sourceSpook.srcset = './img/spooky.svg';
+pictureSpook.appendChild(sourceSpook);
+pictureSpook.appendChild(imgDefa);
+
+const pictureDevice = document.createElement('picture');
+const sourceDevice = document.createElement('source');
+const imgDefaD = defaultImg.cloneNode();
+pictureDevice.classList.add('device');
+imgDefaD.removeAttribute('style');
+imgDefaD.style.width = "72px";
+sourceDevice.srcset = './img/device.svg';
+pictureDevice.appendChild(sourceDevice);
+pictureDevice.appendChild(imgDefaD);
+
+const frankeru = document.createElement('img');
+frankeru.src = "./img/frankeru.svg";
+frankeru.alt = "halloween images";
+frankeru.style.width = "84px";
+
+const monster = document.createElement('img');
+monster.src = "./img/monster.svg";
+monster.alt = "halloween images";
+monster.width = "58";
+
+// KREIRANJE drag-drop ELEMENATA
+
+// OVDE CU NESTO DODATI VEZANO ZA CUSTOM ELMENTE, STO MISLI MDA JE VAZNO, A ODNOSI SE NA NJIHOVE
+// DIMENZIJE, ODNOSNO VISINU:
+                                // VISINI CUSTOM TAGA JE, UVEK 17 PIKSELA
+// JA IPAK MISLIM DA NIJE POTREBNO KORISITIT DIMENZIJE ILI KOORDINATE DIREKTNO, CUSTOM TAGA, VEC ONIH 
+// ELEMENATA IZ SHADOW ILI FLATTENED DOM-A
+
+const draggableSpook = document.createElement('drag-drop');
+const draggableDevice = document.createElement('drag-drop');
+
+const draggableFrankeru = document.createElement('drag-drop');
+const draggableMonster = document.createElement('drag-drop');
+
+// NESTOVANJE   pictureSpook-A     I     pictureDevice-A    U      drag-drop         ELEMENTE
+
+draggableSpook.appendChild(pictureSpook);
+draggableDevice.appendChild(pictureDevice);
+
+// NESTOVANJE img ELEMNATA U LIGHT DOM-OVE OSTALIH drag-drop ELMENATA
+
+draggableFrankeru.appendChild(frankeru);
+draggableMonster.appendChild(monster);
+
+// NESTOVANJE, POMENUTIH drag-drop ELEMENATA U POMENUTI CONTAINER, IZ body-JA, iframe-A
+
+document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableSpook);
+document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableDevice);
+document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableFrankeru);
+document.querySelector('div > .some_frame').contentDocument.body.querySelector('div').appendChild(draggableMonster);
 
 
 
@@ -11878,5 +12240,39 @@ nekiDivEl[1].addEventListener('mousedown', function(ev){
     console.log("KOORDINATA Y -----> ", ev.pageY);
     console.log(ev.currentTarget.getBoundingClientRect());
 }); 
+
+
+const nekiListItem = document.querySelector('li > ul > li > ul > li');
+
+const ancestorBeforeDocument = function(element){
+    let el = element;
+
+    if(el instanceof Document) return null;
+
+    while(el = el.parentNode){
+        console.log(el);
+
+        if(el instanceof Document){
+            break;
+            console.log("||||||||||IT'S DOCUMENT|||||||||||||||");
+        }
+
+    }
+    
+};
+
+
+ancestorBeforeDocument(nekiListItem);
+
+
+document.querySelector('.ctown').addEventListener('mousedown', function(ev){
+    
+    const y = ev.target.offsetTop;
+    
+    ev.target.style.position = "absolute";
+
+    ev.target.style.top = Math.round(y) + "px";
+
+});
 
 

@@ -871,4 +871,24 @@ some-practice-element {
 
 
 
+.ctown {
+    border: olive solid 2px;
+    padding: 10px;
+    height: 400px;
+    width: 68%;
 
+}
+
+.ctown .stav {
+    border: tomato solid 2px;
+    display: inline-block;
+    width: 128px;
+    height: 62px;
+}
+
+.ctown .adam {
+    border: orange solid 2px;
+    display: inline-block;
+    width: 86px;
+    height: 78px;
+}
