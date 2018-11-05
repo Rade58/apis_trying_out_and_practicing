@@ -11339,11 +11339,9 @@ window.customElements.define('draggable-dropable', class extends window.customEl
         // BINDING this-A U DRAG'N'DROP ALGORITMA, JER JE ON HANDLER ON mousedown
         this.dragDropAlorythm = this.dragDropAlorythm.bind(this);
         
-        // 
-        this.changingCursorOnOverAndOut = this.changingCursorOnOverAndOut.bind(this);
+        
 
-        this._cursorIsInside = false;
-
+       
     }
 
     connectedCallback(){
@@ -11360,17 +11358,22 @@ window.customElements.define('draggable-dropable', class extends window.customEl
             'mousedown',
             this.dragDropAlorythm
         );
+        
+        // KURSOR
+        this.shadowRoot.querySelector('[name=draggable]').assignedNodes()[0].style.cursor = "grab";
+        
+        // absOrRelAncestorOrBody  JE NASLEDJENA IZ KLASE IZ KOJE MOJA KLASE NASLEDJUJE (KOJU MOJA
+        // KLASA EXTENDS)
 
-        this.shadowRoot.querySelector('[name=draggable]').addEventListener(
-            'mouseover',
-            this.changingCursorOnOverAndOut
-        );
+        // POMENUTI DEFAULT BEHAVIOUR (DRAGGING DUPLIKATA SLIKE)
+        // MOGAO SAM SPRECITI I U HANDLERU, KOJ ISE KACI U SLUCAJU   dragstart      EVENTA
+        // KOJI SE TRIGGER-UJE, NA POCETKU DRAGGING-A
 
-        // OVO SLEDECE JE SUVISNO, ZATO JE I COMMENTED OUT
-        // this.shadowRoot.querySelector('[name=draggable]').addEventListener(
-        //     'mouseout',
-        //     this.changingCursorOnOverAndOut
-        // );
+        this.shadowRoot.querySelector('[name=draggable]').ondragstart = function(ev){
+            return false;
+        };
+
+
     
     }
   //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11388,7 +11391,10 @@ window.customElements.define('draggable-dropable', class extends window.customEl
 
     dragDropAlorythm(ev){
 
-        ev.preventDefault();
+        // ev.preventDefault();         UMESTO OVOGA, ILI UMESTO DA U OVOJ FUNKCIJI RETURNUJEM
+                                        // false, JA SAM DEFINISAO I ZAKACIO ondragstart HANDLER
+                                        // U KOJEM SAM RETURNOVAO false, I NEM VISE POVLACENJA DUPLIKATA
+                                        // IMAGE-A
 
         let draggable = ev.target.closest('[slot=draggable]');
         
@@ -11416,8 +11422,12 @@ window.customElements.define('draggable-dropable', class extends window.customEl
         draggable.style.top = Math.round(pageDragYBefAbs) + "px";
 
         ////////////////////////////////////////////////////////////////////////////////
-        // PROMENA KURSORA NA mousedown
-        draggable.style.cursor = 'grabbing';  //OVAJ KURSOR INDICIRA DA JE NESTO UGRABLJENO (UHVACENO)
+        draggable.style.cursor = "grabbing";    //OVAKAV KURSOR INDICIRA DA JE NESTO ZGRABLJENO
+                                                // ODNOSNO U OVOM SLUCAJU MOJ DRAGGABLE
+        ////////////////////////////////////////////////////////////////////////////////
+
+    
+        
 
         // I OVDE MOGU ISKORISTITI NASLEDJENU METODU, KOJU SAM DEFINISAO U 
         // KAO METODU PREDHODNE KOMPONENTE, I KOJA BIRA this-OV APSOLUTNO ILI RELATIVNO
@@ -11429,52 +11439,29 @@ window.customElements.define('draggable-dropable', class extends window.customEl
             
             const pageX = ev.pageX;
             const pageY = ev.pageY;
-            
+        
+
             draggable.style.left = Math.round(pageX - moveBackByX) + "px";
             draggable.style.top = Math.round(pageY - moveBackByY) + "px";
         };
+    
 
         draggable.onmouseup = function(ev){
             draggable.style.cursor = 'grab'; //OVAKAV KURSOR INDICIRA DA JE NESTO GRABBABLE
+            
             elementForMovingAcross.onmousemove = null;
             ev.currentTarget.onmouseup = null;
+            this._grabbed = false;
         }
 
     }
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // OVDE CU DEFINISATI I HANDLER, KOJI SE TICE KURSORA, ODNOSNO, NJEGOVE PROMENE, NAKON
-    // TRIGGERING-A mouseover; A I VRACANJA KURSORA NA STARO NAKON TRIGGERINGA mouseout-A
-    changingCursorOnOverAndOut(ev){
-        
-        if(ev.target.hasAttribute('slot') && ev.type === 'mouseover'){
-            const draggable = ev.target;
-
-            if(ev.relatedTarget === null || !ev.relatedTarget.closest('[slot=draggable]')){
-                draggable.style.cursor = 'grab'; //OVAKAV KURSOR INDICIRA DA JE NESTO GRABBABLE
-            }
-        }
-
-        // MOZDA JE SLEDECA USLOVNA IZJAVA VISAK (KADA SAM MALO RAZMISLIO, SHAVATIO SAM DA NE MORAM
-        // KACITI OVU FUNKCIJU, I U SLUCAJU mouseout TIPA EVENTA, JER NISAM KORISTIO EVENT DELEGATION
-        // U SMISLU DA SAM KACIO HANDLER NA SLOTOV, ODNOSNO SLOTTED-OV PARENT ELEMENT)
-        /* if(ev.target.hasAttribute('slot') && ev.type === 'mouseout'){
-            const draggable = ev.target;
-
-            if(ev.relatedTarget !== null){
-
-                if(ev.relatedTarget.querySelector('[slot=draggable]')){
-                    draggable.style.cursor = 'auto';
-                }
-
-            }else{
-                draggable.style.cursor = 'auto';
-            }
-        } */
-
+    // TRIGGERING-A mouseover
+    cursorOnOveringAncestor(ev){
+        ev.target.closest('[slot=draggable]').style.cursor = 'grab';
     }
-
-    // METODA ZA 
 
 });
 
@@ -11490,6 +11477,88 @@ document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentE
     draggableDroppableEl
 );
 
+const draggableNeue = document.createElement('draggable-dropable');
+const pictureClone = pictureSpook.cloneNode();
+const sourceClone = sourceSpook.cloneNode();
+const someDefaultImg = imgDefa.cloneNode();
+pictureClone.appendChild(sourceClone);
+pictureClone.appendChild(someDefaultImg);
+draggableNeue.appendChild(pictureClone);
+document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentElement(
+    'beforeend',
+    draggableNeue
+);
+
+// U POSLEDNJOJ KOMPONENTI SAM UPOTREBIO I EVENT, KOJI JE KONKRETNO VEZAN ZA DRAGGING
+        
+        //          dragstart               (TRIGGER-UJE SE, NAKON POCETKA DRAGG-A)
+
+        // MEDJUTIM, POSTOJE I SLEDECI EVENTOVI
+        
+//                  drag            (TRIGGERUJE SE DOK TRAJE DRAGGING)
+                                    // PREDPOSTAVLJAM, SVAKI PUT, KADA SE ELEMENT, POZICIONIRA
+                                    // SAZNAO SAM DA SE TRIGGER-UJE SVAKIH 350 ms
+
+//                  dragend         (TRIGGERUJE SE, KADA KORISNIK ZAVRSI DRAGGING)
+//                                      PREDPOSTAVLJAM, NAKON TRIGGERING-A  mouseup-A
+
+// POMENUTI EVENTOVI SU EVENT-OVI, KOJI SE TRIGGER-UJU,     NA                          DRAGG TARGET-U
+
+// NAIME, OVDE SAM UPOTREBIO TERMIN        DRAGG TARGET, MEDJUTIM TAKODJE POSTOJI I 
+//                                  
+//                                                                                      DROP TARGET
+
+
+// RECI CU, KOJI SU SVE TO EVENT-OVI, TRIGGER-UJU, NA DROP TARGET-U, TEK KADA SE POZABAVIM SLEDECIM
+// A STO JE I OBJASNJENO U CLANKU KOJI CITAM, A TO JE
+
+                    //          DETEKTOVANJE   DROPPABLE-OVA         (DETECTING DROPPABLES)
+
+// U prethodnim primerima, slike i elementi () bi se mogla drop-ovati "bilo gdje" i da tu ostanu. 
+// U stvarnom životu obično uzimamo jedan element i spustimo ga na drugi. 
+// Na primer, fajl u fasciklu ili korisnik, fsciklu u smeće ili bilo gde drugde.
+// Abstraktno, uzmemo 'draggable' element  i spustimo ga na "droppable" element.
+
+
+// NAIME, ONO STO JA MORAM ZNATI JESTE TARGET DROPPABLE NA KRAJU DRAG'N'DROP-A
+// KAKO BI IZVEO ODGOVARAJUCU AKCIJU
+// TAKODJE POZELJNO JE DA ZNAM ZA DROPPALE, TOKOM DRAGGING PROCES-A, TAKO STO BI DROPPABLE BIO HIGHLIGHTED
+
+// RESENJE JE INTERESANTNO, ALI MALKO TRICKY, A OVDE CU SE NJIME POZABAVITI
+
+// PRVA IDEJA JESTE KACENJE onmouseover  I onmouseup HANDLER-A, NA POTENCIJALNI DROPPABLE, I DETEKTOVANJE
+// KADA SE POINTER MISA POJAVI PREKO DROPPABLE-A; I TAKO MOGU ZNATI DA JA DRAGGUJEM ILI DROPPUJEM PREKO TOG
+// DROPPABLE ELEMENTA
+
+// ALI TO NE BI FUNKCIONISALO
+
+// PROBLEM SE OGLEDA U TOME, STO DOK JA DRAGG-UJEM, DRAGGABLE ELEMENT JE UVEK IZNAD DRUGIH ELEMENATA
+// I Mouse EVENT-OVI SE UVEK DESAVAJU NA TOP ELEMENT, A NE NA ONIM ELEMENTIMA, ISPOD NJEGA
+
+// NA PRIMER, IMAM DVA DIV-A; JEDAN TOMATO I DRUGI OLIVE
+// NE POSTOJI MOGUCNOST DA SE CATCH-UJE EVENT, NA TOMATO-U, ZATO STO JE OLIVE PREKO NJEGA
+
+const dva_diva = `
+    <div onclick="alert('tomato')" class="tomato_zada"></div>
+    <div onclick="alert('olive')" class="olive_zada"></div>
+`;
+
+const style_dva_diva = `
+    div.tomato_zada {
+        background-color: tomato;
+    }
+    div.olive_zada {
+        background-color: olive;
+    }
+
+    div.tomato_zada, div.olive_zada {
+        height: 80px;
+        width: 80px;
+
+        position: absolute;
+        left: 20px;
+    }
+`;
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

@@ -893,3 +893,22 @@ some-practice-element {
     width: 86px;
     height: 78px;
 }
+
+
+div.tomato_zada {
+    background-color: tomato;
+}
+div.olive_zada {
+    background-color: olive;
+}
+
+div.tomato_zada, div.olive_zada {
+    height: 80px;
+    width: 80px;
+
+    position: absolute;
+    left: 20px;
+}
+
+
+
