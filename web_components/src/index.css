@@ -897,6 +897,7 @@ some-practice-element {
 
 div.tomato_zada {
     background-color: tomato;
+    cursor: pointer;
 }
 div.olive_zada {
     background-color: olive;
@@ -905,10 +906,16 @@ div.olive_zada {
 div.tomato_zada, div.olive_zada {
     height: 80px;
     width: 80px;
+    cursor: text;
 
     position: absolute;
     left: 20px;
 }
 
+.za_sakr {
+    border: pink solid 2px;
+    width: 56%;
+    text-align: center;
+}
 
 

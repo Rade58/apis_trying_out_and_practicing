@@ -11327,6 +11327,10 @@ document.querySelector('div > .some_frame').contentDocument.body.querySelector('
 // ALI CU U SKLOPU NOVE KOMPONENTE, KREIRATI, NOVU METODU, KOJA CE USTVARI BITI DRAG'N'DROP
 // ALGORITAM, UCAUREN U ON mousedown LISTENER
 
+// ONO STA SAM TAKODJE SAZNAO U OVOM PRIMERU JESTE DA SE NE MORA DEFINISATI PSEUDO KLASA (KAO :hover)
+// KAKO BI SE ZADAO ODREDJENI OBLIK KURSORA (MOZE KLASICNIM STILIZOVANJEM), JA SAM OVDE 
+// OBLIK KURSORA ZADAVAO U JAVASCRIPTOM, DEFINISUCI cursor U VREDNOSTI style ATRIBUTA
+
 window.customElements.define('draggable-dropable', class extends window.customElements.get('drag-drop') {
     constructor(){
         super();
@@ -11546,6 +11550,7 @@ const dva_diva = `
 const style_dva_diva = `
     div.tomato_zada {
         background-color: tomato;
+        cursor: pointer;
     }
     div.olive_zada {
         background-color: olive;
@@ -11554,11 +11559,402 @@ const style_dva_diva = `
     div.tomato_zada, div.olive_zada {
         height: 80px;
         width: 80px;
+        cursor: text;
 
         position: absolute;
         left: 20px;
     }
 `;
+
+// document.querySelector('div.olive_zada').style.cursor = 'grab';
+
+
+// Isto je sa draggable elementom. Element je uvek iznad drugih elemenata, tako da
+//  se EVENT-OVI, TRIGGERUJU NA NJEMU. Bez obzira na to koji su LISTENERI postavLJENI na ELEMENTE ISPOD,
+// oni neće raditi.
+// Zbog toga početna ideja SA STAVLJANJEM HANDLER-A NA potencijalnim DROPPABLE-IMA ne funkcioniše u praksi. 
+// TI HANDLERI NECE RADITI
+
+// U SVEMU TOME MI MOZE POMOCI METODA, ZA KOJU PRVI PUT CUJEM
+
+                        document.elementFromPoint          
+
+// POMENUTOJ METODI SE KAO ARGUMENTI DODAJU,         BROJNE VREDNOSTI, KOJE SE ODNOSE NA WINDOW RELATED 
+// (ODNOSNO CLIENT) KOORDINATE
+// POVRATNA VREDNOST POMENUTE METODE JESTE ELEMENT, KOJI JE NAJDUBLJE NESTED, NA DATIM WINDOW RELATED
+// KOORDINATAMA, DODATIM, KAO ARGUMENTI; ILI POVRATNA VREDNOST JESTE null, AKO SU KOORDINATE IZVAN
+// window-A
+
+// TAKO DA BI U BILO KOJEM MOUSE EVENT HANDLER-U, MOZE SE DETEKTOVATI, POTENCIJALNI DROPPABLE ISPOD
+// POINTERA
+// MEDJUTIM U TRENUTKU POZIVANJA, POMENUTE METODE, DROPPABLE SE MOR SAKRITI, JER AKO TO NE URADIM
+// ON CE BITI POVRATNA VREDNOST, POMENUTE METODE
+
+// DAKLE PISEM OVAKO
+
+//                      droppable.hidden = true;
+//                      const elementIspod = document.elementFromPoint(ev.clientX, ev.clientY);
+//                      droppable.hidden = false;
+
+// KAO STO VIDIIM, NAKON POZIVA POMENUTE        document.elementFromPoint  METODE, OPET CINIM
+// DROPPABLE, VIDLJIVIM
+
+// SDA CU UPOTREBI OVU METODU, U MOM CODE-U, ODNOSNO U MOM          DRAG'N'DROP ALGORITMU
+// ODNOSNO, KREIRACU NOVU KOMPONENTU KOJA CE REPREZENTOVATI DRAGGABLE CONTAINER (DAKLE KOMPONENTA,
+// CIJI ELEMENT, KOJI REPREZENTUJE, IMA POTPUNO ISTE OSOBINE, KAO I INSTANCE PREDHODNIH
+// dragg-drop KOMPONENTI)
+
+// U            moveIt          (ON mousemove) HANDLER-U, JA CU PRIMENITI, POMENUTU
+//      document.elemntFromPoint        METODU 
+
+window.customElements.define('drag-drop-container', class extends HTMLElement {
+    constructor(){
+        super();
+
+        const shadowRoot = this.attachShadow({mode: 'open'});
+
+        const slotElement = document.createElement('slot');
+        const styleElement = document.createElement('style');
+        const styleText = `
+            /* STILOVI, KOJI CE BITI APLICIRANI DROPPABLE-U (POSTO JE SVAKI DRAGGABLE I POTENCIJALNI
+               DROPPABLE) */
+
+            ::slotted([olive_outline]){
+                outline: olive 4px solid;
+            }
+
+            /*SLEDECA SELEKCIJA NIJE MOGUCA*/
+            /*
+            ::slotted(picture > img){
+                display: none;
+            }
+            */
+        `;
+
+        slotElement.name = "draggable";
+        styleElement.textContent = styleText;
+
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(slotElement);
+
+        // BINDINZI
+        this.pickItUp = this.dragNDropAlgorythm.bind(this);
+        this.moveIt = this.moveIt.bind(this);
+
+        this.changeCursor = this.changeCursor.bind(this);
+
+        this.documentSelector = this.documentSelector.bind(this);
+        this.olderZIndex = this.olderZIndex.bind(this);
+        this.absOrRelAncestorOrBody = this.absOrRelAncestorOrBody.bind(this);
+
+        
+        this._onConnected = this._onConnected.bind(this);
+
+        //////////////////////////////////////////////////
+        this._backBy = {x: 0, y: 0};
+        
+        this._dateOfMounting = null;
+
+        // SLEDECI PROPERTI BI TREBALO DA SKLADISTI TRENUTNI        DROPPABLE       ELEMENT
+        this._currentDroppable = null;
+
+        this._imageOldStyle = "";
+
+    }
+    
+    connectedCallback(){
+        this._onConnected();
+    }
+
+    // FUNKCIJA U KOJOJ JE SAV CODE, NAMENJEN connectedCallback-U
+    _onConnected(){
+
+        this._dateOfMounting = new Date();
+
+        this.children[0].setAttribute('slot', 'draggable');
+        
+        const bodyElement = this.documentSelector().body;
+        bodyElement.scrollTop = Math.round(bodyElement.scrollHeight);
+
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener('mousedown', this.pickItUp);
+
+        this.shadowRoot.querySelector('[name=draggable]').addEventListener('mouseover', this.changeCursor);
+    }
+
+    // EVENT HANDLERI
+    dragNDropAlgorythm(ev){
+        
+        ev.preventDefault();
+        
+        let draggable = ev.target.closest('[slot=draggable]');
+        if(draggable.nodeName === 'PICTURE'){
+            draggable = draggable.querySelector('img');
+        }
+
+        draggable.style.cursor = 'grabbing';
+
+        const clientX = ev.clientX;
+        const clientY = ev.clientY;
+    
+        const clientDraggable = draggable.getBoundingClientRect();
+        const elClientX = clientDraggable.x;
+        const elClientY = clientDraggable.y;
+
+        const elPageX = draggable.offsetLeft;
+        const elPageY = draggable.offsetTop;
+        
+        this._backBy.x = clientX - elClientX;
+        this._backBy.y = clientY - elClientY;
+
+        
+        draggable.style.position = "absolute";
+        
+        draggable.style.zIndex = this.olderZIndex(new Date());
+        
+        draggable.style.left = Math.round(elPageX) + "px";
+        draggable.style.top = Math.round(elPageY) + "px";
+
+        
+        const aOrBOrBody = this.absOrRelAncestorOrBody();
+        
+        const moveIt = this.moveIt;
+
+        aOrBOrBody.addEventListener('mousemove', moveIt);
+
+        draggable.onmouseup = function(ev){
+            draggable.style.cursor = "grab";
+            aOrBOrBody.removeEventListener('mousemove', moveIt);
+            ev.currentTarget.onmouseup = null;
+        };
+        
+    }
+
+    // EVENT LISTENER-I
+    moveIt(ev){
+        
+        const pageX = ev.pageX;
+        const pageY = ev.pageY;
+        let draggable = this.shadowRoot.querySelector('[name=draggable]').assignedNodes()[0];
+
+        if(draggable.nodeName === 'PICTURE'){
+            draggable = draggable.querySelector('img');
+        }
+
+        draggable.style.left = Math.round(pageX - this._backBy.x) + "px";
+        draggable.style.top = Math.round(pageY - this._backBy.y) + "px";
+
+      // DAKLE DEFINISANJE NEOPHODNOG CODE-A, KOJI SE TICE DROPPABLE ELEMENT, MOGU NASTAVITI
+      // OVDE U NASTAVKU, moveIt HANDLERA, KOJI SE, KAO STO SAM RANIJE OBJASNJAVAO, KACI NA
+      // PRVI APSOLUTNO POZICIONIRANI, ILI RELATIVNO POZICIONIRANI this-OV ANCESTOR, ILI AKO TAKVOG NEMA
+      // KACI SE NA body ELEMENT
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // PRIMENJUJEM elementFromPoint METODU
+        // NJENU POVRATNU, VRDEDNOST, ODNONO DROPPABLE ELMENT REFERENCU, SKLADISTIM, KAO
+        // VREDNOST PROPERTIJA, OVE INSTANCE
+        // NARAVNO, DEFINISEM I POMENUTA SAKRIVANJA I PONOVNO VRACANJE VIDLJIVOSTI DRAGGABLE-U
+
+        // ALI NA UMU MORAM IMATI JEDNU BITNIU STVAR,
+        // JA SAM U OVOM PRIMERU KREIRAO NEKOLIKO INSTANCU, OVOG, MOG CUSTOM ELEMENTA
+        // ALI SAM NJU NESTOVA U body   ifram-A
+        // STO ZNACI DA KADA BIH KORISTIO           document     ELEMENT, KOJI BI BIO POVRATNA VREDNOST
+        // POMENUTE METODE BIO BI SAM  iframe, JER ZAISTA JA KURSOR OM PRELAZIM PREKO iframe
+        // A document, NEMA PRISTUP ONOME, UNUTAR iframe-OVOG documenta
+        // ZATO JE NAJBOLJE DA SELEKTUJEM  iframe-OV document, PA DA ONDA NA NJEMU PRIMENIM
+        // elementFromPoint METODU
+        // A JA SAM SLUCAJNO KREIRAO TAKVU METODU
+        //              this.documentSelector
+        // KOJOJ JE POVRATNA VREDNOST TRENUTNA Document INSTANCA, 
+        // ANCESTOR, MOG INSERTOVANOG CUSTOM ELEMENTA
+
+        draggable.hidden = true;
+        const potentialDroppableIspod = this.documentSelector().elementFromPoint(ev.clientX, ev.clientY);
+        draggable.hidden = false;
+
+        // console.log(potentialDroppableIspod.closest('[slot=draggable]'));
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // POSTO SAM SVE POMENUTO DEFINISAO, MORAM SADA RECI, ZASTO JA USTVARI ZELIM DA SKLADISTIM,
+        // TRENUTNI DROPPABLE ELEMENT
+
+        // TREBAM IMATI NA UMU SLEDECE:
+        // JA ZELIM DA OVDE DEFINISEM NEKU MANIPULACIJU (DODAM STILIZOVANJE) DROPPABLE ELEMENT
+        // ALI JA ZELIM STIL DA DODAM SAMO JEDNOM
+        // A POSTO SAM U ON mousemove HANDLER-U, JASNO JE DA BI SE TAKAV STILL IZNOVA I IZNOVA DODAVAO
+        // A U OSTALOM, JA ZELIM DA SE MOJ STIL UKLONI IZ DROPPABLE, KADA SE IZ NJEGA UKLONI
+        // SPUSTENI DRAGGABLE
+        // RANIJE SAM DEFINISAO DA SE POTENCIJALNI DROPPABLE SKLADISTI U PROPERTIJU
+        //                                                                        this._currentDroppable
+
+
+        // AKO POSTOJI DROPPABLE
+        if(this._currentDroppable){
+            // PROVERAVAM, KOJI JE NOVI ELEMENT DOBIJEN PRIMENOM elementFromPoint
+            // AKO JE REC O ISTOM ELEMENTU, NIJE POTRREBNO DA SE UKLANJA REFERENC IZ VREDNOSTI
+            // CUSTOM ELEMENT INSTANCE
+            // U SUPRONOM UKLANJAM
+            if(this._currentDroppable !== potentialDroppableIspod.closest('[slot=draggable]')){ 
+                if(this._currentDroppable.nodeName === 'PICTURE'){
+
+                // MEDJUTIM POSTO SAM JA RADIO SA picture TAGOM , U MOJIM PRIMERIMA, TAKO DA JE ON 
+                // SLOTTED DRAGGABLE (A TAKODJE MOGUCI DROPPABLE) ELEMENT
+                // ZBOG NJEGOVIH OGRANICENJA U STILIZOVANJU, ZATO STO DIREKTNO NA PICTURE TAGU
+                // NE MOGU DEFINISATI STILOVE, A TAKODJE STO ::sloted() PSEUDO KLASOM MOGU DA STILIZUJEM
+                // SLOTTED ELEMENT, A NE I NJEGOVE DESCENDANTE, KAO STO JE img TAG NESTED U picture-U
+
+                // MORACU DIREKTNO DA UKLANJAM style TAG SA img-A (KOJI SAM NARAVNO DODAO, KADA JE
+                // TAKAV picture ELEMENT PRONADJEN I NJEGOVA REFERENCA SKLADISTENA U PROPERIJU
+                // CUSTOM ELEMENT INSTANCE)
+
+                    this._currentDroppable.querySelector('img').style.outline = this._imageOldStyle;
+                    this._imageOldStyle = '';
+                    this._currentDroppable = null;
+                }else{
+                    this._currentDroppable.removeAttribute('olive_outline');
+                    this._currentDroppable = null;
+                }
+                return
+            }                                                        
+        
+        }
+
+
+
+        if(potentialDroppableIspod){         // NAIME, POTREBNO JE PROVERITI DA LI JE NOVI
+                                             //ELEEMNT, ZAISTA DROPPABLE   
+                                              
+            // AKO SE I DALJE MOUSEMOVING VRSI, TAKO DA JE ISPOD VEC ONAJ SELEKTOVANI DROPPABLE
+            // FUNKCIJA SE MOZE RETUTNOVASTI, ODNOSNO NEMA POTREBE NISTA DEFINISATI ZA ONAJ
+            // DROPPABLE, KOJI JE VEC RANIJE SELEKTOVAN
+            if(potentialDroppableIspod.closest('[slot=draggable]') === this._currentDroppable){
+                return;
+            }
+
+            // AKO SE RADI O RAZLICITIM ELEMENTIMA
+            // POTREBNO JE USKLADISTITI NOVI DROPPABLE I DODELITI MU ZELJENE STILOVE
+            // (OVA I PREDHODNA if IZJAVA SU MOGLE BITI if else IZJAVA)
+            if(potentialDroppableIspod.closest('[slot=draggable]') !== this._currentDroppable){
+                                                                    // POSTO U MOM PRIMERU JA JESAM
+                                                                    // DEFINISAO NEKOLIKO
+                                                                    // INSTANCI CUSTOM ELMENTA
+                                                                    // U TOM SMISLU, JA MOGU
+                                                                    // ONAJ POTENCIJALNI NEKI DRUGI
+                                                                    // DRAGGABLE (DEO POTPUNO ISTOG
+                                                                    // OVAKVOG CUSTOMA) ELEMENT
+                                                                    // POSMATRATI I KAO DROPPABLE
+                                                                    // ZATO NEKA UPRAVO POSTOJANJE
+                                                                    //  slot='draggable' ATRIBUTA
+                                                                    // BUDE USLOV DA JE TAKV ELEMENT
+                                                                    // I DROPPABLE ELEMENT;
+                                                                    // U PRIMERU IZ CLANKA
+                                                                    // DROPPABLE JE BIIO ONAJ ELMENT
+                                                                    // STILIZOVAN KLASOM .droppable
+                this._currentDroppable = potentialDroppableIspod.closest('[slot=draggable]');
+
+                // OVDE MOGU DODATI STIL 
+                // MEDJUTIM POSTO SAM JA RADIO SA picture TAGOM , U MOJIM PRIMERIMA, TAKO DA JE ON 
+                // SLOTTED DRAGGABLE (A TAKODJE MOGUCI DROPPABLE) ELEMENT
+                // ZBOG NJEGOVIH OGRANICENJA U STILIZOVANJU, ZATO STO DIREKTNO NA PICTURE TAGU
+                // NE MOGU DEFINISATI STILOVE, A TAKODJE STO ::sloted() PSEUDO KLASOM MOGU DA STILIZUJEM
+                // SLOTTED ELEMENT, A NE I NJEGOVE DESCENDANTE, KAO STO JE img TAG NESTED U picture-U
+
+                // MORACU DIREKTNO DA STILIZUJEM img INSIDE picture
+
+                if(this._currentDroppable.nodeName === 'PICTURE'){
+                    const image = this._currentDroppable.querySelector('img');
+                    this._imageOldStyle = window.getComputedStyle(image).outline;
+                    image.style.outline = "pink solid 4px";
+                }else{  //SVAKI DRUGI ELEMENT SE MOZE STILIZOVATI CSS KLASOM FROM INSIDE SHADOW ROOT
+                    this._currentDroppable.setAttribute('olive_outline', '');
+                }
+            }
+
+        }
+
+        
+      ////////////////////////////////////////////////////////////////////////////////////////////
+
+        // NIJE null, ODNOSNO AKO SE OD RANIJE 
+            // SACUVAO DROPPABLE
+            // ALI I AKO JE SADA KAO  POTENCIJALNI
+            // PRISUTAN NOVI ELEEMNT (DAKLE
+            // DRAGGING SE NASTAVIO IZVAN DROPPABLE-A)
+
+            // POTREBNO JE DA DOLEIM null 
+            //  this._currentDroppable-U
+
+
+        
+    }
+
+    changeCursor(ev){
+        const draggable = ev.currentTarget;
+        draggable.style.cursor = 'grab';
+    }
+
+    //METODE
+    documentSelector(){
+
+        let element = this;
+        
+        if(element.nodeName === '#document') return element;
+
+        while(element = element.parentNode){
+            if(element.nodeName === '#document') return element;
+        }
+    }
+
+    olderZIndex(neueDate){
+        return Math.round((neueDate - this._dateOfMounting)/10);
+    }
+
+    absOrRelAncestorOrBody(){
+        let el = this;
+
+        if(el.nodeName === '#document' || el.nodeName === 'BODY') return el.body || el;
+
+        while(el = el.parentNode){
+            
+            if(
+                window.getComputedStyle(el)['position'] === 'absolute' || 
+                window.getComputedStyle(el)['position'] === 'relative' 
+            ){
+                return el;
+            }
+
+            if(el.nodeName === '#document' || el.nodeName === 'BODY') return el.body || el;
+        }
+    }
+
+});
+
+const draggableOtherKont = document.createElement('drag-drop-container');
+const pikClone = pictureSpook.cloneNode();
+const srcClone = sourceSpook.cloneNode();
+const someDefaultImgClone = imgDefa.cloneNode();
+pikClone.appendChild(srcClone);
+pikClone.appendChild(someDefaultImgClone);
+draggableOtherKont.appendChild(pikClone);
+document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentElement(
+    'afterbegin',
+    draggableOtherKont
+);
+
+const movableDiv = document.createElement('div');
+movableDiv.style.width = "128px";
+movableDiv.style.height = "58px";
+movableDiv.style.border = "8px solid pink";
+movableDiv.style.backgroundColor = "transparent";
+const draggableDroppableContainer = document.createElement('drag-drop-container');
+draggableDroppableContainer.appendChild(movableDiv);
+document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentElement(
+    'afterbegin',
+    draggableDroppableContainer
+);
+
+// TAKODJE POSTOJI, I METODA
+
+                        document.elementsFromPoint
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -12545,5 +12941,7 @@ document.querySelector('.ctown').addEventListener('mousedown', function(ev){
     ev.target.style.top = Math.round(y) + "px";
 
 });
+
+document.querySelector('.za_sakr').hidden = true;
 
 
