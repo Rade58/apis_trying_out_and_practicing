@@ -52,28 +52,6 @@
     100% {transform: scale(10, 10); opacity: 0;}
 }
 
-
-.neki_el {
-    background-image: radial-gradient(circle, transparent 5%, green 20%, yellow 28%, purple 98%);
-    color: #be88dda4;
-    color: #9de758;
-    color: #292f38;
-    color: #67f19c85;
-    color: lightseagreen;
-    color: tomato;
-    color: lightcyan;
-    color: #e67ba6;
-    color: #21695b8e;
-    color: #eeb752;
-    color: lightgreen;
-    color: #3a9b83;
-    color: #f5c9c5;
-    cursor: grab;
-
-}
-
-
-
 .komun {
     width: 380px;
     height: 120px;
@@ -919,3 +897,21 @@ div.tomato_zada, div.olive_zada {
 }
 
 
+.neki_el {
+    background-image: radial-gradient(circle, transparent 5%, green 20%, yellow 28%, purple 98%);
+    color: #be88dda4;
+    color: #9de758;
+    color: #292f38;
+    color: #67f19c85;
+    color: lightseagreen;
+    color: tomato;
+    color: lightcyan;
+    color: #e67ba6;
+    color: #21695b8e;
+    color: #eeb752;
+    color: lightgreen;
+    color: #3a9b83;
+    color: #f5c9c5;
+    cursor: grab;
+
+}

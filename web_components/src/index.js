@@ -6820,10 +6820,10 @@ const misEvent = new MouseEvent('click', {
 
 //DA DEFINISEM KACENJE HANDLERA, NA document, ZA SLUCAJ EVENTA, TIPA 'click'
 
-document.addEventListener('click', function(ev){
+/* document.addEventListener('click', function(ev){
     console.log(ev.clientX, ev.clientY);            //      8       8
     console.log(ev.target, ev.currentTarget);       //paragraf    document
-});
+}); */
 
 //DAKLE JA SAM DEFINISAO DA SE STAMPA TARGET. ZASTO?
 //ZELIM DA VIDIM, KOJI JE TARGET U ODNOSU NA      clientX           I       clientY 
@@ -11657,7 +11657,7 @@ window.customElements.define('drag-drop-container', class extends HTMLElement {
 
         // SLEDECI PROPERTI BI TREBALO DA SKLADISTI TRENUTNI        DROPPABLE       ELEMENT
         this._currentDroppable = null;
-
+        // SLEDECI PROPERTI BI TREBALO DA SKLADISTI VREDNOST ZA outline STIL, MOGUCEG DROPPABLE-A
         this._imageOldStyle = "";
 
     }
@@ -11792,6 +11792,20 @@ window.customElements.define('drag-drop-container', class extends HTMLElement {
             // AKO JE REC O ISTOM ELEMENTU, NIJE POTRREBNO DA SE UKLANJA REFERENC IZ VREDNOSTI
             // CUSTOM ELEMENT INSTANCE
             // U SUPRONOM UKLANJAM
+            
+            if(!potentialDroppableIspod){
+                if(this._currentDroppable.nodeName === 'PICTURE'){
+                    this._currentDroppable.querySelector('img').style.outline = this._imageOldStyle;
+                    this._imageOldStyle = '';
+                    this._currentDroppable = null;
+                }else{
+                    this._currentDroppable.removeAttribute('olive_outline');
+                    this._currentDroppable = null;
+                }
+
+                return;
+            }
+
             if(this._currentDroppable !== potentialDroppableIspod.closest('[slot=draggable]')){ 
                 if(this._currentDroppable.nodeName === 'PICTURE'){
 
@@ -11812,9 +11826,10 @@ window.customElements.define('drag-drop-container', class extends HTMLElement {
                     this._currentDroppable.removeAttribute('olive_outline');
                     this._currentDroppable = null;
                 }
-                return
+                
+                return;
             }                                                        
-        
+            
         }
 
 
@@ -11866,6 +11881,8 @@ window.customElements.define('drag-drop-container', class extends HTMLElement {
                 }else{  //SVAKI DRUGI ELEMENT SE MOZE STILIZOVATI CSS KLASOM FROM INSIDE SHADOW ROOT
                     this._currentDroppable.setAttribute('olive_outline', '');
                 }
+            }else{
+                return;
             }
 
         }
@@ -11954,6 +11971,126 @@ document.querySelector('div > .some_frame').contentDocument.body.insertAdjacentE
 // TAKODJE POSTOJI, I METODA
 
                         document.elementsFromPoint
+// TA MEDOTA JESTE EKSPERIMENTALNA, A POVRATNA VREDNOST JOJ JE NIZ ELEMENATA NA SPECIFICIRANOJ TACKI;
+// ODNOSNO, OD TARGETA U KOJEM JE TACKA, DO TARGETOVOG, NAJ DALJEG ANCESTOR-A
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU SE POZABAVITI SA JOS PRIMERA VEZANIH ZA DRAG'N'DROP
+// PRVO CU NAPRAVITI, JEDAN SLAJDER
+
+window.customElements.define('custom-slider', class extends HTMLElement {
+    constructor(){
+        super();
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        const progressBar = document.createElement('div');
+        const slideBar = document.createElement('div');
+        const styleElement = document.createElement('style');
+        const styleText = `
+            .slide_bar {
+                cursor: pointer;
+                width: 8px;
+                height: 28px;
+                border-radius: 2px;
+                background-color: #67f19c85;
+                position: absolute;
+                top: -9px;
+                left: 3px;            /* POMEREN ULEVO, ZA PARENTOV BORDER RADIUS */  
+            }
+
+            .progress_bar {
+                box-sizing: border-box;
+                padding: 0px;
+                width: 92%;
+                height: 10px;
+                border-radius: 3px;
+                background-color: #f5c9c5;
+                position: relative;
+            }
+        `;
+        styleElement.textContent = styleText;
+        progressBar.classList.add('progress_bar');
+        slideBar.classList.add('slide_bar');
+        progressBar.append(slideBar);
+        shadowRoot.appendChild(styleElement);
+        shadowRoot.appendChild(progressBar);
+
+        // bindings
+        this.grabIt = this.grabIt.bind(this);
+    
+    }
+
+    // LIFECYCLE CALLBACKS
+    connectedCallback(){
+        const shadowRoot = this.shadowRoot;
+
+        shadowRoot.querySelector('.slide_bar').addEventListener('mousedown', this.grabIt)
+    }
+
+    // EVENT HANDLERS
+    grabIt(ev){
+        const slajder = ev.currentTarget;
+        const progress = slajder.parentNode;
+        const slajderCoordsAndSizes = slajder.getBoundingClientRect();
+        const progressCoordsAndSizes = progress.getBoundingClientRect();
+        
+        // TREBACE MI I PROGRESSOV BORDER RADIUS, JER I ON MORA UCI U, NEKE OD SLEDECIH 'RACUNICA'
+        const progressBorderRadiusNumb = 
+            parseInt(/[0-9]*/.exec(window.getComputedStyle(progress).borderRadius)[0]);        
+
+        // ZA POCETAK; DA IMAM 'EFEKAT POVLACENJA U JEDNOJ TACKI' IZMEDJU KURSOR I SLAJDERA-A
+        const cursorClientX = ev.clientX;
+        const moveBackBy = cursorClientX - slajderCoordsAndSizes.x;
+        slajder.style.left = Math.round(
+            cursorClientX - progressCoordsAndSizes.left - moveBackBy 
+        ) + "px";
+
+        
+        // MINIAMLNA I MAKSIMALNA WINDOW REALTED KOORDINATA DO KOJIH KURSOR SME BITI POZICIONIRAN
+        const zero = progressCoordsAndSizes.left;
+        const max = progressCoordsAndSizes.right;
+    
+
+        // KACENJE onmousemove HANDLERA, NA this-OV PARENT ELEMENT 
+        // (ELEMENT U KOJEM JE NESTED MOJ CUSTOM)
+        const parentOfThis = this.parentNode;
+
+        parentOfThis.onmousemove = function(ev){
+            const cursorClientX = ev.clientX;
+    
+            if(cursorClientX < zero){
+                slajder.style.left = progressBorderRadiusNumb + "px";    
+            }else if(cursorClientX > max){
+                slajder.style.left = Math.round(
+                    max - progressCoordsAndSizes.left - progressBorderRadiusNumb - 
+                    slajderCoordsAndSizes.width 
+                ) + "px";
+            }else{ 
+                slajder.style.left = 
+                Math.round(cursorClientX - progressCoordsAndSizes.left - moveBackBy) + "px";
+            }
+
+        };
+        
+        // KACENJE onmouseup HANDLER-A
+
+        parentOfThis.onmouseup = function(ev){
+            ev.currentTarget.onmousemove = ev.currentTarget.onmouseup = null;
+        }
+
+
+
+    }
+
+});
+
+const html_za_slajder = `
+<div class="kontejner_slajdera" style="width: 86%; height: 208px; border: pink solid 1px; padding: 80px">
+</div>
+`
+
+const nekiSlajder = document.createElement('custom-slider');
+document.querySelector('.kontejner_slajdera').appendChild(nekiSlajder);
 
 
 //////////////////////////////////////////////////////////////////////
@@ -12786,7 +12923,7 @@ console.log(`
 
 //JOS JEDNA VEZBA, VEZANA ZA KOORDINATE
 
-const misovEvenrt = new MouseEvent('click', {bubbles: true, cancelable: true});
+/* const misovEvenrt = new MouseEvent('click', {bubbles: true, cancelable: true});
 
 document.body.addEventListener('click', function(ev){
     console.log(ev.target);
@@ -12816,7 +12953,7 @@ new Promise((res, rej) => {
 
 if(nekiHolder){
     console.log("***********************************", nekiHolder, "******************");
-}
+} */
 
 
 /* 
