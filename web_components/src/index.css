@@ -913,5 +913,69 @@ div.tomato_zada, div.olive_zada {
     color: #3a9b83;
     color: #f5c9c5;
     cursor: grab;
+    overflow: unset;
 
 }
+
+
+#example {
+    box-sizing: content-box;
+    width: 300px;
+    height: 200px;
+    border: 25px solid #E8C48F;
+    padding: 20px;
+    overflow: auto;
+}
+
+.pozicioniran_ancestor {                /* PRVI CSS POZICIONIRANI ANCESTOR */
+    box-sizing: content-box;
+    position: relative;
+
+    border: pink solid 10px;
+    width: 500px;
+    height: 300px;
+    padding: 100px;
+}
+
+.pozicioniran_ancestor > div {
+    box-sizing: content-box;
+
+    border: olive solid 10px;
+    width: 400px;
+    padding: 20px;
+}
+
+.pozicioniran_ancestor > div > div {    /* ELEMENT KOJI POSMATRAM */
+    box-sizing: content-box;
+    border: tomato solid 20px;
+    width: 200px;
+    height: 150px;
+
+    padding: 10px;
+    overflow: auto;
+}
+
+
+.element_bla1 {
+    box-sizing: content-box;
+    width: 280px;
+    height: 120px;
+    border: olive solid 10px;
+    padding: 20px;
+    overflow-y: auto; 
+
+    direction: ltr;       /*    LEFT-TO-RIGHT    OVO JE I DEFAULT     */
+}
+
+.element_bla2 {
+    box-sizing: content-box;
+    width: 280px;
+    height: 120px;
+    border: olive solid 10px;
+    padding: 20px;
+    overflow-y: auto;
+
+    direction: rtl;       /*    RIGHT-TO-LEFT    OVO JE I DEFAULT     */
+}
+
+

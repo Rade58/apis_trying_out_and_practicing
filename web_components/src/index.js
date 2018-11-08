@@ -12078,7 +12078,7 @@ window.customElements.define('custom-slider', class extends HTMLElement {
             ev.currentTarget.onmousemove = ev.currentTarget.onmouseup = null;
         }
 
-
+        return false;
 
     }
 
@@ -12091,6 +12091,549 @@ const html_za_slajder = `
 
 const nekiSlajder = document.createElement('custom-slider');
 document.querySelector('.kontejner_slajdera').appendChild(nekiSlajder);
+
+
+// SLEDECI PRIMER CE IZGLEDATI, KAO, MOJ PREDPOSLEDNJI PRIMER (AKCENAT NIJE NA DROPPABLE-U, ALI U CILJU
+// USTEDE VREMENA, JA CU PREKOPIRATI CEO PRIMER)
+// PRIMER CU PREKOPIRATI U CILJU USTEDE VREMENA, A ONO STO HOCU DA DODAM JESTE SLEDECE
+
+                // DA NE MA HORIZONTALNOG SCROLLING-A NA STRANICI, ODNOSNO KADA GRANICA ELEMNTA
+                // DODJE DO LEVE I DESNE GRANICE PROZORA, DA SE TU I ZAUSTAVI, BEZ OBZIRA STO JE KURSOR
+                // IZASAO NAPOLJE
+
+                // A DA VERTIKALNI SCROLLING BUDE PRISUTAN, ALI DA ELEMENT NIKAD NE IZADJE SA STRANICE
+                // NI TOKOM TOG SCROLLINGA
+                // ODNOSNO DA IVICA ELEMENTA (NARAVNO, GORNJA ILI DONJA), BUDE PRILJUBLJENA
+                // UZ GORNJU ILI DONJU IVICU CLIENTA (window-A), NARAVNO DOK SE ELEMENT POZICIONIRA
+                // (DOK SE 'DRZI' TASTER MISA)
+                
+                // SVE OSTALO JE, ISTO, KAO I IZ PREDPOSLEDNJEM PRIMERA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MEDJUTIM, JA SE NISAM DOVOLJNO DOBRO UPOZNAO SA SCROLLING-OM, TAKO DA CU SE SADA BACITI NA CLANKE, U
+// KOJIMA JE OBJASNJEN SCROLLING; A MOZDA OBNOVIM SVE KOORDINATE, NAKON TOGA
+// PA CU SE TEK POZABAVITI OVAKVIM PRIMEROM 
+
+// U PRVOM DELU VEZANOM ZA SCROLLING POZBAVICU SE 'VELICINOM ELEMENTA I SCROLLING-OM', ZATIM 
+// 'VELICINAMA WINDOW-A I SCROLLING-OM'
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                  VELICINA ELEMENTA I SCROLLING       (ELEMENT SIZE AND SCROLLING)
+
+// KAO STO SAM PRIMETIO, I OD RANIJE, JAVASCRIPT NUDI RAZNE PROPERTIJE, KOJI MI DOZVOLJAVAJU DA CITAM 
+// INFORMACIJE O ELEMENTOVOJ, VISINI, SIRINI I DRUGIM GEOMETRIJSKIM ODLIKAMA
+// ONE MI CESTO TREBAJU KOD POMERANJA I POZICIONIRANJA ELEMENATA, ILI ZA PRAVILNO IZRACUNAVANJE 
+// KORDINATA
+
+// POSMATRACU SLEDECI SAMPLE ELEMENT
+
+const sample_element_u_html_fajlu = `
+    <div id="example">
+        <b>Ayahuasca</b>
+        <br>
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B. caapi was
+        named telepathine, but it was found to be identical to a chemical already isolated from 
+        Peganum harmala and was given the name harmine. Beat writer William S. Burroughs read a 
+        paper by Richard Evans Schultes on the subject and while traveling through South America in 
+        the early 1950s sought out ayahuasca in the hopes that it could relieve or cure opiate addiction
+        (see The Yage Letters). Ayahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River to study ayahuasca with the South American Indians. He brought back samples of the beverage
+        and published the first scientific description of the effects of its active alkaloids.
+    </div>
+`;
+const css_sample_elementa = `
+    
+    #example {
+        box-sizing: content-box;  /*NAMESTIO SAM DA BUDE content-box JER TAKO TREBA DA BUDE PO DEFAULTU A
+                                    I MENI TAKO TREBA U OVOM SLUCAJU*/
+        
+        width: 300px;        /*SIRINA SADRZINE, DAKLE TEKSTA*/
+        height: 200px;       /*VISINA SADRZINE; BEZ OBZIRA STO JE DEFINISAN PADDING SVUDA U ELEMENTU;
+                              OVA VISINA CE, I TO ONDA KADA TEKSTA IMA MNOGO (MOGUCE PRELIVANJE)
+                              CE BITI VISINA OD GORNJEG PADDINGA, PA DO POCETKA DONJEG PADDING-A
+                              IAKO CE U VECINI SLUCAJEVA, KADA POSTOJECE PRELIVANJE
+                              JESTE SPRECENO, TEKST PRELAZITI I DONJI PADDING I NJEGOV OVERFLOW
+                              JESTE ZAUSTAVLJEN SA UNUTRASNJOM LINIJOM BORDERA*/
+
+        border: 25px solid #E8C48F;   /*AKO POSMATRAM OVAJ ELEMENT, I AKO POSMATRAM 
+                                      KONKRETNO PO HORIZONTALI, IMAM, SLEDECU SITUACIJU
+                                    (TEK CU NA KRAJU RECI STA OBUHVATA SIRINA)
+
+                        padding)    OKO TEKSTA (KOJI BI SE PO HORIZONTALI PROSTIRAO 300
+                                        PIKSELA, KOLIKA JE I ZADATA SIRINA, ALI POSTO JE SCROLLBAR
+                                        PRISUTAN SIRINA)
+                                        SA LEVE 20 PIKSELA PADDINGA I SA DESNE 20 PIKSELA 
+                                        PADDINGA
+
+                        scrollbar)  POSTO JE PRELIVANJE MOGUCE (KAZEM MOGUCE JER TO POSMATRAM U 
+                                        ODNOSU NA PODESENU overflow VREDNOST) OD DESNOG PADDINGA
+                                        KRECE, ODNOSNO NALAZI SE SCROLLBAR SIROK   16px
+
+                        border)     E ONDA DOLAZI BORDER, PO 25 PIKSELA SA LEVE I DESNE STRANE
+                                        SA DESNE STRANE ON KRECE OD SCROLLBAR-A*/
+
+        /*TU JE DAKLE SCROLLBAR, JASNO DA JE ON U POGLEDU DIMENZIJA 'REMETILAC', ODNOSNO
+        AKO JE SCROLLBAR DODAT, I SIRINA MU IZNOSI 16 PIKSELA; DA LI TO ZNACI DA GA SVAKI PUT
+        MORAM UZIMATI U OBZIR PRE DEFINISANJA, SMATRAJUCI DA MI TAKO MOZE POREMETITI, PLANIRANO
+        DIMENZIONISANJE? */
+                            /*E PA NIJE TAKO,  'SCROLLBAR JE TU NA USTRB SIRINE'    NAIME
+                            SIRINA SCROLLBARA ULAZI U   width     STO ZNACI SLEDECE ZA SIRINU*/
+
+        /*    sirina)   -->      IZNOSI       300   =   284   (SIRINA TEKSTA)   +   16   (SIRINA SCROLL
+                                                                                              BAR-A  )
+        
+        I AKO POSMATRAM SLIKU VIDECU DA SU TEKST I SCROLLBAR ODVOJENI (IZMEDJU NJIH JE DESNI PADDING)
+        SIRINA IPAK IMA TAKVU RACUNICU*/                                                                                              
+
+
+        padding: 20px;
+        
+        overflow: auto;
+    }
+
+    /*MORAM SE PODSETITI DA AKO JE overflow, USTVARI visible (PO DEFAULTU), JASNO JE STA TO ZNACI
+    A AKO JE    scroll      ,SCROLBAR JE PRISUTAN, CAK IAKO SE SADRZINA NE BI PRELIVALA
+    I TAKODJE , JASNO JE STA JE SLUCAJ KADA JE hidden*/
+    
+    /*OPET CU PONOVITI, DA SAKRIVANJE SADRZINE POCINJE SA UNUTRASNJOM DONJOM STRANOM BORDER-A
+    DAKLE TEKST IDE PREKO DONJEG PADDING-A
+    ZA TAKVU SITUACIJU POSTOJI SLEDECE OBJASNJENJE, KOJE SAM PROCITAO U CLANKU
+    The padding-bottom may be filled with text
+    Usually paddings are shown empty on illustrations, but if there’s a lot of text in the element
+    and it overflows, then browsers show the “overflowing” text at padding-bottom, so you can see that
+    in examples. But the padding is still there, unless specified otherwise. (javascript.info)
+    */
+    /*DAKLE, DONJI PADDING JE I DALJE TU, IAKO GA TEKST PRELAZI*/
+
+    /*KADA JE           overflow: auto                  AKO POSTOJI PRELIVANJA, BICE PRISUTAN SCROLLBAR
+    A AKO NEMA PRELIVANJA, NECE BITI PRISUTAN SCROLLBAR
+    I JASNO MI JE SADA KAKO SE TO RAZLIKUJU     overfllow: auto    I    overflow: scroll (KOJI SAM VEC
+    OBJASNIO) */
+`;
+
+// DAKLE TREBA PAZITI NA SCROLLBAR
+
+//SLEDECA BITNA STVAR JESTE DA MARGINE NISU DEO SAMOG ELMENTA, TAK ODA U OVOM OBJASNJENJU 
+// NISU UZETE UOBZIR, A NISAM IH NI DEFINISAO
+
+//                                  GEOMETRIJA
+
+// PROPERTIJI elemenata koje PROVIDES širinu, visinu i drugu geometriju su uvijek Number-I.
+// I PREDPOSTAVLJA  se da su u pikselima
+
+// SADA CU POCETI EXPLORING, MNOGIH OD TIH PROPERTIJA (SA NEKIMA SAM SE DO SADA I SUSREO; MOZDA CU IH 
+// BOLJE RAZUMETI); I TO CU POCETI SA ONIMA KOJI SU OUTER (DAKLE OD ONIH PROPERTIJA, KOJI SU U RELACIJI
+// SA SPOLJASNJIM DELOM ELEMENTA, PA KA ONIM PROPERTIJIMA KOJI SE ODNOSE NA VISE UNUTRASNJI DEO ELEMENTA)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                      offsetParent            offsetLeft          offsetTop
+
+// OVI PROPERTIJI SE RETKO TREBAJU, ALI SU 'MOST OUTER' GEOMETRIJSKI PROPERTIJI, TAKO DA CU S NJIMA
+// POCETI
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  offsetParent            JESTE NAJBLIZI ANCESTOR ELEMENT, KOJI IMA
+//                 1) CSS  position:   absolute | relative | fixed | sticky 
+//                    (ODNOSNO, NAJBLIZI CSS POZICIONIRANI ANCESTOR)
+//                 2) ILI TO JE   <td>   ANCESTOR ILI   <th>   ANCESTOR ILI   <table>   PARENT
+//                 3) ILI TO JE   <body>   ANCESTOR   
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// offsetTop  I  offsetLeft   JESU KOORDINATE, KOJE SU U VEZI SA POMENUTIM offsetParent-OM, ALI, KAKO BIH
+// VIDEO TE KOORDINATE, OPET CU KREIRATI JEDAN PRIMER  
+const html_primera_vezanog_za_offset_koordinate = `
+<div class="pozicioniran_ancestor">     <!--PRVI CSS POZICIONIRANI ANCESTOR-->
+    <div>
+        <div>       <!--ELEMENT KOJI POSMATRAM-->
+            In the 16th century, Christian missionaries from Spain and Portugal first encountered
+            indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+            work of the devil". In the 20th century, the active chemical constituent of B.
+            yahuasca became more widely known when the McKenna brothers published 
+            their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+            botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+            Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+            River
+        </div>                     
+    </div>
+</div>
+`;
+const css_primera_vezanog_za_offset_koordinate = `
+    .pozicioniran_ancestor {                              /* PRVI CSS POZICIONIRANI ANCESTOR */
+        box-sizing: content-box;
+        position: relative;
+
+        border: pink solid 10px;
+        width: 500px;
+        height: 300px;
+        padding: 100px;
+    }
+
+    .pozicioniran_ancestor > div {
+        box-sizing: content-box;
+
+        border: olive solid 10px;
+        width: 400px;
+        padding: 20px;
+    }
+
+    .pozicioniran_ancestor > div > div {                  /* ELEMENT KOJI POSMATRAM */
+        box-sizing: content-box;
+        border: tomato solid 20px;
+        width: 200px;
+        height: 150px;
+
+        padding: 10px;
+        overfllow: auto;
+
+    }
+`;
+// SADA CU POKUSATI DA NA OSNOVU GORNJIH VREDNOSTI, 'POGODIM', KOLIKO IZNOSE      offsetLeft
+// I    offsetTop    ELEMENTA, KOJEG POSMATRAM (ZNAJUCI DA SE TE KOORDINATE, U RELACIJA SA PRVIM CSS
+// POZICIONIRANIM ANCESTOR-OM)
+
+// MISLIM DA TA KOORDINATA IZNOSI 130 PIKSELA, BAR AKO SE RACUNA OD UNUTRASNJE STRANE BORDERA
+// PRVOG CSS POZICIONIRANOG ANCESTOR-A, PA DO SPOLJANJE STRANE BORDER-A, ELEMENTA KOJEG POSMATRAM
+
+const elementKojiPosmatram = document.querySelector('.pozicioniran_ancestor > div > div');
+console.log(elementKojiPosmatram.offsetParent);     //-->   .pozicioniran_ancestor
+console.log(elementKojiPosmatram.offsetLeft, elementKojiPosmatram.offsetTop);       //-->   130     130
+// I BIO SAM U PRAVU
+
+// PROPERTI      offsetParent     MOZE IMATI I VREDNOST       null       
+// TO JE U SLEDECI MSLUCAJEVIMA 
+                //  1)  KADA ELEMENT (DAKLE ELEMENT, NE ANCESTOR) IMA    fixed    VREDNOST    position-A
+                //  2)  <body>      I       <html>      IMAJU       null    VREDNOST ZA    offsetParent
+                //  3)  ZA ELEMENTE KOJI NISU PRIKAZANI, ODNOSNO KOJI IMAJU     display:none
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SLEDECI PROPERTIJI, KOJIMA CU SE POZABAVITI, JESU
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                      offsetWidth         I          offsetHeight
+// 
+// DAKLE, OVIM PROPERTIJIMA SE, 'POMERAM NA SAM ELEMENT'
+// ONI SU NAJEDNOSTAVNIJI PROPERTIJI
+//      ofssetWidth         SKLADISTI SIRINU ELEMENTA, KOJA UKLJUCUJE I BORDER
+//      ofssetHeight        SKLADISTI VISINU ELEMENTA, KOJA UKLJUCUJE I BORDER
+// SADA CU POKUSATI DA PREDPOSTAVIM, KOJE SU VREDNOSTI U PITANJU
+    // ZA   offsetWidth     PREDPOSTAVLJAM SLEDECE
+// 200px(182 SADRZINE + 16 SCROLLBAR-A) + 2*10px PADDINGA + 2*20px BORDER-A     ---->  260
+    // ZA   offsetHeight    PREDPOSTAVLJAM SLEDECE
+// 150px SADRZINE  +  2*10px PADDINGA + 2*20px BORDER-A                         ---->  210
+
+// SADA CU PRISTUPITI POMENUTIM PROPERTIJIMA, ELEMENTA IZ PROSLOG PRIMERA
+console.log(elementKojiPosmatram.offsetWidth, elementKojiPosmatram.offsetHeight)        //-->  260  210
+// I BIO SAM U PRAVU
+
+// GEOMETRIJSKI PROPERTIJI ZA UNSHOWN ELEMENTE (NE PRIKAZANE ELEMENTE) JESU   
+                //        0 (NULA)   ILI    null
+
+// AKO NEKI ELEMENT (ILI NJEGOV BILO KOJI ANCESTOR) IMA DEFINISAN    
+                                             // dispaly: none    ILI NIJE INSERTOVAN U DOM
+// offsetWidth , offsetHeight , offsetLeft , offsetTop           SU MU     0(NULA)
+//                                          offsetParent            JE      null
+// 
+// TREBAM RECI DA TO NE VAZI ZA   visibility: hidden   (ELEMENT SA OVIM PROPERTIJEM NECE IMATI 0(NULU)
+// I NECE IMATI null KAO VREDNOST ZA POMENUTE GEOMETRIJSKE PROPERTIJE
+
+// SADA CU DEFINISATI FUNKCIJU, KOJOM SE MOZE PROVERITI, DA LI JE NEKI ELEMENT, ZAISTA NE DISPLAY-OVAN
+
+const elementIsNotDisplayed = function(el){
+    return !el.offsetHeight && !el.offsetWidth;
+}
+// AKO JE POVRATNA VREDNOST OVE FUNKCIJE     true      ONDA ELEMENT JESTE STILIZOVANSA    display: none
+// MEDJUTIM, IMA JEDNA ZACKOLJICA U POGLEDU OVE FUNKCIJE, AKO JE ELEMENT NA EKRANU, I AKO JE PRAZAN 
+// I AKO SU MU I PADDING I MARGINE  IMAJU NULU KA OVREDNOST; POVRATNA VREDNOST FUNKCIJE CE BITI Ttrue
+// TREBAM RECI DA TO NE VAZI ZA   visibility: hidden   (ELEMENT SA OVIM PROPERTIJEM NECE IMATI 0(NULU)
+// ILI null KAO VREDNOST ZA POMENUTE GEOMETRIJSKE PROPERTIJE
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SLEDECI PROPERTIJI, KOJIMA CU SE POZABAVITI, JESU
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                      clientLeft          clientTop   
+//
+// POSTO SAM SE POZABAVIO SIRINOM I VISINOM, DOLAZIM DO BORDER-A; ALI OVI SLEDECI PROPERTIJI SE NE ODNOSE
+// BAS, KONKRETNO NA BORDER, VEC NA NESTO DRUGO; A BORDER JE INCIDENTALNO NALAZI TU GDE JE
+// VREDNOSTI, POMENUTIH PROPERTIJA SE NAJCESCE POKLAPAJU SA DEBLJINOM BORDER-A, ALI POSTOJI NESTO STO
+// MOZE IZAVATI NEDOUMICE, A ZAVISI OD SCROLLBARA, TACNIJE NJEGOVOG POLOZAJA
+
+// ODNOSNO SVE MOZE ZAVISITI, OD        direction       CSS     PROPERTIJA
+
+// KAKO BI TO POKAZAO, MORAM KREIRATI, JOS JEDAN PRIMER
+const html_primera_dva_elementa = `
+    <div class="element_bla1">       
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River
+    </div>
+    <hr>
+    <div class="element_bla2">       
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River
+    </div>
+`;
+const css_elemenata_bla1bla2 = `
+    /*ELEMENTI CE IMATI POTPUNO ISTE STILOVE IZUZEV JEDNOG, A TO JE      direction       */
+    
+    .element_bla1 {
+        box-sizing: content-box;
+        width: 280px;
+        height: 120px;
+        border: olive solid 10px;
+        padding: 20px;
+        overflow-y: auto; 
+
+        direction: ltr;       /*    LEFT-TO-RIGHT    OVO JE I DEFAULT     */
+    }
+    
+    .element_bla2 {
+        box-sizing: content-box;
+        width: 280px;
+        height: 120px;
+        border: olive solid 10px;
+        padding: 20px;
+        overflow-y: auto
+
+        direction: rtl;       /*    RIGHT-TO-LEFT    OVO JE I DEFAULT     */
+    }
+
+    /*IAKO TO MOZDA NIJE TEMA OVE LEKCIJE , RACI CU NESTO DODATON O     overflow    PROPERTIJU
+    A TAKODJE I O       overflow-x      I       overflow-y  PROPERTIJIMA    
+    
+    POTPUNO JE JASNO DA SE PROPERTIJEM overflow, KONTROLISE TO PRELIVANJEM, I PO X DIRECTION-U, A
+    I PO Y DIRECTION-U
+
+    MEDJUTIM MOGUCE JE KONTROLISATI TAJ OVERFLOW, I SAMO PO JEDNOM OD DIRECTION-A
+
+    NAIME, POTPUNO SU SUGESTIVNA IMENA overflow-x  I  overflow-y ; A JA CU RECI NESTO VEZANO O TOME
+    KAKVU ONI VEZU IMAJU SA SCROLLBAR-OM
+    DAKLE, AKO ZA OBA PROPERTIJA DODELIM VREDNOST  auto, U SLUCAJU overflow-x, AKO POSTOJI MOGUCE 
+    PRELIVANJE PO x, UVESCE SE HORIZONTALNI SCROLLBAR, KOJI SE NALAZI NA DONJOJ STRANI UZ SAMI 
+    BORDER-BOTTOM
+    
+    NE POSTOJI NEKI KLASICNI CSS NACIN KOJIM BIH MOGAO UCINITI DA SE TAJ HORIZONTALNI SCROLLBAR PRIKAZUJE
+    UZ TOP-BORDER; NAIME ZA TAKVU POTREBU POSTOJI CUSTOM RESENJE, ODNOSNO JAVASCRIPT RESENJE
+    
+    MEDJUTIM, POSTOJI MOGUCNOST DA SE ONAJ VERTIKALNI SCROLL, NADJE UZ BORDER-LEFT
+    A VEC ZNAM DA SE VIRTIKALNI SCROLL, GOTOVO UVEK PRIKAZUJE UZ BORDER-RIGHT
+
+    NAIME, DA SE VERTIKALNI SCROLLBAR PRIKAZUJE, UZ LEVU STRANU, MOGU KORISTITI JEDAAN PROPERTI, KOJI
+    MENJA CEO SMER ILI PRAVAC ELEMENA. I TO UTICE I NA NEKE OSTALE ODLIKE ELEMENTA, VEZANO ZA TEKST
+    NA PRIMER, ALI NECU SADA O TOME, JER SE OVDE KONCENTRISEM NA SCROLLBAR
+
+    NAIME, REC JE O VEC UPOTREBLJENOM PROPERTIJU U OVOM PRIMERU, A TO JE            direction
+
+    DEFINISUCI          direction: rtl        JA SAM IZMEDJU OSTALOG POSTIGAO DA JE SCROLLBAR DODJE
+    UZ BORDER-LEFT
+
+    A TO CE UTICATI NA VREDNOSTI PROPERTIJA         clientTop     I      clientLeft
+    */
+
+`;
+const element_bla1 = document.querySelector('.element_bla1');
+const element_bla2 = document.querySelector('.element_bla2');
+
+// PRISTUPICU SADA, VREDNOSTIMA         clientLeft      I       clientTop           PROPERTIJA ZA
+// MOJA DVA DIV ELEMENTA, IZ PRIMERA
+
+// PREDPOSTAVLJAM DA CE         clientLeft     PRVOG ELEMENTA          IZNOSITI          10px
+// A TOLIKO CE IZNOSITI I clientTop     (DAKLE DEBLJINE    BORDER-LEFT   I   BORDER-TOP)
+console.log(element_bla1.clientLeft, element_bla1.clientTop);       //-->   10   10
+// I BIO SAM U PRAVU
+// ALI U SLUCAJU DRUGOG ELMENTA, U VREDNOST, PROPERTIJA clientX, UCI CE I DEBLJINA SCROLLBARA, JER SE ON 
+// NASAO UZ BORDER LEFT
+// NAIME, U SLUCAJ UDRUGOG ELEMENTA, PREDPOSTAVLJAM DA CE           clientLeft             IZNOSITI:
+                //      10 PIKSELA BORDER-LEFT-A   +   16   PIKSELA SCROLLBAR-A    =     26px
+// A    clientTop         CE IZNOSITI    10px   (SIRINA BORDER-TOP-A)
+console.log(element_bla2.clientLeft, element_bla2.clientTop);               //-->    27    10
+// I BIO SAM U PRAVU, ALI SAM OMASIO ZA JEDAN PIKSEL
+// NAIME       clientLeft       IZNOSI          27      PIKSELA, I NIJE MI SADA BAS JASNO ODAKLE SE POJAVIO
+// TAJ DODATNI 1 PIKSEL, ZNAJUCI DA JE border  SVUDA  10px      A DA JE     SCROLLBAR OBICNO    16px
+// MOZDA JE IPAK 17 PIKSELA (ALI U CLANKU KOJI PISEM JE 16)
+
+// SVE U SVEMU, BITNO JE RECI DA POMENUTE VREDNOSTI NISU DEBLJINE BORDER-A, VEC KOORDINATE
+// I TO RELATIVNE KOORDINATE, OD SPOLJASNJE STRANE, DO UNUTRASNJE STRANE ELEMENTA (I UPRAVO JE, KADA
+// POSTOJI SCROLLBAR, I NJEGOVA DEBLJINA URACUNATA U KOORDINATU)
+
+// NASTAVICU SADA SA DRUGIM GEOMETRIJKIM PROPERTIJIMA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                          clientWidth             clientHeight
+//
+//OVI PROPERTIJI, SKLADISTE VREDNOSTI, KOJE SU VELICINE IZMEDJU UNUTRASNJIH STRANA ELEMENTA
+// ODNOSNO IZMEDJU UNUTRASNJIH STRANA BORDER-A, I AKO JE TU PRISUTAN I SCROLLBAR, DO NJEGOVE 
+// UNUTRASNJE IVICE CE DOSTIZATI POMENUTE DUZINE 
+//              clientWidth         JESTE RAZDALJINA PO HORIZONTALI, U UNUTRASNJOSTI ELEMENTA
+//                                  (OD UNUTRASNJIH IVICA NASPRAMNIH BORDER-A, ILI NASPRAMNO BORDERA I
+//                                  NASPRAMNOG SCROLLBAR-A)
+//              clientHeight        JESTE RAZDALJINA PO VERTIKALI, U UNUTRASNJOSTI ELEMENTA
+//                                  (OD UNUTRASNJIH IVICA NASPRAMNIH BORDER-A, ILI NASPRAMNO BORDERA I
+//                                  NASPRAMNOG SCROLLBAR-A)
+
+// PROVERICU TO, NA JEDNOM DIV-U, IZ PROSLOG PRIMER-A
+// PRVO CU RECI, KOLIKO PREDPOSTAVLJAM, DA IZNOSE TE VREDNOSTI
+// ZA   clientWidth    
+//          SIRINA SADRZINE     MINUS     SIRINA SCROLLBAR-A   (280 - 16 = 264)    +   2*PADDING (2*20)
+//          TO IZNOSI DAKLE IZNOSI      304
+// ZA   clientHeight
+            // VISINA SADRZINE  120    +     2*PADIING   (2*20)       STO IZNOSI        160          
+// A SADA CU TO I PROVERITI
+console.log(element_bla1.clientWidth, element_bla1.clientHeight);       //-->   303  160
+// DAKLE NISAM OMANUO MNOGO, OPET ZA JEDAN PIKSEL, ZATO STO IZGLEDA DA SCROLLBAR, JESTE ZAISTA, UMESTO 16 DEBEO
+// USTVARUI 17 PIKSELA
+// DA NEMA PADDING-A I SCROLLBAR-A, POMENUTI PROPERTIJI BI BILI SIRINA I VISINA, SAME SADRZINE
+// TAKO DA KADA NEMA POMENUTIH KARAKTERISTIKA, POMENUTE PROPERTIJE MOGU KORISTITI, KAKO BIH PRISTUPIO
+// SIRINI/VISINI SADRZINE
+
+// NASTAVICU SADA SA DRUGIM GEOMETRIJKIM PROPERTIJIMA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                     scrollWidth              scrollHeight     
+//
+// clientWidth  I   clientHeight    SKLADISTE VREDNOSTI ZA SIRINU I VISINU, VIDLJIVOG DELA ELEMENTA;
+// MEDJUTIM AKO POSTOJI PRELIVANJE (KOJE JE SAKRIVENO ILI KOJEM JE OBEZBEDJEN SCROLLBAR), ZNAM DA 
+// POSTOJI SADRZINA, KOJA NIJE ODJEDNOM VIDLJIVA (MORAM DA SCROLL-UJEM, AKO JE OBEZBEDJEN SCROLL)
+// E PA U VRDENOST PROPERTIJA     scrollWidth I scrollHeight,  UKLJUCENA JE I ONA SIRINA KOJA JE
+// HIDDEN ILI SCROLLED-OUT (DAKLE SIRINA/VISINA VIDLJIVOG DELA + SIRINA/VISINA NEVIDLJIVOG DELA)
+// SADA CU SA JEDNOG, OD ONIH DIVOVA IZ PROSLIH PRIMERA PROCITATI, VREDNOSTI, OVIH PROPERTIJA
+// ONO STA PREDPOSTAVLJAM JESTE DA CE   scrollWidth  , IMATI VREDNOST, KOLIKA JE I VRDENOST clientWidth
+// DAKLE U SLUCAJU DIV ELEMENTA KOJEG SAM RANIJE INSERTOVAO U DOM TA SIRIAN IZNOSI      303 PIKSELA
+// (MOZE SE VIDETI I GORE DA SAM TU VREDNOST VEC IZRACUNAO BAVECI SE SA clientWidth)
+// MEDJUTIM,        scrollheight  , NI NE MOGU DA PREDPOSTAVIM, KOLIKA CE MU VREDNOST BITI, JER ZAVISI
+// OD KOLICINE SADRZINE
+// SADA CU PRISTUPITI, OBEMA VREDNOSTIMA
+console.log(element_bla1.scrollWidth, element_bla1.scrollHeight);           //-->   303   652
+// DAKLE BIO SAM U PRAVU
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// NASTAVICU SADA SA SLEDECIM GEOMETRIJKIM PROPERTIJIMA, POSLEDNJIM I MOZDA NAJVAZNIJIM ZA OVAJ CALNAK
+// ZA KOJI SAM ODVOJIO VREMENA A KOJ ISE TICE SCROLL-A I VELICINA ELEMENTA
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                     scrollLeft              scrollTop
+//
+// OVI GEOMETRIJSKI PROPERTIJI SE RAZLIKUJU OD PREDHODNIH PO JEDNOJ BITNOJ KARAKTERISTICI; ALI PRE NEGO
+// STO KAZEM KOJOJ, RECI CU KOJE SE VREDNOSTI DOBIJAJAU, KADA PRISTUPIM, OVIM PROPERTIJIMA
+// NAIME scrollLeft, GLEDAJUCI PO VERTIKALI PREDSTAVLJA VISINU, KOJA POCINJE OD
+// DONJE IVICE BORDER-TOP-A, PA NAGORE, DO POCETKA UNUTRASNJOSTI MOG ELEMENTA, KOJI JE VEC, RANIJE 
+// SCROLLED NAGORE
+// DAKLE OBICNO KADA SCROLLBAR NIJE DIRAN, ODNOSNO KAD ONAJ 'KLIP SKROLA', NIJE POVLACEN NADOLE
+// I TIME POCETAK UNUTRASNJOSTI ELEMENT-A, NIJE 'OTISAO, GORE U NEVIDLJIVOST'     scrollTop   IMA
+// VREDNOST NULA(0)
+// A KADA, POVUCEM SCROLL 'KLIPACHU', ONDA CE SE POCETAK UNUTRASNJOSTI ELEMENTA POMERA NAGORE
+// I KADA KAZEM POCETAK UNUTRASNJOSTI, MISLIM NA DONJU IVICU BORDER-A
+// I ONA VISINA, KOJA POCINJE OD TE IVICE, PA NAGORE, DO IVICE NEVIDLJIVOG DELA ELEMNTA, (DO IVICE
+// KOJA KADA NISAM DIRAO NISTA JE BILA NA MESTU DONJE IVICE BORDERA OD KOJE SADA MERIM)
+// JESTE ONA VREDNOST, KOJU SKLADISTI           scrollHeight        PROPERTI
+
+// ONO STO SAM REKAO NA POCETKU, JESTE DA SU OVA DVA PROPERTIJA POSEBNA
+// U CLANKU PISE DA SU OVI PROPERTIJI ZAISTA PROPERTIJI
+// MEDJUTIM JA MISLIM DA SU ONI 
+                                    // GETTER-I
+// KOJI IMAJU I ODGOVARAJUCE
+                                    //SETTER-E 
+
+// I TO, IZMEDJU OSTALOG ZELIM DA PRIKAZEM I SLEDECIM PRIMER-OM
+
+// NE OBRACJ PAZNJU NA NENORMALAN BROJ then PRIMENA (TO JE SAMO ZATO STO SAM KORISTIO ASINHRONOST I
+// RANIJE U CODE-U OVOG DOKUMENT) I, POGOTOVO NE OBRACAJ PAZNJU NA NOVI PROMISE UNUTAR ARGUMENT FUNKCIJE
+// 'GLAVNOG' ('OUTER') Promise-A
+const obecaoOvo = new Promise(function(res, rej){
+    new Promise(function(resolve, rej){
+        resolve();
+    }).then(function(){
+        res();
+    });
+}).then(function(){
+}).then(function(){
+}).then(function(){
+}).then(function(){
+    console.log('SCROLL-HEIGHT', element_bla2.scrollHeight);
+    console.log(
+        "BEZ IKAKVOG POMERANJA SCROLL 'KLIPACHE' NADOLE; SCROLL-TOP JE: ",
+        element_bla2.scrollTop
+    );
+});
+// CILJ MI JE BIO DA SE ARGUMENT, console.log POZIVANJA IZNAD; VIDI NA KRAJU LOGOVANJA U KONZOLI
+// NAKON STO RELOADUJEM STRANICU (SAM OZBOG RANIJIH 'ODLOZENIH LOGOVANJA')
+
+//OVAJ DEO CODE-A, MI JE BITAN AKO UZMEM U OBZIR DA SAM PRE, INVOCIRANJA ARGUMENT CALLBACK-A 
+// (ARGUMENTA setTimeout POZIVANJA), JA USTVARI, POMERIO SCROLLBAR 'KLIPACH-U' NADOLE
+window.setTimeout(function(a){ // A OVO JE ONO STO CE SE LOGOVATI U KONZOLU NAKON 5 SEKUNDI
+    console.log("JA SAM POMERIO 'KLIPACHU' SCROLLBAR-A, I...")
+    console.log(a, element_bla2.scrollTop);                               
+}, 5000, 'SCROLL TOP JE SADA: ');
+
+window.setTimeout(function(){  // A OVO JE ONO STO CE SE LOGOVATI U KONZOLU NAKON NAREDNIH 5 SEKUNDI
+    element_bla2.scrollTop = element_bla2.scrollHeight;     
+    //DEFINISAO SAM NOVU VREDNOST    scrollTop-A    , NA OVAJ NACIN, I ZATO SMATRAM
+    // DA SAM OVDE UPOTREBIO SETTER
+    console.log('SADA JE SCROLL-TOP POMEREN INVOKACIJOM FUNKCIJE I IZNOSI: ', element_bla2.scrollTop);
+}, 10000);
+
+//ZASTO SAM SVE OVO NAPISAO, PA NAJBOLJE BI BILO DA INTERPRETIRAM STA SE TO DESAVALO, KAO REZULTAT,
+// OVOG, MOG CODE-A
+
+// PRVO SAM RELOAD-OVAO STRANICU, I       TADA JE       scrollTop       BIO         NULA, JER NISAM
+// DIRAO, SCROLLBAR 'KLIPACHU'
+// I TO SE I STAMPALO U KONZOLI JER SAM TO I ZADAO
+
+// ZATIM SAM POMERIO 'KLIPACHU' SCROLLBAR-A, NA SREDINU, CIME JE POCETAK UNUTRASNJEG DELA ELEMENTA
+// POMEREN NAGORE U NEVIDLJIVOST, I JASNO MI JE DA JE TADA PORASLA VISINA KOJU SKLADISTI    scrollTop
+// I TO SE I STASMPALO U KONZOLI 
+// (JER SAM JA TAKO ZADAO U ARGUMENT CALLBACK-U, PRVOG setTimeout POZIVANJA)
+
+// ZATIM, NAKON PROTICANJA JOS PET SEKUNDI, SAMA SCROLLBAR KLIPACH-A, JE SISLA U SVOJ NAJNIZI 
+// MOGUCI POLOZAJ, I TIM NACINOM JE PRIKAZAN 'NAJDONJI' DEO UNUTRASNJOSTI ELEMENTA, KOJI JE BIO 
+// SAKRIVEN, NAKON RELOAD-OVANJA STRANICE
+// A TO SE DOGODILO, JER SAM JA U OBIMU CALLBACK ARGUMENTA, DRUGOG, GORE setTimeout POZIVANJA, 
+// JA DEFINISAO, DA JE NOVA VREDNOST, ZA    scrollTop (ODNOSNO, NAJVEROVATNIJE, UPOTREBIO SAM SETTER),
+// UPRAVO VREDNOST, CELOKUPNE VISINE (VIDLJIVOG I NEVIDLJIVOG DELA); CIME JE POSTAO VIDLJIV, ONAJ
+// 'NAJDONJI' DEO UNUTRASNJOSTI ELEMENTA, (RANIJE SAKRIVEN); A TO ZNACI DA JE SCROLLBAR 'KLIPACHA'
+// STIGLA U SVOJ, NAJNIZI POLOZAJ
+// NAKON STO SAM SVE OVO OBJASNIO, NEMA POENTE OBJASNJAVATI VREDNOST        scrollLeft
+// ZA NJU SVE ISTO VAZI KAO I ZA scrollTop, SAMO STO JE REC O HORIZONTALI
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OVIM SAM ZAVRSIO PRICU STO SE TICE GEOMETRIJE ELEMENTA I SCROLL-A; ALI, MORAM RECI JEDNU BITNU STVAR
+// A ONA SE OGLEDA U SLEDECEM
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // NAIME, NIKAD, NE TREBA UZIMATI,      width    I   height         IZ CSS-A
+                // Upravo sam se pozabavio geometrijskim osobinama DOM elementa. One se obično koriste za 
+                // CITANJE SIRINE, VISINE i izračunavanja udaljenosti.
+                // Ali, kao što znam CSS visinu i širinu MOGU CITATI koristeći:
+
+                                    //                              getComputedStyle
+
+                // A ZASTO NE KORISTITI POMENUTI PROPERTI ZA CITANJE SIRINE I VISINE
 
 
 //////////////////////////////////////////////////////////////////////
