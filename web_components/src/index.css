@@ -932,7 +932,7 @@ div.tomato_zada, div.olive_zada {
     position: relative;
 
     border: pink solid 10px;
-    width: 500px;
+    max-width: 500px;
     height: 300px;
     padding: 100px;
 }
@@ -979,3 +979,54 @@ div.tomato_zada, div.olive_zada {
 }
 
 
+.kont_some_kind {
+    box-sizing: content-box;
+    border: pink solid 1px;
+    padding: 8px;
+    width: 68%;
+}
+
+.kont_some_kind > .tekst-div {
+    box-sizing: content-box;
+    border: tomato solid 2px;
+    margin-top: 4px;
+    padding: 18px;
+
+    overflow: auto;
+    height: 20vw;
+}
+
+.fleks-kontejner{               /* OVDE SAM SE SAMO PODSETIO flexbox-A, STO NEMA VEZE SA  */
+    border: olive solid 0px;    /* TEMOM OVOG ZADATKA; NAIME, JA SAM SAMO ZELEO DA POZICIONIRAM*/
+    display: flex;              /* JEDAN BUTTON NA DESNU STRANU, A NISAM ZELO DA UPOTREBIM float*/
+}
+
+.kont_some_kind input {
+    border: pink solid 4px;
+    background-color: #f5c9c5;
+    color: #292f38;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.kont_some_kind input:first-of-type {
+    margin-right: auto;                     /*OVO JE FLEX ITEM I SAMO ZATO JE OVO FUNKCIONISALO*/
+}                                           /* margin-right/left: auto, FUNKCIONISE JEDINO AKO
+                                            SE DEFINISE ZA FLEX ITEM */
+
+.kont_some_kind .background_neue {
+    background-color: #eeb752;
+    color: tomato;
+    cursor: not-allowed;
+}
+
+
+
+
+
+.element_blahala {
+    width: 50px;
+    height: 180px;
+    border: olive solid 2px;
+    float: right;
+}

@@ -12594,7 +12594,8 @@ window.setTimeout(function(a){ // A OVO JE ONO STO CE SE LOGOVATI U KONZOLU NAKO
 }, 5000, 'SCROLL TOP JE SADA: ');
 
 window.setTimeout(function(){  // A OVO JE ONO STO CE SE LOGOVATI U KONZOLU NAKON NAREDNIH 5 SEKUNDI
-    element_bla2.scrollTop = element_bla2.scrollHeight;     
+    element_bla2.scrollTop = element_bla2.scrollHeight;
+    element_bla1.style.height = element_bla1.scrollHeight + 'px';     
     //DEFINISAO SAM NOVU VREDNOST    scrollTop-A    , NA OVAJ NACIN, I ZATO SMATRAM
     // DA SAM OVDE UPOTREBIO SETTER
     console.log('SADA JE SCROLL-TOP POMEREN INVOKACIJOM FUNKCIJE I IZNOSI: ', element_bla2.scrollTop);
@@ -12633,8 +12634,192 @@ window.setTimeout(function(){  // A OVO JE ONO STO CE SE LOGOVATI U KONZOLU NAKO
 
                                     //                              getComputedStyle
 
-                // A ZASTO NE KORISTITI POMENUTI PROPERTI ZA CITANJE SIRINE I VISINE
+                // A ZASTO NE KORISTITI POMENUTI PROPERTI ZA CITANJE SIRINE I VISINE?
 
+// AKO JE box-sizing PODESEN NA border-box; VREDNOSTI width/height KOJIMA PRISTUPAM POMENUTOM METODOM,
+// MOGU BREAK-OVATI MOJ JAVASCRIPT;
+//  NE ZNAM STA TACNO AUTOR TUTORIALA, MISLI POD TERMINOM BREAK; JEDINO STO JA ZNAM
+// JESTE DA, KADA OBJEKAT DEFINISEM DA IMA      box-sizing: border-box      TO ZNACI DA ONO STO SE ZADA
+// KAO width PORED SADRZINE, OBUHVATA I PADDING, I BORDER; A ISTO VAZI I ZA height
+// A ZNAM DA NIJE TAKO KADA ZADAM       box-sizing: content-box   (ILI KADA GA NE ZADAM, JER PO 
+// DEFAULTU ON JESTE content-box) DIMENIJE ZA SIRINE I VISINE, JESU ONE DIMENZIJE ELEMENTA, IZ KOJIH SU
+// ISKLJUCENI BORDER I PADDING (MISLIM DA OVO SVE ZNACI DA JE MOGUCE DA SAM SMATRAO DA JE 
+// box-sizing: content-box; I DA SAM SHODNO TOME PRISTUPIO SIRINI, PUTEM getcomputedStyle, I ISPOSTAVILO
+// SE DA JE, NA KRAJU box-sizing: border-box; CIME SVE ONO STO SAM URADIO JAVASCRIPT-OM, JESTE POGRESNO)
+
+// I AKO SU  width  I  height  DEFINISANE DA BUDU auto ; NEAM SMISLA UPOTEBLJAVATI     getComputedStyle
+// DA PRISTUPIM DIMENZIJAMA, JER IM NECU MOC PRISTUPITI, JER ONO STO BIH DOBIO BIO BI STRING   "auto"
+// SA STANOVISTA CSS-A   windt: auto   JE SAVRSENO NORMALAN, ALI U JavaScript-U, MENI TREBA TACNA
+// VREDNOST U PIKSELIMA
+
+// A POSTOJI JOS RAZLOGA, NA PRIMER SCROLLBAR; JER NEKI BROWSERI RETURN-UJU SIRINU, U KOJU NIJE UKLJUCEN
+// SCROLLBAR; A NA PRIMER FIREFOX POTPUNO IGNORISE SCROLLBAR
+// NA PRIMER JEDAN ELEMENT, KOJEM SAM ZADAO CSS  width     PROPERTI DA BUDE    280px,
+
+console.log(window.getComputedStyle(element_bla2).width);   //-->  (OPERA)           263px    
+                                                            //-->  (FIREFOX)         280px
+
+// KAO STO VIDIM DA U webkit  BROWSER-U   ODUZETA JE DEBLJINA SCROLLBAR-A  (17px)  OD  SIRINE
+// DOK JE U FIREFOX-U, TA VREDNOST DEBLINE SCROLLBAR-A IGNORISANA
+
+// TAKO DA JE U OVOM SLUCAJU CSS, POTPUNO BESKORISTAN
+// ODNOSNO U REDU JE KORISTITI getComputedStyle, ALI ZA CITANJE, DRUGIH VREDNOSTI STILOVA, 
+// ALI ZA CITANJE DIMENZIJA TO JE POGRESNO RADITI
+
+// MEDJUTIM, JA SAM SAM OTKRIO GDE JE TO DOBRO RADITI
+                        // STA AKO JE DIMENZIJA VISINE RELATIVNA, A JATU RELATIVNU VREDNOST
+                        // ZELIM DA SACUVAM, PA JE REASSIGN-UJEM ELEMENT, KADA SE ZA TO STVORI POTREBA
+                        // TADA MISLIM DA JE DOBRO KORISTITI, POMENUTI      getComputedStyle
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU ODRADITI, NEKOLIKO PRIMERA, VEZANIH ZA POMENUTU GEOMETRIJU I SCROLLING
+
+// U PRVOM PRIMERU CU DEFINISATI DA SE 
+//                          
+//                          KLIKOM NA JEDNO DUGME, ODREDJENI ELEMENTU, POVECAJU DIMENZIJE
+//                          KAKO BI ON PRIKAZIVAO CELU SADRZINU (DAKLE, DA NEMA HIDDEN SADRZINE, NI
+//                          PRELIVANJA, A DA NEMA NI SCROLLABRA)
+//                          NA ISTO DUGME CE SE VRACATI, NA STARO (DAKL, OVO CE BITI TOGGLING DUGME) 
+
+                            //KLIKOM NA DRUGO DUGME CE SE TOGGLEOVATI, IZMEDJU SCROLLED DO KRAJA I 
+                            // DO POCETKA
+
+const html_ovog_ovakvog_primera = `
+<div class="kont_some_kind">
+    <div class="fleks-kontejner">
+        <input type="button" value="see whole text">
+        <input type="button" value="scroll to bottom">
+    </div>
+    <div class="tekst-div">
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River.
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River
+    </div>
+</div>        
+`;
+
+const css_ovog_ovakvog_primera = `
+    
+    .kont_some_kind {
+        box-sizing: content-box;
+        border: pink solid 1px;
+        padding: 8px;
+        width: 68%;
+    }
+
+    .kont_some_kind > .tekst-div {
+        box-sizing: content-box;
+        border: tomato solid 2px;
+        margin-top: 4px;
+        padding: 18px;
+
+        overflow: auto;
+        height: 20vw;
+    }
+
+    .fleks-kontejner{               /* OVDE SAM SE SAMO PODSETIO flexbox-A, STO NEMA VEZE SA  */
+        border: olive solid 0px;    /* TEMOM OVOG ZADATKA; NAIME, JA SAM SAMO ZELEO DA POZICIONIRAM*/
+        display: flex;              /* JEDAN BUTTON NA DESNU STRANU, A NISAM ZELO DA UPOTREBIM float*/
+    }
+
+    .kont_some_kind input {
+        border: pink solid 4px;
+        background-color: #f5c9c5;
+        color: #292f38;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+    .kont_some_kind input:first-of-type {
+        margin-right: auto;                     /*OVO JE FLEX ITEM I SAMO ZATO JE OVO FUNKCIONISALO*/
+    }                                           /* margin-right/left: auto, FUNKCIONISE JEDINO AKO
+                                                SE DEFINISE ZA FLEX ITEM */
+
+    .kont_some_kind .background_neue {
+        background-color: #eeb752;
+        color: tomato;
+        cursor: not-allowed;
+    }
+
+`;
+
+let tempValueButton1 = "show only part of text", tempValueButton2 = "scroll to top";
+let showWholeText = true, scrollToBottom = true;
+let counter = 0;
+document.querySelector('.kont_some_kind').addEventListener('mousedown', function(ev){
+
+    if(ev.target.nodeName !== 'INPUT') return;
+
+    //SPECAVANJE DA INPUTI (BUTTON-I), BUDU TAB-INDEX-IRANI, NAKON TRIGGERING-A mousedown-A
+    ev.preventDefault();
+
+    const targetInput = ev.target;
+
+    const divTekst = ev.currentTarget.querySelector('.tekst-div');
+
+    /*OVDE PROSTO PROVEZBAVAM MALO USLOVNE IZJAVE..., MOGLO JE OVO I NA JEDNOSTAVNIJI NACIN*/
+    const firstButtonIsClicked = !(ev.currentTarget.querySelector('input:nth-of-type(2)') === targetInput)
+        ?
+        true:false;
+
+    const valueOfButton = targetInput.value;
+
+    counter === 0?tekstDivClientHeight = divTekst.clientHeight: tekstDivClientHeight = tekstDivClientHeight;
+    counter++;
+
+    let takedTempString; 
+    
+    firstButtonIsClicked?(takedTempString = tempValueButton1):(takedTempString = tempValueButton2);
+
+    if(firstButtonIsClicked){
+        tempValueButton1 = valueOfButton;
+        targetInput.value = takedTempString;
+        
+        if(showWholeText){
+            tekstDivClientHeight
+            divTekst.style.height = divTekst.scrollHeight + "px";
+            ev.currentTarget.querySelectorAll('input')[1].setAttribute('disabled', '');
+            ev.currentTarget.querySelectorAll('input')[1].classList.add('background_neue');
+        }else{
+            divTekst.style.height = tekstDivClientHeight + "px";        
+            ev.currentTarget.querySelectorAll('input')[1].removeAttribute('disabled');
+            ev.currentTarget.querySelectorAll('input')[1].classList.remove('background_neue');
+        }
+        
+        showWholeText = !showWholeText;
+
+    }else{
+        tempValueButton2 = valueOfButton;
+        targetInput.value = takedTempString;
+
+        if(scrollToBottom){
+            divTekst.scrollTop = divTekst.scrollHeight;
+            ev.currentTarget.querySelectorAll('input')[0].setAttribute('disabled', '');
+            ev.currentTarget.querySelectorAll('input')[0].classList.add('background_neue');
+        }else{
+            divTekst.scrollTop = 0;
+            ev.currentTarget.querySelectorAll('input')[0].removeAttribute('disabled');
+            ev.currentTarget.querySelectorAll('input')[0].classList.remove('background_neue');
+        }
+
+        scrollToBottom = !scrollToBottom;
+
+    }
+
+});
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
