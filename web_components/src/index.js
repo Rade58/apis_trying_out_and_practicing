@@ -12758,7 +12758,9 @@ const css_ovog_ovakvog_primera = `
 
 let tempValueButton1 = "show only part of text", tempValueButton2 = "scroll to top";
 let showWholeText = true, scrollToBottom = true;
+let oldHeight;
 let counter = 0;
+
 document.querySelector('.kont_some_kind').addEventListener('mousedown', function(ev){
 
     if(ev.target.nodeName !== 'INPUT') return;
@@ -12777,9 +12779,6 @@ document.querySelector('.kont_some_kind').addEventListener('mousedown', function
 
     const valueOfButton = targetInput.value;
 
-    counter === 0?tekstDivClientHeight = divTekst.clientHeight: tekstDivClientHeight = tekstDivClientHeight;
-    counter++;
-
     let takedTempString; 
     
     firstButtonIsClicked?(takedTempString = tempValueButton1):(takedTempString = tempValueButton2);
@@ -12789,12 +12788,13 @@ document.querySelector('.kont_some_kind').addEventListener('mousedown', function
         targetInput.value = takedTempString;
         
         if(showWholeText){
-            tekstDivClientHeight
+            counter<1?oldHeight = divTekst.clientHeight:undefined;
+            counter < 2?counter++:undefined;
             divTekst.style.height = divTekst.scrollHeight + "px";
             ev.currentTarget.querySelectorAll('input')[1].setAttribute('disabled', '');
             ev.currentTarget.querySelectorAll('input')[1].classList.add('background_neue');
         }else{
-            divTekst.style.height = tekstDivClientHeight + "px";        
+            divTekst.style.height = oldHeight + "px";        
             ev.currentTarget.querySelectorAll('input')[1].removeAttribute('disabled');
             ev.currentTarget.querySelectorAll('input')[1].classList.remove('background_neue');
         }
