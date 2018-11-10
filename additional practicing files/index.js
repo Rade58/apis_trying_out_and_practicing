@@ -41,8 +41,10 @@ const cssHeightPracticeDiv = window.getComputedStyle(nekiDivZaPractice).getPrope
 const scrollHeightPracticeDiv = nekiDivZaPractice.scrollHeight;
 
 console.log("HEIGHTS:", cssHeightPracticeDiv, clientHeighPacticeDiv, scrollHeightPracticeDiv);
-
-nekiDivZaPractice.style.height = nekiDivZaPractice.scrollHeight - 2*30 + 'px';
+// taking paddings into account
+nekiDivZaPractice.style.height = nekiDivZaPractice.scrollHeight - 
+    topPadd - 
+    bottomPadd + 'px';
 // nekiDivZaPractice.style.height = (nekiDivZaPractice.scrollHeight - nekiDivZaPractice.clientHeight) + 'px';
 
 
