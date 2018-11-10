@@ -12769,7 +12769,6 @@ const css_ovog_ovakvog_primera = `
 let tempValueButton1 = "show only part of text", tempValueButton2 = "scroll to top";
 let showWholeText = true, scrollToBottom = true;
 let oldHeight;
-let counter = 0;
 
 document.querySelector('.kont_some_kind').addEventListener('mousedown', function(ev){
 
@@ -12798,12 +12797,32 @@ document.querySelector('.kont_some_kind').addEventListener('mousedown', function
         targetInput.value = takedTempString;
         
         if(showWholeText){
-            counter<1?oldHeight = divTekst.clientHeight:undefined;
-            counter < 2?counter++:undefined;
-            divTekst.style.height = divTekst.scrollHeight + "px";
+
+            
+
+            // OVDE UPOTREBLJAVAM CSS (STO KAZU DA NIJE PREPORUCIVO)
+            const styleObject = window.getComputedStyle(divTekst);
+            const paddingTop = styleObject.getPropertyValue('padding-top');
+            const paddingBottom = styleObject.getPropertyValue('padding-bottom');
+
+            // ZABORAVIO SI JEDNU BITNU STVAR, A TO JE DA ARGUMENTI, parseInt  I   parseFloat   FUNKCIJA
+            // MOGU BITI I STRINGOVI, KOJI NE MORAJU DA BUDU POTPUNO BROJCANI STRINGOVI
+            // SAMO JE BITNO DA SU PRVI KARAKTERI, USTVARI BROJACANI KARAKTERI
+            // STO ZNACI DA NE MORAM DA KORISTIM RegExp DA BI "IZFILTRIRAO" BROJEVE IZ STRINGA
+            // KAO TO JE    "20px"  , JER TACNO JE SLEDECE
+            
+            // parseInt("20px")   ----->      20  (Number)
+
+            //DAKLE NOVA VISINA CE BITI scrollHeight MINUS GORNJI I MINUS DONJI PADDING;
+            // ALI PRE TOGA MORAM STARU VISINU SKLADISTITI U JEDNU GLOBALNU VARIJABLU
+            oldHeight = divTekst.clientHeight - parseInt(paddingTop) - parseInt(paddingBottom);
+            // A SADA MOGU PODESITI NOVU VISINU
+            divTekst.style.height = divTekst.scrollHeight - 
+                parseInt(paddingTop) - parseInt(paddingBottom) + "px";
             ev.currentTarget.querySelectorAll('input')[1].setAttribute('disabled', '');
             ev.currentTarget.querySelectorAll('input')[1].classList.add('background_neue');
         }else{
+            console.log(oldHeight);
             divTekst.style.height = oldHeight + "px";        
             ev.currentTarget.querySelectorAll('input')[1].removeAttribute('disabled');
             ev.currentTarget.querySelectorAll('input')[1].classList.remove('background_neue');
