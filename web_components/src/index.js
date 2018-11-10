@@ -12798,8 +12798,6 @@ document.querySelector('.kont_some_kind').addEventListener('mousedown', function
         
         if(showWholeText){
 
-            
-
             // OVDE UPOTREBLJAVAM CSS (STO KAZU DA NIJE PREPORUCIVO)
             const styleObject = window.getComputedStyle(divTekst);
             const paddingTop = styleObject.getPropertyValue('padding-top');
@@ -12911,6 +12909,45 @@ const findScrollbarWidthOtherWay = function(){
 };
 
 console.log(        findScrollbarWidthOtherWay()          );           //-->   17
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// U SLEDECEM PRIMERU, RADI SE O CENTRIRANJU ELEMENTA, NA SREDINU CONTAINER-A
+
+const html_div_kontejner_za_ovaj_primer = `
+    <div class="neki_kont_examp"></div>
+`;
+
+const fieldDiv = document.createElement('div');
+fieldDiv.style.width = "68%";
+fieldDiv.style.height = "38vw";
+fieldDiv.style.border = "pink solid 4px";
+fieldDiv.style.position = "relative";
+
+const ballDiv = document.createElement('div');
+ballDiv.style.width = "10%";
+ballDiv.style.border = "tomato solid 4px";
+ballDiv.style.position = 'relative';
+
+fieldDiv.appendChild(ballDiv);
+
+document.querySelector('.neki_kont_examp').appendChild(fieldDiv);
+
+ballDiv.style.height = ballDiv.offsetWidth + 'px';
+ballDiv.style.borderRadius = ballDiv.offsetWidth/2 + 'px';
+
+//POSTO SAM DEFINISAO ELEMENT-E, I PRIKACIO IH NA DOM (PA SAM IH JOS DODATNO STILIZOVAO UZ POMOC 
+// GEOMETRIJSKIH PROPERTIJA), CENTRIRACU SADA ballDiv, TACNO NA SREDINU fieldDiv-A
+ballDiv.style.left = (fieldDiv.clientWidth/2 - ballDiv.offsetWidth/2) + 'px';
+ballDiv.style.top = (fieldDiv.clientHeight/2 - ballDiv.offsetHeight/2) + 'px';
+
+// CENTRIRANJE JE BILO USPESNO, STO MOGU VIDETI NA STRANICI
+
+// PODSETNIK ZA SLEDECI PUT JESTE DA MORAM VIDETI, ZASTO SLIKA (img) NE MOZE DA SE CENTRIRA 
+// (AKO JOJ PREDHODNO width I height NISU DEFINISANE)
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
