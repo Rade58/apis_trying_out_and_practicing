@@ -1,0 +1,17 @@
+.neki_div_practicing {
+    border: tomato solid 10px;
+    width: 280px;
+    height: 180px;
+    padding: 30px;
+    margin: 10px;
+    
+    /*TREBAO BIH IMATI U VIDU DA JE MOGUCE DEFINISANJE   text-align: justyfy;  */
+    /* text-align: justify;
+    text-justify: distribute-all-lines;
+    white-space: normal; */
+
+    overflow: auto;
+}
+
+
+
