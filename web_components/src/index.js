@@ -12850,6 +12850,68 @@ document.querySelector('.kont_some_kind').addEventListener('mousedown', function
 
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU NASTAVITI SA PRIMERIMA, MEDJUTIM, VISE NEGO STO SU PRIMERI, OVO SU USTVARI PITANJA, O
+// RAZUMEVANJU SVIH GEOMETRIJSKIH PROPERIJA, SA KOJIMA SAM SE UPOZNAO U PREDHODNOM DELU
+
+// 1) 
+// STA BI BILO       scrollBottom (ONO NE POSTOJI)    KADA BI POSTOJALO?
+// ODNOSNO STA BI BILO ONO STA SE MERI OD UNUTRASNJE IVICE DONJEG BORDERA, ODNOSNO OD DONJEG PADDINGA
+// PREMA DOLE
+
+// JA MISLIM DA JE TO SLEDECE:
+                                //  element.scrollHeight - element.scrollTop - element.clientHeight
+                                
+                                // TACAN ODGOVOR (PROVERIO SAM U CLANKU)
+
+// 2)
+// PRONADJI KOLIKI JE SCROLLBAR WIDTH
+
+// ONO STO CU URADITI, JESTE KREIRANJE ELEMENTA, NJEGOVO STILIZOVANJE (DA BI MU SCROLLBAR BIO DISPLAYOVAN),
+// ZATIM PRONALAZENJE DEBLJINE SCROLLBARA-, I UKLANJANJE ELEMENTA IZ DOM-A
+
+const findScrollbarWidth = function(){
+    let scrollbarWidth;
+    const divElement = document.createElement('div');
+    
+    // divElement.innerHTML = "A";      /*MISLIO SAM DA JE I OVO BILO POTREBNO, ALI IPAK NIJE, I ZATO JE*/
+                                                                                        /* COMMENTED OUT*/
+    divElement.style.overflowY = 'scroll';
+    divElement.style.direction = 'rtl';
+    // DA GA NISAM ZAKACIO NA BODY, SVA GEOMETRIJ BI BILA NULA
+    document.body.appendChild(divElement);
+
+    scrollbarWidth = divElement.clientLeft;
+
+    document.body.removeChild(divElement);
+
+    return scrollbarWidth;
+};
+
+console.log(        findScrollbarWidth()          );           //-->   17
+
+// POKUSACU DA DEFINISEM I DRUGIM NACINOM (ONO STO CE BITI OD VELIKOG ZNACAJA U SLEDECEM PRIMERU, JESTE
+// DA BORDER 'PRIVREMENOG ELEMENTA', MORA BITI NULA)
+
+const findScrollbarWidthOtherWay = function(){
+    let scrollbarWidth;
+    const divElement = document.createElement('div');
+    divElement.style.borderWidth = "0px"    // DEFINISEM ZA SVAKI SLUCAJ
+    divElement.style.overflowY = 'scroll';
+    // divElement.innerHTML = "A";                      /*NI OVDE NESTED TEKST NIJE BIO NEOPHODAN, JER JE*/
+    document.body.appendChild(divElement);            /*DEFINISUCI overflow-y: scroll; TO JE DISPLAYOVALO */
+                                                                                             /*SCROLLBAR*/
+    
+    //  offsetWidth     UKLJUCUJE I SCROLLBAR DEBLJINU, DOK     clientwidth     NE UKLJUCUJE
+    scrollbarWidth = divElement.offsetWidth - divElement.clientWidth;
+
+    document.body.removeChild(divElement);
+
+    return scrollbarWidth;
+};
+
+console.log(        findScrollbarWidthOtherWay()          );           //-->   17
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
