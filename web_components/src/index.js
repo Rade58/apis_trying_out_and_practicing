@@ -13290,45 +13290,97 @@ const neka_dugme_koje_klikom_scrolluju_sli_druga_metoda = `
 `;
 
 document.querySelector('.scroll-to-top').addEventListener('mousedown', function(ev){
-    window.scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = 'smooth';
+    window.scrollTo(0, 35180);      // NALAZI SE NESTO IZNAD MOG DUGMETA
+    document.documentElement.style.scrollBehavior = 'auto';
 });
 
-// PROVERI ZASTO U POSLEDNJEM PRIMERU NIJE RADIO SMOOTH SCROLLING
+// POMENUTE METODE FUNKCIONISU ZA SVE BROWSER-E, NA ISTI NACIN, DAKLE U SLUCAJU POMENUTIH METODA, NE MORAM
+// SE BRINUTI O CROSS-BROWSER COMPATABILITY-JU
+// ////////////////////////////////////////////////////////
+// SADA CU SE POZABAVITI  
+//                                  scrollIntoView          METODOM
+// KOJA SE PRIMENJUJE NA ELEMENTE
+// 
+// DODAJU JOJ SE BOOLEAN true, ILI BOOLEAN false VREDNOST, KAO JEDINI ARGUMENT (TAJ ARGUMENT SE NAZIVA I
+// top  )
+// BOOLEAN  true JESTE I DEFAULT VREDNOST
 
+// PRIMENOM NA ELEMENT, STRANICA CE SE SCROLLOVATI, TAKO DA CE ELEMENTOVA GORNJA IVICA 
+// BITI PRILJUBLJENA SA GORNJOM IVICOM BROWSEROVOG WINDOW-A (U SLUCAJU KADA JE ARGUMENT BOOLEAN true)
+// A KADA SE POMENUTOJ PRIMENI DODA BOOLEAN false ARGUMENT, ONDA CE SE STRANICA SCROLL-OVATI NA
+// TAKAV NACIN DA CE SE ELEMENT, NA KOJI JE METODA PRIMENJENA, NACI IZRAVNAN U ODNOSU NA BROWSER-OW WINDOW
+// TAKO DA SE ELEMENTOVA DONJA IVICA PRILJUBITI SA DONJOM IVICOM BROWSER-OVOG WINDOW-A 
 
+// ODRADICU I JEDAN PRIMER
 
 const neki_divElement = `
-    <div class="neki-element-div">
-        In the 16th century, Christian missionaries from Spain and Portugal first encountered
-        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
-        work of the devil". In the 20th century, the active chemical constituent of B.
-        yahuasca became more widely known when the McKenna brothers published 
-        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
-        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
-        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
-        River.
-        In the 16th century, Christian missionaries from Spain and Portugal first encountered
-        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
-        work of the devil". In the 20th century, the active chemical constituent of B.
-        yahuasca became more widely known when the McKenna brothers published 
-        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
-        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
-        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
-        River.
-    </div>
+<div class="neki-element-div">
+    <div class="upper-arrow"></div>
+    <p>In the 16th century, Christian missionaries from Spain and Portugal first encountered
+    indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+    work of the devil". In the 20th century, the active chemical constituent of B.
+    yahuasca became more widely known when the McKenna brothers published 
+    their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+    botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+    Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+    River.</p>
+    <div class="lower-arrow"></div>
+</div>
 `;
 
 const css_nekiElementDiv = `
+    
     .neki-element-div {
         box-sizing: content-box;
-        border: tomato solid 10px;
-        width: 180px;
-
+        border: tomato solid 0px;
+        width: 78%;
+        text-align: justify;
     }
+
+    .neki-element-div > p {
+        border: tomato solid 2px;
+        margin: 8px;
+    }
+
+    .neki-element-div > div {
+        margin: 0px auto;
+        border-left: transparent solid 10px;
+        border-right: transparent solid 10px;
+        width: 0px;
+        height: 0px;
+        cursor: pointer;
+    }
+
+    .upper-arrow {
+        border-bottom: #334 14px solid;
+        top: -24px;
+    }
+
+    .lower-arrow {
+        border-top: #334 14px solid;
+        bottom: -24px;
+    }
+
 `;
 
+ 
+document.querySelector('.neki-element-div').addEventListener('mousedown', function(ev){
+    if(!ev.target.closest('[class$=arrow]')) return;
 
+    document.documentElement.style.scrollBehavior = "smooth";
 
+    if(ev.target.closest('[class^=upper]')){
+        ev.currentTarget.querySelector('p').scrollIntoView(true);
+    }
+    
+    if(ev.target.closest('[class^=lower]')){
+        ev.currentTarget.querySelector('p').scrollIntoView(false);
+    }
+
+    document.documentElement.style.scrollBehavior = "auto";
+
+}, false);
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
