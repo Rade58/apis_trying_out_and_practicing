@@ -4,8 +4,13 @@
 }*/
 
 * {
-    box-sizing: border-box;
+    box-sizing: content-box;
 }
+
+/* html, body {
+    margin: 0;
+    padding: 0;
+}  */
 
 /*.waving {
     --from-left: 0px;
@@ -914,7 +919,6 @@ div.tomato_zada, div.olive_zada {
     color: #f5c9c5;
     cursor: grab;
     overflow: unset;
-
 }
 
 

@@ -12943,8 +12943,389 @@ ballDiv.style.top = (fieldDiv.clientHeight/2 - ballDiv.offsetHeight/2) + 'px';
 
 // CENTRIRANJE JE BILO USPESNO, STO MOGU VIDETI NA STRANICI
 
-// PODSETNIK ZA SLEDECI PUT JESTE DA MORAM VIDETI, ZASTO SLIKA (img) NE MOZE DA SE CENTRIRA 
-// (AKO JOJ PREDHODNO width I height NISU DEFINISANE)
+// ONO STO NISAM REKAO, JESTE DA KOORDINATE SLIKE, MOGU BITI POGRESNE, ODNOSNO ODNOSNO REC JE SAMO O
+// SITUACIJI, PRI PRVO LOAD-OVANJU STRANICE
+
+// NAIME, TADA, PRI PRVOM LOAD-OVANJU, U SLUCAJU img  TAGA, KOJEM NISU DEFINISANE DIMENZIJE
+// (BILO DA JE TO PUTEM TAG ATRRIBUTA ILI CSS-OM), BROWSER, NE ZNAJUCI ZA TE DIMENZIJE, SMATRA DA SU NULA,
+// SVE DOK SE NE ZAVRSI LOADING
+
+// IN REAL LIFE, NAKON PRVOG LOAD-OVANJA, BROWSER OBICNO CACHE-UJE SLIKU, I NA SLEDECEM LOAD-OVANJU,
+// BROWSER CE ODMAH IMATI PRAVU VELICINU
+
+// OVO SE POPRAVLJA TAKO STO SE DEFINISU DIMENZIJE SLIKE UZ POMOC ATRIBUTA ILI CSS PROPERTIJA
+
+// MENI SE, MEDJUTIM DOGADJA DA JE VREDNOST offsetWidth, UVEK ONOLIKA, KOLIKA JE I NATURALNA
+// SIRINA SLIKE (LAKO SE MOZE PROVERITI, NA SAMOM IMAGE FAJLU) 
+ 
+const html_neke_slike = `
+    <img class="neka_slika" alt="some kind" src="./img/nove slike/synth.jpg">
+`;
+const neka_slika_bla = document.querySelector('.neka_slika');
+console.log(neka_slika_bla.offsetWidth);            //-->       200
+
+// MOZDA JE TO ZATO STO NE ZNAM DA CLEAR-UJEM CACHE
+// POKUSACU DA UVEDEM NOVU SVEZU SLIKU, PA DA VIDIM, NJENU      offsetWidth     VREDNOST
+
+const html_druge_slike = `
+    <img class="neki_synth_img" alt="syntwave art" src="./img/nove slike/synth2.jpg">
+`;
+
+const nekiSytnhImage = document.querySelector('.neki_synth_img');
+
+console.log(nekiSytnhImage.offsetWidth);
+// I U OVOM SLUCAJU STAMPANA JE VREDNOST, KOJA NIJE NULA, (A U CLANKU JE RECENO DA JER NULA)
+// MISLIM DA JE MOZDA U PITANJU STO JE SVE POTPUNO UCITANO, ODNOSNO POSTO JE HTML UCITAN, A SCRIPT TAG SE 
+// NALAZI NA SAMOM DNU  BODY-JA (MOZDA GRESIM, ALI OVDE CU SADA STATI DA BI SE POZABAVIO SA SLEDECIM
+// CLANKOM), KOJI OPET IMA VEZE SA GEOMETRIJOM
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////NAKON SLEDECEG CLANAK//////////////////////////////////PODSETNIK DA SE POZABAVIM SA ////////////
+//////////////////////////////////////          scroll-behavior
+/////////////////////////////////////////
+//////////////////////////////////////////////////////////////////A SADA CU POCETI SA IZUCAVANJEM, NOVOG
+//                                                                              CLANKA
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                     Window SIZES AND SCROLLING         ( Window VELICINE I SCROLLING )
+// 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// KAKO SAZNATI KOJA JE SIRINA BROWSER-OVOG WINDOW-A, KAKO DOCI DO CELE VISINE documenta-A, UKLJUCUJUCI I
+// SCROLLED OUT DEO; KAKO SCROLLOVATI STRANICU, KORISCENJEM JAVASCRIPTA
+
+// IZ DOM-OVOG UGLA GLEDANJA    ROOT ELEMENT JESTE      document.documentElement
+// POMENUTI ELEMENT CORRESPONDS         html-U      I IMA GEOMETRIJSKE PROPERTIJE, KOJIMA SAM SE BAVIO
+// IZUCAVAJUCI PREDHODNI CLANAK
+
+console.log(      document.documentElement      );      //-->       <html>...</html>
+
+
+// U NEKIM SLUCAJEVIMA, JA IH MOGU KORISTITI, ALI POSTOJE DODATNE METODE, I OSOBENOSTI (PECULIARITIES)
+// DOVOLJNO VAZNE, DA BI SE TREBALE RAZMOTRITI
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//          WIDTH   I   HEIGHT      window-A
+
+// ONO STO MI JE OVDE POTREBNO JESU      
+//                                   clientWidth     I    clientHeight     
+//
+                                                                        //   document.documentElement-A
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////
+document.documentElement.style.boxSizing = 'content-box'; //(NE OBRACAJ PAZNJU NA OVO, OVO JE NEKA MOJA PROVERA)
+/////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+console.log(      document.documentElement.clientWidth      );          //-->   455
+console.log(      document.documentElement.clientHeight      );         //-->   871
+
+// VREDNOSTI, KOJE SU STAMPANE SU VREDNOSTI, SIRINE I VISINE    BROWSER-OVOG    window-A
+
+//                                  TREBA VODITI RACUNA O KORISCENJU SLEDECIH PROPERTIJA
+
+//                                                      window.innerWidth   I   window.innerHeight
+
+// ONE IZGLEDAJU TAKO KAO DA MI TREBAJU, KADA ZELIM SIRINU I VISINU BROWSER-OVOG WINDOW-A
+// ZASTO IH ONDA NE TREBA KORISTITI?
+
+// AKO POSTOJI SCROLLBAR, I AKO ON ZAUZIMA, NEKI PROSTOR, U        clientWidth   I   clientHeight   NIJE
+// UKLJUCENA I DEBLJINA SCROLLBAR-A; TO ZNAM I IZ PROSLOG CLANKA, JER SAM UPRAVO RAZLIKOM IZMEDJU
+// offsetWidth-A        I       clientWidth-A PRONALAZIO DEBLJINU SCROLLBAR-A (NARAVNO TO VAZI ZA ELEMENT
+// SA ZERO PADDING-OM I ZERO BORDER-OM)
+
+// A U VREDNOSTI      window.innerwidth       I       window.innerHeight       UKLJUCENA JE I DEBLJINA
+// SCROLLBARA
+
+console.log(    window.innerWidth, window.innerHeight   );          //-->       472   888
+
+// I OVO JE MOZDA BIO JOS JEDAN NACIN DA SE PRONADJE DEBLJINA SCROLLBAR-A
+// (cak se dogodilo da se sada slucajno, nadju i horizontalni i verticalni scrollbar uz ivice  windowa, 
+// jer sam imao ogromne elemente na stranici (sa ne-relativnim sirinama) a smanjio sam velicinu 
+// browser-ovog windowa)
+console.log(    window.innerWidth - document.documentElement.clientWidth  );          //-->   17
+console.log(    window.innerHeight - document.documentElement.clientHeight  );        //-->   17
+
+//DAKLE,        window.innerWidth                           (PUNA SIRINA window-A)
+//              document.documentElement.clientWidth        (window SIRINA MINUS SCROLLBAR SIRINA)
+
+// U MNOGIM SLUCAJEVIMA. MENI JE POTREBNO DA MI BUDE DOSTUPAN window WIDTH, KAKO BIH NACRTAO NESTO, ILI
+// NESTO POZICIONIRAO
+// TAKO DA MI TU NECE BITI POTREBNA SIRINA SCROLLBAR-A, A KORISTIECI SIRINU KOJA UKLJUCUJE I DEBLJINU 
+// SCROLLBARA DOVESCE SIGURNO DO CODE BREAK-OVA
+
+// DAKLE, TREBAM KORISTITI          document.documentElement.clientWidth
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////MORAM RECI I SLEDECE
+                    
+                //                     DOCTYPE         je vazan
+
+// NAIME TOP-LEVEL GEOMETRIJSKI PROPERTIJI (MOZDA SE MISLI NA GEOMETRIJSLE PROPERTIJE TOP-LEVEL
+// ELEMENTA, KAO STO JE html), MOGU SE PONASATI NESTO DRUGACIJE KAD NEMA    <!DOCTYPE html>     U   HTML-U
+// CUDNE STVARI SU MOGUCE, KADA NE POSTOJI, POMENUTO U HTML-U
+
+// U MODERNOM HTML-U, TREBA SE UVEK NAPISATI I DOCTYPE; I GENERALNO, TO NIJE PITANJE JAVASCRIPT-A; ALI MOZE
+// DA UTICE I, TAKODJE DA UTICE I NA JAVASCRIPT
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                          WIDTH       I       HEIGHT      document-A
+
+// TEORETSKI, POSTO ROOT DOKUMENT ELEMENT ( document.documentElement ), SA SVOJOM SIRINOM I VISINOM
+// (document.documentRoot.clientWidth I document.documentRoot.clientHeight), USTVARI ZAGRADJUJE (ENCLOSES)
+// SADRZINU, LOGICNO BI BILO, UPOTREBITI,       document.documentElement.scrollWidth        I
+// document.documentElement.scrollHeight        , DA IZMERIM CELOKUPNU VELICINU SADRZINE
+
+// OVI PROPERTIJI DOBRO FUNKCIONISU NA OBICNIM ELEMENTIMA, AL IZA CELU STRANICU, OVI PROPERTIJI NE FUNKCIONISU
+// KAO STO BI SE OCEKIVALO
+
+// AKO NE POSTOJI SCROLL, U BROWSER-IMA     CHROME/SAFAR/OPERA,         ONDA
+//      document.documentElement.scrollHeight       , MOZE BITI CAK MANJE NEGO STO JE
+//                                                              document.documentelement.clientHeight
+// TO SA STANOVISTA REGULARNIH ELEMENATA JESTE NONSENSE; ODNOSNO NEMA NIKAKVE LOGIKE, 
+// ALI OVDE SADA NIJE REC O REGULARNIM ELEMENTIMA
+
+// ZELIM, PREDHODNU TVRDNJU DA POTKREPIM I PRIMEROM
+// MEDJUTIM, TO MORAM ODRADITI U DRUGOM DOKUMENTU, POSTO U OVOM VEC IMAM EKSTENZIVNU SADRZINU,
+// TAKO, DA OVDE SCROLLBAR POSTOJI (MISLIM NA SCROLLBAR documentElement-A), A MENI SCROLLBAR NE TREBA
+// DA BIH POKAZO, POMENUTU NELOGICNOST
+
+// DAKLE, SLEDECE SAM NAPISAO U JAVASCRIPT DOKUMENTU, KOJI JE LOADED IN, NEKI DRUGI HTML DOKUMENT
+// U KOJEM NEMA DOVOLJNO SADRZINE DA BI POSTOJAO SCROLLBAR
+
+console.log(document.documentElement.clientHeight, document.documentElement.scrollHeight);      
+console.log(document.documentElement.clientHeight > document.documentElement.scrollHeight);
+
+// NE ZNAM DA LI JE TO BIO SLUCAJ U PREDHODNIM VERZIJAMA BROWSERA, A MOZDA JE TAKVA SITUACIJA
+// POPRAVLJENA, JER ONO STO JE IZASLO KAO REZULTAT PRVOG LOGOVANJA U KONZOLU JESU
+//                                                          DVE JEDNAKE BROJNE VREDNOSTI 
+// A U SLUCAJU DRUGOG LOGOVANJA U KONZOLI JE PRIKAZANO      false (STO JE I LOGICNO KADA VRSIM COMPARISON DVE JEDNAKE VREDNOSTI)
+
+// MEDJUTIM, TO SE KOSI SA GORNJIM IZRECENIM TVRDNJAMA IZ CLANKA
+// ONO STO CU JA ZAKLJUCITI JESTE, DA JE , VEROVATNO, POSTO SU BROWSERI UNAPRDJENI, NOVIJIM VERZIJAMA
+// POMENUTA NEZELJENA SITUACIJA RESENA UPDATE-OM, U NEKE VERZIJE webkit-A
+// CAK SAM PROBAO I U FIREFOX-U, I TAMO JE IZASLO ONO OCEKIVANO, DAKLE ONO BEZ POMENUTE PROBLEMATICNOSTI
+
+// MEDJUTIM, ONO STO SE PREPORUCUJE, A STO VODI POREKLO IZ DAVNIJIH VREMENA BROWSER-A, JESTE SLEDECI NACIN
+// ZA KOJI BAS NISAM SIGURAN DA LI JE RELIABLE (ALI CIM GA PREPORUCUJU U TOM STANDARDNO DOBROM CLANKU,
+// MISLIM DA CU GA UPOTREBITI) 
+
+// NAIME, CILJ JE DA SE IZABERE NAJVECA VISINA OD 6 MOGUCIH, I ONDA JE BAS TA VISINA scrollHeight
+// ONO STO SE TOM PRILIKOM KORISTI, JESTE
+                                                    Math.max  
+// FUNKCIJA, SE KAO ARGUMENTI, DODAJU BROJEVI, A POVRATNA VREDNOST, JE NAJVECI BROJ OD NJIH
+// DAKLE scrollHeight BI SE NAJSIGURNIJE TREBAO PRONALAZITI, NA NACIN DA PRISTUPIM
+
+            // GEOMETRIJSKIM PROPERTIJIMA (KOJE SE ODNOSE NA VISINU NARAVNO)    document.body
+            // GEOMETRIJSKIM PROPERTIJIMA (KOJE SE ODNOSE NA VISINU NARAVNO)    document.documentElement
+
+const scrollHeight = Math.max(
+    document.documentElement.clientHeight, document.body.clientHeight,
+    document.documentElement.offsetHeight, document.body.offsetHeight,
+    document.documentElement.scrollHeight, document.body.scrollHeight
+);
+
+// STAMPACU, REZULTAT U KONZOLI
+console.log(scrollHeight);                  //-->   36875       TO JE NAJVECA VREDNOST
+
+//STAMPACU I SVE VREDNOSTI POJEDINACNO, KAKO BIH SE UVERIO I VIZUELNO, KOJA JE TO NAJVECA VREDNOST
+console.log(
+    document.documentElement.clientHeight, document.body.clientHeight,
+    document.documentElement.offsetHeight, document.body.offsetHeight,
+    document.documentElement.scrollHeight, document.body.scrollHeight
+);
+
+// ONO STO PRVO ZELIM DA KAZEM, JESTE DA SU SVE VREDNOSTI OSIM JEDNE BILE U RANGU OD OKO 36860
+// DAKLE OKO TE BROJKE
+
+// JEDINA, KOJA JE NEUPOREDIVO MANJA JESTE      document.documentElement.clientHeight
+// KOJA IZNOSI      871     I TO JE UPRAVO VISINA VIDLJIVOG DELA BROWSER-OVOG WINDOW-A 
+
+// VREDNOSTI, KOJE SU BILE ISTE, I KOJE SU IZABRANE (ODNOSNO SAMO JEDNA JE IZABRANA), JESU VREDNOSTI
+//      offsetHeight    I   scrollHeight        document.documentElement -A
+// KOJE SU IZNOSILE     36875
+
+// ONO IZ CEGA MISLIM DA MOZE NASTATI NEDOUMICA, JESTE         body-JEV        clientHeight
+// TU VIDIM MOGUCNOST ZA GRESKU, KOJA BI SE MOGLA DOGODITI TAKO STO BIH BODY POSMATRAO, KAO NEKI TOP
+// LEVEL (KAO STO JE window i document.documentElement (ODNOSNO html))      I KADA BIH POKUSAO 
+// DA PRISTUPIM NJEGOVOM clientHeight-U, MISLECI DA CE IZ TOGA IZACI VISINA BROWSER-OVOG WINDOW-A
+// E PA NECE, JER BODY JESTE ELEMENT I TAJ      clientHeight     CE BITI UPRAVO ONO STO I ZVUCI
+// clientWidth BODY ELEMENTA, (DAKLE, TO CE ZAISTA BITI VISINA NJEGOVE UNUTRASNJOSTI, KOJA ZAVISI OD
+// OGROMNE NESTED SADRZINE, KOJA SE STAVLJA U BODY) 
+// clientHeight    body-JA, U OVOM SLUCAJU, IZNOSI           36859
+
+// a scrollHeight I offsetHeight; body-JA, U OVOM PRIMERU IZNOSE        36867       I       36859      
+
+// DAKLE, MOGU DA PRIMETIMA DA SU POMENUTE KARAKTERISTIKE       body-JA   
+// (MISLIM NA scrollHeight    I         offsetHeight)           NESTO MANJE OD  document.documentElement-
+// OVIH, ODNOSNO OD html-OVIH(POSTO SAM REKAO DA document.documentElement REPREZENTUJE  <html></htm>)
+
+// PITAM SE GDE JE TA RAZLIKA, MOGLA NASTATI (MOZDA SAM TOKOM KODIRANJA OVE STRANICE, DODAO NESTO body ELEMENTU)
+// NEMA VEZE
+            // ALI PREDPOSTAVLJAM JEDNO, A TO JE DA JE OVO MOZDA RAZLOG, ZATO STO SAM NEGDE VIDEO DA 
+            // DEVELOPERI PISU SLEDECI SELEKTOR, NA POCETK USTILIZOVANJA 
+
+            //              html, body {
+            //                  margin: 0;
+            //                  padding: 0;
+            //              }
+//DA PROVERIO SAM, PRI POMENUTIM POSTAVKAMA         document.body.scrollHeight      I
+//                                                  document.documentElement.scrollHeight         SU
+//                                                          JEDNAKI I PREDSTAVLJAJU, NAJVECE VREDNOSTI
+// MEDJUTIM, POSTO MI OVO SADA NE TREBA, JA CU OVO DA COMMENT OUT U MOM CSS FAJLU
+// PRELAZIM SADA NA SLEDECU STVAR VEZANU ZA OVU SEKCIJU
+// A TO JE 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//              DOBIJANJE TRENUTNOG SCROLL-A     (GETTING THE CURRENT SCROLL)
+
+// REGULARNI ELEMNTI IMAJU PROPERTIJE       scrolLeft       I       scrollTop   , KOJIMA SE MOZE
+// PRISTUPITI TRENUTNIM SCROLL VREDNOSTIMA
+
+// STA JE SA SA STRANICOM?
+// VECINA BROWSERA OBEZBEDJUJU 
+//                               document.documentElement.scrollLeft    document.documentelement.scrollTop
+// ZA POMENUTU POTREBU
+// ALI U SLUCAJU        CHROME/OPERA/SAFARI         ,POSTOJE BUG-OVI, PRI UPOTREBI POMENUTIH PROPERTIJA
+// ZATO SE U SVRHU GETTING-A, scrollLeft-A   I   scrollTop-A, CELE STRANICE, TREBA USTVARI KORISTITI
+// SLEDECE
+//                document.body.scrollLeft            document.body.scrollTop
+//              (MDJUTIM KADA BUDEM TESTIRAO OVE VREDNOSTI, SHVATICU DA SU ONE TE KOJE NE VALJAJU
+                // I DA JE OVO DEPRECATED PRISTUP)
+//
+////////MEDJUTIM, NE MORAM SE BAVITI POSEBNIM PERTICULARITIES-IMA, UOPSTE; JER POSTOJE POSEBNI PROPERTIJI
+
+//                      window.pageXOffset          window.pageYOffset
+// DAKLE, NAJVAZNIJE MI JE DA OVI window-OVI, PROPERTIJI FUNKCIONISU
+
+// SADA CU PROVERITI, SVE POMENUTE, PROPERTIJE
+
+console.log(document.documentElement.scrollLeft, document.documentElement.scrollTop);
+// U SLUCAJU SVIH BROWSERA, PREDHODNO JE VRATILO ZA LEFT NULA, A ZA TOP, ODREDJENI BROJ
+
+console.log(document.body.scrollLeft, document.body.scrollTop);         //OVO DAKLE NE VALJA
+// U SLUCAJU SVIH BROWSER-A, VRATILO JE NULU I ZA LEFT I ZA TOP, DAKLE OVO NE VALJA
+
+console.log(window.pageXOffset, window.pageYOffset);
+// U SLUCAJU SVIH BROWSERA, PREDHODNO JE VRATILO ZA LEFT NULA, A ZA TOP, ODREDJENI BROJ
+
+// POSTO        document.body.scrollTop/Left      RETURN-UJE        NULU, MORAO SAM PROVERITI, ZASTO
+// I KAZU DA SU
+
+//                          document.body.scrollLeft    I        document.body.scrollTop
+                                // DEPRECATED, ODNOSNO ZASTARELI, I ZATO IH NECU KORISTITI
+// A NEKO PREPORUCUJE DA RADIM I SLEDECE ZA PRISTUPANJE, CURRENT SCROLL-U
+         document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset 
+// MEDJUTIM, TAKODJE SAM SAZNO DA       window.pageXOffset      I       window.pageYOffset
+// NE FUNKCIONISU U SLUCAJU         IE 8        , UTOLIKO JE TO JOS JEDAN RAZLOG DA KORISTIM, PREDHODNU
+// LOGICKU IZJAVU (IZ KOJE SAM MOZDA TREBAO I DA IZUZMEM        document.body.scrollTop         )
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////PRELAZIM NA SLEDECU STVAR, VEZANU ZA SCROLLING CELE STRANICE, A TO JE
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//          SCROLLING:          scrollTo        scrollBy        scrollIntoView
+// 
+// JEDNA BITNA STVAR:
+                            // DA BI SE STRANICA SCROLL-OVALA, IZ JAVASCRIPT-A, NJEN        DOM     
+                            // MORA BITI FULLY BUILT (IZGRADJEN U POTPUNOSTI)
+// NA PRIMER, AKO POKUSAM DA SCROLL-UJEM STRANICU, IZ script-A, KOJI BI BIO NESTED U <head> ELEMENTU
+// TO NE BI FUNKCIONISALO
+
+// ZNAM DA REGULARNI ELEMENTI, MOGU BITI SCROLLED, PROMENOM PROPERTIJA (JA MISLIM DA SU SETTERI):
+//      scrollLeft      I       scrollTop   , STO SAM SAZNAO IZ PREDHODNOG CLANKA
+// NAIME, JA ISTO MOGU POSTICI ZA CELU STRANICU
+// MEDJUTIM I TU POSTOJI JEDNA DIVERGENCIJA, U POGLEDU NA KOM ELEMENTU SE SETT-UJE, POMENUTE KARAKTERISTIKE
+// STO ZAVISI, PRVENSTVENO OD BROWSER-A
+
+// ************OVO SLEDECE STO CE PISATI JE JAKO UPITNO, JER SAM SAZNAO, KAKO SU VREDNOSTI DOBIJENE
+// OD document.body.scrollTop/Left, USTVARI DEPRECATED**************ONDA PREDPOSTAVLJAM, KADA JE
+// GETTING, POMENUTIH VREDNOSTI, INCORRECT, ONDA, ZASTO I SETTING, NE BI BIO NETACAN**************
+// ZA       CHROME/OPERA/SAFARI     TREBA SE MODIFIKOVATI           document.body.scrollTop
+//                                                                  document.body.scrollLeft
+// ******************************************************************************************************
+// ZA BROWSERE, IZUZEV POMENUTIH (DAKLE FIREFOX)    TREBA SE MODIFIKOVATI
+//                                                                  document.documentElement.scrollLeft
+//                                                                  document.documentElement.scrollTop 
+// OVO BI TREBALO DA FUNKCIONISE, ALI TO SMRDI NA CROSS-BROWSER INCOMPATABILITIES
+
+// I IZ TOG RAZLOGA SE TREBA KORISTITI, JEDAN JEDNOSTAVNIJI, I VISE UNIVERZALAN NACIN; A TO SU SLEDECE
+// METODE
+//                          window.scrollBy(x, y)           window.scrollTo(pageX, pageY) 
+// 
+    // METODA
+       window.scrollBy     //SCROLL-UJE, STRANICU, RELATIVNO OD NJENE TRENUTNE SCROLL POZICIJE
+    // POKUSACU DA URADIM PRIMER, U KOJEM CU PRIMENITI OVU METODU
+
+const neka_dugmeta_koja_klikom_scrolluju = `
+    <div class="scroll-buttons">
+        <input type="button" value="scroll down by 258">
+        <input type="button" value="scroll up by 258">
+    </div>
+`;
+
+document.querySelector('.scroll-buttons').addEventListener('mousedown', function(ev){
+
+    // PORED TOGA STO OVDE VEZBAM       window.scrollBy JA SAM U OVOM PRIMERU
+    // UPOTREBIO I CSS, ODNOSNO PROPERTY        
+    //                                          scroll-bevaior
+    // JER SAM ZELEO DA PROMENA SCROLL-A BUDE SMOOTH, ODNOSNO DA SE NE DOGADJA JUMP SA JEDNE VREDNSOTI
+    // NA DRUGU, ODNOSN OPROSTIJE RECENO DA JE SCROLLING PROSTO SPORIJE PROTICE
+
+    if(ev.target.nodeName !== 'INPUT') return;
+
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    if(ev.currentTarget.querySelectorAll('input')[0] === ev.target){
+        window.scrollBy(0, 258);
+    }else{
+        window.scrollBy(0, -258);
+    }
+
+    document.documentElement.style.scrollBehavior = 'auto';
+
+});
+
+    // METODA
+    window.scrollTo     //SCROLL-UJE, STRANICU, RELATIVNO OD page-OVOG (STRANICINOG) TOP LEFT UGLA
+    // POKUSACU DA URADIM PRIMER, U KOJEM CU PRIMENITI OVU METODU
+
+const neka_dugme_koje_klikom_scrolluju_sli_druga_metoda = `
+    <input class="scroll-to-top" type="button" value="scroll to top">    
+`;
+
+document.querySelector('.scroll-to-top').addEventListener('mousedown', function(ev){
+    window.scrollTo(0, 0);
+});
+
+// PROVERI ZASTO U POSLEDNJEM PRIMERU NIJE RADIO SMOOTH SCROLLING
+
+
+
+const neki_divElement = `
+    <div class="neki-element-div">
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River.
+        In the 16th century, Christian missionaries from Spain and Portugal first encountered
+        indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+        work of the devil". In the 20th century, the active chemical constituent of B.
+        yahuasca became more widely known when the McKenna brothers published 
+        their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+        botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+        Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+        River.
+    </div>
+`;
+
+const css_nekiElementDiv = `
+    .neki-element-div {
+        box-sizing: content-box;
+        border: tomato solid 10px;
+        width: 180px;
+
+    }
+`;
 
 
 
