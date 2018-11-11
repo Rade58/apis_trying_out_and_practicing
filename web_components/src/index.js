@@ -13286,7 +13286,7 @@ document.querySelector('.scroll-buttons').addEventListener('mousedown', function
     // POKUSACU DA URADIM PRIMER, U KOJEM CU PRIMENITI OVU METODU
 
 const neka_dugme_koje_klikom_scrolluju_sli_druga_metoda = `
-    <input class="scroll-to-top" type="button" value="scroll to top">    
+    <input class="scroll-to-top" type="button" value="scroll up a little bit">    
 `;
 
 document.querySelector('.scroll-to-top').addEventListener('mousedown', function(ev){
@@ -13381,6 +13381,52 @@ document.querySelector('.neki-element-div').addEventListener('mousedown', functi
     document.documentElement.style.scrollBehavior = "auto";
 
 }, false);
+
+// DAKLE PRIMER SAM USPESNO OSMISLIO I RESIO
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU SE POZABAVITI SLEDECIM VEZANIM ZA OVAJ CLANAK, I TO CE BITI UJEDNO I POSLEDNJE VEZANO ZA
+// OVAJ CLANAK, A TO JE
+////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+                        //    ZABRANJIVANJE SCROLLINGA
+
+// Ponekad je potrebno da dokument postanemo "UNSCROLABLE". Na primer, kada treba da je pokrijemo sa
+// velikom porukom, koji zahteva hitnu pažnju, a mi želimo da korisnik vrsi interakciju sa tom porukom,
+// a ne sa dokumentom.
+// Da bi dokument bio UNSCROLABLE, dovoljno je podesiti sledece na,za
+                                                                            // body
+
+//                  document.body.style.overflow: hidden;
+
+// I STRANICA CE BITI FREEZED ('SMRZNUTA'), NA TRENUTNOM SCROLL-U
+
+// POKUSACU TO DA PODESIM, JEDNIM PRIMEROM
+// 
+
+const dugmad_za_zamrzavanje_i_odmrzavanje = `
+    <button freeze>Zamrzni</button>
+    <button unfreeze>Odmrzni</button>
+`
+document.querySelector('[freeze]').onclick = function(ev){
+    document.body.style.overflow = "hidden";
+}
+
+document.querySelector('[unfreeze]').onclick = function(ev){
+    document.body.style.overflow = "";
+}
+
+// Prvo dugme zamrzava SCROLL, a drugi ga OMOGUCAVA
+// Mi možemo koristiti istu tehniku da "zamrznemo" SCROLL za druge elemente, ne samo za document.body
+
+                    // NEDOSTATAK OVAKVOG DEFINISANJAOGLEDA SE U TOME DA SCROLLBAR NESTAJE
+
+// Ako JE SCROLLBAR ZAUZIMAO određeni prostor, taj prostor je sada slobodan, a sadržaj "SKAČE" da ga popuni.
+// To izgleda malo čudno, ali se može ODRADITI, JEDAN WORKAROUND ako uporedimo clientWidth pre i posle 
+// zamrzavanja,
+// I ako je clientWidth povećano (traka za pomeranje nestala), onda dodajte padding za 
+//          document.bod                umesto trake za pomeranje, da bi se sirina sadrzine odrzala istom
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
