@@ -13049,8 +13049,8 @@ console.log(    window.innerHeight - document.documentElement.clientHeight  );  
 
 // U MNOGIM SLUCAJEVIMA. MENI JE POTREBNO DA MI BUDE DOSTUPAN window WIDTH, KAKO BIH NACRTAO NESTO, ILI
 // NESTO POZICIONIRAO
-// TAKO DA MI TU NECE BITI POTREBNA SIRINA SCROLLBAR-A, A KORISTIECI SIRINU KOJA UKLJUCUJE I DEBLJINU 
-// SCROLLBARA DOVESCE SIGURNO DO CODE BREAK-OVA
+// TAKO DA MI TU NECE BITI POTREBNA URACUNATA SIRINA SCROLLBAR-A, A KORISTIECI SIRINU KOJA UKLJUCUJE 
+// I DEBLJINU SCROLLBARA DOVESCE SIGURNO DO CODE BREAK-OVA
 
 // DAKLE, TREBAM KORISTITI          document.documentElement.clientWidth
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13165,6 +13165,7 @@ console.log(
             //              html, body {
             //                  margin: 0;
             //                  padding: 0;
+            //                  border: 0;
             //              }
 //DA PROVERIO SAM, PRI POMENUTIM POSTAVKAMA         document.body.scrollHeight      I
 //                                                  document.documentElement.scrollHeight         SU
@@ -13178,13 +13179,13 @@ console.log(
 // REGULARNI ELEMNTI IMAJU PROPERTIJE       scrolLeft       I       scrollTop   , KOJIMA SE MOZE
 // PRISTUPITI TRENUTNIM SCROLL VREDNOSTIMA
 
-// STA JE SA SA STRANICOM?
+// STA JE SA CELOM STRANICOM?
 // VECINA BROWSERA OBEZBEDJUJU 
 //                               document.documentElement.scrollLeft    document.documentelement.scrollTop
 // ZA POMENUTU POTREBU
 // ALI U SLUCAJU        CHROME/OPERA/SAFARI         ,POSTOJE BUG-OVI, PRI UPOTREBI POMENUTIH PROPERTIJA
 // ZATO SE U SVRHU GETTING-A, scrollLeft-A   I   scrollTop-A, CELE STRANICE, TREBA USTVARI KORISTITI
-// SLEDECE
+// SLEDECE (*******USTVARI NE TREBA, KAKO SAM SAZNAO KASNIJE********)
 //                document.body.scrollLeft            document.body.scrollTop
 //              (MDJUTIM KADA BUDEM TESTIRAO OVE VREDNOSTI, SHVATICU DA SU ONE TE KOJE NE VALJAJU
                 // I DA JE OVO DEPRECATED PRISTUP)
@@ -13199,8 +13200,11 @@ console.log(
 console.log(document.documentElement.scrollLeft, document.documentElement.scrollTop);
 // U SLUCAJU SVIH BROWSERA, PREDHODNO JE VRATILO ZA LEFT NULA, A ZA TOP, ODREDJENI BROJ
 
+//****
 console.log(document.body.scrollLeft, document.body.scrollTop);         //OVO DAKLE NE VALJA
 // U SLUCAJU SVIH BROWSER-A, VRATILO JE NULU I ZA LEFT I ZA TOP, DAKLE OVO NE VALJA
+//****(POMENUTO NE TREBA KORISTITI)
+
 
 console.log(window.pageXOffset, window.pageYOffset);
 // U SLUCAJU SVIH BROWSERA, PREDHODNO JE VRATILO ZA LEFT NULA, A ZA TOP, ODREDJENI BROJ
@@ -13425,7 +13429,239 @@ document.querySelector('[unfreeze]').onclick = function(ev){
 // I ako je clientWidth povećano (traka za pomeranje nestala), onda dodajte padding za 
 //          document.bod                umesto trake za pomeranje, da bi se sirina sadrzine odrzala istom
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////ONO CIME CU SE SDA POZABAVITI JESU KOORDINATE, IAKO SAM SE NJIMA VEC BAVIO TOKOM BAVLJENJA SA 
+///////////////////////////////////////////////// DRAG'N'DROP-OM ////////////////////////////////////////
+//////// MOZDA JE TREBALO DA SE PRVO BAVIM OVIM, PRE SAMOG DRAG'N'DROP-A, ALI NEMA VEZE
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                                          KOORDINATE      (COORDINATES)
+//
+// VECINA JavaScript METODA, KOJE SE BAVE SA KOORDINATMA, U ODNOSU NA DVA KOORDINATNA SISTEMA
+            //      1)  RELATIVAN NA window (ILI DRUGI VIEWPORT)    top/left
+            //      1)  RELATIVAN NA document                       top/left
 
+// VEOMA JE VAZNO ZNATI RAZUMETI RAZLIKE IZMEDJU POMENUTIH, I VAZNO JE ZNATI, KOJI TIP SISTEMA SE GDE
+// NALAZI
+
+    //      Window KOORDINATE:         getBoundingClientRect
+
+// WINDOW-OVE KOORDINATE POCINJU IZ GORNJEG LEVOG UGLA window-A
+// A POMENUTA METODA getBoundingclientRect , KOJU SAM I RANIJE KORISTIO, RETURNUJE OBJEKAT ZA window
+// KOORDINATAMA, ZA ELEMENT, NA KOJEM SE PRIMENILA
+// U POMENUTOM OBJEKTU NALAZE SE SLEDECI PROPERTIJI
+//                              top :       Y   KOORDINATA DO GORNJE SPOLAJNJE IVICE BORDER-A ELEMENTA
+//                              left:       X   KOORDINATA DO LEVE              -\\-
+//                              bottom:     Y   KOORDINATA DO DONJE             -\\-
+//                              right:      X   KOORDINATA DO DESNE             -\\-
+
+// WINDOW-OVE KOORDINATE, NE UZIMAJU U OBZIR SCROLLED OUT DEO   document-A; ONE SE NAIME KALKULISU OD 
+// TOP-RIGHT WINDOW CORNER-A
+// DRUGIM RECIMA, KADA SCROLL-UJEM STRANICU, ELEMENT IDE GORE ILI DOLE
+                            // NJEGOVE WINDOW KOORDINAT SE MENJAJU
+                            // I TO JE VEOMA VAZNO ZNATI
+// OVDE SAM SADA MOGAO DEFINISATI, JEDAN PRIMER KAKO BI TO POKAZO
+// TO BI BILO JEDNO DUGME, KOJE BI NAKON KLIKA NA NJEGA ALERTOVALO, KORDINATE, I JA BIH MALO SCROLL-OVAO
+// STRANICU, I U RAZLICITIM POZICIJAMA U ODNOSU NA STRANICE BROWSER-OVOG WINDOW-A, BI SE NALAZILO MOJE
+// DUGME, TOKOM TOG POMERANJ, JA BIH KLIKTAO NA DUGME, I ALERTOVALE BI SE RAZLICITE VREDNOSTI, KOORDINATA
+
+        // SLEDECE STVARI SU TAKODJE BITNE, JER MISLIM DA SAM SE JA SUSRETAO SA TAKVOM 'PROBLEMATIKOM' U
+        // MOJIM PRIMERIMA
+
+    // NAIME KOORDINATE MOGU BITI DECIMALNI BROJEVI (ILI KAKO SU U CLANKU NAZVANI: 'DECIMAL FRACTIONS')
+    // TO JE, NAIME NORMALNO, JER INTERNALLY, BROWSER IH KORISTI ZA KALKULACIJE
+    // NE MORAM DA IH ZAOKRUZUJEM (STO SAM JA RANIJE POGRESNO RADIO METODOM Math.round), KADA IH
+    // DODELJUJEM KAO VREDNOSTI CSS-A, ODNOSNO KAO VREDNOST     style.position.top/left PROPERTIJA
+    // BROWSER SE, DAKLE NE ZAMERA, POMENUTE FRACTIONE
+
+    // KOORDINATE, MOGU BITI NEGATIVNE, U SLUCAJU KADA JE STRANICA SCROLLED NA TAKAV NACIN, DA JE DEO
+    // ELEMENTA VIDLJIV, A DRUGI DEO NEVIDLJIV; ODNOSNO JEDAN DEO JE U BROWSER-OVOM WINDOW-U, DOK DRUGI
+    // DEO ELEMENTA, NIJE U BROWSER-OVOM WINDOW-U
+
+    // U SLUCAJU BROWSER-A, KAO STO JE CHROME, POMENUTI OBJEKAT, POVRATNA VREDNOST, getBoundingClientRect 
+    // METODE, OBEZBEDJUJE I    width   I   heigh   (REC JE NARAVNO O   offsetWidth/Height)
+    // KOJI SE MOGU I IZRACUNATI NA SLEDECI NACIN (AKO NISU OBEZBEDJENI U DRUGIM BROWSER-IMA, KA DEO
+    // POVRATNE VREDNOSTI, POMENUTE METODE):      offsetWidth = right - left       
+    //                                            offsetHeight = bottom - top
+
+// ONO STO MORAM RECI JESTE DA SE
+//          right   I   bottom              RAZLIKUJU OD ISTOIMENIH CSS PROPERTIJA
+// AKO UPOREDJUJEM WINDOW KOORDINATE SA NASPRAM CSS POZICIONIRANJA, VIDECU DA POSTOJE OCIGLEDNE SLICNOSTI
+// SLEDECIM:
+        //      position: fixed;
+    // POZICIONIRANJE ELEMENTA JE TAKODJE RELATIVNO NA VIEWPORT
+// ALI U CSS-U,      right       PROPERTI, ZNACI RAZMAK OD DESNE IVICE, A        bottom      PROPERTI
+// ZNACI RAZMAK OD DONJE IVICE
+// ALI TAKAV NIJE SLUCAJ SA JAVASCRIPTOM; ODNOSNO SVE WINDOW KOORDINATE SU KOORDINATE SE RACUNAJU OD 
+// GORNJEG LEVOG UGLA, UKLJUCUJUCI      I   bottom      I       right       KOORDINATU
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU SE POZABAVITI, JEDNOM METODOM, KOJU SAM, KONKRETNO KORISTIO RANIJE, KAKO BI UCINO JEDAN ELEMENT
+// DROPPABLE-IM
+// REC JE O METODI                  document.elementFromPoint(x, y)
+
+// OVA METODA RETURN-UJE, MOST NESTED ELEMENT, U KOJEM SE NALAZE SPECIFICIRANE WINDOW KOORDINATE (x  I  y)
+// KREIRACU SADA PRIMER, A CILJ MI JE DA DEFINISEM DA SE KLIKOM NA JEDNO DUGME, ALERT-UJE
+// ELEMENT, ODNOSNO IME NJEGOVOG TAGA,
+// A TAJ ELEMENT TREBA DA BUDE ONAJ ELEMENT, KOJI SE TRENUTNO NALAZI NA CENTRU VIEWPORT-A
+
+const dugme_html = `
+    <button class="for_center">Show what is at center of window</button>
+`;
+
+document.querySelector('.for_center').addEventListener('mousedown', function(ev){
+    const centerX = document.documentElement.clientWidth/2;
+    const centerY = document.documentElement.clientHeight/2;
+
+    alert(
+        document.elementFromPoint(centerX, centerY).className ||
+        document.elementFromPoint(centerX, centerY).id ||
+        document.elementFromPoint(centerX, centerY).nodeName
+    );
+});
+//DAKLE, POSTO METODA KORISTI WINDOW KOORINATE, KOJI CE SE ELEMENT NALAZITI NA TIM KOORDINATMA, ZAVISI OD
+//TRENUTNE SCROLLING POZICIJE
+// ZA       OUT OF WINDOW       KOORDINATE; POMENUTA METODA CE RETURN-OVATI            null
+
+// DAKLE, AKO JE NEKA OD ARGUMENT KOORDINATA NEGATIVNA, METODA CE RETURN-OVATI         null
+// I AKO NEKA OD KOORDINATA EXCEEDES (PRELAZI) WINDOW-OV HEIGHT ILI WIDTH, METODA CE RETURN-OVATI     null
+
+// TIPICNI ERROR, KOJI SE MOZE DOGODITI, AKO NE PROVERIM, DA LI SU KOORDINATE UNUTAR WINDOW-A
+    //      const elem = document.elementFromPoint(x, y);
+    //      AKO SE  DOGODI DA JE, JEDNA OD KOORDINATA IZVAN WINDOW-A, ONDA      elem === null
+    //      elem.style.background = '';             // Error!
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////         KORISCENJE WINDOW KOORDINATA ZA POTREBE      position: fixed;        //////////////////
+
+// NAJCESCE MENI TREBAJU KORDINATE DA POZICIONIRAM NESTO
+// U CSS-U, DA BI POZICIONIRAO ELEMENT, RELATIVNO NA VIEWPORT, KORISTIM
+//                                                                          position: fixed;
+//                                                                       ZAJEDNO SA     left/top
+//                                                                                 ILI  right/bottom
+
+//MOGU KORISTITI getBoundingClientRect DA BI DOBIO KOORDINATE ELEMENTA, I KAKO BI POKAZAO NESTO BLIZU NJEGA
+
+// ODRADICU JEDAN PRIMER
+// SLEDECA FUNKCIJA, KOJU CU KREIRATI         pokaziPorukuIspod(elem, html)
+// TREBA DA POKAZUJE PORUKU ISPOD ELEMENTA
+// A KAO STO VIDIM, ARGUMENTI, KOJI JOJ SE DODAJU JESU,     ELEMENT     I        PORUKA
+
+const prikaziPorukuIspod = function(el, html){
+    const elementWindowCoords = el.getBoundingClientRect();
+    const elementHeight = elementWindowCoords.height;
+
+    let messageDiv = document.createElement('div');
+    messageDiv.innerHTML = html;
+
+    const halfElementWidth = elementWindowCoords.width/2;
+
+    // ZELIM DA MEESAGE BUDE SIROK, ONOLIKO KOLIKA MU JE I SADRZINA (BITNO JE DA TO DEFINISEM PRE NEGO STO
+    //  BUDEM ZELEO DA PRISTUPIM SIRINI POMENUTOG MESSAGE ELEMENTA (A ZNAM DA JE BLOCK ELEMENTI ZAUZMU
+    // CELU DOSTUPNU SIRINU))
+    // ISPROBACU I              cssText         SETTER, KOJI NSAM DUGO KORISTIO
+    messageDiv.style.cssText = 'display: inline-block;';
+
+    // A PRE NEGO STO PRISTUPIM GEOMETRIJSKIM VREDNOSTIMA, JEDNOG ELEMENTA, JASNO JE DA ON MORA BITI
+    // ZAKACEN U DOM DRVO
+    document.body.appendChild(messageDiv);
+
+    const halfMessageWidth = messageDiv.offsetWidth/2;
+    const elementLeftCoord = elementWindowCoords.left;
+
+    let left;
+
+    if(elementLeftCoord < halfMessageWidth){
+        left = 8;
+    }else{
+        left = halfElementWidth + elementLeftCoord - halfMessageWidth;
+    }
+
+    // PROBAO SAM DA KORISTIM    style.cssText     SETTER, KAKO BI PODESIO CSS
+    // A POSTO, SAM VEC RANIJE PODESIO JEDAN INLINE STIL, ELEMENTU, ISKORISTIo SAM
+    //              addition assignment (+=)    OPERATOR    (KORISTIO SAM GA A NISAM NI ZNAO DA SE TAKO ZOVE)          
+    // KAKO BIH ZADRZAO TU VREDNOST OD RANIJE (display: inline-block)
+    
+    messageDiv.style.cssText += 
+        `position: fixed; left: ${left}px; top: ${elementWindowCoords.top + elementHeight + 2}px`; 
+
+    setTimeout(function(){
+        messageDiv.remove();
+        messageDiv = null;
+    }, 3800);
+
+}
+
+const neko_dugme_html = `
+    <button style="margin-left: 208px;" class="show_fixed">Show text</button>
+`;
+
+document.querySelector('.show_fixed').addEventListener('mousedown', function(ev){
+    prikaziPorukuIspod(ev.target, 'ovo je <b>ajovaska</b> tekst; tekst, koji je dugacak koji tekst blah');
+});
+
+// CODE se može modifikovati kako bi se prikazala poruka sa leve, desne strane, ispod, ZATIM PRIMENA CSS 
+// animacije ZA "fade it in" EFEKAT i tako dalje. To je lako, jer imamo sve koordinate i veličine elementa.
+// Ali obratite pažnju na važne detalje: kada se stranica pomera, poruka odlazi od dugmeta.
+// Razlog je očigledan: element poruke se oslanja na position: fixed, tako da ostaje na istom mestu prozora 
+// dok se stranica SCROLL-UJE;
+// Da bi to promenili, moramo koristiti      Document-BASED KOORDINATE       I       position: absolute
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                 Document KOORDINATE:         
+
+// Koordinate u RELATIVNE NA document POCINJU OD LEVOG GORNJEG UGLA documenta, ODNOSNO PAGE-A 
+// a ne od window-A
+// U CSS, koordinate prozora odgovaraju ZA  position:fixed DOK SU KORRDINATMA  dokumenat-A
+// ODGOVARAJU   position: absolute
+// Mi možemo da koristimo       position:absolute       I               top/left PROPERTIJE DA stavimo 
+// nešto na određeno mesto document-A, tako da ostaje tamo tokom listanja stranica
+// Ali prvo nam trebaju prave koordinate.
+// U CILJU JASNOCE, U NASTAVKU, OSLOVLJAVACU KOORDINATE WINDOWA SA      clientx      clientY                
+// I KOORDINATE document-A SA           pageX           pageY
+
+// AKO POGLEDAM JEDAN ELEMENT NA STRANICI:
+
+    // Kada STRANICA, NI MALO NIJE SCROLL-OVANA, KOORRDINATE  window-A   I KOORDINATE   document-A 
+    // su ustvari iste. ISTO TAKO, Njihove nulte tačke se tada podudaraju:
+
+    // AKO SCROLL-UJEM STRANICU,    clientX     I      clientY      SE MENJAJU, JER SU RELATIVNE
+    // NA window
+    // ALI          pageX       I       pageY       OSTAJU ISTE
+
+    // NARAVNO, AKO STRANICA, NIJE SCROLLOVANA HORIZONTALNO (STO JE OBICNO I SLUCAJ, JER SE NARAVNO
+    // IZBEGAVA BILO KAKVO POSTOJANJE HORIZONTALNOG SCROLL-OVANAJA), TADA VAZI      clientX === pageX
+
+// // //    PRISTUPANJE document-OVIM KOORDINATAMA
+// 
+// DA PRISTUPIM page, ODNOSNO document-OVIM KOORDINATAMA, POTRBNO JE SLEDECE
+        // window   KOORDINATE              (   getBoundingClientRect   )
+        // SCROLL KOORDINATE window-A       (   pageXOffset    pageYOffset)
+
+// DAKLE, ZNAJUCI POMENUTO, MOGU NAPISATI, OVAKO
+// 
+    //      const pageX = element.getBoundingClientRect.left + window.pageXOffset;
+    //      const pageY = element.getBoundingClientRect.top + window.pageYOffset;
+
+// NAIME, NE POSTOJI STANDARDNI METOD ZA DOBIJANJE document-OVIH KOORDINATA, NEKOG ELEMENTA, ALI JE LAKO
+// NAPISATI, NACIN, STO SAM MOGAO VIDETI IZ GORE PRIKAZANOG
+
+// MOGAO SAM NAPISATI I FUNKCIJU, KOJA PRONALAZI, ODNOSNO IZRACUNAVA    document    KOORDINATE ELEMENTA
+
+const getElemDocCoords = function(el){
+    const boundingOb = el.getBoundingClientRect();
+    return {
+        left:  window.pageXOffset +boundingOb.left,
+        top: window.pageYOffset + boundingOb.top 
+    };
+};
+
+// PRISTUPICU NEKOM ELEMENTU (DUGME IZ PROSLOG PRIMERA), I UZ POMOC GORNJE FUNKCIJE, PRONACI CU NJEGOVE
+// DOCUMENT KOORDINATE
+
+console.log(      getElemDocCoords(document.querySelector('.show_fixed'))      );
+// I STAMPAO SE U KONZOLI OBJEKAT, SA TRAZENIM PAGE, ODNOSNO document KOORDINATAMA ELEMENTA
+// SA OVIM PRIMEROM, ZAVRSIO SAM SA BELESKAMA, VEZNAIM ZA KOORDINATA
+// URADICU SADA JOS PRIMERA, KOJE SE TICU KOORDINATA
 
 
 //////////////////////////////////////////////////////////////////////
