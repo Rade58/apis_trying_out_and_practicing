@@ -13,5 +13,10 @@
     overflow: auto;
 }
 
-
+.neki_div_examp {
+    width: 50%;
+    height: 2000px;
+    overflow: scroll;
+    border: olive solid 8px;
+}
 

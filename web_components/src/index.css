@@ -917,7 +917,7 @@ div.tomato_zada, div.olive_zada {
     color: lightgreen;
     color: #3a9b83;
     color: #f5c9c5;
-    cursor: grab;
+    cursor: arrow;
     overflow: unset;
 }
 
@@ -1067,3 +1067,55 @@ div.tomato_zada, div.olive_zada {
     bottom: -24px;
 }
 
+.ayohuv {
+    border: tomato solid;
+    border-right-width: 20px;
+    border-left-width: 10px;
+    border-top-width: 28px;
+    border-bottom-width: 14px;
+    box-sizing: content-box;
+    padding: 20px;
+    width: 78%;
+    height: 28vw;
+    overflow: auto;
+}
+
+
+.kontejner_teksta blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 0 0 0 100px;
+    padding: .5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+    display: inline-block;
+    white-space: pre;
+}
+
+.kontejner_teksta blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: .1em;
+    margin-right: .25em;
+    vertical-align: -.4em;
+}
+
+
+.kontejner_teksta_za_abs blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 0 0 0 100px;
+    padding: .5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+    display: inline-block;
+    white-space: pre;
+}
+
+.kontejner_teksta_za_abs blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: .1em;
+    margin-right: .25em;
+    vertical-align: -.4em;
+}

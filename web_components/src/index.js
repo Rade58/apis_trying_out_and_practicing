@@ -13192,7 +13192,10 @@ console.log(
 //
 ////////MEDJUTIM, NE MORAM SE BAVITI POSEBNIM PERTICULARITIES-IMA, UOPSTE; JER POSTOJE POSEBNI PROPERTIJI
 
-//                      window.pageXOffset          window.pageYOffset
+//                      window.pageXOffset         window.pageYOffset
+
+// MEDJUTIM, ZA OVE PROPERTIJE, RECENO JE DA SU ALIASI, ZA SLEDECE:   window.scrollX     window.scrollY  
+
 // DAKLE, NAJVAZNIJE MI JE DA OVI window-OVI, PROPERTIJI FUNKCIONISU
 
 // SADA CU PROVERITI, SVE POMENUTE, PROPERTIJE
@@ -13650,10 +13653,15 @@ document.querySelector('.show_fixed').addEventListener('mousedown', function(ev)
 const getElemDocCoords = function(el){
     const boundingOb = el.getBoundingClientRect();
     return {
-        left:  window.pageXOffset +boundingOb.left,
-        top: window.pageYOffset + boundingOb.top 
+        left:  Math.max(window.pageXOffset, document.documentElement.scrollLeft) + boundingOb.left,
+        top: Math.max(window.pageYOffset, document.documentElement.scrollTop) + boundingOb.top 
     };
 };
+
+// ZASTO SAM KORISTIO TOLIKE VREDNOSTI DA BIH NASO SCROLL WINDOWA, JESTE STO SE TO PREPORUCUJE
+// TO RADIM SAMO NA OSNOVU SLEDECE PREDPOSTAVKE, KOJA MI NIRE RAZUMLJIVA, A KOJU MORAM DODATNO PROVERITI
+//              "The "Getting document coordinates" part that only uses pageXOffset, pageYOffset is not
+//              universal as it does not account for nested scrollable regions."
 
 // PRISTUPICU NEKOM ELEMENTU (DUGME IZ PROSLOG PRIMERA), I UZ POMOC GORNJE FUNKCIJE, PRONACI CU NJEGOVE
 // DOCUMENT KOORDINATE
@@ -13663,7 +13671,403 @@ console.log(      getElemDocCoords(document.querySelector('.show_fixed'))      )
 // SA OVIM PRIMEROM, ZAVRSIO SAM SA BELESKAMA, VEZNAIM ZA KOORDINATA
 // URADICU SADA JOS PRIMERA, KOJE SE TICU KOORDINATA
 
+// ZA PRVI OD PRIMERA, JA TREBA DA NAPISEM FUNKCIJU, KOJA PRONALAZI WINDOW
+            // KOORDINATE, LEVOG-GORNJEG 'SPOLJASNJEG COSKA' ELEMENTA    (DAKLE DO, SPOLJASNJE STRANE
+            //                                                              BORDER-A ELEMENTA)
+            // KOORDINATE, LEVOG-GORNJEG 'UNUTRASNJEG COSKA' ELEMENTA    (DO UNUTRASNJE STRANE
+            //                                                               BORDER-A ELEMENTA)
+            // KOORDINATE, DESNOG-DONJEG 'UNUTRASNJEG COSKA' ELEMENTA    (DO UNUTRASNJE STRANE
+            //                                                               BORDER-A ELEMENTA)
+            // KOORDINATE, DESNOG-DONJEG 'SPOLJASNJEG COSKA' ELEMENTA    (DO SPOLJASNJE STRANE
+            //                                                               BORDER-A ELEMENTA)
+         
+const coordsOfSomeCorners = function(el){
+    const bounRect = el.getBoundingClientRect();
+    console.log(bounRect);
 
+
+    return {
+        topLeftCorners: {
+            outer: {left: bounRect.left, top: bounRect.top},
+            inner: {left: bounRect.left + el.clientLeft, top: bounRect.top + el.clientTop}
+        },
+        bottomRightCorners: {
+            outer: {left: bounRect.right, top: bounRect.bottom},
+            inner: {
+                left: bounRect.right - (el.offsetWidth - el.clientWidth - el.clientLeft),
+                top: bounRect.bottom - (el.offsetHeight - el.clientHeight - el.clientTop)
+            },
+            // DRUGI NACIN ZA BOTTOM RIGHT CORNERS:
+            // SLEDECE VREDNOSTI, KOJE NA OVAJ NACIN IZRACUNAM BICE VECE ZA JEDAN PIKSEL OD
+            // PREDHODNIH (NE ZNAM ODAKLE TAJ JEDAN PIKSEL)
+            innerSec: {
+                left: bounRect.left + el.clientLeft + el.clientWidth,
+                top: bounRect.top + el.clientTop + el.clientHeight 
+            },
+            outerSec: {
+                left: bounRect.left + el.offsetWidth,
+                top: bounRect.top + el.offsetHeight
+            }
+        }
+    };
+};
+
+const html_koji_cu_koristiti_za_ovaj_primer = `
+<div class="ayohuv">
+    In the 16th century, Christian missionaries from Spain and Portugal first encountered
+    indigenous South Americans using ayahuasca; their earliest reports described it as "the 
+    work of the devil". In the 20th century, the active chemical constituent of B.
+    yahuasca became more widely known when the McKenna brothers published 
+    their experience in the Amazon in True Hallucinations. Dennis McKenna later studied pharmacology,
+    botany, and chemistry of ayahuasca and oo-koo-he, which became the subject of his master's thesis.
+    Richard Evans Schultes allowed for Claudio Naranjo to make a special journey by canoe up the Amazon
+    River.
+</div>
+`;
+
+const css_ovog_prim = `
+    .ayohuv {
+        border: tomato solid;
+        border-right-width: 20px;
+        border-left-width: 10px;
+        border-top-width: 28px;
+        border-bottom-width: 14px;
+        box-sizing: content-box;
+        padding: 20px;
+        width: 78%;
+        height: 28vw;
+        overflow: auto;
+    }
+`;
+
+window.setTimeout(function(){   //setTimeout je tu samo zbog ostalih asinhronih funkcija, pozvanih ranije
+
+    const ayohuvElement = document.querySelector('.ayohuv');
+    // POSTO IMAM STRANICU SA EKSTENZIVNIM SADRZAJEM, I KAKO SAM KORISTIO RAZNE FUNKCIJE, KOJE SU
+    // MOZDA UTICALE NA SCROLL, JA CU PRVO DEFINISATI DA SE STRANICA SCROLLUJE, TAKO DA MOJ ELEMENT
+    // BUDE VIDLJIV (KORISTICU DVE METODE KOJ SCROL-UJU STRANICU)
+
+    ayohuvElement.scrollIntoView(false);
+
+    window.scrollBy(0, 180);
+
+    // SADA KADA JE MOJ ELEMENT VIDLJIV, I KADA JE ZAUZEO POLOZAJ
+    // POZVACE SE MOJA FUNKCIJA     coordsOfAllcorners
+    console.log(    coordsOfSomeCorners(ayohuvElement)    );
+
+    // U CILJU PROVERE, NA IZBRANI ELEMENT, KACIM onmousedown HANDLER, KOJI CE STAMPATI
+    // CLIENT KOORDINATE KURSORA
+    ayohuvElement.onmousedown = function(ev){
+        console.log(ev.clientX, ev.clientY);
+    }
+    //DA KURSOR BUDE STRELICA, I KADA PRELAZI PREKO TEKSTA
+    ayohuvElement.style.cursor = 'default';
+
+}, 3800);
+
+// PROVERIO SAM I, MOJA FUNKCIJA JE TACNO NASLA KOORDINATE, ZA ELEMENT, ZA KOJI JE TRAZILA, POMENUTE 
+// KOORDINATE
+
+// POSTO U OVOM PRIMERU POSTOJI SCROLLBAR, 'UNUTRASNJI DONJI DESNI COSAK' JE ONAJ COSAK, DO UNUTRASNJEG
+// DELA SCROLLBAR-A (POSTO JE KAO STO ZNAM OD RANIJE, SCROLLBAR DEBLJINA, USTVARI DEO width-A ELEMENTA)
+
+// NECU SE BAVITI TIME, KAKO DA OD OVIH VREDNOSTI ODUZMEM SCROLLBAR DEBLJINU (ZA TO MOGU DA ODEM NA PRIMER
+// GDE SAM PRONALAZIO SCROLLBAR DEBLJINI I TAJ METOD UPOTREBIM OVDE (DVA NACINA DA IZRACUNAM SCROLLBAR
+// DEBLJINU:        1) DA RENDERUJEM NOVI ELEMENT (NE VEZAN ZA GORNJI ELEMENT) BEZ BORDRA ...
+//                  2) DA KORISTIM      direction: rtl   I    direction: ltr     I U OBA SLUCAJA IZMERIM
+//                     IZMERIM      element.clientLeft  ;RAZLIKA IZMEDJU TE DVE VREDNOSTI DACE DEBLJINU 
+//                     SCROLLBARA 
+
+//////////////////////
+// SLEDECIM PRIMER-OM, SAM SE BAVIO I RANIJE (BAR DO ODREDJENOG NIVOA); NAIME REC JE OPET O TOOLTIP-U
+// U OVOM PRIMERU, NAIME TREBAM KREIRATI FUNKCIJU       positionAt    , KOJA TREBA DA IMA TRI PARAMETRA:
+//              anchor      (ODNOSI SE NA ELEMENT, KOJI 'OBJASNJAVA TOOLTIP')
+//              position    (STRING KOJI OBJASNJAVA GDE TREBA TOOLTIP DA SE POZIVIONIRA, U ODNOSU NA anchor) 
+//                                                             (MOGUCE VREDNOSTI: "top", "bottom", "right")
+//              tooltip     (TO JE ELEEMNT, KOJI SE POZICIONIRA)
+// I TREBA DA KREIRAM FUNKCIJU          showNote            U KOJOJ TREBA BITI POZVANA      positionAt
+// showNote FUNKCIJA, TREBA DA IMA TRI PARAMETRA:
+//                                                  anchor
+//                                                  position
+//                                                  html    (OVAJ PARAMETAR SE ODNOSI NA innerHTML
+//                                                          KOJIM TREBAM 'NAHRANITI' TOOLTIP)
+// 
+// NAIME, U SLUCAJU OVOG PRIMERA NECE BITI DEFINISANOG NIKAKVOG PONASANJA onmousemove I TAKO DALJE
+// JER CILJ MI JE SAMO DA PRIKAZEM POZICIONIRANJE
+// NAIME, PREDVIDJENO JE DA U OVOM PRIMERU BUDU TRI TOOLTIPA, JEDAN TREBA DA BUDE PRILJUBLJEN UZ GORNJU,
+// DRUGI UZ DONJU, A TRECI UZ DESNU STRANU ELEMENTA
+// POZICIONIRANJE KOJE U OVOM SLUCAJU TREBA UPOTREBITI JESTE FIXED
+// (DAKLE CILJ OVOG PRIMERA JE SAMO POZICIONIRANJE ELEMENATA UZ UPOTREBU KOORDINATA, NEKOM NAREDNOM
+// PRILIKOM KORISTECI OVO ZNANJE, MOGU SE POZABAVITI KREIRANJEM 'PAMETNIJEG TOOLTIPA', A SADA, U CILJU
+// USTEDE VREMENA TO NECU RADITI)
+
+const positionAt = function(anchor, position, tooltip){
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    
+    if(position === "top"){
+        tooltip.style.left = anchorRect.left + "px";
+        tooltip.style.top = anchorRect.top - tooltipRect.height + "px";
+        return
+    }
+
+    if(position === "bottom"){
+        tooltip.style.left = anchorRect.left + "px";
+        tooltip.style.top = anchorRect.bottom + "px";
+        return;
+    }
+
+    if(position === "right"){
+        tooltip.style.left = anchorRect.right + "px";
+        tooltip.style.top = anchorRect.top + "px";
+        return;
+    }
+};
+
+const showNote = function(anchor, position, html){
+    const element = document.createElement('div');
+    //OVO STILIZOVANJE JE MOGLO U CSS FAJLU, PUTEM CSS KLASEM,ALI POCEO SAM OVAKO DA PISEM, PA NECU NISTA
+    // MENJATI U CILJU USTEDE VREMENA
+    element.style.display = "inline";
+    element.style.border = "olive solid 2px";
+    element.style.background = "white";
+    element.style.position = "fixed";
+    element.style.zIndex = 1000;
+    element.style.padding = "5px";
+    element.innerHTML = html;
+    document.body.appendChild(element);
+
+    // DEFINISEM, DA SE TOOLTIP UKLONI NAKON NEKOLIKO SEKUNDI OD INSERTIONA, U body, 
+    // JER KADA BUDEM DEFINISAO I ISPITAO, OVAJ PRIMER, ZELIM DA SE UKLONE SVI
+    // TOOLTIPOVI, KOJI CE SMETATI, JER CE BITI FIXED U VIEWPORT-U
+    window.setTimeout(()=>{
+        element.remove();
+    }, 3800);
+
+    // POZIVANJE positionAt
+    positionAt(anchor, position, element);
+
+};
+
+// OVO CE BITI HTML, KOJI MI JE POTREBAN U PRIMERU
+
+const html_za_primer_tooltipas = `
+<div class="kontejner_teksta">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <blockquote>
+        Teacher: Why are you late?
+        Student: There was a man who lost a hundred dollar bill.
+        Teacher: That's nice. Were you helping him look for it?
+        Student: No. I was standing on it.
+    </blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+</div>
+ `;
+
+const css_zaprim_tooltip = 1/*`
+
+    TREBAO BI SE POZABAVITI OVAKVIM CSS-OM, ODNOSNO NAUCITI IPODSETITI SE MALO BOLJE PSEUDO ELEMENATA
+    ALI I POZBAVITI SE PROPERTIJIMA KAO STO SU  quotes I white-space 
+
+    .kontejner_teksta blockquote {
+        background: #f9f9f9;
+        border-left: 10px solid #ccc;
+        margin: 0 0 0 100px;
+        padding: .5em 10px;
+        quotes: "\201C""\201D""\2018""\2019";
+        display: inline-block;
+        white-space: pre;
+    }
+
+    .kontejner_teksta blockquote:before {
+        color: #ccc;
+        content: open-quote;
+        font-size: 4em;
+        line-height: .1em;
+        margin-right: .25em;
+        vertical-align: -.4em;
+    }
+
+`;*/;
+
+const mojBlockquote = document.querySelector('.kontejner_teksta blockquote');
+
+setTimeout(function(){
+
+    // OPET SAM MORAO DA SCROLLUJEM STRANICU, KAKO BI MI SE ELEMENT NASO U VIEWPORT-U (ZBOG OSTALE SADRZINE
+    // OVOG DOKUMENTA)
+    mojBlockquote.scrollIntoView(false);
+    window.scrollBy(0, 280);
+
+    showNote(mojBlockquote, "bottom", "tekst blahala");
+    showNote(mojBlockquote, "right", "tekst blahala");
+    showNote(mojBlockquote, "top", "tekst blahala");
+}, 8000);
+
+// SLEDECI PRIMER TREBA DA BUDE, GOTOVO ISTI, KAO I PROSLI, SAMO STO UMESTO window KOORDINATA
+// TRABA DA KORISTIM document KOORDINATE, ODNOSNO POTREBNO JE DA KORISTIM APSOLUTNO POZICIONIRANJE
+// JEDINO STO CU U OVOM PRIMERU DODATI JOS JEDAN TOOLTIP, KOJI CE SE NALAZITI "U ANCHOR-U", ODNOSNO
+// TOOLTIP-OVA LEVA I GORNJA IVICA, TREBAJU DA SE POKLAPAJU SA ANCHOR-OVOM LEVOM I GORNJOM IVICOM
+// NARAVNO, KADA KAZEM IVICE, MISLIM NA SPOLJASNJE LINIJE BORDER-A
+
+const placeAt = function(anchor, position, tooltip){
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    // U NASTAVKU CU KORISTITI      window.scrollX          window.scrollY          
+    // ISTO TAKO CU KORISTITI  I    window.pageXOffset      window.pageYOffset
+    // IAKO JE REC O ISTIM VREDNOSTMA (ODNOSNO DVE DRUGE, POMENUTE KOORDINATE SU ALIAS-I, PRVIH)
+    const windowCoords = {
+        left: Math.max(window.scrollX, window.pageXOffset, document.documentElement.scrollLeft),
+        top: Math.max(window.scrollY, window.pageYOffset, document.documentElement.scrollTop)
+    }
+
+    // console.log(window.scrollX, window.pageXOffset, document.documentElement.scrollTop);
+    
+    // DAKLE SAMO VREDNOSTIMA IZ PREDHODNOG PRIMERA DODAJE KOORDINATE window-A, KOJE SAM GORE IZRACUNAO
+    // I DEFINISAO DA BUDU VREDNOSTI PROPERTIJA OBJEKTA     windowCoords
+    if(position === "top"){
+        tooltip.style.left = windowCoords.left + anchorRect.left + "px";
+        tooltip.style.top = windowCoords.top + anchorRect.top - tooltipRect.height + "px";
+        return
+    }
+
+    if(position === "bottom"){
+        tooltip.style.left = windowCoords.left + anchorRect.left + "px";
+        tooltip.style.top = windowCoords.top + anchorRect.bottom + "px";
+        return;
+    }
+
+    if(position === "right"){
+        tooltip.style.left = windowCoords.left + anchorRect.right + "px";
+        tooltip.style.top = windowCoords.top + anchorRect.top + "px";
+        return;
+    }
+
+    // TOOLTIP KOJI TREBA DA BUDE POZICIONIRAN UNUTAR ANCHORA, NA GORE POMENUTI NACIN
+    tooltip.style.left = windowCoords.left + anchorRect.left + "px";
+    tooltip.style.top = windowCoords.top + anchorRect.top + "px";
+
+};
+
+const showMessage = function(anchor, position, html){
+    const element = document.createElement('div');
+    //OVO STILIZOVANJE JE MOGLO U CSS FAJLU, PUTEM CSS KLASEM,ALI POCEO SAM OVAKO DA PISEM, PA NECU NISTA
+    // MENJATI U CILJU USTEDE VREMENA
+    element.style.display = "inline";
+    element.style.border = "olive solid 2px";
+    element.style.background = "white";
+    // DAKLE, POZICIONIRANJE TREBA DA BUDE APSOLUTNO
+    element.style.position = "absolute";
+    element.style.zIndex = 2000;
+    element.style.padding = "5px";
+    element.innerHTML = html;
+    document.body.appendChild(element);
+
+    placeAt(anchor, position, element);
+
+};
+
+
+const html_za_primer_to0ltipas= `
+<div class="kontejner_teksta_za_abs">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <blockquote>
+        Teacher: Why are you late?
+        Student: There was a man who lost a hundred dollar bill.
+        Teacher: That's nice. Were you helping him look for it?
+        Student: No. I was standing on it.
+    </blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+</div>
+`;
+
+const css_zaprim_tool = 2/*`
+
+    TREBAO BI SE POZABAVITI OVAKVIM CSS-OM, ODNOSNO NAUCITI IPODSETITI SE MALO BOLJE PSEUDO ELEMENATA
+    ALI I POZBAVITI SE PROPERTIJIMA KAO STO SU  quotes I white-space 
+
+    .kontejner_teksta_za_abs blockquote {
+        background: #f9f9f9;
+        border-left: 10px solid #ccc;
+        margin: 0 0 0 100px;
+        padding: .5em 10px;
+        quotes: "\201C""\201D""\2018""\2019";
+        display: inline-block;
+        white-space: pre;
+    }
+
+    .kontejner_teksta_za_abs blockquote:before {
+        color: #ccc;
+        content: open-quote;
+        font-size: 4em;
+        line-height: .1em;
+        margin-right: .25em;
+        vertical-align: -.4em;
+    }
+
+`;*/;
+
+const mojBlockquoteDrugi = document.querySelector('.kontejner_teksta_za_abs blockquote');
+
+setTimeout(function(){
+    // OPET SAM MORAO DA SCROLLUJEM STRANICU, KAKO BI MI SE ELEMENT NASO U VIEWPORT-U (ZBOG OSTALE SADRZINE
+    // OVOG DOKUMENTA)
+    mojBlockquote.scrollIntoView(false);
+    window.scrollBy(0, 280);
+
+    showMessage(mojBlockquoteDrugi, "bottom", "tekst blahala");
+    showMessage(mojBlockquoteDrugi, "right", "tekst blahala");
+    showMessage(mojBlockquoteDrugi, "top", "tekst blahala");
+    // ZA TOOLTIP, KOJI SE NALAZI UNUTAR ELEMENTA
+    showMessage(mojBlockquoteDrugi, "nije bitno", "tekst blahala");
+
+}, 10000);
+
+// I OVAJ PRIMER SAM USPESNO DEFINISAO, ODNOSNO ELEMENTI SU BILI POZICIONIRANI, KAKO SAM ZELEO, STO ZNACI
+// DA SU KOORDINATE, PRAVILNO UPOTREBLJENE
+
+// POSTO SAM SE POZABVIO SVIM KOORDINATAMA I GEOMETRIJOM VEZNAOM ZA ELEMENTE, ALI I ZA BROWSER-OV WINDOW,
+// VRATICU SE, NA DEO CLANAKA KOJI POKRIVAJU EVENT-OVE; I TAMO CU SE POZABAVITI CLANKOM: KOJI SE ODNOSI
+// NA SCROLLING
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////          SCROLLING:        'scroll'  EVENT           /////////////////////////
+/////////////////////////                                                       /////////////////////////
+
+// SCROLL EVENT-OVI DOZVOLJAVAJU REACTTION NA STRANICI, ILI ELEMENTU, KOJI SE SCROLL-UJU.
+// POSTOJE MNOGO DOBRIH STVARI, KOJE SE U TOM SLUCAJU MOGU URADITI
+// NA PRIMER SLEDECE:
+//                            show/hide     DODATNE KONTROLE ILI INFORMACIJE, U ZAVISNOSTI, 
+//                                          GDE JE KORISNIK U SOKUMENTU                
+
+//                            load-OVANJE   VISE PODATAKA KADA KORISNIK SCROLLS DOWN DO KRAJA STRANICE
+
+// SADA CU KREIRATI MALU FUNKCIJU, KOJA POKAZUJE (STAMPA U KONZOLI) TRENUTNO SCROLL (TAKO PISE U CLANKU),
+// A JA MISLIM DA JE, KOREKTNIJE RECI DA TA, ODNOSNO SLEDECA FUNKCIJA POKAZUJE CURRENT      scrollTop
+// BROWSER-OVOG window-A TA FUNKCIJA JE, NARAVNO EVENT HANDLER, KOJI SE KACI ZA window, ZA SLUCAJ
+//  scroll      EVENT-A
+
+window.addEventListener('scroll', function(ev){
+    this.console.log(Math.max(
+        document.documentElement.scrollTop,
+        ev.currentTarget.pageYOffset,
+        ev.currentTarget.scrollY
+    ));
+});
+// kao sto mogu videti u obimu funkcije, mal osam se poigra osa code-om, koristeci
+//      this   I    event.currentTarget   (JASNO JE DA SE this KEYWORD, event.currentTarget PROPERTI
+//                                         ODNOSE NA window)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
