@@ -1112,10 +1112,21 @@ div.tomato_zada, div.olive_zada {
 }
 
 .kontejner_teksta_za_abs blockquote:before {
-    color: #ccc;
+    color: #fff;
     content: open-quote;
     font-size: 4em;
     line-height: .1em;
     margin-right: .25em;
     vertical-align: -.4em;
 }
+
+
+.infinite_scrollable {
+    box-sizing: content-box;
+    width: 68%;
+    height: 48vw;
+    padding: 18px;
+    border: olive solid 4px;
+    overflow: auto;
+}
+

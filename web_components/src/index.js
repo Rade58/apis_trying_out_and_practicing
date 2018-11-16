@@ -14041,6 +14041,8 @@ setTimeout(function(){
 // POSTO SAM SE POZABVIO SVIM KOORDINATAMA I GEOMETRIJOM VEZNAOM ZA ELEMENTE, ALI I ZA BROWSER-OV WINDOW,
 // VRATICU SE, NA DEO CLANAKA KOJI POKRIVAJU EVENT-OVE; I TAMO CU SE POZABAVITI CLANKOM: KOJI SE ODNOSI
 // NA SCROLLING
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////          SCROLLING:        'scroll'  EVENT           /////////////////////////
 /////////////////////////                                                       /////////////////////////
@@ -14059,15 +14061,264 @@ setTimeout(function(){
 //  scroll      EVENT-A
 
 window.addEventListener('scroll', function(ev){
-    this.console.log(Math.max(
+    /* this.console.log(Math.max(
         document.documentElement.scrollTop,
-        ev.currentTarget.pageYOffset,
-        ev.currentTarget.scrollY
-    ));
+       ev.currentTarget.pageYOffset,                    ISKOMENTARISANO JE SAMO ZBOG TOGA STO
+        ev.currentTarget.scrollY                        REZULTATI PREPLAVILI KONZOLU, KOJA MI TREBA
+    )); */                                              /*STO CISTIJA ZA SLEDECE PRIMERE*/
 });
 // kao sto mogu videti u obimu funkcije, mal osam se poigra osa code-om, koristeci
 //      this   I    event.currentTarget   (JASNO JE DA SE this KEYWORD, event.currentTarget PROPERTI
 //                                         ODNOSE NA window)
+
+// EVENT TIPA 'scroll' RADI I ZA OBOJE, I ZA    window      , I ZA      scrollable element
+// 
+///////////////////////////////////////SPRECAVANJE     SCROLLING-A//////////////////////
+//                                          (PREVENT SCROLLING)
+
+// KAKO UCINITI NESTO NESTO     UNSCROLLABLE-IM ?   NE MOZE SE SPRECITI SCROLLING, UPOTREBOM
+                                            //      event.preventDefault() , U      onscroll    LISTENER-U
+                                            //      ZATO STO SE EVENT, TIPA 'scroll' TRIGERUJE, NAKON STO
+                                            //      SE SCROLLING DOGODIO
+// ALI MOZE SE SPRECITI SCROLLING, PRIMENOM   preventDefault-A   NA EVENTU, KOJI JE PROUZROKOVAO SCROLLING
+// NA PRIMER ZA
+                    //      wheel   EVENT  (ODNOSNO     MOUSE WHEEL ROLL)  (SCROLLING TOUCHPAD GENERISE
+                    //                                                       SCROLLING, TAKODJE)
+
+                    //      keydown EVENT   U SLUCAJU   pageUP      I       pageDown    DUGMADI
+
+// PONEKAD TO MOZE POMOCI, ALI POSTOJI VISE NACINA ZA SCROLLING, TAKO DA JE POPRILICNO TESKO HANDLE-OVATI,
+// SVE NJIH; TAKO DA JE POUZDANIJE KORISTITI CSS, KAKO BI UCINO NESTO UNSCROLLABLE-IM  (overflow PROPERTI)
+
+// SADA CU ODRADITI, NEKOLIKO PRIMERA, U KOJIMA SE UPOTREBLJAVA   onscrol, ODNOSNO  'scroll'    EVENT
+
+// PRVI PRIMER SE ODNOSI NA 'NEPREKIDNU STRANICU' (U OVOM SLUCAJU, TO CE BITI ELEMENT)
+// NAIME, CILJ JE DA KADA KORISNIK, SCROLLUJE DO DNA ELEMENTA, DA SE TDA, APPEND-UJE TRENUDTNI VREME-DATUM
+// (TAKO DA BI KORISNIK, MOGAO SCROLL-OVATI JOS)
+
+const someOnScrollHandler = function(ev){
+    const el = ev.currentTarget;
+    const currentScrollTop = el.scrollTop;
+    const currentScrollHeight = el.scrollHeight;
+
+    console.log(currentScrollTop + el.clientHeight, currentScrollHeight)
+
+    if((currentScrollTop + el.clientHeight) === currentScrollHeight){
+        el.appendChild(document.createElement('hr'));
+        el.appendChild(document.createTextNode(`${new Date()}`));
+    }
+}
+
+//DEFINISACU, NEKI SCROLLABLE ELEMENT, ZA KOJI CU ZAKACITI, GORE DEFINISANI onscroll HANDLER, CIME CU
+// ELEMENT, UCINITI INFINITE SCROLLABLE-IM
+
+const infinite_scrollable_element = `
+    <div class="infinite_scrollable"></div>
+`;
+// DODACU MU SADRZINU  (NEKOLIKO TEKSTA ZA KOJI KORISTIM Date INSTACE)
+const dateObjectText = document.createTextNode(`${new Date()}`);
+
+for(let i = 0; i < 18; i++){
+    document.querySelector('.infinite_scrollable').appendChild(dateObjectText.cloneNode());
+    document.querySelector('.infinite_scrollable').appendChild(document.createElement('hr'));
+}
+// STILIZOVACU GA
+const infinite_scrollable_style = `
+    .infinite_scrollable {
+        box-sizing: content-box;
+        width: 68%;
+        height: 48vw;
+        padding: 18px;
+        border: olive solid 4px;
+        overflow: auto;
+    }
+`;
+// ZAKACICU MU POMENUTI, onscroll HANDLER
+document.querySelector('.infinite_scrollable').addEventListener('scroll', someOnScrollHandler);
+
+// OVAJ PRIMER, FUNKCIONISE, ALI RAZLIKUJE SE OD ONOG IZ CLANKA; JER JE U CLANKU, SE HANDLER, KACIO NA
+// window; DAKLE TAMO SE RADILO O DEFINISANJU DA window BUDE INFINITE SCROLLABLE (UZ JOS NEKE DODATNE 
+// STVARI, KOJE SE ODNOSE NA NEKE OSOBENOSTI, SAMOG SCROLL-A)
+
+// TE OSOBENOSTI SE OGLEDAJU U SLEDECEM
+        // SCROLL JE 'ELASTICAN'    ODNOSNO MOZE SE SCROLL-OVATI, I NESTO DALJE OD document-OVOG POCETKA,
+                                    //      I NESTO DALJE OD document-OVOG KRAJA, U NEKIM BROWSER-IMA/UREDJAJIMA
+                                    //      TO ZNACI DA JE DOLE PRIKAZUJE, PRAZAN PROSTOR, I document
+                                    //      CE AUTOMATSKI 'BOUNCE BACK' U NORMALU
+
+        // SCROLL JE IMPRECISE (NEPRECIZAN)
+                                    // STO ZNACI KADA SCROLL-UJEM DO KRAJA STRANICE, ONDA MOGU BITI ZAPRAVO
+                                    // OD NULA DO 50px DALJE OD PRAVOG document-OVOG BOTTOM-A
+
+// IZ SVEGA OVOGA JE U CLANKU IZVEDEN ZAKLJUCAK; ODNOSNO ZAKLJUCAK JE IZVEDEN U POGLEDU SCROLLING-A DO
+// KRAJA, I ON GLASI:
+        
+        // DAKLE, SCROLLING TO THE END ZNACI DA POSETILAC NIJE VISE OD 100 PIKSELA UDALJEN OD 
+        // document-OVOG KRAJA
+
+// HANDLER BI IZGLEDAO OVAKO
+
+// NAIME, OVAJ HANDLER CE IMATI, JAKO MALO CODE, ALI JAKO DUGACKE KOMENTARE IZ RAZLOGA STO POSTOJE
+// ODREDJENE STVARI, KOJE SE TICU KOORINATA I VIEWPORTA, A NA KOJE JE POTREBNO OBRATITI, PO MENI, DOSTA
+// PAZNJE
+
+// ONO STO JOS NISAM REKAO, A NISAM NI UZEO U RAZMATRANJE KADA SAM RESAVAO PROSLI PRIMER (NA OSNOVU
+// CITANJA POSTAVKE SLEDECEG PRIMERA, ODNOSNO PRIMERA IZ CLANKA) JESTE
+//          DA NE TREBA APPEND-OVATI SAMO JEDAN ELEMENT PO TRIGGERING-U 'scroll' EVENT-A, VEC TO TREBA DA
+//          BUDE VISE ELEMENATA (ODNOSNO VISE Data INSTANCI)
+// NAIME, TREBALO BI DA SE DEFINISE NEPREKIDNA PETLJA KOJA VRSI DODAVANJE NOVIH ELEMNATA
+// I U OBIMU PETLJE TREBA DA BUDE USLOV, KOJI KAD SE ISPUNI, PETLJA TREBA DA break-UJE
+
+// KOJI JE USLOV VIDECU U OBIMU SAMOG HANDLERA
+
+// ALI POTREBNO JE RECI SLEDECE U POGLEDU ENDLESS SCROLLING-A OVOG PRIMERA, ODNONO POTREBNO JE RECI
+// STA SE TO TRBA DOGADJATI U OVOM PRIMERU 
+        // TRIGGERING   scroll-A
+            // INFINITE LOOP, DODAVANJA NOVIH ELEMENATA
+            // KAD SE ISPUNI USLOV, PREKIDANJE DODAVANJ
+        // SVE TAKO IZNOVA PO TRIGGERINGU, SVAKOG NOVOG scroll EVENTA 
+
+const onScrollWindowHandler = function(ev){
+    // NAIME, GEOMETRIJI I KOORDINATMA, SAMOG window-A, MOGU PRISTUPITI NA SLEDECI NACIN
+    //          
+    //            document.documentElement.getBoundingClientRect();
+    
+    // OVO RANIJE NISAM ZNAO DA MOGU ILI SMEM URADITI
+    // STO SE TICE OVAKVIH KOORDINATA, JA MORAM RECI SLEDECE
+
+    // NAIME JA SAM U OVOM SLUCAJU ZATRAZIO KOORDINATE    <html>  ELEMENTA, ODNOSNO ELEMENTA 
+    // CELOG DOKUMENTA, ODNOSNO document.documentElement -A
+
+    // KADA SE DOBRO RAZMISLI O OVAKVIM KOORDINATAMA (KOJE SU VREDNOSTI PROPERTIJA getBoundingClient),
+    // JA MOGU ZAKLJUCITI I SLEDECE:
+                //     DA SAM JA USTVARI PRISTUPIO KORDINATAMA     page-A,   RELATIVNIM NA window, ODNOSNO
+                //     VIEWPORT
+
+    // TO MOZE BITI, JAKO NEUGODNO U POGLEDU SAMOG RAZUMEVANJA, IZ RAZLOGA JEDNE CINJENICE, A KOJA SE OGLEDA
+    // U TOME, DA JA, NEKIM window, ODNOSNO VIEWPORT KARAKTERISTIKAMA, PRISTUPAM, UPRAVO, PREKO
+    // document.documentElement     ELEMENT-A
+
+    // STA POD SVIM TIM MISLIM MOZDA MOGU POKAZATI TAKO STO CU OBRATITI PAZNJU NA SLEDECE VREDNOSTI
+    //      NAIME, VISINI VIEWPORTA, ODNOSNO WINDOW-A, MOGU PRISTUPITI
+                // I UZ POMOC Window INSTANCE           window,     JA MOGU PRISTUPITI      scrollTop-U
+                // SAMOG VIEWPORT-A, ALI ISTO MOGU URADITI I UZ POMOC       document.documentElement-A
+        // NAIME, MOGUCNOSTI SU VELIKE:
+    //            document.documentElement.scrollTop || window.scrollY || window.pageYOffset
+        // A MOGU PRIMETITI I DA SAM KORISTIO window KAKO BI PRISTUPIO VREDNOSTIMA SCROLL-A window-A
+        // ISTO TAKO, NE POSTOJE PROPERTIJI, SAMOG window-A, KOJE BIH MOGAO KORISTITI DA PRISTUPIM
+        // VISINI ILI SIRINI VIEWPORTA
+        // ZA TU POTREBU MORAM KORISTITI SAMO       document.documentElement
+        //      document.documentElement.clientHeight || document.documentElement.offsetHeight
+
+    // IZ SVEGA OVOGA, MOGU SHVATITI DA JE BOLJE KORISTITI   document.documentElement; DELUJE PRIRODNJIJE
+    // BAR MNI DELUJE PRIRODNIJE
+
+    // ONO STO NISAM REKAO JESTE CINJENICA DA JA MOGU I NA SLEDECI NACIN PRISTUPITI, html   ELEMENTU
+    //                  document.querySelector('html')
+    // I ONO STO ZNAM TAKODJE JE 
+    //                          DA NE BIH TREBAO KORISTITI      document.body
+
+    // MOZDA SAM SE UDALJIO OD TEME U OVOM SLUCAJU
+    // NAIME, MENI JE CILJ BIO DA POSMATRAM,            document.documentElement      KAO ELEMENT
+    // ********************************************************************************************
+    // ZASTO TO KAZEM? PA ZATO STO MISLIM DA POSTOJI BOJAZAN DA SE TOKOM RAZMISLANJA
+    //          document.documentElement        'IZJEDNACI' SA          window-OM
+    //                          STO NARAVNO NE MOZE BITI DOBRO
+    // ********************************************************************************************
+    // ONO STO SE MOZE ZAKLJUCITI, JESTE DA JE      document.documentElement    USTVARI ELEMENT
+    // I POPUT body-JA, TO JE ELEMENT, KOJI JE VECI OD SAMOG VIEWPORT-A (OVO MI JE POSLEDNJE JAKO BITNO)
+
+    // A TAKODJE POSTOJE I OSTALI ELEMENTI, KOJI NISU html ILI body I KOJE JA MOGU DEFINISATI DA BUDU
+    // PO DIMENZIJAMA VECI OD VIEWPORTA
+    // OVO SAM SVE GOVORIO IZ RAZLOGA STO NA SVIM TIM ELEMENTIMA, JA MOGU PRISTUPITI PROPERTIJIMA, CIJE SU 
+    // VREDNOSTI, UPRAVO KOORDINATE, KOJE SE MERE OD (), ODNOSNO CIJI KOORDINATNI POCETAK, JESTE
+    // GORNJI LEVI UGAO VIEWPORTA, ODNOSNO window-A
+
+    // STO ZNACI DA MOGU       getBoundingClientRect        PRIMENITI I NA      body     I NA    html
+    // ISTO TAKO KAO STO IH PRIMENJUJEM NA BILO KOJE DRUGE ELEMENTE
+
+    // JASNO MI JE DA CE TADA, I ONE KOORDINATE KOJE SU IZVAN VIEWPORT-A, IMATI SVOJE VALIDNE VREDNOSTI
+    // A NEKE VREDNOSTI KOORDINATA CE BITI NEGATIVNE
+
+    // TO CE BITI VREDNOSTI KORDINATA ONIH ELEMENTA, KOJI SU NEGDE IZNAD VIEWPORTA, ILI CIJU SU DELOVI
+    // DELOVI IZNAD VIEWPORTA
+
+    // U SLUCAJU body-JA I html         top    KOORDINATA CE BITI NEGATIVNA, JER SE NJIHOVA GORNJA GRANICA
+    //                                         NALAZI IZNAD VIEWPORT-A
+
+    // DOK CE       bottom      KOORDINATA BITI POZITIVNA, ALI VECA NEGO STO JE VISINA VIEWPORT-A
+    //                          JEDINO AKO JE PRISUTAN POTPUNI SCROLLING, JER U TOM SLUCAJU JE 
+    //                          VISINA VIEWPORT-A, JEDNAKA   html-OVLJEVOJ  bottom KOORDINATI
+    
+    // SAD SE MOGU VRATITI NA OBJEKAT, KOJI JE PROIZISAO KAO POVRATNA VREDNOST PRIMENE
+    // getBoundingClientRect    NA      document.documentElement (html-U)
+
+    // ONO STO MI JE POTREBNO JESTE UPOREDJIVANJE IZMEDJU     bottom     KOORDINATE  I      height-A
+    // documentElement-A
+
+    // height  documentElement-A, JESTE USTVARI ISTO STO I NJEGOV scrollHeight
+    // TO MOGU I PROVERITI
+
+    console.log(
+        document.documentElement.offsetHeight,
+        document.documentElement.getBoundingClientRect().height,
+        document.documentElement.scrollHeight
+    );
+    //  OVO SE STAMPALO
+                //              39944       39943.53125         39944
+                //KAO STO VIDIM, VREDNOSTI NISU JEDNAKE, ALI SU PRIBLIZNO JEDNAKE
+                // PREDPOSTAVLJAM DA JE     scrollHeight    ROUNDED U OVOM SLUCAJU
+                // I ZATO NIJE MATEMATICKI JEDNAKO, ALI MOGU SMATRATI DA JE JEDNAKO
+                // VEROVATNO SU SVE VREDNOSTI I OBJEKTA POVRATNE VREDNOSTI getBoundingClientRect
+                // USTVARI ZAOKRUZENE VREDNOSTI
+    
+    // ONO STO TAKODJE MOGU ZAKLJUCITI, JESTE DA SU ONE VREDNOSTI  height    I      width
+    // PROPERTIJI POVRATNE VREDNOSTI getBoundingClientRect, USTVARI OFFSET VREDNOSTI
+    // ODNOSNO      offsetWidth     I       offsetHeight        SAMO STO SU ZAOKRUZENE
+
+    // ONO STO JOS ZELIM PROVERITI, PRE NEGO STO NASTAVIM DA DEFINISEM OVAJ PRIMER, JESTE
+    // KAKO IZGLEDAJU VREDNOSTI     bottom-A   (RELATIVNOG NA VIEWPORT) I VREDNOSTI        clientHeight-A
+    //                                                                                             html-A
+    // ALI OVO ZELIM DA VIDIM, KADA SCROLL BUDE NA SAMOM KRAJU
+    console.log(
+        document.documentElement.clientHeight,
+        document.documentElement.getBoundingClientRect().bottom
+    );
+    // OVO SE STAMPALO
+                //              871             870.53125
+    
+    // DOBRO EVIDENTNO JE DA JE TADA, KADA JE SCROLL U NAJDONJEM MOGUCEM POLOZAJU       clientHeight
+    // (STO PREDSTAVLJA I VISINU VIEWPORT-A) JESTE ISTO KAO I   bottom KOORDINATA RELATIVNA NA KOORDINATNI
+    // POCETAK VIEWPORT-A (SAMO STO JE JEDNA VREDNOST ZAOKRUZENA)
+    
+    // ONO STO JA   NE VIDIM    , JESTE POMENUTA ELASTICNOST SCROLLA, KOJA GOVORI DA SE SCROLLOVANJE MOZE
+    // NASTAVITI I PRE I POSLE DOKUMENTOVOG POCETKA
+
+    // ONO STO JA TAKODJE NE VIDIM JE NEPRECIZNOST SCROLL-A, ODNOSNO NE VIDIM DA KADA SCROLLUJEM DO KRAJA
+    // STRANICE, JA USTVARI BUDEM I OKO 50px DALJE OD KRAJA DOKUMENTA (KAKO JE U CLANKU RECENO)
+
+    // TU SAM DOSAO DO PRIMERA, ODNOSNO DO DEFINISANJA CODE-A, KOJI CE BITI NEOPHODAN ZA OVU FUNKCIJU,
+    // U KOJOJ SAM SADA, JER SU PREDHODNO, SVE BILA DOSECANJA, SHVATANJA NEKIH STVARI I TESTIRANJA
+    
+    const documentElementRect = document.documentElement.getBoundingClientRect();
+
+    // POTREBAN JE USLOV KOJI MORA BITI ISPUNJEN DA BI SE DODAVAL NOVA SADRZINA, KOJA BI OMOGUCILA,
+    // INFINITE SCROLLING
+    // ILI JOS BOLjE, MOGU PRIMENITI, OBRNUTI PRISTUP, KOJIM CU DEFINISATI STA SE NE TREBA IZVRSITI
+    // ODNOSNO NAJBOLJE JE DEFINISATI INFINITE LOOP, KOJI CE BITI INFINITE LOOP DODAVANJA
+    // SADRZINE
+
+    // ALI TREBA DEFINISATI, KADA DA DODAVANJE SADRZINE PRESTANE
+
+    // DODAVANJE SADRZINE TREBA DA PRESTANE KADA    bottom  KOORDINATA PORASTE DO TE VREDNOSTI
+    // KADA BUDE VECA CAK I OD client
+
+};
+
+window.addEventListener('scroll', onScrollWindowHandler);
+
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

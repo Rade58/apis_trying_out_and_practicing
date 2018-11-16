@@ -20,3 +20,12 @@
     border: olive solid 8px;
 }
 
+
+
+.some_div {
+    border: tomato solid 4px;
+    width: 78%;
+    height: 58vw;
+    padding: 10px;
+    overflow: auto;
+}

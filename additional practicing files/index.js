@@ -47,5 +47,17 @@ nekiDivZaPractice.style.height = nekiDivZaPractice.scrollHeight -
     bottomPadd + 'px';
 // nekiDivZaPractice.style.height = (nekiDivZaPractice.scrollHeight - nekiDivZaPractice.clientHeight) + 'px';
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+console.log(document.querySelector('.some_div').getBoundingClientRect());
+console.log(document.documentElement.getBoundingClientRect());
+
+console.log(document.documentElement.clientHeight, document.documentElement.offsetHeight);
+
+console.log(window.scrollY === window.pageYOffset);
+console.log(document.documentElement.scrollTop === window.scrollY);
+
+console.log(window.scrollY, window.pageYOffset);
+console.log(document.documentElement.scrollTop, window.scrollY);
 
 
