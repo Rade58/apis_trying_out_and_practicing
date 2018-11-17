@@ -14259,11 +14259,11 @@ const onScrollWindowHandler = function(ev){
     // height  documentElement-A, JESTE USTVARI ISTO STO I NJEGOV scrollHeight
     // TO MOGU I PROVERITI
 
-    console.log(
+    /* console.log(
         document.documentElement.offsetHeight,
         document.documentElement.getBoundingClientRect().height,
         document.documentElement.scrollHeight
-    );
+    ); */
     //  OVO SE STAMPALO
                 //              39944       39943.53125         39944
                 //KAO STO VIDIM, VREDNOSTI NISU JEDNAKE, ALI SU PRIBLIZNO JEDNAKE
@@ -14280,10 +14280,10 @@ const onScrollWindowHandler = function(ev){
     // KAKO IZGLEDAJU VREDNOSTI     bottom-A   (RELATIVNOG NA VIEWPORT) I VREDNOSTI        clientHeight-A
     //                                                                                             html-A
     // ALI OVO ZELIM DA VIDIM, KADA SCROLL BUDE NA SAMOM KRAJU
-    console.log(
+    /* console.log(
         document.documentElement.clientHeight,
         document.documentElement.getBoundingClientRect().bottom
-    );
+    ); */
     // OVO SE STAMPALO
                 //              871             870.53125
     
@@ -14299,23 +14299,592 @@ const onScrollWindowHandler = function(ev){
 
     // TU SAM DOSAO DO PRIMERA, ODNOSNO DO DEFINISANJA CODE-A, KOJI CE BITI NEOPHODAN ZA OVU FUNKCIJU,
     // U KOJOJ SAM SADA, JER SU PREDHODNO, SVE BILA DOSECANJA, SHVATANJA NEKIH STVARI I TESTIRANJA
-    
-    const documentElementRect = document.documentElement.getBoundingClientRect();
 
     // POTREBAN JE USLOV KOJI MORA BITI ISPUNJEN DA BI SE DODAVAL NOVA SADRZINA, KOJA BI OMOGUCILA,
     // INFINITE SCROLLING
-    // ILI JOS BOLjE, MOGU PRIMENITI, OBRNUTI PRISTUP, KOJIM CU DEFINISATI STA SE NE TREBA IZVRSITI
-    // ODNOSNO NAJBOLJE JE DEFINISATI INFINITE LOOP, KOJI CE BITI INFINITE LOOP DODAVANJA
-    // SADRZINE
+    
+    // DOBRO JE KRENUTI DEFINISANJE UZ SLEDECU CINJENICU:
+                    // APPENDOVANJE NOVIH ELEMENATA POVECAVA scrollHeight   document.documentElement -A
+                    // JASNO JE DA TO MENJA I bottom KOORDINATU
+                    // (NEMA VEZE PREVISE JE OVO APSTRAKTNO STO SAM REKAO DA BI SE RAZUMELO ODMAH)
 
-    // ALI TREBA DEFINISATI, KADA DA DODAVANJE SADRZINE PRESTANE
+    // ZELIM DA SE ELEMENTI DODAVAJU KADA JE bottom KOORDINATA TOLIKO MALA DA SE PRIBLIZILA VELICINI
+    // KOJA JE BLIZU VELICINE clientHeight-A, ODNOSNO VISINI VIEWPORT-A
 
-    // DODAVANJE SADRZINE TREBA DA PRESTANE KADA    bottom  KOORDINATA PORASTE DO TE VREDNOSTI
-    // KADA BUDE VECA CAK I OD client
+    // DAKLE NE ISTA, VEC DA SE PRIBLIZILA DO ODREDJENE VREDNOSTI
+
+    // ZASTO KAZEM: 'NE ISTA' ?
+
+    // PA ZTO STO KADA JE ELEMENT SCROLLED DO DNA     bottom      KOORDINATA, RELATIVNA NA VIEWPORT
+    // JEDNAKA JE VISINI VIEWPORTA
+
+    // A U CLANKU, DEFINISANO JE DA SE APPEND-OVANJE VRSI, ONDA KADA JE         bottom      KOORDINATA
+    // MANJA OD         VIEWPORT VISINA   +  100px;
+
+    // DAKLE, CIM JE ISPUNJENO SLEDECE
+    //       APPENDING   TEKSTA (KOJI SE SASTOJI OD STRINGA Date INSTANCE)(MOZE DA BUDE I PARAGRAF ELEMENT)  
+    //                   MOZE DA POCNE, I DA TAJ APPENDING TEKSTA TRAJE NEPREKIDNO, SVE DOK JE
+    //                   bottom KORRDINATA, MANJA OD        VIEWPORT VISINA + 100
+
+    // TREBA DA SE DEFINISE, KADA PETLJA TREBA DA SE BREAK-UJE
+    // PETLJA NAIME TREBA DA SE BREAK-UJE, ONDA KADA bottom     JESTE VECE OD       VIEWPORT VISINA + 100
+
+    // ZATO JE TOKOM PETLJE NOPHODNO STALNO PRISTUPANJE VREDNOSTIM
+
+    // DEFINISACU SADA CODE, NA OSNOVU POMENUTOGA
+    
+    while(true){
+        let bottom = document.documentElement.getBoundingClientRect().bottom;
+        let clientHeight = document.documentElement.clientHeight;
+        if(bottom > clientHeight) break;
+        document.body.insertAdjacentHTML('beforeend', `<p>${new Date()}</p>`);
+    }
 
 };
 
-window.addEventListener('scroll', onScrollWindowHandler);
+// window.addEventListener('scroll', onScrollWindowHandler);
+
+// USPESNO JE DEFINISANO, ALI SAM COMMENT OUT, KACENJE HANDLERA, ZATO STO SE DESAVA OGROMAN BROJ
+// KACENJA PARAGRAFA, KADA SCRROLUJEM DO KRAJA
+
+// KREIRACU SADA NOVI PRIMER
+// CILJ JE DA SE DEFINISE POJAVA DUGMETA, NA ODREDJENOJ VREDNOSTI SCROLLA, A KADA KORISNIK KLIKNE
+// NA DUGME, SCROLLUJE SE DO POCETKA
+// NAIME, KADA STRANICA NIJE SCROLLED DOWN, ZA JEDNU clientHeight DUZINU, DUGME NE BI TREBALO
+// DA BUDE VIDLJIVO
+// JASNO JE DA SE MORA DEFINISATI I ZKACITI onscroll HANDLER, KAK OBIH MOGAO DA PRATIM, TU PROMENU
+// VREDNOSTI SCROLL-OVANJA, ODNOSNO PROMENU VREDNOSTI scrollTop-A (PREDPOSTAVLJAM DA CU KORISTITI scrollTop
+// PROPERTI)
+
+const onMouseDownScrollToStart = function(ev){
+    document.documentElement.scrollTop = 0;
+    ev.currentTarget.classList.remove('position_in_view')
+    ev.currentTarget.onmousedown = null;
+};
+
+const onScrollHandler_and_buttonShower = function(ev){
+    const scrollTop = document.documentElement.getBoundingClientRect().top;
+    const viewportHeight = document.documentElement.clientHeight;
+
+    const upButton = document.querySelector('.up_button');
+
+
+
+    if(viewportHeight < Math.abs(scrollTop)){
+
+        if(!upButton.classList.contains('position_in_view')){
+            upButton.classList.add('position_in_view');
+            upButton.onmousedown = onMouseDownScrollToStart;
+        }
+
+    }else{
+
+        if(upButton.classList.contains('position_in_view')){
+            upButton.classList.remove('position_in_view');
+            upButton.onmousedown = null;
+        }
+    }
+
+
+};
+
+const html_up_button = `
+    <div class=".up_button"></div>
+`;
+
+const css_up_button = `
+
+    .up_button {
+        display: inline-block;
+        border-bottom: 14px solid tomato;
+        border-left: 8px transparent solid;
+        border-right: 8px transparent solid;
+        cursor: pinter;
+        position: fixed;
+        top: 2000px;
+        visibility: hidden;
+    }
+
+    .position_in_view {
+        top: 58px;
+        left: 8px;
+        visibility: visible;
+    }
+
+`;
+
+/* window.addEventListener('scroll', onScrollHandler_and_buttonShower); */
+
+// MOJE RESENJE IAKO USPESNO, JAKO JE PREOPSIRNO
+// U RESENJI UZ CLANKA, KORISCENA JE I METODA       window.scrollTo
+// I TAJ PRIMER IMA ZNATNO MANJE CODE-A, NEGO MOJ
+// URADICU I PRIMER IZ CLANKA
+
+
+// U CLANKU JE STRELICA POZICIONIRANA, DAKLE NE MORAM DA BRINEM O NJENOM POZICIONIRANJU
+// ONA JE VEC POZICIONIRANA, A NAKON TRIGGERINGA 'scroll'-A, ONA SE SAKRIVA ILI POKAZUJE, U ZAVISNOSTI OD
+// USLOVA (CAK JA NE MORAM SE NI TRUDITI OKO STILIZOVANJA ELEMENTA, DA ON IZGLEDA KAO STRELICA, JER
+// MOGU KREIRATI PSEUDO ELEMENT I content PROPERTIJEM (CSS) UVESTI SPECIJALNI UNICODE KARAKTER, KOJI
+// IZGLEDA KAO STRELICA)
+
+// MEDJUTIM JA SAM URADIO, JOS JEDNU VERZIJU PRIMERA
+
+const htmlStrelice = `
+    <div id="arrow_up" style="visibility: hidden;"></div>
+`;
+
+const cssStrelice = `
+    /*NEKI SPECIJALNI KARAKTERI MOGU BITI DISPLAYED U SAMO ODREDJENOM FONT-U*/
+    @font-face {
+        font-family: symbola;           /*MOGU MU DATI ZELJENO IME (NE VEZANO ZA OVAJ PRIMER, NEGO INACE)*/
+        src: url('../fonts/Symbola_hint.ttf');  /*NE ZABORAVI DVE TACKE NA POCETKU URL-A*/
+    }
+
+    #arrow_up {
+        display: inline-block;
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        font-family: symbola;
+    }
+
+    #arrow_up::after {
+        content: 'neki unicode koji ne mogu ovde prikazati zbog backlasha';  /*GLAVA STRELICE OKRENUTA */
+        color: tomato;                                                              /*NAGORE*/
+        font-size: 2em;
+        cursor: pointer;
+    }
+
+    #arrow_up:hover {
+        opacity: 0.8;     
+    }
+`;
+
+let isHidden = true;
+
+const scrollToStarHandler = function(ev){
+    if(Math.abs(document.documentElement.scrollTop) > document.documentElement.clientHeight){
+        if(isHidden){
+            document.querySelector('#arrow_up').style.visibility = 'visible';
+            isHidden = !isHidden;
+        }
+        return;
+    }
+    document.querySelector('#arrow_up').style.visibility = 'hidden';
+    isHidden = true;
+};
+
+// window.addEventListener('scroll', scrollToStarHandler);          //  TACNO, ALICOMMENTED OUT JER MOZE
+//                                                                        SMETATI U BUDUCNOSTI ZA OVAJ
+
+document.querySelector('#arrow_up').addEventListener('mousedown', function(ev){
+    window.scrollTo(0,0);
+});
+
+
+// NA REDU JE DA URADIM I TRECU VERZIJU, KOJA JE NAPISANA SA STO JE MANJE MOGUCE CODE
+// CAK SU I ONI PROPERTIJI  window-A,  NAPISANI TAKO DA     window  NIJE EKSPLICITNO REFERENCIRAN
+
+// NEKA SAV HTML I CSS BUDE ISTI, KAO I U PREDHODNOM PRIMERU
+
+const htmlStrelice2 = `
+    <div id="up_arrow" hidden></div>       <!--hidden ATRIBUT, ZATO STO NAKON STO SE LOADUJE
+                                            STRANICA, I scrollTop JESTE NULA, TADA STRELICA
+                                            TREBA BITI SAKRIVENA-->
+`;
+
+const cssStrelice2 = `
+    /*NEKI SPECIJALNI KARAKTERI MOGU BITI DISPLAYED U SAMO ODREDJENOM FONT-U*/
+    @font-face {
+        font-family: symbola;           /*MOGU MU DATI ZELJENO IME (NE VEZANO ZA OVAJ PRIMER, NEGO INACE)*/
+        src: url('../fonts/Symbola_hint.ttf');  /*NE ZABORAVI DVE TACKE NA POCETKU URL-A*/
+    }
+
+    #up_arrow {
+        /*display: inline-block;*/      /*AKO JE OVO DEFINISANO PROMENA DODAVANJE I UKLANJANJE
+                                            hidden ATRIBUTA NECE DATI EFEKTA
+                                                        PREDPOSTAVLJAM ZATO STO BI OVO
+                                                        OVERRIDE-OVALO     display: none
+                                                    KOJE SE IZ KULISA DEFINISE STAVLJANJEM
+                                                    hidden      ATRIBUTA    */
+        position: fixed;
+        top: 18px;
+        left: 48px;
+        font-family: symbola;
+    }
+
+    #up_arrow::after {
+        content: 'neki unicode koji ne mogu ovde prikazati zbog backlasha';  /*GLAVA STRELICE OKRENUTA*/
+        color: tomato;                                                              /*NAGORE*/
+        font-size: 2em;
+        cursor: pointer;
+    }
+
+    #up_arrow:hover {
+        opacity: 0.8;     
+    }
+`;
+
+//ID JE ODMAH I GLOBALNA VARIJABLA
+
+up_arrow.onmousedown = function(){
+    window.scrollTo(pageXOffset, 0);    // MOGU DA PRIMETIM DA KAKO BI PRISTUPIO pageXoffset-U, JA NISAM
+                                        // KORISTIO window (STO JE MOGUCE URADITI, I SA console, ILI 
+                                        // document (EKSPLICTNO TO JE window.document))
+                                        // A ZASTO SAM UNO SIO pageXOffset?
+                                        // PA ZATO DA ZADRZIM ONAJ POSTOJECI SCROLLING, PO HORIZONTALI
+                                        // A ONAJ SCROLLING PO VERTIKALI VRACAM NA NULU
+};
+
+// ZA SAKRIVANJE I POKAZIVANJE STRELICE, NAJBOLJE JE KORISTITI      hidden      SETTER 
+// (UPRAVO ZBOG TOGA STO SE NJIME )
+// U STA SAM SE UVERIO, IZ PRIMERA U CLANKU
+
+// NAIME, AKO JE         window.pageYOffset         MANJE OD        document.documentelement.clientHeight
+// hidden   SETTERU 'TREBA DODELITI' true, U SUPROTNOM  false
+
+window.addEventListener('scroll', function(){
+    up_arrow.hidden = (pageYOffset < document.documentElement.clientHeight);
+    // UPRAVO ZBOG OSOBINA hidden   SETTERA, BILO JE POGODNO DEFINISATI DA ONO STO PROIZIDJE
+    // IZ USLOVA, BUDE VREDNOST DATA SETTER-U (BOOLEAN true, ILI false)
+});
+
+// SLEDECI PRIMER KOJI CU DEFINISATI, BAVI SE SLIKAMA
+// ZAMISLICU DA IMAM SLOW-SPEED CLIENT I ZELIM DA SACUVAM NJIHOV MOBILE TRAFFIC
+// ZA TU POTREBU DEFINISE SE DA SE SLIKE NE PRIKAZUJU ODMAH, VEC SU ZAMENJENE SA PLACEHOLDER-OM 
+// NAIME, CILJ JE UCINITI DA img POCNE UCITAVANJE SLIKE (REC JE O UCITAVANJU SLIKE SA NEKOG DRUGOG
+// URL-A (APSOLUTNA ADRESA, NE MORA DA BUDE ALI MISLIM DA CE U OVOM MOM PRIMERU POSLUZITI SLIKE
+// SA WIKIMEDIA COMMONS-A)) TEK KADA SE SCROLL-OVANJEM DO SLIKE DODJE
+// NA POCETKU, KADA SE LOAD-UJE STRANICA, PLACE HOLDER SLIKA CE BITI UCITANA (LOKALNA SLIKA,
+// ODNOSNO LOKALNA ADRESA CE BITI DEFINISANA ZA PLACEHOLDER, (NE MORA DA BUDE LOKALNA, ALI ODLUCIO SAM
+// OVDE DA STAVIM LOKALNU))
+// KORISTICU I figure TAG, KAO WRAPPER ZA img (KORISTIM figure UPRAVO ZBOG NJEGOVIH OSOBINA KOJE 
+// SADA OVDE NECU KOMENTARI, JER NEMAM VREMENA, JEDINO OSTAJE PODSETNIK DA KADA SE U BUDUCNOSTI 
+// BUDEM BAVIO SA SLIKAMA, UPRAVO SE UPOZNAM SA figure TAGOM, I DA GA KORISTIM)
+// ZNACI IZMEDJU SVE OSTALE SADRZINE, NALAZICE SE OVAKVI figure TAGOVI
+{/* 
+    <figure>  
+        <img alt="neki opis" src="lokal adresa za placeholder" data-src="apsolutna adresa za sliku" >
+    </figure 
+*/}
+
+const html_primera_sa_loadingom_slika = `
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <blockquote>
+        Teacher: Why are you late?
+        Student: There was a man who lost a hundred dollar bill.
+        Teacher: That's nice. Were you helping him look for it?
+        Student: No. I was standing on it.
+    </blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Emådalen_Water_Tower_June_2015.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Katrinetorp_Mansion_close.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/0/07/Akumal_Half-moon_Bay-27527-2.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/6/62/Cozumel_Windward_Reef-27527.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/3/35/Cataloochee_Valley-27527.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Linville_Gorge-27527-5.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+
+`;
+
+const cssForFigure = `
+    figure {
+        border: tomato solid 2px;
+    }
+`;
+
+// MISLIM DA JE PRVO POTREBNO PROCITATI, KOORDINATE SVAKOG      figure   TAGA
+const everyImage = document.querySelectorAll('img[data-src]');
+let imageCounter = everyImage.length;
+let imageIndex = 0;
+
+window.addEventListener('scroll', function(){
+
+    if(imageIndex === imageCounter) return;
+
+    /* this.console.log("picture-->",everyImage[imageIndex].getBoundingClientRect().top);
+    this.console.log("viewportVi-->", document.documentElement.clientHeight); */
+
+    if(
+        (document.documentElement.clientHeight/4) <         // KROZ 4 SAM STAVIO ZATO STO ZELIM DA SE
+                                                            // SLIKA UCITA TEK KADA BUDE, BILZU VRHA
+                                                            // VIEWPORTA (OVO JE SAMO ZA MENA DA JA OCIMA
+                                                            // MOGU VIDETI, KADA SE MENJA SLIKA
+                                                            // SA PLACEHOLDER-A, NA NOVU SLIKU
+                                                            // ODNOSNO DA PRIMETIM UCITAVANJE SLIKE)
+        everyImage[imageIndex].getBoundingClientRect().top
+    )   return;
+
+    everyImage[imageIndex].src = everyImage[imageIndex].dataset['src'];
+    imageIndex++;
+});
+
+// ONO STO NISAM PREDVIDEO OVOM PRIMERU JESTE MOGUCNOST DA SE ELEMENT, ODNOSNO SLIKA, NALAZE
+// IZNAD VIEWPORT-A (NIJE MI PALO NA PAMET); U OVAKVOM SLUCAJU SLIKE CIJE ADRESE SU VREDNOSTI
+// data-src ATRIBUTA LOADOVALE BI SE, NAKON RELOAD-A, STRANICE, KADA BI NA PRIMER NAKON TOG RELODA
+// SCROLL BIO U POLOZAJU, PRI KOJEM SE VIEWPORT NALAZI ISPOD SLIKA
+// NECU DORADJIVATI, OVAJ PRIMER U CILJU USTEDE VREMENA, ALI CU POGLEDATI, ONO RESENJE, KOJE JE
+// PONUDJENO U CLANKU
+
+// U CLANKU JE PONUDJENO DRUGACIJE RESENJE OD MOG, TAMO SE KORISTI PETLJA U OBIMU ON scroll HANDLER-A
+// URADICU I TAJ PRIMER
+// A ONO STO JE URADJENO U OVOM PRIMERU, JESTE DRUGACIJI PRISTUP, PO KOJEM SE PRATI DA LI JE
+// I JEDAN KRAJ ELEMENTA, USAO U VIEWPORT, I AKO JESTE, ONDA SE TREBA UCITATI NOVA SLIKA
+
+// PRE NEGO STO DEFINISEM BILO STA, NAPRAVICU DUPLIKAT PREDHODNOG HTML
+// SAMO STO CE DATA ATRIBUTI NA SLIKA SADA IZGLEDATI OVAKO
+                                                    //          data-address
+
+const html_primera_sa_loadingom_slika2 = `
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <blockquote>
+        Teacher: Why are you late?
+        Student: There was a man who lost a hundred dollar bill.
+        Teacher: That's nice. Were you helping him look for it?
+        Student: No. I was standing on it.
+    </blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/7/7e/Emådalen_Water_Tower_June_2015.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/1/1c/Katrinetorp_Mansion_close.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/0/07/Akumal_Half-moon_Bay-27527-2.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/6/62/Cozumel_Windward_Reef-27527.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/3/35/Cataloochee_Valley-27527.jpg" 
+            alt="wild west"
+            width="408"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+    <figure>
+        <img 
+            src="./img/galery/placeholders/landmark_placeholder.svg"
+            data-address="https://upload.wikimedia.org/wikipedia/commons/6/6c/Linville_Gorge-27527-5.jpg" 
+            alt="wild west"
+            width="306"
+        >
+    </figure>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+    incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+    nisi rem provident molestias sit tempore omnis recusandae
+    esse sequi officia sapiente.</p>
+`;
+
+// PRVO KREIRAM FUNKCIJU, KOJA PROVERAVA DA LI JE ELEMENTOV DEO U VIEWPORT-U
+
+const isVisible = function(el){
+    const elCoordsSizes = el.getBoundingClientRect();
+    const viewportHeight = document.documentElement.clientHeight;
+    
+    //SLEDECOM PROVERO MCE SE VIDETI, DA LI JE ELEMENT, USAO U VIEWPORT ILI NIJE
+    const topIsVisible = elCoordsSizes.top < viewportHeight && elCoordsSizes.top > 0;
+    const bottomIsVisible = elCoordsSizes.bottom > 0 && elCoordsSizes.bottom < viewportHeight;
+
+    // AKO JE ELEMENT USAO U VIEWPORT (SA BILO KOJOM STRANOM (GORNJOM ILI DONJOM))
+    // POVRATNA VREDNOST OVE FUNKCIJE BICE      true
+    return topIsVisible || bottomIsVisible;
+}
+
+// ON scroll HANDLER 
+
+const loadInVisiblePicture = function(ev){
+    const allImg = document.querySelectorAll('img[data-address]');
+
+    // POSTO CE SE MENJATI VREDNOST     data-adress NA PRAZNA STRING, KADA SE NOVA SLIKA UCITA
+    // MOZE DOCI DO TOGA DA SE      REASSIGNUJE  src VREDNOST SLIKE   NA  ''
+    // MOZDA JE BILO BOLJE DA SAM UKLANJAO CEO ATRIBUT, MEDJUTIM POSTO U CLANKU NIJA TAKO, PROVERICU
+    // DA LI data-adress IMA PRAZAN STRING KAO VREDNOST
+
+    for(let img of allImg){
+        
+        if(!img.dataset.address) continue;   //AKO JE data-adress    PRAZAN STRING, PRESKACE SE ONO STO SLEDI
+                                            //U PETLJI 
+
+        // console.log(!isVisible(img));
+        if(!isVisible(img)) continue;
+        console.log(img.dataset['address']);
+        img.src = img.dataset['address'];
+
+        img.dataset.address = '';
+
+    }
+
+}
+
+// OVAJ HANDLER JE DOBRO POZVATI, PRVO BEZ KACENJA NA HANDLER, JER TIPE SE OBEZBEDJUJE DA AKO SE
+// NAKON RELOAD-A, NEKA SLIKA NALAZI U VIEWPORTU, MOCI CE DA SE UCITA NOVA SLIKA
+
+loadInVisiblePicture();
+
+// KACENJE HANDLER-A
+
+window.addEventListener('scroll', loadInVisiblePicture);
+
 
 
 

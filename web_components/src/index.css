@@ -1130,3 +1130,72 @@ div.tomato_zada, div.olive_zada {
     overflow: auto;
 }
 
+.up_button {
+    display: inline-block;
+    border-bottom: 14px solid tomato;
+    border-left: 8px transparent solid;
+    border-right: 8px transparent solid;
+    cursor: pointer;
+    position: fixed;
+    top: 2000px;
+    visibility: hidden;
+}
+
+.position_in_view {
+    top: 58px;
+    left: 8px;
+    visibility: visible;
+}
+
+@font-face {
+    font-family: symbola; /*MOGU MU DATI ZELJENO IME (NE VEZANO ZA OVAJ PRIMER, NEGO INACE)*/
+    src: url('../fonts/Symbola_hint.ttf');
+}
+
+#arrow_up {
+    display: inline-block;
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    font-family: symbola;
+}
+
+#arrow_up::after {
+    content: '\0023F6';  /*GLAVA STRELICE OKRENUTA NAGORE*/
+    color: tomato;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+#arrow_up:hover {
+    opacity: 0.8;     
+}
+
+/*NEKI SPECIJALNI KARAKTERI MOGU BITI DISPLAYED U SAMO ODREDJENOM FONT-U*/
+@font-face {
+    font-family: symbola;           /*MOGU MU DATI ZELJENO IME (NE VEZANO ZA OVAJ PRIMER, NEGO INACE)*/
+    src: url('../fonts/Symbola_hint.ttf');  /*NE ZABORAVI DVE TACKE NA POCETKU URL-A*/
+}
+
+#up_arrow {
+    /* display: inline-block; */
+    position: fixed;
+    top: 18px;
+    left: 48px;
+    font-family: symbola;
+}
+
+#up_arrow::after {
+    content: '\0023F6';  /*GLAVA STRELICE OKRENUTA */
+    color: tomato;                                                              /*NAGORE*/
+    font-size: 2em;
+    cursor: pointer;
+}
+
+#up_arrow:hover {
+    opacity: 0.8;     
+}
+
+figure {
+    border: tomato solid 2px;
+}
