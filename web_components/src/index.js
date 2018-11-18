@@ -14885,9 +14885,236 @@ loadInVisiblePicture();
 
 window.addEventListener('scroll', loadInVisiblePicture);
 
+// OSTAVICU ZA SVAKI SLUCAJ I LINK DO ORIGINALNOG PRIMERA
+// JER VIDIM DA JE U PRIMERU KORISCENO PRAZNJENJE LOCAL STORAGE-A (MORAM DA SAZNAM STA JE TO)
+// http://next.plnkr.co/edit/HvvY9P2Twik2evCxixUx?p=preview&preview
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA NASTAVLJAM PRICU SA EVENT-OVIMA
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// POZABAVICU SE SA KEYBOARD EVENT-OVIMA:      
+                    //                          keydown     I       keyup
+                    
+// ALI PRE NEGIO STO DODJEM DO KEYBOARD-A, MORAM ZNATI DA NA MODERNIM DEVICE-OVIMA, POSTOJE DRUGI NACINI
+// DA SE 'NESTO UNESE' ('input something')
+// NA PRIMER, LJUDI KORISTE SPEECH RECOGNITION (POSEBNO NA MOBILNIM UREDJAJIMA), ILI KORISTE copy/paste
+// UZ POMOC MISA
+// TAKO DA AKO ZELIM DA TRACK-UJEMBILO KOJI UNOS U <input> FIELD, KEYBOARD EVENT-OVI NISU DOVOLJNI
+// ZATO POSTOJI JEDAN EVENT, KOJI SE ZOVE:
+//                                                 'input'      EVENT
+//                                                                   KOJI HANDLE-UJE PROMENE <input>
+//                                                                   FIELD-A, PROMENE POUZROKOVANE
+//                                                                   BILO KOJIM SREDSTVIMA (BY ANY MEANS)
+// I ZA HANDLE-OVANJE PROMENA <input> FIELD-A, KORISCENJE 'input' EVENTA JE BOLJI IZBOR
+// A S POMENUTIM CU SE UPOZNATI KASNIJE KADA SE BUDEM BAVIO EVENTOVIMA TIPA:  'change' , 'input' 
+//                                                                            'cut', 'copy', 'paste'
+//                                                                             (TO JE U SKLOPU CLANAKA
+//                                                                             KOJI SE BAVE FORMULARIMA
+//                                                                             I KONTROLAMA)
+
+// NAIME, KETBOARD EVENT-OVI SE TREBAJU KORISTITI, KADA ZELIM DA HANDLE-UJEM KEYBOARD ACTIONS
+// TU SE UBRAJA I VIRTUELNA TASTATURA
+// NA PRIMER, ZA REACTION NA ARROW KEY-OVE   Up  I  Down ,  ILI HOTKEYS (UKLJUCUJUCI I KOMBINACIJU KEY-EVA) 
+
+//     keydown     i      keyup
+// keydown     EVENTOVI (DAKLE MNOZINA; OVO JE VEOMA VAZNO) SE TRIGGER-UJU, KADA JE DUGME PRITISNUTO NADOLE
+// A    keyup EVENT (JEDNINA) SE TRIGGER-UJE, KADA SE DUGME PUSTI
+
+//      event.code          event.key
+// 
+//  key     PROPERTI INSTANCE EVENTA, OMOGUCAVA GETT-OVANJE KARAKTERA, DOK      code        PROPERTI
+// INSTANCE EVENT-A, OMOGUCAVA GETT-OVANJE, NECEGA STO SE ZOVE          'PHISYCAL KEY CODE'
+//                                                                      ('FIZICKI CODE-OVI DUGMETA')
+
+// NA PRIMER, JEDAN TE ISTI KEY        Z        MOZE BITI PRITISNUT SA, ILI BEZ   'Shift'-A
+// TO MI DAJE DVA RAZLICITA KARAKTERA:
+        //                              LOWERCASE 'z'   I   uppercase 'Z'
+// U TOM SLUCAJU    event.key   VREDNOST JE EGZAKTAN KARAKTER, BICE RAZLICITA (DAKLE BICE ILI 'z' ILI 'Z') 
+// ALI ONO STO OSTAJE ISTO U OBA SLUCAJE JESTE   event.code
+
+// PRISTISNUTO                         event.key                            event.code
+        //      Z                          'z'   (LOWERCASE)                       'KeyZ'
+        //      Shift + Z                  'Z'   (UPPERCASE)                       'KeyZ'
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// A AKO KORISNIK RADI SA RAZLICITIM JEZICIMA, ONDA BI SWITCHING NA DRUGI LANGUAGE, BI UCINLO DA KADA SE
+// PRITISNE         Z       TO USTVARI BUDE POTPUNO DRUGACIJI KARAKTER, ODNOSNO DA BUDE UNESEN POTPUNO
+// DRUGACIJI KARAKTER, TO ZNACI DA CE VREDNOST      event.key       BITI PROMENJENA
+                // ALI event.code      OSTAJU ISTO          A TO JE U OVOM PRIMERU      'KeyZ'
+
+// UPAMTI DOBRO, DA JE VREDNOST         event.code        JE UVEK TAKVA DA   'Key'     DEO, UVEK POCINJE
+// VELIKIM SLOVOM, A TAKODJE I OSTALO (ODNONO ONO STO SE ODNOSI NA KARAKTER (U OVOM SLUCAJU 'Z')), JESTE
+// UVEK NAPISANO VELIKIM SLOVOM  (DAKLE NIJE   keyz, ILI Keyz ILI keyZ   VEC JESTE   KeyZ)
+
+//      OVO BI BILO         false       KADA BIH NAPISAO OVAKO      event.code === "keyZ"
+// STO ZNACI DA       CASE MATTERS 
+
+// NAIME, SVAKI KEY IMA    code     KOJI ZAVISI OD NJEGOVE LOKACIJE NA TASTATURI; I Key codes SU OPISANI
+// U NECEMU STO SE ZOVE         UI Events code specification    https://www.w3.org/TR/uievents-code/
+        
+// NA PRIMER 
+        // LETTER KEYS IMAJU code-OVE, KOJI IZGLEDAJU OVAKO:    'Key<letter>'
+        //                                                                        "KeyA", "KeyB"  etc.
+        // DIGIT KEYS IMAJU code-OVE, KOJI IZGLEDAJU OVAKO:     'Key<number>'
+        //                                                                         "Digit0", "Digit1"  etc.
+        // SPECIAL KEYS SU CODED BY THEIR NAMES:  "Enter", "Backspace", "Tab"  etc.
+
+// NAIME, POSTOJI NEKOLIKO RASPROSTRANJENOSTI (WIDESPREAD, MOZDA SE MISLI DA POSTOJI NEKOLIKO TIPOVA
+// TASTATURA, SA RAZLICITO PROSTRTIM KEY-OVIMA) KEYBOARD LAYOUT-A; I SPECIFIKACIJA DAJE key codes ZA SVAKU
+// OD NJIH (MOZDA SE IPAK MISLILO NA SEKCIJE JEDNE TASTATURE (ODNOSNO DA POSTOJI SEKCIJA GDE SU LETTERS, 
+// PA SEKCIJA GDE SU DIGITS, ZATIM SPECIAL...)) OSTAVICU LINK ZA TE SVE SPECIFIKACIJE
+// https://www.w3.org/TR/uievents-code/#key-alphanumeric-section
+
+// STA AKO KEY NE PRUZA NI JEDAN KARAKTER? STA PO D TIME MISLIM?
+        // PA NA PRIMER         F1     ili     Shift     ili neki drugi 
+        // ONI ZAISTA NE DAJU NIAKAKAV KARAKTER, KADA PRITISNEM NA NJIH
+    // ZA NJIH      event.key       JESTE PRIBLIZNO (VIDECU ZASTO SAM REKAO PRIBLIZNO ODNOSNO APPROXYMATELY) 
+    // ISTO, KAO    event.code
+// POSMATRACU SLEDECI PRIKAZ
+
+            //      Key                     event.key                       event.code
+            //            F1                            'F1'                            'F1'
+            //            Backspace                     'Backspace'                     'Backspace'
+            //            Shift                         'Shift'             ILI 'ShiftRight' ILI 'ShiftLeft'
+
+// AKO POGLEDAM OVE VREDNOSTI, I AKO POGLEDAM VREDNOST      event.code      VIDECU DA ON SPECIFICIRA
+// KOJI JE KONKRETNO KEY PRITISNUT
+// NA PRIMER, MNOGE TASTATURE IMAJU      DVA Shift KEYA     ; JEDAN NA LEVOJ I JEDAN NA DESNOJ STRANI
+// event.code GOVORI KOJI JE TACNO OD NJIH PRESSED; A       event.key       JE ODGOVORAN ZA 'ZNACENJE'
+// ODNOSNO RESPONISBILE FOR THE 'MEANING' OF THE KEY: ODNOSNO 'STA JE?' (TO JE 'Shift')
+
+// ZAMISLICU DA JA SADA ZELIM DA HANDLE-UJEM HOTKEY:      Ctrl+Z (TO JE ISTO STO I  Cmd+Z  U SLUCAJU Mac-a)
+// A MNOGI TEKST EDITORI HOOK-UJU (ODNOSNO POVEZU PRITISKANJE OVE KOMBINACIJE KEY-EVA) SA "Undo" AKCIJOM
+// (PONISTAVANJE PREDHODNOG UNOSA)
+// MOZE SE PODESITI LISTENER (ON keydown) I PROVERITI, KOJI JE TO KEY PRITISNUT; KAKO BI DETEKTOVAO, KADA 
+// IMAM HOTKEY
+// SADA JE U CLANKU POSTAVLJENO JEDNO PITANJE U POGLEDU TAKVOG LISTENERA; A ONO GLASI:
+//                                     STA SE TREBA KORISTITI U TOM HANDLERU DA BI PROVERIO DA LI JE REC
+//                                     O HOTKEY-U ILI NE? DA L ITREBA KORISTITI  event.key  ILI  event.code ?
+
+// ODGOVOR JE DA JE ZA POMENUTU POTREBU, NARAVNO TREBA KORISTITI        event.code       
+// DAKLE ZA POMENUTU PROVERU DA LI JE HOTKEY PRITISNU, NE TREBA MI      event.key; ZATO STO SE NJEGOVA
+// VREDNOST MOZE MENJATI; U ZAVISNOSTI OD ENABLOVANOG JEZIKA (MISLIM NA JEZIK UNOSA A NE PROGRAMSKI) ILI
+// PRITISNUTOG CapsLock-A
+// A VREDNOST         event.code-A      JE STRIKTNO VEZANA ZA KEY
+
+// SADA CU UPRAVO DEFINISATI I ZAKACITI TAKAV HANDLER, KOJI PROVERAVA DA LI JE PRITISNUT HOTKEY
+//      Ctrl + Z    ILI     Cmd + Z             (NE ZABORAVI DA SE metaKey PROPRTYI, USTVARI KORISTI DA 
+//                                               SE PROVERI DA LI JE Cmd NA Mac-u PRITISNUT)
+
+document.addEventListener('keydown', function(ev){
+    if(ev.code === 'KeyZ' && (ev.ctrlKey || ev.metaKey)) alert('Undo!');
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MISLIM DA SAM OVO VEC RANIJE SPOMENUO, A STO SE ODNOSNI NA   keydown JESTE
+//                                                                                 AUTO-REPEAT
+
+// AKO JE KEY PRITISNUT DOVOLJNO DUGO VREMENA, TRIGGEROVANJE    keydown-A   POCINJE DA SE PONAVLJA, IZNOVA
+// I IZNOVA
+// I ONDA KADA SE PUSTI DUGME, KONACNO SE TRIGGER-UJE SE   keyup   
+// NAIME IT'S KIND OF NORMAL, TO 
+//                                IMANJE MNOGO keydown-OVA, I IAMNE SAMO JEDNOG keyup-A
+// ZA SVE REPEATING KEYS event OBJEKAT IMA      
+//                                              event.repeat        PROPERTI, PODESEN NA        true
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////// DEFAULT ACTIONS VEZANE ZA KEYBOARD EVENT-OVE
+// DEFAULT akcije VARIJAJU, jer postoji mnogo mogućih stvari koje MOZE INICIRATI tastatura.
+// Na primer:
+            //      POJAVA KARAKTERA NA EKRANU (NAJOCIGLEDNIJI ISHOD (MOST OBVIOUS OUTCOME)) 
+            //      KARAKTER JE DELET-OVAN  (Delete KEY)
+            //      STRANICA JE SCROLL-OVANA (PageDown KEY)
+            //      BROWSER OTVORA 'Save Page' DIALOG (Ctrl + S)
+            //      ... I TAKO DALJE I TAKO DALJE
+
+// PREVENT-OVANJE DEFAULT AKCIJA U      ON keydown      HANDLER-U MOZE CANCEL-OVATI VECINU NJIH;
+// SA IZUZETKOM, NEKIH OS-based SPECIJALNIH KEY-EVA NA PRIMER Windows-OV        Alt + F4    ZATVARA
+// TRENUTNI BROWSER-OV window; I NE POSTOJI NACIN DA SE SPRECI, TAKO STO BI PREVENT-OVAO DEFAULT ACTION U 
+// JAVASCRIPT-U
+// ZATO CU SADA KREIRATI, JEDAN PRIMER
+
+// U PRIMERU CE SE SPRECAVATI DEFAULT ACTION, U ON keydown HANDLER-U (ZAKACENOM ZA input FIELD),
+// U SLUCAJU, KADA SE PRITISKAJU KEY-EVI, KOJI NISU SPECIFICNI ZA BROJ TELEFONA
+// DAKLE, POTREBNO JE SPRECITI DEFAULT ACTION, AKO SE PRITISKA NA NON Digit KEY-EVE, ANO PORED DIGIT
+// KEY-EVA TREBA DA BUDE OMOGUCENO JESU KAY-EVI             '('   ')'    '+'    '-'
+
+let checkPhoneKey = function(key){
+    return (key >= 0 && key <= 9) || key === '+' || key === '-' || key === '(' || key === ')';
+};
+
+// GORNJU FUNKCIJU CU POZVATI INLINE, U OBIMU   onkeydown   HANDLERA. SLEDECEG input FIELD-A
+const input_broja_tel = `
+<input class="za_tel" onkeydown="return checkPhoneKey(event.key)" placeholder="Phone please" type="tel">
+`;
+// ZNACI AKO JE POVRATNA VREDNOST EVENT HANDLER-A, false , ONDA JE SPRECEN DEFAULT BEHAVIOR
+// U OVOM SLUCAJU CE BITI SPRECEN DEFAULT (A JEDAN OD DEFAULT-OVA JE UNOS KARAKTERA U INPUT)
+// AKO KARAKTER NIJE JEDAN OD GORE POMENUTIH
+
+// MEDJUTIM TREBA PRIMETITI DA U PREDHODNOM PRIMERU, SPECIJALNI KEY-EVI KAO STO SU:
+                                        //       Backspace      Left      Right     NE RADE U INPUT-U
+                                        // A NE RADI NI HOTKEY      ctrl + V    (PASTING, ODNOSNO
+                                        //                                          PROSLEDJIVANJE)
+// TO JE, NAIME OSTLO KAO SIDE EFFECT STRIKNOG FILTERA      checkPhoneKey
+
+// TAKO DA CU MALO RELAKSIRATI SITUACIJU
+
+checkPhoneKey = function(key){
+    return (key >= 0 && key <= 9) || key === '+' || key === '-' || key === '(' || key === ')' ||
+            key === 'ArrowRight' || key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft'
+};
+// DAKLE SADA STRELICE I DELITION RADE KAKO TREBA
+// ONO STO I DALJE NE RADI JESTE    PASTING     PUTEM       Ctrl + V
+// MEDJUTIM DRUGACIJI PASTE, JESTE MOGUC ,ALI TAJ PAST NE IZISKUJE TRIGGERING KEYBOARD EVENT-OVA   
+
+// NAIME, I DALJE JE MOGUC UNOS BILO CEGA (BILO KAKVIH KARAKTERA, STO MI NARAVNO NE ODGOVARA),
+// I TO UZ KORISCENJE    right-click + Paste
+// TAKO DA FILTER NIJE 100% POUZDAN
+// MOGU GA SAMO PUSTITI DA BUDE TAKAV, ZATO STO U VECIN ISLUCAJEVA FUNKCIONISE (OSI MZA POMENUTI)
+// ILI SE MOZE PRIMENITI ALTERNATIVNI PRISTUP, KOJI SE SASTOJI OD TOGA DA SE TRACK-UJE input EVENT
+// KOJI SE TRIGGERUJE, NAKON BILO KOJE MODIFIKACIJE (UNOSA, UKLANJANJA) INPUTA
+// U ON inpot HANDLER-U BIH CHECK-OVAO NOVE VREDNOSTI; I HIGHLIGHT-OVAO/MODIFY-OVAO, KADA SU INVALID
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////
+// NASLEDJE (LEGACY)
+//U prošlosti postojao je EVENT             'keypress'             TIPA, kao i 
+// keyCode       charCode      which      PROPERTIJI EVENT OBJEKTA
+// Bilo je toliko browser incompatabilities da su programeri specifikacije odlučili da ih   deprecate-UJU
+// ODNOSNO OZNACE KAO ZASTARELE
+// Stari kod još uvek funkcioniše, pošto ih pretraživač nastavlja podržavati, ali uopšte nema potrebe da 
+// ih koristite
+// Bilo je vremena kada je ovo poglavlje uključilo njihov detaljni opis. Ali od sada možemo zaboraviti
+// na to
+
+/////////////////////////////////////////  SUMMARY U POGLEDU KEYBOARD EVENT-OVA
+// Pritiskom na taster uvek se generiše event tastature, bilo da se radi o simbolnim key-ovima
+// ili specijalnim key-ovima, kao što su Shift ili Ctrl i tako dalje. Jedini izuzetak je Fn ključ
+// koji se ponekad stavlja na laptopovoj tastaturi. (IMA GA I MOJA DESKTOPA TASTATURA) 
+// Za to nema eventa na tastaturi, jer se često
+// implementira na nižem nivou od operativnog sistema.
+
+// EVENT-OVI na tastaturi:
+
+// keydown - pritiskom na taster (automatsko ponavljanje ako je dugme pritisnuto dugo),
+// keyup - kada pustim key
 
 
+// Glavne karakteristike event-ova tastature:
 
+// event.code - "key code" ("KeyA", "ArrovLeft" i tako dalje), specifični za fizičku lokaciju keya na
+// tastaturi.
+// event.key - karakter ("A", "a" i tako dalje), za non-character tastere obično imaju istu vrijednost kao
+// event.code
+// U prošlosti se događaji tastature ponekad koristili za praćenje korisničkog unosa u form fields 
+// To nije pouzdano, jer ulaz može biti iz različitih izvora. Imamo    'input'      i       'change' 
+// EVENT OVE, ZA HANDLOVANJE
+// bilo kog unosa (BICE pokriveno kasnije KADA SE BUDEM BAVIO EVENTOVIMA:
+// change, input, cut, copy, paste
+// TRIGGER-UJU SE nakon bilo kog unosa, uključujući MOUSE ILI prepoznavanje govora (SPEECH RECOGNITION)
+
+// Trebali bismo koristiti događaje na tastaturi kada zaista želimo tastaturu. Na primer, ZA REAKCIJE na
+// hotkeys-EVIMA ili special key-ovima
+
+// SADA CU ODRADITI JEDAN PRIMER
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
