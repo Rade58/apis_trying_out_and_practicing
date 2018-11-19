@@ -14913,7 +14913,7 @@ window.addEventListener('scroll', loadInVisiblePicture);
 //                                                                             KOJI SE BAVE FORMULARIMA
 //                                                                             I KONTROLAMA)
 
-// NAIME, KETBOARD EVENT-OVI SE TREBAJU KORISTITI, KADA ZELIM DA HANDLE-UJEM KEYBOARD ACTIONS
+// NAIME, KEYBOARD EVENT-OVI SE TREBAJU KORISTITI, KADA ZELIM DA HANDLE-UJEM KEYBOARD ACTIONS
 // TU SE UBRAJA I VIRTUELNA TASTATURA
 // NA PRIMER, ZA REACTION NA ARROW KEY-OVE   Up  I  Down ,  ILI HOTKEYS (UKLJUCUJUCI I KOMBINACIJU KEY-EVA) 
 
@@ -14925,7 +14925,7 @@ window.addEventListener('scroll', loadInVisiblePicture);
 // 
 //  key     PROPERTI INSTANCE EVENTA, OMOGUCAVA GETT-OVANJE KARAKTERA, DOK      code        PROPERTI
 // INSTANCE EVENT-A, OMOGUCAVA GETT-OVANJE, NECEGA STO SE ZOVE          'PHISYCAL KEY CODE'
-//                                                                      ('FIZICKI CODE-OVI DUGMETA')
+//                                                                      ('FIZICKI CODE DUGMETA')
 
 // NA PRIMER, JEDAN TE ISTI KEY        Z        MOZE BITI PRITISNUT SA, ILI BEZ   'Shift'-A
 // TO MI DAJE DVA RAZLICITA KARAKTERA:
@@ -14990,7 +14990,7 @@ window.addEventListener('scroll', loadInVisiblePicture);
 // IMAM HOTKEY
 // SADA JE U CLANKU POSTAVLJENO JEDNO PITANJE U POGLEDU TAKVOG LISTENERA; A ONO GLASI:
 //                                     STA SE TREBA KORISTITI U TOM HANDLERU DA BI PROVERIO DA LI JE REC
-//                                     O HOTKEY-U ILI NE? DA L ITREBA KORISTITI  event.key  ILI  event.code ?
+//                                     O HOTKEY-U ILI NE? DA LI TREBA KORISTITI  event.key  ILI  event.code ?
 
 // ODGOVOR JE DA JE ZA POMENUTU POTREBU, NARAVNO TREBA KORISTITI        event.code       
 // DAKLE ZA POMENUTU PROVERU DA LI JE HOTKEY PRITISNU, NE TREBA MI      event.key; ZATO STO SE NJEGOVA
@@ -15012,11 +15012,13 @@ document.addEventListener('keydown', function(ev){
 
 // AKO JE KEY PRITISNUT DOVOLJNO DUGO VREMENA, TRIGGEROVANJE    keydown-A   POCINJE DA SE PONAVLJA, IZNOVA
 // I IZNOVA
-// I ONDA KADA SE PUSTI DUGME, KONACNO SE TRIGGER-UJE SE   keyup   
-// NAIME IT'S KIND OF NORMAL, TO 
-//                                IMANJE MNOGO keydown-OVA, I IAMNE SAMO JEDNOG keyup-A
+// I ONDA KADA SE PUSTI DUGME, KONACNO TRIGGER-UJE SE   keyup   
+// NAIME, IT'S KIND OF NORMAL: 
+//                              TO, IMANJE MNOGO keydown-OVA, I TO IAMNJE SAMO JEDNOG keyup-A
 // ZA SVE REPEATING KEYS event OBJEKAT IMA      
+//                                              
 //                                              event.repeat        PROPERTI, PODESEN NA        true
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////// DEFAULT ACTIONS VEZANE ZA KEYBOARD EVENT-OVE
 // DEFAULT akcije VARIJAJU, jer postoji mnogo mogućih stvari koje MOZE INICIRATI tastatura.
@@ -15029,7 +15031,7 @@ document.addEventListener('keydown', function(ev){
 
 // PREVENT-OVANJE DEFAULT AKCIJA U      ON keydown      HANDLER-U MOZE CANCEL-OVATI VECINU NJIH;
 // SA IZUZETKOM, NEKIH OS-based SPECIJALNIH KEY-EVA NA PRIMER Windows-OV        Alt + F4    ZATVARA
-// TRENUTNI BROWSER-OV window; I NE POSTOJI NACIN DA SE SPRECI, TAKO STO BI PREVENT-OVAO DEFAULT ACTION U 
+// BROWSER; I NE POSTOJI NACIN DA SE SPRECI, TAKO STO BI PREVENT-OVAO DEFAULT ACTION U 
 // JAVASCRIPT-U
 // ZATO CU SADA KREIRATI, JEDAN PRIMER
 
@@ -15114,7 +15116,133 @@ checkPhoneKey = function(key){
 // Trebali bismo koristiti događaje na tastaturi kada zaista želimo tastaturu. Na primer, ZA REAKCIJE na
 // hotkeys-EVIMA ili special key-ovima
 
+// ONO STO NIJE BILO NAVEDENO U CLANKU, A STA SAM PRIMETIO JESTE DA ELEMENT MORA BITI FOCUSED DA BI SE NA
+// NJEMU TRIGGEROVAO    keydown
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SADA CU ODRADITI JEDAN PRIMER
+// TREBA DA SE KREIRA FUNKCIJA, KOJA CE SE ZVATI        invocateOnKeys
+// KOJOJ SE KAO ARGUMENTI DODAJU:                                       
+//                                  CALLBACK
+//                                  NEOGRANICEN BROJ KEY CODE-OVA
+// 
+// POMENUTI CALLBACK TREBA DA SE INVOCIRA, TEK KADA SU, ZAJEDNO PRITISNUTI
+// SVI KEY-EVI, KOJIMA ODGOVARAJU POMENUTI STRINGOVI (U 'FORMATU' KEY code-A) DODATI KAO ARGUMENTI
+
+// NAIME, MORA SE VODITI RACUNA, KOJI SU KEY-EVI PRITISNUTI, TAKO STO BI    DODAVAO NIZU,     ODNOSNO SET-U
+// (JER JE SET BOLJI U OVAKVOM SLUCAJU (JER NE POSTOJI MOGUCNOT DA IMAM DVA ISTA KEY code-A))
+// SVE ONE KEY code-OVE, KEYEVA KOJI SU TRENUTNO PRITISNUTI
+// ONO STO SE MORA UPOTREBITI JESTE I keyup HANDLER, KAKO BI SE 'POCISTIO' TAJ SET
+// ODNOSNO, KADA SE DOGODI,    keyup        EVENT, ONDA NESTO STO JE BILO PRITISNUTO, TO VISE NIJE, I
+// NEMA POTREBE DA SE PROVERAVAJU code-OVI U SET-U
+
+// MOZDA CU U OVOM PRIMERU, KORISTITI I     Set     INSTANCU JAVASCRIPT-A
+
+// DAKLE, OVA FUNKCIJA, TREBA DA ZAKACI, NEOPHODNE HANDLERE, KEYBOARD EVENT-OVA NA ELEMENT
+// (NISAM O TOME TAKO RAZMISLJAO I NAISAO SAM NA PROBLEMATIKU) (JER ORIGINALNO, JA SAM FUNKCIJI HTEO
+// POZVATI U HANDLER-IMA, ALI TO NEMA NEKOG SMISLA U OVOM PRIMERU)
+
+// IZMENIO SAM MALO FUNKCIJU, JER U PRIMERU IZ CLANKA, FUNKCIJI SE NE DODAJE ELEMENT, KAO ARGUMENT
+// JA SAM GA IPAK DODAO
+
+// OVO JE MOJA VERZIJA
+const invocateOnKeys = function(element, funk, ...kodovi){
+    const kodSet = new Set;     // DA, MOGUCE JE INSTANTICIRATI Set, BEZ DODAVANJA ZAGRADA KONSTRUKTORU
+    element.addEventListener('keydown', function(ev){
+        
+        for(let code of kodovi){
+            if(code === ev.code){       // DODAJEM SET-U, CLANOVE, SAMO AKO ODGOVARAJU NEKOM OD
+                kodSet.add(ev.code);    // code ARGUMENTA
+            }
+        }
+
+        if(kodSet.size === kodovi.length && ev.repeat){   // OVDE JE PRESUDILO ev.repeat
+            funk();                                       // DA SAM DEFINISAO DA MORA BEZ REPEAT-A keydown-A
+            kodSet.clear();                               // MOGLO BI I SA UZASTOPNO (DAKLE NE
+        }                                                 // ISTOVREMENO, VEC UZASTOPNO) PRITISNUTIM  
+                                                          // KEY-OVIMA (SPECIFICIRANIH code-OVA)
+
+                                                            //A ZASTO SE SET CLEAR-UJE?
+                                                            // PA MORA, JER DA NIJE, ONDA 
+                                                            // KADA BI SE SLEDECI PUT BUDE
+                                                            // TRIGGER-OVAO keydown, BEZ OBZIRA
+                                                            // KOLIKO JE DUGMADI    
+    }, false);
+};
+
+// U OVOM PRIMERU, KAO STO SE VIDI, NISAM UPOTREBIO I keyup EVENT
+
+
+// ISPITACU OVU FUNKCIJU NA JEDNOM PARAGRAFU (DA, TO NEMA SMISLA, JER SE NE MOZE UNOSTITI TEKST U PARAGRAF)
+// KOJI SAM UCINIO FOCUSABLE-IM, CIME CE SE, NA NJEMU MOCI TRIGGER-OVATI keydown I  keyup
+const paragraf_lorem = `
+    <p tabindex="0" class="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet!Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.
+    </p>
+`;
+
+invocateOnKeys(
+    document.querySelector('.lorem_ipsum'),
+    () => {alert('the real keys')},
+    'KeyJ',
+    'KeyK',
+    'KeyL'
+);
+
+//PRIMER FUNKCIONISE, ALI JE U CLANKU ON DEFINISAN NESTO DRUGACIJE
+
+
+// U PRIMERU IZ CLANKA, DUGMAD SE KRACE DRZE NEGO U SLUCAJU MOG RESENJA, KOJE ZAHTEVA REPEATING TRIGGERING
+// keydown-A 
+
+// URADICU I TAJ PRIMER
+
+// MISLIM DA U SVOM RESAVANJU POLAZIM IZ POGRESNOG PRISTUPA, U OVOM PRIMERU
+// COVEK POCINJE SA ONIM SLUCAJEVIMA, KADA SE FUNKCIJA TREBA RETURN-OVATI
+
+const runOnKeys = function(element, funk, ...codes){
+    const setOfCodes = new Set();
+
+    element.addEventListener('keydown', function(ev){
+
+        setOfCodes.add(ev.code);     // SVAKI KEY code SE DODAJE SETU, NAKON TRIGGERA EVENTA
+
+        for(let code of codes){
+            if(!setOfCodes.has(code)) return;       // PROVERAVA SE DA LI U TOM SETU IMA ISTIH code-OVA
+        }                                           // KOJI SU DODATI KAO ARGUMENTI
+                                                    // AKO NEMA, POTREBNO JE RETURN-OVATI FUNKCIJU
+
+        // OVO ZNACI DA SE FUNKCIJA NIJE RETURN-OVALA, JER SU PRONADJENI SVI code-OVI U SETU
+        // I DA NIJE POSTOJALO ONIH KOJI NISU SPECIFICIRANI
+        // CALLBACK SE MOZE IZVRSITI
+
+        setOfCodes.clear();  // OVO JE ZA SLUCAJ, AKO SE U SKLOPU funk IZVRSAVA alert
+                             // AKO JE TAJ SLUCAJ alert CE UCINITI DA SE NE REGISTRUJE PUSTANJE DUGMADI
+                             // ODNOSNO DA SE NE REGISTRUJE keydown EVENT, CIME SET NE BI BIO 'OCISCEN'
+        funk();
+
+         
+
+    });
+    
+    element.addEventListener('keyup', function(ev){
+        setOfCodes.delete(ev.code);     // UKLANJANJE code-OVA IZ SETA, DA BI NAKON SLEDECH TRIGGERINGA 
+                                        // keydown-A, IMAO PRAZAN SET
+    });
+}
+
+runOnKeys(
+    document.querySelector('.lorem_paragraf'),
+    () => {alert('the real keys')},
+    'KeyJ',
+    'KeyK',
+    'KeyL'
+);
+
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -16102,5 +16230,20 @@ document.querySelector('.ctown').addEventListener('mousedown', function(ev){
 });
 
 document.querySelector('.za_sakr').hidden = true;
+
+
+/* const loremParagraf = document.querySelector('.lorem_paragraf');
+console.log(loremParagraf);
+
+loremParagraf.addEventListener('keydown', function(ev){
+    if(!ev.repeat) console.log('KEYDOWN-->', ev.code);
+});
+
+loremParagraf.addEventListener('keyup', function(ev){
+    console.log('KEYUP', ev.code);
+}); */
+
+
+
 
 
