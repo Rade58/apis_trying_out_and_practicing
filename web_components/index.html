@@ -2069,6 +2069,19 @@
   <hr />
   <hr />
   <br />
+  <script>
+    document.addEventListener('DOMContentLoaded', function(ev){
+        console.log('DOM is ready');
+      
+        // SLIKA JOS NIJE LOADED (SEM AKO JE CACHED, ONDA JE LOADED)
+
+        console.log(
+            `Velicine slike: ${slika.offsetWidth} X ${slika.offsetHeight}`
+        );
+    });
+  </script>
+
+  <img id="slika" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Overview_of_Tenjo%2C_Cundinamarca%2C_Colombia-_2013-11-05_00-29.jpg">
   <hr />
   <br />
   <hr />
@@ -2077,14 +2090,62 @@
   <hr />
   <br />
   <hr />
+  <script>
+    document.addEventListener('DOMContentLoaded', function(ev){
+        console.log('DOM is ready');
+      
+        // SLIKA JOS NIJE LOADED (SEM AKO JE CACHED, ONDA JE LOADED)
+
+        console.log(
+            `Velicine slike2: ${slika2.offsetWidth} X ${slika2.offsetHeight}`
+        );
+    });
+  </script>
+
+  <img id="slika2" src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Reflected_sunset.jpg">
+  <hr />
+  <br />
+  <hr />
   <hr />
   <br />
   <hr />
   <br />
   <hr />
+  <link type="text/css" rel="stylesheet" href='./src/slilovi_dva.css'>
+  <div class="novi_div_kul"></div>
+    <script>
+        console.log(window.getComputedStyle(document.querySelector('.novi_div_kul')).margin);
+        console.log(window.getComputedStyle(document.querySelector('.novi_div_kul')));
+        document.addEventListener('DOMContentLoaded', function(){
+          console.log(window.getComputedStyle(document.querySelector('.novi_div_kul')).margin);
+        });
+
+    </script>
+  <!-- <div class="novi_div_kul"></div> -->
   <hr />
   <br />
   <hr />
+  <a href="https://upload.wikimedia.org/wikipedia/commons/b/b6/Reflected_sunset.jpg">Slika</a>
+  <br />
+  <hr />
+  <hr />
+  <br />
+  <hr />
+  <script>
+    function log(text){console.log(text)}
+    document.addEventListener('readystatechange', () => log('reeadyState: '+ document.readyState));
+    document.addEventListener('DOMContentLoaded', () => log('DOMContentLoaded'));
+    window.onload = () => log('window onload');
+  </script>
+  <iframe
+    src="../additional practicing files/index.html"
+    onload="log('iframe onload')"
+  >
+  </iframe>
+  <img id="img" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/ChampagnePool-Wai-O-Tapu_rotated_MC.jpg">
+  <script>
+    img.onload = () => log('img onload');
+  </script>
   <br />
   <hr />
   <hr />

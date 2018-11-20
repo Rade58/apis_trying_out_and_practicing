@@ -293,7 +293,26 @@
         <br />
         <hr />
         <br />
+        <script>
+            document.addEventListener('DOMContentLoaded', function(ev){
+                console.log(
+                    document.querySelector('.slika').offsetWidth,
+                    document.querySelector('.slika').offsetHeight
+                );
+            });
+            window.addEventListener('load', function(ev){
+                console.log(
+                    document.querySelector('.slika').offsetWidth,
+                    document.querySelector('.slika').offsetHeight
+                );
+            });
+        </script>
         <hr />
+        <br />
+        <hr />
+        <br />
+        <hr />
+        <img class="slika" src="https://images.freeimages.com/images/large-previews/773/koldalen-4-1384902.jpg">
         <br />
         <hr />
         <br />
@@ -301,7 +320,27 @@
         <br />
         <hr />
         <br />
+        <script>
+            console.log(
+                document.querySelector('.wrapper')
+            );
+
+            document.addEventListener('DOMContentLoaded', function(){
+                console.log(
+                    window.getComputedStyle(document.querySelector('.wrapper')).margin
+                );
+            });
+
+        </script>
         <hr />
+        <br />
+        <hr />
+        <div class="wrapper"></div>
+        <br />
+        <hr />
+        <br />
+        <hr />
+        <link rel="stylesheet" type="text/css" href="./styles_2.css"> 
         <br />
         <hr />
         <br />

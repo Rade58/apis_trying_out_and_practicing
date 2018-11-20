@@ -1,0 +1,7 @@
+.novi_div_kul {
+    box-sizing: content-box;
+    width: 68%;
+    height: 208px;
+    margin: 20px;
+    border: tomato solid 10px;
+}

@@ -12999,8 +12999,8 @@ console.log(nekiSytnhImage.offsetWidth);
 console.log(      document.documentElement      );      //-->       <html>...</html>
 
 
-// U NEKIM SLUCAJEVIMA, JA IH MOGU KORISTITI, ALI POSTOJE DODATNE METODE, I OSOBENOSTI (PECULIARITIES)
-// DOVOLJNO VAZNE, DA BI SE TREBALE RAZMOTRITI
+// U NEKIM SLUCAJEVIMA, JA IH MOGU KORISTITI, ALI POSTOJE DODATNE METODE, I OSOBENOSTI, ODNOSNO CUDNOSTI
+// (PECULIARITIES), DOVOLJNO VAZNE, DA BI SE TREBALE RAZMOTRITI
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //          WIDTH   I   HEIGHT      window-A
@@ -15224,7 +15224,6 @@ const runOnKeys = function(element, funk, ...codes){
         funk();
 
          
-
     });
     
     element.addEventListener('keyup', function(ev){
@@ -15241,6 +15240,356 @@ runOnKeys(
     'KeyL'
 );
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NASTAVLJAM SADA DALJE, SA EVENT-OVIMA
+// SLEDECI EVENTOVI JESU                                EVENTOVI                           
+                                    //              Page lifecycle-A
+// ODNOSNO                                                 
+//                                              ZIVITNOG CIKLUSA STRANICE
+// TU SE UBRAJAJU:
+
+//                                    DOMContentLoaded      load        beforeunload        unload
+// 
+// NAIME, ZIVOTNI CIKLUS HTML page-A IMA TRI VAZNA EVENT-A:
+//      1)      DOMContentLoaded        -->  BROWSER JE FULLY LOADOVAO HTML, I IZGRADJENO JE DOM DRVO, ALI
+                                            // SPOLJASNJI RESURSI, KAO STO SU SLIKE <img>, I 
+                                            // stylesheets  MOZDA NISU JOS LOADED
+
+//      2)      load                    -->  BROWSER JE LOAD-OVAO SVE RESURSE (images, styles etc.)
+
+//      3)      beforeunload/unload     -->  KADA KORISNIK NAPUSTA STRANICU
+
+// SVAKI OD EVENT-OVA MOZE BITI KORISTAN:////////////////////////////////////////////////////////////////
+
+//)  DOMcontentLoaded    EVENT     : DOM JE READY, TAKO DA HANDLER MOZE POTRAZITI DOM NODES, I INICIJALI-
+                                    //  ZIRATI INTERFACE
+//)  load                EVENT     : DODADATNI RESURSI SU LOADED, MOZEMO GET-OVATI VELICINE SLIKE
+                                    // (AKO ONE NISU SPECIFICIRANE U HTML/CSS-U) etc.
+//)  beforeunload/unload    EVENT  : KORISNIK ODLAZI; I MOZEMO PROVERITI DA LI JE KORISNIK SACUVAO
+                                    // PROMENE I PITATI GA, DA LI STVARNO ZELI DA NAPUSTI STRANICU
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // SADA CU ISTRAZITI DETALJE, POMENUTIH EVENT-OVA
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//                               DOMContentLoaded
+
+// OVAJ EVENT SE TRIGGER-UJE, ODNOSNO DOGODI SE NA      document    OBJEKTU, I MORAM KORISTITI 
+// addEventListener     KAKO BI GA UHVATIO
+// ODRADICU, JEDAN PRIMER
+// OVO JE DEO, HTML-A, KOJI JE VEZAN ZA MOJ PRIMER
+
+const html_slike_i_scripta_bla = `
+    <script>
+        document.addEventListener('DOMContentLoaded', function(ev){
+            console.log('DOM is ready');
+
+            // SLIKA JOS NIJE LOADED (SEM AKO JE CACHED, ONDA JE LOADED)
+
+            console.log(        // TAKO DA SLEDECE VREDNOSTI TREBA DA SU NULA
+
+                'Velicine slike: ${slika.offsetWidth} X ${slika.offsetHeight}'
+            );
+        });
+    </script>
+
+    <img id="slika" src="https://upload.wikimedia.org/wikipedia/commons/3/32/Panobogmonse.JPG">
+`;
+
+// DAKLE U OVOM PRIMERU,  ON DOMContentLoaded HANDLER, POKRENUT JE KADA document LOADED, ALI NE CEKA NA
+// SLIKU, DA SE I ONA LOAD-UJE
+                //              TAKO DA SU SE U KONZOLI STAMPALE NULTE VREDNOSTI ZA offsetWidth/Height
+// NA PRVI POGLED ON DomContentLoaded EVENT SE CINI VEOMA JAEDNOSTAVNIM; NAIME DOM DRVO JE SPREMNO I EVO GA
+// EVENT
+// ******************************************************************************************************
+// ******************************************************************************************************
+// E PA MISLIM DA OVO U POTPUNOSTI NIJE TACNO, JER SU SE MENI STAMPALE TACNE VELICINE SLIKE
+// **********************************************************************************************
+// **********************************************************************************************
+// A OVO SAM PRONASAO U JEDNOM POSTU:
+// DOMContentLoaded isn't guaranteed to fire before images have started loading. Browsers optimize 
+// and start loading images as soon as possible, a behavior we won't be able to (and don't want 
+// to) change.
+// *********************************************************
+// *********************************************************
+// A OVO JE JOS JEDAN POST, KOJI SAM PROCITAO:
+// The concept behind DomContentLoaded is, to have an event which fires when the full Dom is loaded 
+// (the html-structure).
+// A t this point every Javascript-command accessing elements wont fail anymore.
+// You dont need the images to do something with an img-tag for example.
+// If you wanna wait until the full page is completely loaded use onload instead.
+// *********************************************************
+// TAKO DA NIJE GARANTOVANO DA SLIKA NECE BITI LOADED, KADA JE CEO HTML UCITAN (KADA SE TRIGGERUJE
+// DOMContentLoaded)
+// *********************************************************
+// TAKO DA MOGU DA PRIMETIM DA JE RUSKI CLANAK, NEPOTPUN U POGLEDU OVE LEKCIJE
+// ******************************************************************************************************
+
+// POSTOJE, PAR PECULIARITIES (CUDNIH STVARI) U POGLEDU DOMContendLoaded-A (TAKO STOJI U RUSKOM CLANKU)
+//
+//                                         DOMContentLoaded   AND SCRIPTS
+
+// Kada pretraživač u početku učita HTML i naiđe na     <script> ... </ script>      u tekstu,
+// ne može nastaviti da gradi DOM. ON ODMAH, ODNOSNO Trenutno mora izvršiti skriptu. Dakle, 
+// DOMContentLoaded se može desiti samo nakon izvršenja svih takvih skripti
+// Spoljni script-ovi (sa src-om) takođe stavljaju DOM building na pauzu, dok se skripta učitava i izvršava.
+// Dakle, DOMContentLoaded čeka i spoljne skripte takođe.
+// Jedini izuzetak su eksterne skripte sa atributima      async     i     defer      
+// One govore pretraživaču da nastavi sa procesiranjem bez čekanja na skripte. Ovo omogućava korisniku
+// da vidi stranicu pre nego što skript-ovi završe učitavanje, što je dobro za performanse
+
+//                             SCRIPTS   SA          async       I       defer
+// Atributi async i defer radi samo za spoljne script-ove. Ako script-e nemaju   src,  async/defer se 
+// ignorisu 
+// I   async    I   defer govore pregledaču da on može nastaviti da radi sa stranicom i učita script 
+// "u pozadini", a zatim da pokrene script, kada se učita. Stoga script ne blokira izgradnju DOM-a i
+// prikazivanje stranica.
+
+// Postoje dve razlike između async I defer
+
+// Razlikuju se u pogledu:
+                            // REDOSLEDA (ORDER-A) EXECUTE-OVANJA                   
+
+//          script-OVI SA   async   EXECUTE-UJU SE PO REDOLSLEDU      'LOAD-FIRST'
+                                    // DAKLE NJIHOV REDOSLED U document-U, NE ZNACI NISTA
+                                    // A TO ZNACI, KOJI SE LOAD-UJE PRVI, TAJ CE SE script I PRVI
+                                    // RUN-OVATI
+//          script-OVI SA   defer   UVEK SE EXECUTE-UJU PO document ORDER-U, ODNONO PO REDOSLEDU, I KAKAV
+                                    // IMAJU U document-U
+
+                            // I U POGLEDU     DOMContentLoaded-A
+
+//          script-OVI SA   async   MOGU SE LOAD-OVATI I EXECUTE-OVATI, I DOK document NIJE JOS FULLY 
+                                    // DOWNLOADED; TO SE DOGADJA AKO SU script-OVI MALI, ILI CASHED
+                                    // I AKO JE document DOVOLJNO DUGACAK
+//          script-OVI SA   defer   EXECUTE-UJU SE NAKON STO JE document LOADED, I PARSED (CEKAJU AKO JE
+                                    // NEOPHODNO), NEPOSREDNO PRE DOMContentLoaded EVENT-A
+
+// Dakle,   async    se koristi za nezavisne script-OVE, kao što su:       brojači (counters)      ili 
+//                                                                         oglasi (ads)
+
+// kojima ne trebaju pristupati sadržaju stranice. A njihov redosled izvršenja nije bitan
+
+// Dok se     defer    se koristi za script-ove, kojima je potreban DOM i/ili je njihov relativni redosled
+// izvrsenja važan.
+
+//                                    DOMContentLoaded      I       STILOVI
+
+// EXTERNAL STYLESHEET-OVI      NE UTICU NA     DOM     I ZBOG TOGA         DOMContentLoaded    NE CEKA NA
+// EXTERNAL STYLESHEET-OVE
+// ALI TU POSTOJI KLOPKA (PITFALL); NAIME, AKO U HTML-U, IMAM   script   TAG, PRE   style-A     , ONDA TAJ
+// script MORA CEKATI NA EXECUTE-OVANJE, POMENUTOG style-A
+
+const html_scripta_i_styla = `
+    <link type="text/css" rel="stylesheet" href='./src/slilovi_dva.css'>
+    <script>
+        // SCRIPT NECE BITI EXECUTED, SVE DOK SE STYLESHEET NE LOAD-UJE
+        console.log(window.getComputedStyle(document.querySelector('.novi_div_kul')).margin);
+    </script>
+    
+`;
+// Razlog je taj što skripta možda želim da dobije koordinate (STO SE SECAM IZ CLANKA O KOORDINATAMA
+// DA SE NE PREPORUCUJE CITANJE DIMENZIJA I KOORDINTA IZ CSS-A) i druge style-dependant propertije 
+// elemenata , kao u prethodnom primeru. Prirodno je da se mora čekati na stilove da se učitaju
+// Kako DOMContentLoaded čeka na skripte, on čeka i na stilove pre njih, takodje
+//************************************************************************************* 
+// MEDJUTIM POSTO SU MI MNOGI PRIMERI, U OVOM CELOM CLANKU, POPRILICNO NERAZUMLJIVI (NEKI OD NJIH NE DAJU
+// REZULTAT, ZA KOJI JE RECENO DA CE GA DATI), PLANIRAM DA
+// OPET PROCITAM OVAJ CLANAK, NEKOLIKO PUTA, NAKON STO ZAVRSIM SA PISANJEM KOMENTARA OVDE;
+// NAKON TOGA CU ODRADITI PRIMERE, VEZNAE ZA NEKI DRUGI HTML FAJL (KOJI IMA MNOGO MANJE CODE-A, NEGO OVAJ
+// SADA, A NE ODGOVARA MI I STO SAM MNOGO CODE-A, VEC NAPISAO ; DAKLE VEZBACU KASNIJE U NOVOM FAJLU,
+// JER ZELIM DA IMAM, JASNIJU PREDSTAVU O SVEMU)
+// *****************************************************************************************************
+// ONO STO SAM JOS PROCITAO U NEKOM POSTU JESTE SLEDECE
+// It is recommended placing style tag of external style sheet in head section, because when you have the
+// CSS declared before <body> starts, your styles has actually loaded already.
+// So very quickly users see something appear on their screen (e.g. background colors). 
+// If not, users see blank screen for some time before the CSS reaches the user.
+// Also, if you leave the the styles somewhere in the <body>, the browser has to re-render the page
+// (new and old when loading) when the styles declared has been parsed.
+// *****************************************************************************************************
+// NASTAVICU, SADA DA NAVODIM ONO STO JE NAPISANO U RUSKOM CLANKU
+// ODNOSNO NASTAVICU SA NOVIM PODNASLOVOM
+/////////////////////////////////////////
+//////////////                      
+//                                                 BUILT-IN BROWSER AUTOFILl
+
+// Firefox, Chrome i Opera autofill-UJU (AUTOMATSKI POPUNJAVAJU) forms-E (OBRAZCE) NA TRIGGERING-U
+// DOMContentLoaded-A
+// Na primjer, ako stranica ima form sa login-OM i lozinkom, a pretraživač zapamtio vrijednosti,
+// onda će ih na DOMContentLoaded pokušati autofilirati (ako je to odobreno od strane korisnika)
+// Dakle, ako je DOMContentLoaded odložen (postponed) dugotrajnim skriptama, onda i autofill čeka.
+// Verovatno ste to videli na nekim lokacijama (ako koristite autofilter pretraživača) - 
+// -polja za prijavu / lozinku se odmah ne autofil-UJU, ali postoji kašnjenje dok se stranica ne učita
+// potpuno. To je zapravo kašnjenje do triggering-A DOMContentLoaded
+
+// Jedna od manjih prednosti u korišćenju async i defer za spoljne skripte - 
+// -oni ne blokiraju DOMContentLoaded i ne odlažu autofill pregledača
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                                       window.onload
+// 'load' Event na window objektu, trigger-uje se, kada se cijela stranica učita, uključujući stilove, slike
+// i druge resurse
+// Primer dolje ispravno prikazuje veličinu slike, jer window.onload čeka sve slike:
+// (OVAKO JE PISALO U CLANKU, A JA NIKAKO DA MI USPE, TO DA UVIDIM, DA SLIKA NIJE LODED ON DOMContentLoaded
+// JER SAM I U TO MSLUCAJU USPEO DA PROCITAM VELICINU SLIKE; MORACU, TO KAO STO SAM REKAO, ISPITATI DETALJNIJE)
+const html_slike_i_scripta_bla_dva = `
+    <script>
+        document.addEventListener('DOMContentLoaded', function(ev){
+            console.log('Page loaded');
+
+            // U OVOM TRENUTKU IMAGE IS LOADED
+
+            console.log(  
+                'Velicine slike: ${slika.offsetWidth} X ${slika.offsetHeight}'
+            );
+        });
+    </script>
+
+    <img id="slika" src="https://upload.wikimedia.org/wikipedia/commons/3/32/Panobogmonse.JPG">
+`;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                       window.onunload
+// Kada posetilac napusti stranicu, 'unload' event se trigger-uje na window-u
+// Možemo tamo uraditi nešto što ne uključuje kašnjenje, kao što je zatvaranje related popup prozora
+// Ali ne možemo otkazati prelazak na drugu stranicu
+// Za to bi trebalo da koristim još jedan događaj       'beforeunload'
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                       window.onbeforeunload
+// Ako je visitor pokrenuo navigaciju away od stranice ili pokušavao da zatvori prozor, U OBIMU
+// ON beforeunload HANDLER-A MOZE DA SE UPUTE KORISNIKU, DODATNE CONFIRMATION-E
+// TAJ HANDLER Može RETURN-OVATI niz sa pitanjem. Istorijski pretraživači su to pokazivali, 
+// ali sada samo neki od njih pokazuju confirmation-E
+// To je zato što su određeni webmasters-I zloupotrebili ovaj event handler, PRIKKZUJUCI
+// MISLEADING AND HACKISH MESSAGES (PORUKE KE KOJE SU ZBUNJUJUCE I HACKISH)
+// Možete ga probati tako što ćete pokrenuti ovaj kod i ponovo učitati stranicu
+
+//       window.onbeforeunload = function(){
+//         return "There are unsaved changes. Leave now?";    /*OVO BI TREBALO DA SE alert-UJE (ALI NECE)*/
+//       };
+
+// MEDJUTIM OVO NE RADI
+// OVDE CU DODATI JEDAN TEKST JEDNOG POSTA, KOJI OBJASNJAVA ZASTO NE RADI
+// Since 25 May 2011, the HTML5 specification states that calls to window.showModalDialog(), 
+// window.alert(), window.confirm(), and window.prompt() methods may be ignored during this event.
+// It is also suggested to use this through the addEventListener interface:
+// You can and should handle this event through window.addEventListener() and the beforeunload event.
+// The updated code will now look like this:
+    `       window.addEventListener("beforeunload", function(e){
+                saveFormData();
+
+                (e || window.event).returnValue = null;
+                return null;
+            });                                                       `;
+
+
+window.addEventListener('beforeunload', function(ev){
+    condirm();
+
+    return 'There are unsved changes. Leave now?';
+});
+// OVAJ PRIMER UOPSTE NE FUNKCIONISE TAKO DA NE ZNAM DA LI JE ONO STO SAM PAST-OVAO IZ POSTA, JESTE TACNO
+// JER NEKI GOVORE DA JE CAK, VISE NEMOGUCE KORISTITI,
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NASTAVLAM DALJE SA OVIM CLANKO
+// SADA CU SE POZABAVITI SA                     readyState
+
+// Šta se događa ako postavimo ON DOMContentLoaded HANDLER nakon što je dokument ucitan?
+// Naravno, taj handler, nikad nece biti pokrenut.
+// Postoje slučajevi kada nismo sigurni da li je dokument spreman ili ne, na primer spoljašnja skripta sa
+// atributom    async   load-uje se i pokrece se asinhrono. U zavisnosti od mreže, može se učitati i 
+// izvršiti pre nego što je dokument completed ili nakon toga; ne možemo biti sigurni.
+// Dakle, trebali bismo znati trenutačno stanje dokumenta.
+// MOZDA SAM JA UPRAVO IMAO PROBLEMA SA PRIMERIMA IZ OVE LEKCIJE, UPRAVO ZATO STO JE OVAJ JAVASCRIPT
+// FAJL U KOJEM PISEM, UPRAVO POSLEDNJI NESTED TAG, body-JA (KAO STO SAM REKAO, SVE CU TO PROVERITI,
+// U DRUGOM FAJLU; SADA NASTAVLJAM SA readyState-OM)
+
+document.readyState     //UPRAVO DAJE POMENUTU INFORMACIJU
+// A POSTOJE TRI MOGUCE VREDNOSTI (TO SU USTVARI STANJA), KOJE MOZE DATI
+
+                //      'loading'           document IS LOADING
+
+                //      'interactive'       document IS FULLY LOADED
+
+                //      'complete'          document IS FULLY READ (U POTPUNOSTI PROCITAN) I SVI RESURSI
+                //                                   POPUT SLIKA SU, TAKODJE LOADED
+
+// NAIME, ZATO MOGU PROVERITI       document.readyState     I ZKACITI HANDLER, ILI EXECUTE-OVATI CODE, 
+// IMMEDIATELLY, AKO JE READY
+
+// NA PRIMER OVAKO
+
+const work = function(){/*  */};
+
+if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoade', work);
+}else{
+    work();
+}
+// POSTOJI I:
+//              readystatechange        EVENT, KOJI SE TRIGGER-UJE, KADA SE STATE PROMENI, TAKO DA MOGU
+//                                      PRINT-OVATI, SVA POMENUTA STANJA
+
+// TRENUTNO STANJE
+console.log(document.readyState);
+// PRINT-OVANJE PROMENA STANJA
+document.addEventListener('readystatechange', () => console.log(document.readyState));
+
+// EVENT readystatechange je alternativni mehanizam praćenja stanja učitavanja dokumenta, 
+// davno se pojavio. Danas se retko koristi, ali moram ga pokriti u cilju kompletnosti
+// Koje je mesto        readystatechange       medju ostalim eventovima?
+// Da biste videli tajming, evo dokumenta sa <iframe>, <img>, i handlerima koji log-uju event-OVE
+
+const iframe_img_and_scripts_example = `
+<script>
+    function log(text){console.log(text)}
+    document.addEventListener('readystatechange', () => log('reeadyState: '+ document.readyState));
+    document.addEventListener('DOMContentLoaded', () => log('DOMContentLoaded'));
+    window.onload = () => log('window onload');
+  </script>
+  <iframe
+    src="../additional_practicing_files/index.html"
+    onload="log('iframe onload')"
+  >
+  </iframe>
+  <img id="img" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/ChampagnePool-Wai-O-Tapu_rotated_MC.jpg">
+  <script>
+    img.onload = () => log('img onload');
+  </script>
+`;
+
+// Tipičan output:
+
+//       1.      [1] initial readyState: loading
+//       2.      [2] readyState: interactive
+//       3.      [2] DOMContentLoaded
+//       4.      [3] iframe onload
+//       5.      [4] img onload
+//       6.      [4] readyState: complete
+//       7.      [4] window onload
+
+// Brojevi u kvadratnim zagradama označavaju približno vreme kada se event desio.
+//  Realno vreme je malo veće, ali događaji označeni sa istom cifrom se događaju približno istovremeno
+//  (± nekoliko ms).
+
+// (a)          document.readyState          postaje   interactive   , neposredno pre DOMContentLoaded. 
+//                                                                  Ova dva događaja zapravo znače isto
+
+// (b)          document.readiState          postaje   complete    , kada su svi resursi (iframe i img)
+//                                                                                              učitani.
+                //  Ovde možemo videti da se to dešava u približno istom 
+                // trenutku kao img.onload (img je poslednji resurs)
+                //  i window.onload. Prebacivanje na complete stanje znači isto kao i window.onload.
+                // Razlika je u tome što window.onload uvek radi nakon svih ostalih load handler-A
+
+
+//IZ COMMENTA ISPOD CLANKA  ///////////////////////////////////////////////////////////////////////////////
+// You're not quite right about your explanation of the timing of the defer attribute. Deferred scripts are 
+// guaranteed to execute before DOMContentLoaded event
 
 
 //////////////////////////////////////////////////////////////////////

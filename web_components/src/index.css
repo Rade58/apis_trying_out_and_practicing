@@ -1187,7 +1187,7 @@ div.tomato_zada, div.olive_zada {
 
 #up_arrow::after {
     content: '\0023F6';  /*GLAVA STRELICE OKRENUTA */
-    color: tomato;                                                              /*NAGORE*/
+    color: tomato;                       /*NAGORE*/
     font-size: 2em;
     cursor: pointer;
 }
@@ -1199,3 +1199,5 @@ div.tomato_zada, div.olive_zada {
 figure {
     border: tomato solid 2px;
 }
+
+
