@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<!-- U PREDHODNOM HTML FAJLU, KOJI SE ODNOSIO, NAJVISE NA DOMcontentLoaded, SAZNAO SAM DA GA
+NE TREBAM KORISTITI, AKO ZELIM DA PROCITAM KOORDINATE I DIMENZIJE ELEMENATA, KAKAVA JE<!-- <!--  img
+ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
+
+ <!-- 
+    ***************************************************************************************************
+  POSTOJI JASNA PRAKSA ZA KOJU GOVORE DA JE DOBRA A TO JE:
+        DA SE EXTERNAL SCRIPT-OVI, POSTAVLJAJU NA KRAJU body-JA; A TAKODJE DA SE link TAGOVI, KOJI UVODE
+        STYLSHEET, STAVLJAJU U head-A
+        JA CU TAKVU PRAKSU KORISTITI I DALJE (OVO CISTO NAPOMINJEM)
+    ***************************************************************************************************
+ -->
+
+
+
+<!-- SADA CU SE POSVETITI EXTERNAL script-OVIMA, KOJIMA JE DODAT    async   ILI    defer -->
+        <!-- SAMO SE EXTERNAL script-OVIMA, I MOGU DODATI, POMENUTI ATRIBUTI, JER AKO script TAG NEMA 
+        src, ONDA SE    async       ILI         defer       IGNORISU -->
+        
+        <!-- ALI MOAM SAGLEDATI RAZLIKE, IZMEDJU OVIH script-OVA -->
+
+                        <!-- POCECU SA                  async               -->
+        <!-- U SLOBODNOJ ITERPRETACIJI, RECI CU DA OVI         script-OVI, NE CEKAJU NA DA SE UCITA 
+        HTML U DOM; ODNOSNO OVO SCRIPTOVI NE CEKAJU NA TRIGGERING       DOMContentLoaded-A -->
+        <!-- ONI UPRAVO, ZATO SLUZA ZA INDEPENDENT, ODNOSNO NEZAVINI CODE; KAO STO SU NEKI COUNTER-I
+        I REKLAME, KOJE NE TREBAJU PRISTUP DOM-U -->
+        <!-- KOJI SE PRVI OD        async       SCRIPT-OVA UCITA, TAJ CE SE PRVI I ZVRSITI -->
+        <!-- REDOSLED async SCRIPT-OVA U DOCUMENTU, NEMA NIKAKVO ZNACENJE ZA IZVRSENJE -->
+
+                        <!--          defer           -->
+        <!-- OVI SCRIPT-OVI SE IZVRSAVAJU, TEK POSTO JE DOCUMENT, LOADED I PARSED (DAKLE, AKO JE POTREBNO
+             CEKAJU DOK SE TO NE DOGODI) 
+            NAIME, ONI SE IZVRSAVAJU NEPOSREDNO NAKON TRIGGERING-A   DOMContentLoaded-A   -->
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewportial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#000000">
+        <link rel="shortcut icon" type="image/png" href="./images/icon.png">
+        <title>Learning about async and defer (attributes on script)</title>
+    </head>
+
+    <body>
+
+
+        <style>
+            /*MANJE BITNO*/
+            /*SAMO DEFINISEM DA OVERFLLOW BUDE auto, ZA SLEDECE figure TAGOVE, A I DAJEM
+            figure-u DIMENZIJE*/
+
+            figure {
+                height: 208px;
+                width: 308px;
+                border: olive solid 4px;
+                overflow: auto;
+            }
+            
+            figure:nth-of-type(2n){
+                width: 408px;
+                border: tomato solid 2px;
+            }
+
+        </style>
+
+        <!-- DEFINISACU NEKOLIKO ELEMENATA (MEDJU NJIMA I NEKOLIKO SLIKA)-->
+        <!-- MEDJUTIM PRE TOGA CU NESTOVATI, NEKOLIKO SCRIPT TAGOVA,
+                    NEKA JEDAN OD NJIH BUDE INTERNAL
+                    JEDNA CE BITI EXTERNAL I async
+                    I JEDAN CE BITI EXTERNAL I defer     
+        -->
+
+        <script async src="./async_script.js"></script>
+
+        <script>
+            console.log(document.querySelector('p'));               //--> null
+            console.log(document.querySelector('img'));             //--> null
+            
+            // console.log(document.querySelector('img').offsetHeight);  //--> TypeError  
+
+        </script>
+
+        <script defer src="./defer_script.js"></script>         <!-- DEFINISAO SAM DA adync I defer 
+                                                                script-OVI
+                                                                IMAJU ISTI CODE, KAO I INTERNAL SCRIPT
+                                                                 -->
+        
+
+        <!-- KAO STO SE DA PRIMETITI, U POMENUTIM SCRIPT-OVIMA SAM KORISTIO
+            NEKE OD SLEDECIH ELEMENATA -->
+        
+        <!-- A ONO STA SE DOGODILO JESTE DA SE PRVO IZVRSIO INTERNAL SCRIPT KOJI NIJE USPEO DA
+        PRISTUPI NI SLICI A NI PARAGRAFU, JER SE ONI NISU UCITALI KADA SE SCRIPT IZVRSAVAO 
+        DAKLE U OBIMU OVOG SCRIPTA NISAM MOGAO PRISTUPITI VISINI SLIKE
+        -->
+
+        <!-- SLEDECI SCRIPT, KOJI SE IZVRSIO JESTE, U VECINI SLUCAJEVA JESTE async KOJI JE DAO
+        NEKAD TACNE, A NEKAD NE TACNE VREDNOSTI VISINE SLIKE, JER JE VEROVATNO, NEKADA SLIKA UCITALA
+        NA VREME, A NEKAD NIJE -->
+        <!-- A NEKAD SE DOGODI I DA SE PRVI IZVRSI defer ; KOJI JE U WEBKIT BROWSER-U, GOTOVO
+        UVEK DAVAO TACNU VREDNOST, ALI NI TO NIJE POUZDANO -->
+
+        <!-- TAKO DA NE VERUJEM OVIM SCRIPTOVIMA, U POGLEDU, ZA STA SAM IH JA KORISTIO -->
+
+        <!-- KAO STO I SAM CLANAK KAZE, async SCRIPTOM NE TREB PRISTUPATI, DOM-U, VEC SAMO RUKOVATI
+        REKLAMAMA ILI BROJACIMA -->
+
+        <!-- A NI U defer SCRIPTU, NE TREBA PRISTUPATI GEOMETRIJI SLIKE, VEC TO TREBA RADITI
+        U OBIMU ON load HANDLER-A, window-A -->
+
+        <!-- ALI NAJVECA ISTINA OSTAJE DA SCRIPTOVI, NE TREBA DA SE NALAZE NA MESTIU GDE SU SADA, 
+            VEC NESTED NA KRAJU body TAGA -->
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <blockquote>
+            Teacher: Why are you late?
+            Student: There was a man who lost a hundred dollar bill.
+            Teacher: That's nice. Were you helping him look for it?
+            Student: No. I was standing on it.
+        </blockquote>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <figure>
+            <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/3/33/Dykker.jpg" 
+                alt="wild west"
+            >
+        </figure>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <figure>
+            <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Katrinetorp_Mansion_close.jpg" 
+                alt="wild west"
+            >
+        </figure>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <figure>
+            <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/0/07/Akumal_Half-moon_Bay-27527-2.jpg" 
+                alt="wild west"
+            >
+        </figure>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <figure>
+            <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/3/33/Dykker.jpg" 
+                alt="wild west"
+            >
+        </figure>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
+        incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
+        nisi rem provident molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+        <figure>
+            <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/3/35/Cataloochee_Valley-27527.jpg" 
+                alt="wild west"
+            >
+        </figure>
+
+    </body>
+</html>
