@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!--
+ZELIM U OVOM FAJLU DA SE DETALJNIJE POZABAVIM PAGE LIFECYCLE-OM
+TAKO DA CU U OVOM FAJLU, NESTOVATI, SCRIPT TAGOVE U     head     SEKCIJI, ZATIM link TAGO-VE CU NESTOVATI
+U   body  SEKCIJI; JER UPRAVO AKO BUDEM DEFINISAO CODE, KOJI SE EXECUT-UJE, NAKON TRIGGERINGA LIFCYCLE
+EVENT-OVA, VERUJEM DA CU MOCI JASNO VIDETI REDOSLED TRIGGERING-A, SVIH TIH EVENT-OVA
+A ZASTO PRVENSTVENO RADIM, POMENUTIM PRISTUPOM?
+PA ZATO STO CU LAKSE VIDETI STA SE LOAD-OVALO, A STA NIJE (VIDECU JASNIJE ONE SITUACIJE KADA SE REFERENCIRA
+NESTO, A DA TO JOS NIJE UCITANO U DOM) (NA KRAJU JE ISPALO DA TO NIJE NI BITNO)
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#000000">
+        <link rel="shortcut icon" type="image/png" href="./images/icon.png">
+        <title>Learning about page lifecycle</title>
+     <!--PRVO STA SAM SAZNAO OD RANIJE JESTE DA SE   DOMContentLoaded   TRIGGER-UJE  ONDA, KADA JE SAV HTML
+     UCITAN U DOM 
+    
+     MEDJUTIM TU POSTOJI IZUZETAK KOJI SE TICE EKSTERNIH RESURSA, KAO STO SU SLIKE, KOJE SE UVODE, KAO STO
+     ZNAM, PUTEM         img         TAGA
+    
+     NAIME, KOD PRVOG OTVARANJA STRANICE (OVO JE VEOM VAZNO, SAMO KADA SLIKA NIJE CASHED); NECU MOCI
+     ON DOMContentLoaded DA PROCITAM, NATURALNU VELICINU SLIKE
+     ZELIM DA TO POTKREPIM PRIMEROM
+     -->
+        <script>
+            //JASNO JE DA AKO OVDE REFERENCIRAM SLIKU, DA CU IMATI REFERENCE ERROR, JER ZAISTA DONJA SLIKA
+            // JOS NIJE UCITATNA, KADA SE POKRENE OVAJ SCRIPT
+                //    console.log(   slika1  );        //--> ReferenceError
+            
+            //POKUSACU SADA DA REFERENCIRAM, ISTU SLIKU, U OBIMU,   ON  ONDOMContentLoaded     HANDLER-A
+            //I NE SAMO TO, VEC CU POKUSATI DA PROCITAM DIMENZIJE, POMENUTE SLIKE (offsetWidth offsetHeight)  
+            document.addEventListener('DOMContentLoaded', function(ev){
+                console.log(slika1);        //-->   <img ...>
+                console.log(slika1.offsetWidth, slika1.offsetHeight);       //--> U CHROME-U I OPER-I
+                                                                            //      0   0 
+                                                                            //--> U MOZILI SU SE STAMPALE
+                                                                               // VREDNOSTI    64      17
+                                                                               // KOJE NARAVNO NISU
+                                                                               // TACNE VREDNOSTI
+                                                                               // PREDPOSTAVLJAM DA JE
+                                                                               // OVA JEDNA DIMENZIJA,
+                                                                               // USTVARI JESTE DEBLJINA 
+                                                                               // SCROLLBAR-A (17)
+                                                                               // KOJI JESTE TU JER SAM
+                                                                               // NA STRANICU DOVEO OGROMNU
+                                                                               // SLIKU
+                                                                               // TO IMA SMISLA U SLUCAJU
+                                                                               // MOZZILE, JER JE
+                                                                               // TAKVA NJENA OSOBINA
+                                                                               // KOJA SE TICE GEOMETRIJE
+                                                                               // I KOORDINATA
+                                                                               // JER CHROME I OPERA
+                                                                               // RACUNAJU DA JE SCROLLBAR
+                                                                               // DEO width-A ILI height-A
+                                                                               // (css-OVOG, BEZ PADDING-A)
+                                                                               // DOK SE U MOZZILI SCROLLBAR
+                                                                               // SIRINA DODAJE POSTOJECIM
+                                                                               // DIMENZIJAMA ELEMENTA
+                                    // ONO STO MI NIJE JASNO JESTE, OTKUD TA VELICNA OD 64 ZA SIRINU SLIKE
+
+                // ONO STO SAM SAZNAO, CITAJUCI POSTOVE JESTE DA FIREFOX MOZDA POCINJE DA VRSI NEKE KALKULACIJE 
+                // NE ZNAM? UGLAVNOM TREBAM IZBEGAVATI OVAKVO KORISCENJE (A NE VIDIM I NEKI SMISAO, ZASTO BI
+                // UOPSTE KORISTIO VELICINE SLIKE, A DA NISAM SCEKAO DA SE ONE POTPUNO UCITAJU)
+                
+                // A MOZDA, STO SE TICE SLIKE, NIJE NI POTREBNO CITATI  ofsset VREDNOSTI, JER SLIKE NEMAJU
+                // BORDER
+                // ONO STO JE JASNO JESTE DA CE client VREDNOSTI, BITI NULA
+                console.log(slika1.clientWidth, slika1.clientHeight);       //-->       0   0
+
+
+            });
+            // SADA CU OBJASNITI
+
+
+        </script>
+    
+    </head>
+
+    <body>
+
+        <!--U CILJU PRIMERA, OVA SLIKA MORA BITI POTPUNO NOVA SLIKA (NE SME BITI CACHED)
+        DAKLE, POSTO JOS NISAM UPOZNAT SA BRISANJEM POJEDINCNIH CACHED FAJLOVA, JA CU 
+        SE MORATI POSTARATI DA SVE DEFINISEM KAKO TREBA, JER CU SAMO NAKON INICIJALNOG RELOADA
+        STRANICE, MOCI VIDETI DA LI SE SLIKA UCITALA ILI NIJE, ONDA KADA SE TRIGGEROVAO 
+        DOMContentLoaded (A KAO STO SAM REKAO, OCEKUJE SE DA SLIKA NE BUDE UCITANA TADA, JER 
+        DOMContentLoaded NE BI TREBAO DA CEKA NA NJENO UCITAVANJE)
+        -->
+
+        <img 
+            id="slika1"
+            src="https://upload.wikimedia.org/wikipedia/commons/3/33/Dykker.jpg"
+            alt="slika voza"
+        >
+
+        <!--MEDJUTIM, OVAJ SLUCAJ JESTE SPECIFICAN, NE ZNAM ZASTO
+        DA LI JE TO ZBOG VELICINE SLIKE, PA SE SLIKA SPORO UCITAVA ILI NECEG DRUGOG, CAK
+        MI IZGLEDA DA SLIKU NE MOGU NI CACH-IRATI  -->
+        
+        <!-- NAIME, DA SAM POSTAVIO SCRIPT PRE SLIKE U HTML, ALI DA SE SCRIPT NASAO NESTED U
+        BODY SEKCIJI, NE BI SE, TAKODJE MOGLE OCITATI TACNE DIMENZIJE SLIKE, U POMENUTOM SCRIPT-U -->
+
+        <!-- MEDJUTIM, VAZNIJA STVAR JESTE DA SE NECE MOCI OCITATI TACNE DIMENZIJE SLIKE
+        NI KADA POSTAVIM SCRIPT (KOJI CE KORISTITI SLIKU), ISPOD SAME SLIKE,
+        
+        CAK I DA PRISTUPAM SLICI, ODNOSNO DA JOJ OCITAVAM DIMENZIJE BEZ  DA TO RADIM    ON  DOMContentLoad
+        
+        OVAKO -->
+
+        <script>
+            console.log(slika1);        //-->   <img ...>
+            console.log(slika1.offsetWidth, slika1.offsetHeight);  //--> CHROME  0  0       //--> Moz 64  17
+            console.log(slika1.clientWidth, slika1.clientHeight);  //--> CHROME  0  0       //--> Moz 0   0
+
+
+            //A I DALJE NECU MOCI OCITATI TACNE VREDNOSTI DIMENZIJA SLIKE   ON   DOMContentLoaded
+
+            document.addEventListener('DOMContentLoaded', function(ev){
+                console.log(slika1);
+                console.log(slika1.offsetWidth, slika1.offsetHeight);//--> CHROME  0  0    //--> Moz 64  17
+                console.log(slika1.clientWidth, slika1.clientHeight);//--> CHROME  0  0    //--> Moz 0   0
+            });
+
+        </script>
+
+        <!--
+        IZ TOG RAZLOGA PADA MI NA PAMET SAMO JEDNO
+        *******************************************************************************************
+        NE CITATI DIMENZIJE I KOORDINATE SLIKE  U OBIMU     ON      DOMContentLoaded     HANDLER-A
+        TE VREDNOSTI, NIAKAKO NECE BITI RELIABLE (POUZDANE)
+        *******************************************************************************************
+        -->
+
+        <!-- POSTO MI JE CUDNO, KAKO TO CITANJE DIMENZIJA SLIKE, NISAM MOGAO POSTICI SCRIPT-OM,
+             KOJI SE NALAZI U CODE-U, NAKON SLIKE; PADA MI NA PAMET SAMO JEDNO
+            DA NIJE MOZDA RAZLIA U TOME, STO CODE NISAM DEFINISAO U EXTERNAL SCRIPT-U
+        -->
+        <!-- TAKO DA CU UVESTI JEDAN SCRIPT, U KOJEM CU STAMPATI, ONO ISTO STO SAM STAMPAO I U PREDHODNIM -->
+
+        <script src="page_lifectcle.js"></script>
+        <!-- I APSOLUTNO, OVO NIJE IMALO NIKAKVOG EFEKTA, JER I DALJE NISU OCITANE TACNE VREDNOSTI -->
+      <!-- ********************************************************************************************* -->
+      <!-- ********************************************************************************************* -->
+        <!-- TAKO DA JE ONO STO MI OSTAJE JESTE DA Z OVU POTREBU, OCITAVANJA DIMENZJA I KOORDINATA SLIKE
+        DEFINISEM U OBIMU   ON load  HANDLER-A, window OBJEKTA  -->
+        
+        <script>
+
+            window.addEventListener('load', function(ev){
+                console.log(
+                    slika1.offsetWidth,
+                    slika1.offsetHeight,
+                    slika1.clientWidth,
+                    slika1.clientHeight
+                );
+                
+                //ONO STO SE OVOM PRILIKO MSTAMPALO U KONZOLI JESTE:        640   480           640   480
+                // OVO JESU TACNE DIMENIZIJE SLIKE
+            });
+
+        </script>
+
+        <!-- OPET PONAVLJAM, U SLUCAJU CHROME-A I OPERE, KADA SE DIMENZIJE SLIKE OCITAJU NA POGRESNOM
+        MESTU, ODNOSNO NA ONOM MESTU KOJE NIJE OBIM   ON  load HANDLER  window OBJEKTA, ONDA
+        SU VREDNOSTI SIRINA I VISINA, ZAISTA   NULA   ; A STO NE VAZI ZA FIREFOX; GDE VREDNOSTI NISU
+        NULA ALI TO NE ZNACI DA SU TACNE (VEROVATNO SIGURNO NISU TACNE) -->
+
+    </body>
+</html>

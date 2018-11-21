@@ -15591,6 +15591,8 @@ const iframe_img_and_scripts_example = `
 // You're not quite right about your explanation of the timing of the defer attribute. Deferred scripts are 
 // guaranteed to execute before DOMContentLoaded event
 
+//ODLUCIO SAM DA ODSADA SVE PISEM U NOVIM FAJLOVIMA; GDE CU I PROVEZBATI 
+// PAGE LIFECYCLE EVENT-OVE
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
