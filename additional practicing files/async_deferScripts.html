@@ -228,7 +228,8 @@ ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
             U async i defer SCRIPTU JE U POTPUNO SVIM SLUCAJEVIMA PROCITANE TACNE VREDNOSTI COMPUTED
             STILOVA -->
 
-
+            <!-- ZA INTERNAL SCRIPTU, KOJI SE NALAZI NESTED NA POCETKU body-JA, NE TREBA DAVATI
+            DODATNE KOMENTARE, JER TAJ SCRIPT, NICEMU NIJE MOGAO USPESNO PRISTUPITI -->
 
 
 
@@ -278,6 +279,34 @@ ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
         
         <!-- ALI NAJVECA ISTINA OSTAJE DA SCRIPTOVI, NE TREBA DA SE NALAZE NA MESTIU GDE SU SADA, 
             VEC NESTED NA KRAJU body TAGA; A EXTERNAL STILOVE, TREBA LINKOVATI U head TAGU -->
+
+        <!-- ONO STO JOS NISAM REKAO, ODNOSNO NA STA JOS NISAM PODSETIO, JESTE DA SE 
+        STILOVI MORAJU, IPAK STAVLJATI U head OBLAST (OVO NARAVNO NE VAZI ZA WEB KOMPONENTE
+        GDE SE KAO STO ZNAM style TAG-OVI NEST-UJU U SHADOW DOM), JER POSTOJE RAZNE NEPOVOLJNOSTI,
+        KOJE TOM PRILIKOM MOGU NASTATI, ALI TIME NEMAM VREMENA, SADA DA SE POZABAVIM, TAKO DA 
+        NECU OSTAVLJATI DODATE KOMENTARE O TOME -->
+
+        <!-- ****************************************************************************************** -->
+
+            <!-- OVDE CU OSTAVITI NESTO STO JEDAN DEVELOPER MISLI O defer-U, KAKO GA KORISTI, I 
+            ZASTO JE NAJBOLJI PO NJEMU  -->
+
+                <!-- TL;DR, tell me what’s the best
+
+      The best thing to do to speed up your page loading when using scripts is to put them in the head, 
+      and add a defer attribute to your script tag:
+                      
+              <script defer src="script.js"></script>
+                      
+      This is the scenario that triggers the faster domInteractive event.
+      Considering the pros of defer, is seems a better choice over async in a variety of scenarios.
+      Unless you are fine with delaying the first render of the page, making sure that when the page
+      is parsed the JavaScript you want is already executed. -->
+
+
+
+        <!-- ****************************************************************************************** -->
+            <!-- NASTAVICU BAVLJENJE SA         PAGE LIFECYCLE EVENT-OVIMA, U DRUGOM FAJLU-->
 
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
         incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
