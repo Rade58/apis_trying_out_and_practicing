@@ -1,37 +1,117 @@
 <!DOCTYPE html>
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- OBJASNJENJA KOJA SAM DAO ZA    async    I    defer    MOGU BITI NERAZUMLJIVA, DOLE U CODE-U, JER
+SAM DOSAO DO NOVIH INFORMACIJA U POGLEDU        script-OVA, KOJI IMAJU BOOLEAN ATRIBUT    async    I ONIH
+KOJI IMAJU BOOLEAN ATRIBUT defer -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+
+<!-- PRE NEGO STO POCNEM GOVORITI O POMENUTIM SCRIPT-OVIMA, MORAM NAPRAVITI RAZLIKU IZMEDJU SLEDECIH
+STVARI:
+                                            PARSING-A
+
+                    I                       RENDERING-A
+
+PROCES CITANJA, ILI PROCESSOVANJA HTML-A TEKSTA OD STRANE BROWSER-A, SE NAZIVA PARSSING-OM
+
+MEDJUTIM, ISTO TAKO KAKO BROWSER PROCESSUJE, ODREDJENI DEO HTML TEKSTA, ON ODGOVARAJUCU SADRZINU PRIKAZE
+NA EKRANU I TO JE       RENDERING
+
+DAKLE PARSING ENGINE, I RENDERING ENGINE, RADE UPOREDNO
+        NAIME, AKO PARSING ENGINE PROCESSUJE, SAMO JEDAN TABLE ROW TAG, ODMAH NAKON TOGA, RENDRING ENGINE
+        RENDERUJE, TAJ TABLE ROW
+
+STO ZNACI DA PARSING I RENDERING ENGIN-A RADE ZAJEDNO ODNOSNO UPOREDNO, SAMO STO JE PARSING ENGINE,
+ RADI JEDAN KORAK IZA
+-->
+<!-- POSTO ZNAM STA ZNACE TERMINI PARSING I RENDERIN URADICU SLEDECE -->
+
+<!-- *************************************************************************************************** -->
+<!-- POSTO SAMO IMA SMISLA DA SE SCRIPTOVI KOJI IMAJU  defer ILI async ATRIBUTE, POSTAVE U head OBLAST -->
+<!-- NAJBOLJE JE ZAMISLITI DVE STRANICE
+                    JEDNA DA IMA NESTED script      SA BOOLEAN async ATRIBUTOM  U head OBLASTI
+                    DRUGA DA IMA NESTED script      SA BOOLEAN defer ATRIBUTOM  U head OBLASTI
+                -->
+
+<!-- SADA CU POSMATRATI PARSING I RENDERING POMENUTIH STRANICA, GDE CU OBRATITI PAZNJU NA script-OVE -->
+
+<!-- PRVA STRANICA SA async ATRIBUTOM NA SCRIPTU, KOJI JE NESTED U HEAD-U 
+                POCECE  PROCESS-OVANJE SE (ODNOSNO PARSE-OVACE SE, ODNOSNO UCITAVACE SE U DOM)
+                I TAJ PARSING CE STICI I DO async SCRIPTA; KOJI NECE BLOKIRATI PARSING, ODNOSNO 
+                NJEGOV PARSING CE SE DOGODITI ASINHRONO, A BROWSER CE NASTAVITI SA DALJIM PARSING-OM
+                STRANICE
+                KADA SE async SCRIPT UCITA, ODNONO PARSE-UJE, ODMAH MOZE POCETI NJEGOV EXECUTION
+                I SAV HTML NIJE UCITAN, ODNOSNO PARSE-OVAN, ODNONO PROCESSOVAN, EXECUTE-OVANJE, POMENUTOG
+                SCRIPTA CE BLOKIRATI DALJI PARSSING; I DALJI PARSING CE SE NASTAVITI TEK KADA, SE ZAVRSI
+                EXECUTE-OVANJE async SCRIPT-A
+                -->
+
+<!-- DRUGA STRANICA, KOJA IMA defer ATRIBUT, KOJI JE NESTED U HEAD-U
+                NECU DAVATI, OPSIRNO OBJASNJENJE VEC CU SAMO RECI SLEDECE
+                KADA PARSING NAIDJE NA defer SCRIPT, ISTO TAKO SE NE BLOKIRA PARSING, VEC defer SCRIPT,
+                POCINJE PARSING ASINHRONO, ODNOSNO NEZAVISNO OD PARSINGA STRANICE (STO JE ISTO I SA async)
+                
+                I U SLEDECOJ STVARI, KOJU CU RECI,      defer      SCRIPT, SE RAZLIKUJE OD      async
+                A TO JE EXECUT-OVANJE defer SCRIPT
+
+                E PA , defer SCRIPT CE SE EXECUTE-OVATI, ONDA KADA SE ZAVRSI PARSING STRANICE
+                
+                ALI ONO STO SAM PROCITAO JESTE INTERESANTNO, A TICE SE  DOMContentLoaded  EVENTA
+                IZGLEDA DA OVAJ EVENT CEKA DA SE I TAJ defer SCRIPT PARSUJE I EXECUTUJE, DA BI SE
+                NAKON TOGA TRIGGER-OVAO
+
+                STO ZNACI DA AKO POSTOJE defered SCRIPTOVI, ONDA CE SE      DOMContentLoaded  
+                TRIGGER-OVATI, TEK POSTO SE POSLEDNJI OD NJIH RASCLANI I IZVRSI
+
+                A AKO IH IMA VISE defered SCRIPTOVI SE PARSU-JU I IZVRSAVAJU, PO REDOSLEDU KOJIM SU POSTAVLJENI
+                script TAGOVI U HTML; NAIME DOK SE JEDAN PARS-UJE I IZVRSI SLEDECI CE CEKATI DA ON TO URADI
+                DAKLE, IAMM POTPUNO BLOCKING SITUACIJU, U POGLEDU script-OVA, ALI ONI NE
+                BLOKIRAJU PARSING STRANICE
+
+                E TAKVI NISU async SCRIPTOVI, JER SE ONI SVI PARSE-UJU, NEZAVISNO JEDAN OD DRUGOG
+                I OD BRZINE NJIHOVOG PARSINGA, ZAVISICE I EGZEKUCIJA; JER ONAJ KOJI SE NAJBRZE PARS-OVA, CE
+                PRVI POCETI ZA EXECUT-OVANJE; 
+                        A EXECUTE-OVANJE JE UVEK BLOCKING, TAKO DA DRUGI SCRIPT, MORA SACEKATI DA SE
+                        ONAJ KOJI SE PARSE-OVAO, PRE NJEGA, IZVRSI
+                        
+                IAK O STO SAM REKAO, A PONAVLJAM JOS JEDNOM: TAKVO EXECUT-OVANJE  async SCRIPT-OVA,
+                MOZE IZAZVATI BLOCKING, ODNOSNO BLOKIRANJE PARSINGA STRANICE
+                -->
+
+<!-- IZ OVOGA VIDIM, DA SU defered SCRIPTOVI, 'NESTO BOLJI', JER NECE STAVITI UCITAVANJE STRANICE ON HOLD -->
+
+<!-- U CLANKU JOS PISE, DA JE POMENUTI SCRIPT TAG (POSTAVLJEN U head OBLASTI) SA defer ATRIBUTOM; USTVARI
+WINNING SOLUTION IN TERMS OF SPEED -->
+
+<!-- MEDJUTIM, POSTOJI JEDNA, JAKO BITNA STVAR-->
+<!-- NI     async   NI      defer       NE GARANTUJU NIST U POGLEDU BLOKIRANJA RENDERING-A
+JER POMENUTO ZAVISI OD SAME SADRZINE SCRIPT-A I MENE 
+ZATO JE DOBRO DEFINISATI DA SE SAV JAVASCRIPT, KOJI UTICE NA DOM BUDE WRAPPED U        ON   load   HANDLER
+window OBJEKTA
+-->
+
 <!-- U PREDHODNOM HTML FAJLU, KOJI SE ODNOSIO, NAJVISE NA DOMcontentLoaded, SAZNAO SAM DA GA
 NE TREBAM KORISTITI, AKO ZELIM DA PROCITAM KOORDINATE I DIMENZIJE ELEMENATA, KAKAVA JE<!-- <!--  img
 ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
 
- <!-- 
-    ***************************************************************************************************
-  POSTOJI JASNA PRAKSA ZA KOJU GOVORE DA JE DOBRA A TO JE:
+  <!-- 
+  ***************************************************************************************************
+    POSTOJI JASNA PRAKSA ZA KOJU GOVORE DA JE DOBRA A TO JE:
         DA SE EXTERNAL SCRIPT-OVI, POSTAVLJAJU NA KRAJU body-JA; A TAKODJE DA SE link TAGOVI, KOJI UVODE
         STYLSHEET, STAVLJAJU U head-A
         JA CU TAKVU PRAKSU KORISTITI I DALJE (OVO CISTO NAPOMINJEM)
-    ***************************************************************************************************
- -->
+  ***************************************************************************************************
+  -->
 
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
 
+<!-- MISLIM DA JE DOBRO DA SE POPZABAVIM I PRIMETRIMA -->
 
-<!-- SADA CU SE POSVETITI EXTERNAL script-OVIMA, KOJIMA JE DODAT    async   ILI    defer -->
-        <!-- SAMO SE EXTERNAL script-OVIMA, I MOGU DODATI, POMENUTI ATRIBUTI, JER AKO script TAG NEMA 
-        src, ONDA SE    async       ILI         defer       IGNORISU -->
-        
-        <!-- ALI MOAM SAGLEDATI RAZLIKE, IZMEDJU OVIH script-OVA -->
-
-                        <!-- POCECU SA                  async               -->
-        <!-- U SLOBODNOJ ITERPRETACIJI, RECI CU DA OVI         script-OVI, NE CEKAJU NA DA SE UCITA 
-        HTML U DOM; ODNOSNO OVO SCRIPTOVI NE CEKAJU NA TRIGGERING       DOMContentLoaded-A -->
-        <!-- ONI UPRAVO, ZATO SLUZA ZA INDEPENDENT, ODNOSNO NEZAVINI CODE; KAO STO SU NEKI COUNTER-I
-        I REKLAME, KOJE NE TREBAJU PRISTUP DOM-U -->
-        <!-- KOJI SE PRVI OD        async       SCRIPT-OVA UCITA, TAJ CE SE PRVI I ZVRSITI -->
-        <!-- REDOSLED async SCRIPT-OVA U DOCUMENTU, NEMA NIKAKVO ZNACENJE ZA IZVRSENJE -->
-
-                        <!--          defer           -->
-        <!-- OVI SCRIPT-OVI SE IZVRSAVAJU, TEK POSTO JE DOCUMENT, LOADED I PARSED (DAKLE, AKO JE POTREBNO
-             CEKAJU DOK SE TO NE DOGODI) 
-            NAIME, ONI SE IZVRSAVAJU NEPOSREDNO NAKON TRIGGERING-A   DOMContentLoaded-A   -->
 
 <html>
     <head>
@@ -44,11 +124,55 @@ ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
 
     <body>
 
+        <!-- DEFINISACU NEKOLIKO ELEMENATA (MEDJU NJIMA I NEKOLIKO SLIKA)-->
+        <!-- MEDJUTIM PRE TOGA CU NESTOVATI, NEKOLIKO SCRIPT TAGOVA,
+                    
+                    NEKA JEDAN OD NJIH BUDE INTERNAL
+                    
+                    DVA CE BITI EXTERNAL I async
 
-        <style>
-            /*MANJE BITNO*/
+                    I JOS DVA CE BITI EXTERNAL I defer     
+        -->
+
+        <script async src="./async_script.js"></script>
+
+        <script>
+            // DAKLE KAKAV JE CODE U OVOM INTERNAL SCRIPT-U, TAKAV JE CODE I U OSTALIM EXTERNAL 
+            // SCRIPTOVIMA
+
+            console.log('INLINE SCRIPT');
+            console.log(document.querySelector('p'));                       //--> null
+            console.log(document.querySelector('img'));                     //--> null
+            // console.log(document.querySelector('img').offsetHeight);     //--> TypeError  
+            // console.log(document.querySelector('p').offsetHeight);       //--> TypeError
+            // console.log(window.getComputedStyle(document.querySelector('figure')));       //--> TypeError
+            // console.log(window.getComputedStyle(document.querySelector('figure')).border); //--> TypeError
+            // console.log(window.getComputedStyle(document.querySelector('figure')).height);  //--> TypeError
+
+            console.log('*************');
+        </script>
+
+        <script defer src="./defer_script.js"></script>         <!-- DEFINISAO SAM DA adync I defer 
+                                                                script-OVI
+                                                                IMAJU ISTI CODE, KAO I INTERNAL SCRIPT
+                                                                STO NA KRAJU KRAJEVA NIJE NI VAZNO
+                                                                 -->
+        
+        <script defer src="./defer_script_sec.js"></script>
+        
+        <script async src="./async_script_sec.js"></script>
+ 
+       <!-- ********************************************************************** -->
+        <!-- OVE SAM STILOVE STAVIO CAK NA KRAJ body-JA, OVDE SAM IH SAMO COMMENTED OUT, KAKO BI SE
+        VIDELI -->
+        <!--  NAIME,  HOCU DA VIDIM KOJE CE VREDNOSTI PROPERTIJA IMATI
+        OBJEKAT, POVRATNA VREDNOST window.getComputedStyle METODE, KOJU CU POZVATI U EXTERNAL
+         async   I   defer  SCRIPTOVIMA-->
+        <!-- <style>
             /*SAMO DEFINISEM DA OVERFLLOW BUDE auto, ZA SLEDECE figure TAGOVE, A I DAJEM
-            figure-u DIMENZIJE*/
+            figure-u DIMENZIJE (OVO RADI MZBOG SLIKE, JER NE ZELIM DA SE PRELIVA)
+            ALI ZELIM DA ZADRZIM NATURALNE DIMENZIJE SLIKE, JER ONO STO CU POKUSATI, JESTE 
+            CITANJE TIH DIMENZIJE U JAVASCRIPT-U*/
 
             figure {
                 height: 208px;
@@ -62,55 +186,98 @@ ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
                 border: tomato solid 2px;
             }
 
-        </style>
+        </style> -->
 
-        <!-- DEFINISACU NEKOLIKO ELEMENATA (MEDJU NJIMA I NEKOLIKO SLIKA)-->
-        <!-- MEDJUTIM PRE TOGA CU NESTOVATI, NEKOLIKO SCRIPT TAGOVA,
-                    NEKA JEDAN OD NJIH BUDE INTERNAL
-                    JEDNA CE BITI EXTERNAL I async
-                    I JEDAN CE BITI EXTERNAL I defer     
-        -->
 
-        <script async src="./async_script.js"></script>
-
-        <script>
-            console.log(document.querySelector('p'));               //--> null
-            console.log(document.querySelector('img'));             //--> null
-            
-            // console.log(document.querySelector('img').offsetHeight);  //--> TypeError  
-
-        </script>
-
-        <script defer src="./defer_script.js"></script>         <!-- DEFINISAO SAM DA adync I defer 
-                                                                script-OVI
-                                                                IMAJU ISTI CODE, KAO I INTERNAL SCRIPT
-                                                                 -->
-        
 
         <!-- KAO STO SE DA PRIMETITI, U POMENUTIM SCRIPT-OVIMA SAM KORISTIO
-            NEKE OD SLEDECIH ELEMENATA -->
+            NEKE OD SLEDECIH HTML ELEMENATA (PARAGRAFA I SLIKA I FIGURE-A)
+        CILJ MI JE DA VIDIM, PORED REDOSLEDA IZVRSAVANJA SCRIPTOVA, I 
+        KAKO SU U TIM SCRIPT-OVIMA KORISCENI ELEMENTI DOMA-A
+        
+        ZATIM MI JE BITNO, DA VIDIM, KAKO JE, U SCRIPTU PRISTUPLJENO DIMENZIJAMA, NEKIH ELEMENATA
+        
+        TAKODJE MI JE BITNO DA VIDIM, IZ KOJI H JE SCRIPTOVA BILO MOGUCE 
+
+        -->
         
         <!-- A ONO STA SE DOGODILO JESTE DA SE PRVO IZVRSIO INTERNAL SCRIPT KOJI NIJE USPEO DA
         PRISTUPI NI SLICI A NI PARAGRAFU, JER SE ONI NISU UCITALI KADA SE SCRIPT IZVRSAVAO 
-        DAKLE U OBIMU OVOG SCRIPTA NISAM MOGAO PRISTUPITI VISINI SLIKE
+            DAKLE TO NIJE NI IMALO SMISLA RADITI U OBIMU POMENUTOG SCRIPT-A, ZNAJUCI DA SE ON
+            U HTML CODE-U, NALAZI PRE POMENUTIH HTML ELEMENATA
         -->
 
-        <!-- SLEDECI SCRIPT, KOJI SE IZVRSIO JESTE, U VECINI SLUCAJEVA JESTE async KOJI JE DAO
-        NEKAD TACNE, A NEKAD NE TACNE VREDNOSTI VISINE SLIKE, JER JE VEROVATNO, NEKADA SLIKA UCITALA
-        NA VREME, A NEKAD NIJE -->
-        <!-- A NEKAD SE DOGODI I DA SE PRVI IZVRSI defer ; KOJI JE U WEBKIT BROWSER-U, GOTOVO
-        UVEK DAVAO TACNU VREDNOST, ALI NI TO NIJE POUZDANO -->
+        <!-- ONO STO JE JASNO DA SU SU SE OSTALI SCRIPT-OVI IZVRSILI U SKLADU SA OSOBINAMSA
+        defer  I   async SCRIPTOVA -->
+        
+            <!-- U ODREDJENIM BROWSER-IMA DOGODILO SE DA SE async SKRIPTOVI IZVRSE PRE, A NEGDE POSLE
+            UGLAVNOM NISU BLOKIRALI PARSING (DA SE RADILO O OGROMNOM HTML FAJLU
+            VEROVATNO BI PARSING BIO BLOKIRAN), SVOJIM EXECUTE-OVANJEM
+            NEKAD SU SE IZVRSAVALI PRE deffered SCRIPTOVA, NEKAD POSLE
+            NEKAD SE IZVRSAVAO, PRVO, PRVI async SCRIPT, A NEKAD DRUGI
+            
+            UGLAVNOM, U SKLADU SA SVOJOM OSOBINOM, defer SCRIPTOVI SU SE IZVRSILI, PO REDOSLEDU,
+            KOJIM SU NEST-OVANI U HTML
 
-        <!-- TAKO DA NE VERUJEM OVIM SCRIPTOVIMA, U POGLEDU, ZA STA SAM IH JA KORISTIO -->
+            I defer I async SCRIPTOVI SU PROCITALI PRAVILNO DIMANZIJE PARAGRAF
+            STO SE NE MOZE RECI I ZA SLIKU, JER NEKAD JE PROCITANA PRAVA NATURALNA VISINA SLIKE
+            A NEKAD NIJE (STO ZNACI, OPET PONAVLJAM DIMENZIJE SLIKE NE TREBA CITATI OVAKO)
+            -->
 
-        <!-- KAO STO I SAM CLANAK KAZE, async SCRIPTOM NE TREB PRISTUPATI, DOM-U, VEC SAMO RUKOVATI
-        REKLAMAMA ILI BROJACIMA -->
+            <!-- STO SE TICE STILOVA, BEZ OBZIRA STO JE style TAG NESTED NA SAMOM KRAJU body-JA
+            U async i defer SCRIPTU JE U POTPUNO SVIM SLUCAJEVIMA PROCITANE TACNE VREDNOSTI COMPUTED
+            STILOVA -->
 
-        <!-- A NI U defer SCRIPTU, NE TREBA PRISTUPATI GEOMETRIJI SLIKE, VEC TO TREBA RADITI
-        U OBIMU ON load HANDLER-A, window-A -->
 
+
+
+
+        <!-- ************************************************************************************** -->
+            <!-- A ONO STO NEMA NIKAKVOG SMISLA RADITI, A STO SAM JA RADIO, MOZDA BEZ VEZE, JESTE 
+            CITANJE DIMENZIJA ILI KOORDINATA SLIKE,      U BILO KOJEM OD OVIH          SCRIPTOVA-->
+            <!-- ЈЕР КАО СТО САМ ОД РАНИЈЕ РЕКАО ТО СЕ НЕ ТРЕБА РАДИТИ 
+            AKO SE HTML UCITAO, TO NE ZNACI DA SE UCITALA I SLIKA-->
+
+            <!-- A OPET MOGU DODATI, SLEDECE, AKO SAM ZABORAVIO -->
+                            
+                            <!-- NEAMA SMISLA TAKODJE CITATI DIMNZIJE SLIKE NI U
+                            
+                                    DOMContentLoaded        HANDLER-U
+                            JER OPET PONAVLJAM, TAJ EVENT SE TRIGGERUJE, KADA SE UCITA SAV HTML U DOM
+                            STO    NE ZNACI DA SE, I SLIKA UCITALA
+                            -->
+                            <!-- I OPET PONAVLJAM DA JE NEZAVISNO I KOM BI SE OD OVIH SCRIPT-OVA
+                            DEFINISALO KACENJE      ON  load    HANDLER-A, NA window OBJEKAT
+                        
+                                   JEDINO BI IMALO SMISLA PRISTUPANJE DIMENZIJAMA SLIKE, U ON load HANDLER-U
+                                   window-A
+                                   -->
+        
+        
+        
+
+        <!-- TAKO DA NE VERUJEM OVIM SCRIPTOVIMA, U POGLEDU, ZA STA SAM IH JA KORISTIO
+        (ZA PRISTUPANJE DIMENZIJAMA SLIKE STO JE POGRESNO) -->
+
+        <!-- KAO STO I SAM CLANAK KAZE, async SCRIPTOM NE TREBA PRISTUPATI, DOM-U, VEC SAMO RUKOVATI
+        REKLAMAMA ILI BROJACIMA; TAKO DA U OBIMU OVOG SCRIPTA UOPSTE NISAM TREBAO KORISTITI DOM
+        ELEMENTE -->
+
+        <!-- PONOVICU JOS JEDNOM, JEDNU BITNU STVAR KOJU SAM MOZDA VEC I RANIJE PONAVLJAO A TICE SE
+                        EXTERNAL STILOVA       I       DOMContentLoaded         EVENT-A
+
+        NIME, I OVAJ EVENT NE CEKA DA SE EXTERNAL STILOVI UCITAJU
+        
+        DAKLE NJEGOV TRIGGERING NEMA VEZE SA UCITAVANJEM STILOVA; JER DOMContentLoaded SE TRIGGERUJE
+        NAKON STO SE UCITA HTML U DOM, STO NEMA VEZE SA STILOVIMA
+        
+        STO ZNACI DA SVE STO SAM REKAO    ZA   RELACIJU         DOMContentLoaded-A     I     
+        EXTERNAL SCRIPT-OVA, TAKODJE VAZI I ZA EXTERNAL STILOVE   
+        
+        -->
+        
         <!-- ALI NAJVECA ISTINA OSTAJE DA SCRIPTOVI, NE TREBA DA SE NALAZE NA MESTIU GDE SU SADA, 
-            VEC NESTED NA KRAJU body TAGA -->
+            VEC NESTED NA KRAJU body TAGA; A EXTERNAL STILOVE, TREBA LINKOVATI U head TAGU -->
 
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad
         incidunt voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim
@@ -188,6 +355,26 @@ ALI NI DA GA KORISTIM, PRILIKOM PRISTUPANJA COMPUTED STILOVIMA -->
                 alt="wild west"
             >
         </figure>
+
+        <style>
+                /*SAMO DEFINISEM DA OVERFLLOW BUDE auto, ZA SLEDECE figure TAGOVE, A I DAJEM
+                figure-u DIMENZIJE (OVO RADI MZBOG SLIKE, JER NE ZELIM DA SE PRELIVA)
+                ALI ZELIM DA ZADRZIM NATURALNE DIMENZIJE SLIKE, JER ONO STO CU POKUSATI, JESTE 
+                CITANJE TIH DIMENZIJE U JAVASCRIPT-U*/
+    
+                figure {
+                    height: 208px;
+                    width: 308px;
+                    border: olive solid 4px;
+                    overflow: auto;
+                }
+                
+                figure:nth-of-type(2n){
+                    width: 408px;
+                    border: tomato solid 2px;
+                }
+    
+            </style>
 
     </body>
 </html>

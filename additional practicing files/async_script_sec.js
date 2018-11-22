@@ -1,4 +1,4 @@
-console.log('DEFER SCRIPT 1')
+console.log('ASYNC SCRIPT 2')
 console.log(document.querySelectorAll('p')[8]);
 console.log(document.querySelectorAll('p')[8].offsetHeight);
 console.log(document.querySelectorAll('img')[4]);
