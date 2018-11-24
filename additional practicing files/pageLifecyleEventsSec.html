@@ -2,6 +2,17 @@
 
 <!-- U OVOM FAJLU NASTAVLJAM SA UCENJEM   PAGE LIFECYCLER EVENT-OVA -->
 
+<!-- ************************************************************************************** -->
+<!-- ************************************************************************************** -->
+<!--        ALI KADA TO ZAVRSIM POZABAVICU SE     RESOURCE LOADING-OM   
+NAIME, REC JE O 'PRACENJU', LOADING-A, POJEDINCANIH RESURSA  (RANIJE SAM SAMO POSMATRAO
+PAGE LIFECYCLE (KOJI TAKODJE U OVOM DOKUMENTU OBNAVLJAM I UCIM NOVE STVARI O NJEMU)), ODNOSNO
+PARSING HTML-A U DOM, I PARSING EKSTERNIH RESURSA, KAO STO SU SLIKE I STILOVI; A LI TADA SAM
+KORISTIO EVENT-OVE, NA NIVOU CELOG PAGE- -->
+<!-- ************************************************************************************** -->
+<!-- ************************************************************************************** -->
+
+
 <!-- OPET GOVORIM O UPOTREBI        DOMContentLoaded          -->
 <!-- U PROSLOM DOKUMENTU, MOGAO SAM ZAKLJUCITI DA UCITAVANJEI EXECUTE-OVANJE SCRIPT-OVA, MOZE BLOK
 IRATI DALJI PARSING STRANICE, CIME SE BLOKIRA I DOMContentLoaded, KOJI DA BI SE TRIGGER-OVAO, MORA 
@@ -10,6 +21,10 @@ ILI NE) -->
 
 <!-- SADA PONAVLJAM NESTO O EXTERNAL STILOVIMA -->
 <!-- EXTERNAL STILOVI NE UTICU NA DOM. TAKO DA DOMContentLoaded, NECE CEKATI DA SE ONI PARSE-UJU -->
+<!-- KAD SE KAZE DA 'NE UTICU NA DOM', PREDPOSTAVLJAM DA TO ZNACI DA NE UTICU NA PARSING HTML-A, 
+    I NJEGOVO UCITAVANJE U DOM (A STA AKO POSTOJI   display:none  ( MISLIM DA TO UTICE SAMO NA  RENDERING)
+                                                                         (PROVERICU TO DRUGOM PRILIKOM) ) 
+-->
 
 <html>
     <head>
@@ -17,7 +32,506 @@ ILI NE) -->
         <meta name="viewportial-scale=1, shrink-to-fit=no">
         <meta name="theme-color" content="#000000">
         <link rel="shortcut icon" type="image/png" href="./images/icon.png">
-        <title>Learning about async and defer (attributes on script)</title>
+      <!-- MEDJUTIM POSTOJI JEDNA ZACKOLJICA, U ODNOSU NA ONO STO JE NAPISANO GORE U POGLEDU ONOGA STO SAM
+        REKAO      " DA    DOMContentLoaded    NE CEKA NA STILOVE " -->
+
+      <!-- POSMATRACU SLEDECI   link    I    script    TAG   -->
+        <link rel="stylesheet" type="text/css" href="secPageLifecycle.css">
+      <!-- U EXTERNAL STYLESHEET-U SU DEFINISANI ODREDJENI STILOVI, JEDNOG PARAGRAF-A -->
+        <script defer src="./secPageLifexycle.js"></script>
+      <!-- A U OVOM defer SCRIPTU SAM PRISTUPIO, TIM COMPUTED STILOVIMA -->
+      
+      <!-- ONO STA CE SE DOGADJATI, U POGLEDU, PARSINGA I EXECUTIONA STILOVA I SCRIPT-OVA JESTE SLEDECE -->
+        <!-- PRVO CE BITI PARSED EXTERNAL STYLESHEET, I SVE DOK SE ON NE UCITA SCRIPT NECE MOCI PRISTUPIT
+        COMPUTED STILOVIMA
+        KADA SE UCITAJU STILOVI, SCRIPT CE IM MOCI PRISTUPITI, I ONDA CE SE I SCRIPT EXECUTE-OVATI -->
+        <!-- A POSTO        DOMContentLoaded    CEKA NA PARSING I EXECUTION SCRIPT-A; ON JE U OVOM SLUCAJU
+        CEKAO I NA PARSING I EXECUTION  STILA -->
+        <!-- UPRAVO ZATO STO SAM U OBIMU SCRIPTA UPOTREBIO          window.getComputedStyle           -->
+
+
+
+        <!-- MEDJUTIM, OPET VIDIM DA UPOTREBA defer SCRIPT-A, UOPSTE NIJE RELIABLE
+        U POGLEDU PRISTUPANJA STILOVA, JER SAM IMAO RAZLICITE PROCITANE VREDNOSTI,
+        NAKON NEKOLIKO RELOAD-OVANJA STRANICE -->
+
+
+
+
+        <!-- I PORED SVEGA TOGA, POSTOJI JOS JEDAN PROBLEM KOJI SE TICE SAMIH BROWSER-A -->
+
+
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+        <!-- MEDJUTIM OPET SAM STIGAO DO NECEGA STO, MOZDA NIJE TEMA OVE LEKCIJE, A KONKRETNO SE TICE
+
+                            window.getComputedStyle         METODE
+
+            ZA WEBKIT BROWSER-E (OPERA, I CHROME),      POVRATNA VREDNOST       getComputedStyle
+            METODE JESTE        CSSStyleDeclaration     INSTANCA
+
+            ZA FIREFOX (I NORMALNU VERZIJU I DEVELOPER VERZIJU)   POVRATNA VREDNOST     getComputedStyle
+            METODE JESTE        CSS2Properties
+
+        I PORED SVEGA TOGA, IMAM CUDNO PONASANJE U MOZZILI, KADA POKUSAM UPOTREBITI         CSS2Properties    
+        KONSTRUKTORA, PRILIKO PROVERE :        
+                DA LI JE POVRATNA VREDNOST   getComputedStyle    METODE, USTVARI INSTANCA   CSS2Properties-A
+        (TADA SAM KORISTIO      instanceof          OPERATOR, I NISAM DOLAZIO DO TACNE VREDNOSTI)
+            
+        ****************************************************************************************************
+
+        ONO STO ZELIM DA URADIM JESTE DA UPOTREBIM METODE, KOJE PROVERAVAJU DA LI JE NEKI KONSTRUKTOR,
+        PROTOTIP, NEKOM OBJEKTU  (MEDJUTIM TO JA RADIM NA SVOJU RUKU KAKO BI BOLJE POGLEDAO TAJ PROTOTIPLANI
+        LANAC, U SLUCAJU KADA ISTA METODA MOZE IMATI DVE RAZLICITE POVRATNE VREDNOSTI U DVA BROWSERA)
+            <!-- MEDJUTIM, NAKON STO SAM PROCITAO NESTO, I STO SAM I SAM UVIDEO, OAKVA PROVERA
+            I NIJE TAKO BITNA -->
+
+    <!-- ONO STO JE BITNIJE CU SADA RECI -->
+        
+    <!-- NAIME, POTPUNO JE ISTA NAMENA POMENUTIH INSTANCI, I U FIREFOX-U, I U OPER-I 
+    ISTI JE NACIN PRISTUPANJA COMPUTED STILOVIMA (MEDJUTIM OVO CAK I NISU COMPUTED STILOV, VEC SU TO 
+    VEC RESOLVED STILOVI (ALI O TOME CU KADA SE BUDEM POSEBNO BAVIO RUSKIM CLANKOM O STILOVIMA))
+
+    DAKLE, U SLUCAJU OBA OBJEKATA (CSSStyleDeclaration INSTANCE ILI CSS2Properties INSTANCE), STILOVIMA
+    SE MOZE PRISTUPITI, PREKO IMENA, ZELJENOG CSS PROPERTIJA (JEDNIM NACINOM UZ UPOTREBU camelCase-A,
+    DRUGIM NACINOM UZ UPOTREBU STRINGA 'PRAVOG' IMAENA CSS PROPERTIJA)
+
+                    window.getComputedStyle(poslednjiParagraf).textAlign,
+                    window.getComputedStyle(poslednjiParagraf)['text-align']
+    A MOZE SE I KORISTITI METODA:
+                                        getPropertyValue
+
+                OVAKO:
+                      window.getComputedStyle(document.querySelector('p')).getPropertyValue('text-align')
+
+        U     secPageLifexycle.js  FAJLU SAM USPESNO PRISTUPIO VREDNOSCU text-aligna, NA SVA OVA TRI NACINA
+
+
+    ******************************************************************************************************
+    ALI OVDE SAM NAISAO DO PRVE PROBLEMATICNOSTI, KOJU TREBA UPAMTITI, IKOJA SE TICE RAZLIKE
+    IZMEDJU         WEBKIT I MOZZILA BROWSER-A
+
+            *************************************************************************************
+                U FIREFOX-U NIJE MOGUC PRISTUP SHORTHAND CSS PROPERTIJIMA (OVO TREBA ZAPAMTITI)
+            *************************************************************************************
+      DAKLE:
+          OVO CE U CHROME-U I OPER-I, DATI PRAVU VREDNOST (NAPOMINJEM DA JE border-color  USTVARI SHORTHAND (IAKO BI SE MOZDA PREVARIO I POMISLIO DA NIJE SHORTHAND))
+
+          window.getComputedStyle(document.querySelector('p:last-of-type')).borderColor,
+          window.getComputedStyle(document.querySelector('p:last-of-type'))['border-color'],
+          window.getComputedStyle(document.querySelector('p:last-of-type')).getPropertyValue('border-color')
+            
+        ******************************************************************************************
+        ALI CE ISTO TO U FIREFOX-U DATI PRAZAN STRING (DAKLE SVA TRI NACINA CE DATI PRAZAN STRING)
+        ******************************************************************************************
+
+        I ZATO JE NAJBOLJA PRAKSA NE PRISTUPATI SHORTHAND-IMA, VEC AKO TRAZIM BOJU BORDERA, MOGU URADITI
+        SLEDECE, JER CE TO DATI PRAVE VREDNOSTI, BEZ OBZIRA NA BROWSER:
+
+     window.getComputedStyle(document.querySelector('p:last-of-type'))['border-right-color']
+     window.getComputedStyle(document.querySelector('p:last-of-type')).borderLeftColor
+     window.getComputedStyle(document.querySelector('p:last-of-type')).getPropertyValue('border-top-color')
+     window.getComputedStyle(document.querySelector('p:last-of-type')).borderBottomColor
+
+        DAKLE NE TREBA TRAZITI COMPUTED (RESOLVED) STILOVE, PREKO SHORTHAND PROPERTIJA
+        VEC TREBA KORISTITI POJEDINACNE PROPERTIJE, KOJIMA SAM JA KAO STO SE VIDI
+        PRISTUPIO, NA RAZLICITE NACINE
+
+    -->      
+
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+
+   <!-- MOZDA SAM SE UDALJIO OD TEME, GOVORECI O STILOVIMA , SADA NASTAVLJAM SA PAGE LIFECYCLE EVENT-OVIMA --> 
+
+
+   <!-- ONO STO SE MOZE DOGODITI JESRE I AUTOFIL (ZAPAMCENE VREDNOSTI LOGIN-A I PASSWORD-A)
+    (AKO JE KORISNIK ODOBRIO) POLJA FOMULARA,
+    NAKON STO SE UCITA STRANICA 
+    TAJ AUTOFIL SE DOGADJA NAKON TRIGGERINGA DOMContentLoaded-A; STO ZNACI DA AKO JE POSTPONED, ODNOSNO
+    ODLOZENO, POMENUTO TRIGGER-OVANJE, I TAJ AUTOFIL CE BITI ODLOZEN
+
+    CITAT IZ RUSKOG CLANKA:
+            You probably saw that on some sites (if you use browser autofill) – the login/password fields
+             don’t get autofilled immediately, but there’s a delay till the page fully load
+
+
+    O           window.onload     ODNOSNO O   window-OVOM           'onload'        EVENT-U, MISLIM
+    DA JE VEC DOVOLJNO RECENO U DRUGIM FAJLOVIMA
+
+    SAMO CU OPET RECI DA SE OVAJ EVENT TRIGGER-UJE, KADA SU SVI RESURSI LOADED, UKLJUCUJUCI SLIKE I STILOVE
+    *****************************************************************************************************
+
+-->
+
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- SADA CU SE OPET POZABAVITI       unload          I          beforeunload      EVENTOVIMA window-A -->
+
+<!-- OVAKO PISE U RUSKOM CLANKU, O KOJEM SAM VEC GOVORIO; A TICE SE unload EVENT-A
+
+// Kada posetilac napusti stranicu, 'unload' event se trigger-uje na window-u
+// Možemo tamo uraditi nešto što ne uključuje kašnjenje, kao što je zatvaranje related popup prozora
+// Ali ne možemo otkazati prelazak na drugu stranicu
+// Za to bi trebalo da koristim još jedan event:       'beforeunload'
+
+                            SADA CU SE KONKRETNIJE POZBAVITI            'beforeunload' EVENTOM
+                                    ODNOSNO     onbeforeunload  HANDLER-OM
+
+BEZ OBZIRA STA JE RECENO U OSTALIM DOKUMENTIMA, U OBIMU POMENUTOG HANDLER-A, SE NE MOGU ZADATI, E
+GZECUTOVANJA FUNKCIJA, KOJIMA BI SE KORISNIKU PRIAKZIVALI DODATNI DIALOZI
+            KAO STO SU          confirm     alert       propmpt
+TO JE UCINJENO ZBOG ZLOUPOTREBA OD STRANE DEVELOPERA, KOJI SU NEKADA NA TAKAV NACIN ZABRANJIVALI
+KORISNIKU NAPUSTANJE STRANICE, POPLAVOM RAZNIH DIALOGA
+
+KAKO MOGU SPRECITI I TAJ JEDAN JEDINI DIALOG DA SE POAJVI
+SAVETUJE SE     event.preventDefault()    ALI TO NIJE MOGUCE U SVIM BROWSERIMA
+                
+ZATIM, MOGUCE JE   return-OVATI    null    IZ HANDLERA (TO CE U NEKIM BROWSERIMA SPRECITI
+POMENUTO)
+
+ZATIM, MOGUCE JE PROMENITI VREDNOST     returnValue     EVENT INSTANCE, DA BUDE    undefined
+(OVO POSLEDNJE SAMO FUNKCIONISE U SLUCAJU INTERNET EXPLORER-A)
+                        **************************************************
+                            A NISTA OD OVOGA MI NIJE USPELO U SLUCAJU FIREFOX-A, GDE SE DIALOG UVEK 
+                            PRIKAZIVAO
+                        ZA FIREFOX OVO PISE NA MDN STRANICI
+                        Firefox has a switch named dom.disable_beforeunload in about:config to
+                         enable this behaviour.    
+             ********************************************************************************************************
+NECU VISE DODATNO KOMENTARISATI    beforeunload  , A U FAJLU     secPageLifexycle.js       SAM ISPROBAO, MNOGO
+STA, STO JE VEZANO ZA OVAJ EVENT
+SAMO CU RECI DA PREPORUCUJU DA SE KORISTI       addEventListener   PRE NEGO   onbeforeunload PROPERTI
+PRILIKOM KACENJA HANDLER-A, U SLUCAJU       'beforeunload'  EVENT
+
+JEDIN STVAR, KOJA MI MALO NIJE RAZUMLJIVA, JESTE KACENJE OVOG EVENTA      NA        body
+ELEMENT, ALI TO CU ISPITATI, NEKOM DRUGOM PRILIKOM
+
+ONO STO TAKODJE VIDIM JESTE DA SE NE BI TREBALO, POMENUTO KORISTITI IZ SLEDECEG RAZLOGA, NAVEDENOG NA
+MDN STRANICI
+
+Attaching an event handler/listener to window or document's beforeunload event prevents browsers from
+using in-memory page navigation caches, like Firefox's Back-Forward cache or WebKit's Page Cache.
+
+ONO STO TAKODJE ZNAM JESTE, KAO STO MU I SAMO IME GOVORI, OVAJ EVENT JESTE EVENT KOJI SE TRIGGER-UJE
+PRE         'unload'       EVENT-A
+-->
+
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- ************************************************************************************************* -->
+<!-- SLEDECE CIME CU SE, OPET POZABAVITI JESTE        readyState          -->
+
+<!-- PRE NEGO STO POCNEM GOVORITI O         readyState-U         MORAM SE OSVRNUTI NA SCRIPT-OVE -->
+<!-- TACNIJE, MORAM SE OSVRNUTI NA async SCRIPT
+TAKAV SCRIPT SE PARSE-UJE NA NACIN DA NJEGOV PARSING NE BLOKIRA DALJI PARSING STRANICE -->
+ <!-- AKO JE OVAKAV SCRIPT DOVOLJNO VELIKI DA SE IZVRSI PRE NEGO STO SE PARSUE-UJE SAV HTML
+ONDA EXECUTION OVAKVOG SCRIPT-A, NECE BLOKIRATI UCITAVANJE STRANICE -->
+<!-- STO ZNACI DA SE        async      SCRIPT, MOZE IZVRSITI, PRE ALI POSLE PARSINGA HTML U DOM -->
+<!-- ODNOSNO PRE ILI POSLE TRIGGERING-A        DOMContentLoaded-A    -->
+
+<!-- KAKO BIH BILA DOSTUPNA INFORMACIJA, TAKVOM SCRIPT-U, O TOME, U KAKVOM JE STANJU DOM (ODNOSNO DA LI SE
+    I KOLIKO SSE, OD POMENUTOG PARSING-A DOGODILO) KORISTIM, UPRAVO,      readyState
+    KOJI MOZE IMATI SLEDECI TRI VREDNOSTI:
+
+            "loading"       HTML SE JOS UCITAVA U DOM (ODNOSNO   document IS LOADING)
+
+            "interactive"   HTML JE POTPUNO PARSED, ODNOSNO UCITAN U DOM
+                            (DOGADJA SE ISTO KADA      DOMContentLoaded    , ALI MOMENAT, PRE NJEGA)
+
+            "complete"      I OSTALI RESURSI, KAO STO SU SLIKE I CSS SU POTPUNO UCITANI
+                            (DOGADJA SE ISTO KADA I     onload     , ALI MOMENAT, PRE NJEGA)
+
+U JAVASCRIPT FAJLU (KOJI TREBA DA BUDE async), I KOJEG CU POSTAVITI, ODMAH TU ISPOT, 
+POKUSACU DA PRISTUPIM DIMENZIJAMA SLIKE, KADA U SLUCAJU, KADA       readyState      IMA VREDNOST
+                                                                                                "complete"
+U TOM SLUCAJU BIH MORAO DA KORISTIM TIMER
+
+EVO STA SAM NAPISAO U OBIMU, POMENUTOG async SCRIPT-A
+
+
+        const timerID = window.setInterval(function(){
+
+            console.log(document.readyState);
+
+            if(document.readyState === "complete"){
+
+                console.log(
+                    document.querySelectorAll('img')[4].offsetHeight,
+                    window.getComputedStyle(document.querySelectorAll('img')[4]).getPropertyValue('height')
+                );
+
+                window.clearInterval(timerID);
+            }
+
+        }, 1);
+
+        U PREDHODNOM PRIMERU, POKRENUO SAM TIMER, KOJI CE SE ZAUSTAVITI KADA        readyState      BUDE
+        'complete', A PRE NEGO STO SE ZAUSTAVI, PROCITACE SE VISINA JEDNE SLIKE, JER JE SLIKA U TOM
+        TRENUTKU, SIGURNO UCITANA
+        
+        KAO VELICINA SLIKE U OVOM SLUCAJU STAMPALO SE       1600   PIKSELA, A TO I JESTE NATURALNA
+        VISINA SLIKE, STO ZNACI DA JE SLIKA BILA UCITNA KADA SAM PRISTUPIO, NJENOM COMPUTED, ODNOSNO
+        RESOLVED STILI VISINE
+        DA SAM KOJIM SLUCAJEM,   height  ATRIBUTOM, ZADAO VISINU SLIKE, KADA SAM PISAO HTML
+        TADA BI SE TA VISINA MOGLA PROCITATI I PRILKOM 'interactive' readyState-A
+-->
+ <!-- *****************************************************************************************************
+ **********************************************************************************************************
+    JOS JEDNOM CU RECI NESTO STO JE, PO SVEMU SUDECI PROPUSTENO U RUSKOM CLANKU, A STO SAM JA VEC SAZNO
+    I STO SE TICE   async  SCRIPTA
+    OVO OVDE PROSLEDJUJEM ZATO STO JE NA STACK OVERFLOW-U, LEPO NAPISANO
+
+            The execution of any script always blocks parsing, rendering, and execution of other scripts in
+            the same tab. The attribute async does not change that. The only thing async does is tell the
+            browser that the script should be fetched (assuming it's a remote file) without blocking those
+            activities.
+    A NESTO JE I OVDE NAPISANO:
+
+                https://javascript.tutorialhorizon.com//2015/08/11/script-async-defer-attribute/
+
+    
+ -->
+<!-- *****************************************************************************************************
+**********************************************************************************************************
+            MEDJUTIM, U PROSLOM PRIMERU, JA SAM KORISTIO TAJMER, ALI NISAM UOPSTE TO MORAO RADITI
+
+    ONO STO SAM MOGAO JESTE SLUSANJE ZA         'readystatechange'      EVENT-OM
+
+    DAKLE, SLUZAO BIH PROMENU       readyState-A, CIME SE TRIGGER-UJE     readystatechange      EVENT
+    I U SLUCAJU, KONKRETNE VREDNOSTI readyState-A, JA BIH DEFINISAO NEKI CODE
+
+    U SLEDECEM PRIMERU CU PRISTUPITI NATURALNOJ SIRINI SLIKE, STO CU URADITI U OBIMU ON readystatechange
+    HANDLER-A (OPET CU TO URADITI U SLUCAJU, KADA JE readyState, USTVARI 'complete', JER SE TADA SLIKA
+    ZAISTA UCITALA)
+    
+        document.addEventListener('readystatechange', function(ev){
+
+            console.log(document.readyState)
+            
+            if(document.readyState === 'complete'){
+
+                console.log(
+                    document.querySelectorAll('img')[3].offsetWidth,
+                    window.getComputedStyle(document.querySelectorAll('img')[3]).getPropertyValue('width')
+                );
+
+            }
+
+        });
+
+    ONO STO JE JOS RECENO U POGLEDU OVOG EVENTA, JESTE DA SE ON NEKADA DOSTA KORISTIO, A DA GA SADA RETKO
+    KORISTE
+
+
+        OVDE CU OSTAVITI REZIME U POGLEDU PAGE LIFECYCLE EVENT-OVA (PREUZETO SA RUSKOG SAJTA)
+
+
+        Page lifecycle events:
+
+    DOMContentLoaded event triggers on document when DOM is ready. We can apply
+     JavaScript to elements at this stage.
+       - All inline scripts and scripts with defer are already executed.
+       - Async scripts may execute both before and after the event, depends on when they load.
+       - Images and other resources may also still continue loading.
+    load event on window triggers when the page and all resources are loaded. We rarely use it,
+    because there’s usually no need to wait for so long.
+    beforeunload event on window triggers when the user wants to leave the page. If it returns a string,
+    the browser shows a question whether the user really wants to leave or not.(VAZI SAMO ZA IE)
+    unload event on window triggers when the user is finally leaving, in the handler we can only do
+    simple things that do not involve delays or asking a user. Because of that limitation, it’s rarely used.
+    document.readyState is the current state of the document, changes can be tracked in the readystatechange 
+    event:
+        loading – the document is loading.
+        interactive – the document is parsed, happens at about the same time as DOMContentLoaded, but before it.
+        complete – the document and resources are loaded, happens at about the same time as window.onload, but before it.
+-->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- ************************************************************************************************** -->
+<!-- SADA CU SE POZABAVITI SLEDECIM:
+
+
+                                        RESOURCE LOADING (UCITAVANJE RESURSA)    
+
+                                        onload          I               onerror
+
+DAKLE, BROWSER DOZVOLJAVA PRACENJE LOADING-A, EKSTERNIH RESURSA:  scripts, iframes, pictures    etc.
+
+
+ZA POMENUTU POTREBU, POSTOJE DVA EVENT-A, TACNIJE EVENT HANDLERA:
+
+                                                                    onload      (USPESNO UCITANO)
+
+                                                                    onerror     (POJAVA ERROR-A)
+
+**********************************************************************************************************
+
+            LOADING A SCRIPT
+
+STA AKO NA PRIMER ZELIM DA POZOVEM FUNKCIJU, KOJA RESIDES ('STANUJE'), ODNOSNO, KOJA JE DEKLARISANA U 
+EXTERNAL SCRIPT-U (   NA PRIMER, ZELI MDA UCITAM SCRIPT   lodash BIBLIOTEKE, KOJU CU JEDNOG DANA
+NAUCITI   )
+
+MOGU DEFINISATI DA SE TAJ SCRIPT LOAD-UJE DINAMICNO, ODNOSNO U OBIMU SCRIPT-A, KOJI JE VEC POVEZAN SA
+DOKUMENTOM (some_async_script.js), JA KREIRAM NOVI script TAG, KOJI KACIM U DOM, JER ZELIM DA SE TAJ, NOVI
+SCRIPT UCITA (JER ZELI MDA KORISTIM, JEDNU NJEGOVU FUNKCIJU)
+
+                    const lodashScript = document.createElement('script');
+                    lodashScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.3.0/lodash.js";
+                    document.head.append(lodashScript);
+
+                                  
+ALI KAKO SADA DA POKRENEM FUNKCIJU, KOJA JE DECLARED UNUTAR TOG LODASH SCRIPT-A
+
+PA KORISCENJEM      onload      HANDLERA, KOJEG DEFINISEM, UPRAVO ZA TAJ SCRIPT
+
+(***NAIME LOODASH SCRIPT     IMA JEDNU FUNKCIJU, A TO JE DONJA CRTA      _     (KAO STO JE ZA jQuery, $ )        )
+TO JE ZA LOODASH        DONJA CRTA  ( _ ))
+
+UPRAVO CU STAMPATI, POMENUTU FUNKCIJU, ON load, DAKLE, NAKON LOADING-A, POMENUTOG SCRIPTA
+
+                    lodashScript.onload = function(ev){
+                        
+                        console.log(
+
+                            _                       
+
+                        )
+
+                    }
+
+    I POMENUTA HELPER FUNKCIJA SE STAMPALA U KONZOLI (TADA JE lodash BIBLIOTEKA, BILA POTPUNO UCITANA
+    U MOJ DOM)
+
+    POMENUTA 'DONJA CRTA FUNKCIJA' (JA SAM JOJ TAKO DAO IME), ZOVE SE JOS I HELPER FUNKCIJA
+    KOJU SCRIPT, MISLIM DA UPRAVO IMA ZATO DA BI SE PROVERILA DOSTUPNOST (MORAM PROVERITI STA
+    ZNACI HELPER FUNKCIJA, I ZASTO SE BAS TAKO ZOVE)
+
+    NAIME, U      onload     HANDLERU, JA TAKO MOGU KORISTITI VARIJABLE DRUGOG EXTERNAL SCRIPT-A, ZATIM
+    MOGU ZVATI, NJEGOVE FUNKCIJE ETC.
+***********************************************************************************************************
+SADA CU SE POZABAVITI       
+                                    onerror         HANDLEROM
+
+ERROR-I, KOJI SE POJAVE TOKOM LOADING-A (ALI NE I EXECUTION-A) script-A, MOGU BITI PRACENI SLUSANJEM NA:
+                        error       EVENT
+
+NA PRIMER, JA CU SADA REQUEST-OVATI SCRIPT, KOJI NE POSTOJI
+
+                        const someScript = document.createElement('script');
+                        someScript.src = 'https://example.com/404.jss';        //OVAJ SCRIPT NE POSTOJI
+                        document.head.append(someScript);
+
+                        someScript.onerror = function(ev){
+                            console.log('Error loading ' + this.src);
+                        };
+
+U ZAVISNOSTI OD BROWSER, U NEKIM CE SE STAMPATI PORUK, KOJU SAM ZADAO 
+(TO SE NECE DOGODITI U FIREFOXU)
+            U FIREFOX-U JE OVAKVA PORUKA:   Учитавање <script> са извором “https://example.com/404.jss”, 
+                                            није успело.
+
+                                    ZA SLEDECE      document.head.append(someScript)
+
+                                    OVAKVA PORUKA:      some_async_script.js:44 
+                                                        GET https://example.com/404.jss net::ERR_ABORTED 404
+
+                                    ALI PORED TOGA CE SE U KONZOLI STAMPATI ONA PORUKA ZADATA U OBIMU
+                                    onerror     HANDLER-A (U SLUCAJU OBA BROWSER-A)
+                                    
+
+**********************
+A ONO STO JE RECENO U RUSKOM CLANKU JESTE DA SE U OBIMU, POMENUTOG HANDLER-A, NE MOGU DOBITI DETALJI 
+ERROR-A. DAKLE NE ZNA SE DA JE LOADING FAILED ALI SE NE ZNA DA LI JE REC O ERROR-U  404   ILI   500  
+                                                                    (MEDJUTIM, GORNJI ERROR,
+                                                                    , KAZE DA JE
+                                                                    REC O 404 ERROR-U) (ISTO JE POKAZNO
+                                                                    U CHROME-U)
+                                                                    (ALI TOM ERROR-UN NE MOGU
+                                                                    PRISTUPITI U OBIMU onerror HANDLER-A)
+
+
+
+          DRUGI RESURSI:
+
+                        onload          I          onerror         HANDLERI SE MOGU ZAKACITI, I USLUCAJU
+                                                                   DRUGIH RESURSA
+                                                                   KAO STO SU:
+                                                                                <link>         I      <img>
+                                                                        (external stylesheet)
+
+    
+                OBA HANDLERA, I U TOM SLUCAJU FUNKCIONISU, KAKO JE I OCEKIVANO
+
+
+A U SLUCAJU     <iframe>
+                            IZ ISTORIJSKIH RAZLOGA, UVEK SE TRIGGERUJE   load   ZA BILO KOJI LOAD
+                            COMPLETITION, CAK IAKO STRANICA NIJE PRONADJENA
+
+***********************************************************************************************************
+IZ RUSKOG CLANAKA, KRATAK REZIME:
+
+    Pictures <img>, external styles, scripts and other resources provide load and error events to track their
+    loading:
+                load triggers on a successful load,
+                error triggers on a failed load.
+
+    The only exception is <iframe>: for historical reasons it always triggers load, for any load completion,
+    even if the page is not found.
+
+The readystatechange event also works for resources, but is rarely used, because load/error events are 
+simpler.
+***********************************************************************************************************
+
+MORAM RECI SLEDECE STO SAM PROCITAO U RUSKOM CLANKU:
+                                                        
+                SLIKA, ODNOSNO IMAGE, JE LOADED, KADA JE I CREATED
+                ODNOSNO AKO DODAM       <img>      NA STRANICU, KORISNIK NECE VIDETI SLIKU ODMAH
+                                                        JER JE BROWSER MORA, PRVO UCITATI
+
+AKO ZELIM DA SE SLIAK PRIKAZ EMMEDIATELY; MOGU JE KREIRATI    'IN ADVANCE' (ODNOSNO JAVASCRIPT-OM), OVAKO
+
+        let slika = document.createElement('img');
+        slika.src = 'mojaslika.svg'
+
+BROWSER CE OVAKO LOAD-OVATI SLIKU, I ZAPAMTICE JE U CACHE-U; I KASNIJE KADA SE ISTA SLIKA POJAVI U 
+DOKUMENTU (BEZ OBZIRA KAKO), BICE PRIKAZANA ODMAH
+
+JA SAM MOZDA IMAO POGRESNU PREDSTAVU DA ELEMENT, KAO STO JE SLIKA, MORA BITI APPENDED DA BI H MU PROCITAO
+NATURAL DIMENZIJE (ODNOSNO DA BI BIO UCITA), ALI TO NEMA VEZE, JER      slika.src    U JAVASCRIPTU
+OMOGUCITI TO UCITAVANJE
+
+U JAVASCRIPT FAJLU KREIRAM JEDAN PRIMER     some_async_script.js   KREIRAM FUNKCIJU, KOJA CE SE KAO ARGUMENTI
+DODAVATI NIZ SOURC-EVA, ZA SLIKE; I CALLBACK, KOJI SE TREBA IZVRSITI, KADA SVE SLIKE BUDU LOADED
+TRIGGERING error EVENTA, CE ISTO PODRAZUMEVATI DA JE SLIKA LOADED
+            ODNOSNO ZELIM DA SE CALLBACK IZVRSI, KADA SVE SLIKE BUDU LOADED ILI ERRORED OUT
+
+-->
+
+
+        <script async src="some_async_script.js"></script>
+
+
+        <title>Learning about async and defer (attributes on script) and the rest of 
+            pagelifecycle events</title>
     </head>
 
     <body>
@@ -99,5 +613,7 @@ ILI NE) -->
             >
         </figure>
 
+        <a href="https://en.wikipedia.org/wiki/Ayahuasca">Idi na drugu stranicu</a>
+        
     </body>
 </html>

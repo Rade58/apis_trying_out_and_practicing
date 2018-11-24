@@ -15462,7 +15462,7 @@ const html_slike_i_scripta_bla_dva = `
 //                                       window.onbeforeunload
 // Ako je visitor pokrenuo navigaciju away od stranice ili pokušavao da zatvori prozor, U OBIMU
 // ON beforeunload HANDLER-A MOZE DA SE UPUTE KORISNIKU, DODATNE CONFIRMATION-E
-// TAJ HANDLER Može RETURN-OVATI niz sa pitanjem. Istorijski pretraživači su to pokazivali, 
+// TAJ HANDLER Može RETURN-OVATI niz sa pitanjem? Istorijski pretraživači su to pokazivali, 
 // ali sada samo neki od njih pokazuju confirmation-E
 // To je zato što su određeni webmasters-I zloupotrebili ovaj event handler, PRIKKZUJUCI
 // MISLEADING AND HACKISH MESSAGES (PORUKE KE KOJE SU ZBUNJUJUCE I HACKISH)
