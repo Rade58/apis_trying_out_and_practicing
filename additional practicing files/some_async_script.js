@@ -49,7 +49,7 @@ someScript.onerror = function(ev){
 
 
 
-/*IZ RUSKOK CLANKA PRIMER*/ 
+/*IZ RUSKOG CLANKA PRIMER*/ 
 
 const preloadImages = function(sources, callback){
     const imgNum = sources.length;
@@ -59,10 +59,11 @@ const preloadImages = function(sources, callback){
         let img = document.createElement('img');
         img.onload = img.onerror = function(){
             counter++;
-            if(counter === imgnum) callback();
+            if(counter === imgNum) callback();
         };
         img.src = source;
     }
 }
 
 // http://next.plnkr.co/edit/6CS08hJfAcs2TX4PZ3Gr?p=preview&preview
+
