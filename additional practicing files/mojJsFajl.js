@@ -268,3 +268,47 @@ console.log(
 //                          index           -->       REDNI BROJ OPCIJE, KADA JE ONA NESTED U select ELEMNTU
 //                          text            -->       TEXT SADRZAN OD OPCIJE (VIDJEN OD STRANE VISITOR-A)
 // 
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+/////////////////////////////////////////////////////////////
+// PRIMER:
+// MORAM KREIRATI    <options>       ELEMNT;     SA         vlue-OM             'classic'
+                                           //    SA         text-OM             'Classic'  
+                                           //    DA BUDE             selected
+
+// I TAKAV ELEMENT, TREBAM NESTOVATI U SLEDECI      <select>
+
+const primerZaoption = `
+    <select id="genres">
+        <option value="rock">Rock</option>
+        <option value="blues" selected>Blues</option>
+    </select>
+`;
+
+// MORAM PRVO UKLONITI  selected    ATRIBUT, SA JEDNOG OD option-A
+genres.options[genres.selectedIndex].removeAttribute('selected');
+
+genres.append(new Option("Classic", "classic", true, true));
+
+
+// REZIME
+// 
+// Formular navigaciju:
+
+//            document.forms
+    // FOTMULAR je dostupan kao document.forms [name / indek].
+//            form.elements
+    // Elementi formulara su dostupni kao form.elements [name / indek], ili mogu koristiti samo oblik 
+    // [nme / indeks]. PROPERTI       elements           takođe radi za <fieldset>
+//             element.form
+    // Elementi upućuju na njihovog formulara
+
+// Vrednost je dostupna kao                          input.value    textarea.value     select.value      etc. 
+// ili          input.checked           za checkox      i       radio buttons
+
+// Za <select> takođe možemo dobiti vrednost indeksom   select.selectedIndex        ili kroz opciju 
+//      select.options      ; Puna specifikacija ovog i drugih elemenata je na
+//              https://html.spec.whatwg.org/multipage/forms.html
+
+// To su osnove za početak rada sa formularima. U sledećem poglavlju ćemo pokriti     focus   i     blur 
+// EVENT-OVE, koji se mogu pojaviti na bilo kom elementu, ali se uglavnom HANDLE-UJU SA FORMULARIMA
