@@ -49,9 +49,9 @@ console.log(    document.forms[1]              );   //-->       <form>...</form>
 // INSTANCA, KOJA SE SASTOJI OD ELEMENATA, FORMULARA; ODNOSNO OD KONTROLA TOG FORMULARA
 // I NJIMA JE MOGUCE PRISTUPITI UZ POMOC VREDNOSTI      name       ATRIBUTA, ALI I      INDEKSA
 
-console.log(    document.forms.moj_formular.elements        );      //-->   HTMLFormControlsCollection
-console.log(    document.forms.moj_formular.elements.jedan  );      //-->   <input name="jedan">
-console.log(    document.forms.moj_formular.elements[0]     );      //-->   <input name="jedan">
+console.log(    document.forms.moj_formular.elements            );      //-->   HTMLFormControlsCollection
+console.log(    document.forms.moj_formular.elements.jedan      );      //-->   <input name="jedan">
+console.log(    document.forms.moj_formular.elements[0]         );      //-->   <input name="jedan">
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEDJUTIM, CESTA JE SITUACIJA DA POSTOJI VISE ELEMNATA JEDNOG FORMULARA, KOJI IMAJU ISTU VREDNOST
@@ -189,7 +189,7 @@ const selectElement = `
     </select>
 `;
 
-// PRVI NACIN JE KAK OSE CINI, NAJOCIGLEDNIJI; ALI SU DRUGI  ITRECI NACIN, OBICNO VISE POGODNIJI
+// PRVI NACIN JE KAKO SE CINI, NAJOCIGLEDNIJI; ALI SU DRUGI  I TRECI NACIN, OBICNO VISE POGODNIJI
 
 selekt_element.options[1].selected = true;
 console.log(        selekt_element.value        );      //-->   "kruske"
@@ -286,8 +286,10 @@ const primerZaoption = `
 `;
 
 // MORAM PRVO UKLONITI  selected    ATRIBUT, SA JEDNOG OD option-A
-genres.options[genres.selectedIndex].removeAttribute('selected');
-
+genres.options[genres.selectedIndex].removeAttribute('selected');     // OVO SE NIJE NI TRAILO U PRIMERU
+                                                                      // VEC SAMO DA SE PRIKAZE, KAKO JE
+                                                                      // CONVINIENT, IZABRATI selected
+                                                                      // OPCIJU, PUTEM  selectedIndex-A
 genres.append(new Option("Classic", "classic", true, true));
 
 
@@ -312,3 +314,13 @@ genres.append(new Option("Classic", "classic", true, true));
 
 // To su osnove za početak rada sa formularima. U sledećem poglavlju ćemo pokriti     focus   i     blur 
 // EVENT-OVE, koji se mogu pojaviti na bilo kom elementu, ali se uglavnom HANDLE-UJU SA FORMULARIMA
+
+
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+//                      
+//                          FOCUSING:       focus/blur
+
+// 
