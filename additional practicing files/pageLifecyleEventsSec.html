@@ -37,6 +37,7 @@ ILI NE) -->
 
       <!-- POSMATRACU SLEDECI   link    I    script    TAG   -->
         <link rel="stylesheet" type="text/css" href="secPageLifecycle.css">
+        <link rel="stylesheet" type="text/css" href="./formulari.css">
       <!-- U EXTERNAL STYLESHEET-U SU DEFINISANI ODREDJENI STILOVI, JEDNOG PARAGRAF-A -->
         <script defer src="./secPageLifexycle.js"></script>
       <!-- A U OVOM defer SCRIPTU SAM PRISTUPIO, TIM COMPUTED STILOVIMA -->
@@ -774,12 +775,74 @@ KOMENTARE, ODNOSNO SVE STO JE POTREBNO DA BOLJE NAUCIM SVE STO JE VEZANO ZA
         <br>
         <hr>
         <br>
-        <select id="selekcija_vise" multiple>
+        <select id="selekcija_vise" multiple size="2">
             <option value="vino">Vino</option>
             <option value="konjak">Konjak</option>
             <option value="pivo">Pivo</option>
             <option value="sampanjac">Shampanjac</option>
         </select>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        Your email please: <input type="email" id="input_email">
+        <div id="error_element"></div>
+        <hr>
+        <br>
+        <hr>
+        Your email please: <input type="email" id="email_input" style="margin-top: 4px;">
+        <input
+            type="text"
+            placeholder="ucini email nevalidnim i pokusaj da fokusiras ovde (bilo kojim nacinom)"
+            style="width: 68%; margin-top: 4px;"
+        >
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <ul class="u_list">
+            <li tabindex="1">One</li>
+            <li tabindex="0">Zero</li>
+            <li tabindex="2">Two</li>
+            <li tabindex="-1">Minus one</li>
+        </ul>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <form onfocus="this.className = 'focused'" id="wrong_stuff">
+            <input type="text" name="name" value="Name">
+            <input type="text" name="surname" value="Surname">
+        </form>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <form id="good_stuff">
+            <input type="text" name="name" value="Name">
+            <input type="text" name="surname" value="Surname">
+        </form>
+        <br>
+        <hr>
+        <br>
+        <form id="form_in_out">
+            <input type="text" name="name" value="Name">
+            <input type="text" name="surname" value="Surname">
+        </form>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
         <hr>
         <br>
         <hr>

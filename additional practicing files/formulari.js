@@ -292,7 +292,7 @@ genres.options[genres.selectedIndex].removeAttribute('selected');     // OVO SE 
                                                                       // OPCIJU, PUTEM  selectedIndex-A
 genres.append(new Option("Classic", "classic", true, true));
 
-
+/////////////////////////
 // REZIME
 // 
 // Formular navigaciju:
@@ -323,4 +323,273 @@ genres.append(new Option("Classic", "classic", true, true));
 //                      
 //                          FOCUSING:       focus/blur
 
+// ELEMENT, MOZE PRIMITI    focus    , AKO KORISNIK, KLIKNE NA NJEGA, ILI AKO KORISNIK ISKORISTI   Tab   KEY,
+// NA TASTATURI ONO STO TAKODJE POSTOJI JESTE        autofocus        HTML ATRIBUT, KOJI CE ELEMENT STAVITI
+// U FOKUS, PO DEFAULT-U, KADA SE STRANICA LOAD-UJE, ILI NEKIM DRUGIM NACINOM DOBIJANJA FOKUSA
 // 
+// FOKUSIRANJE, GENERALNO ZNACI:        "PRIPREMI SE DA OVDE PRIHVATIS PODATKE"         ; TAKO DA JE TO 
+// MOMENAT KADA MOGU POKRENUTI CODE, KOJI INICIJALIZUJE ILI LOAD-UJE NESTO
+// 
+// MOMENAT, GUBITKA FOKUSA (    'blur'    ) MOZE BITI, CAK I VAZNIJI; TO JE MOMENAT KADA KORISNIK KLIKNE
+// NEGDE DRUGDE, ILI PRITISNE   Tab    , KAKO BI SE OTISLO DO SLEDECEG FORM FIELD-A, ILI BILO KOJIM DRUGIM
+// NACINOM
+
+// GUBITAK FOKUS-A, GENERALNO ZNACI:    "PODACI SU UNETI"       , TAKO DA SE MOZE POKRENUTI CODE, ZA PROVERU,
+// ILI CAK ZA SACUVAVANJE TIH PODATAKA NA SERVERU, ETC.
+
+// POSTOJE VAZNE PECULIARITIES (JEDINSTVENOSTI), PRILIKO MRADA SA       focus       EVENT-OVIMA, A TRUDICU SE
+// DA IH NAJBOLJE SHVATIM IZ SLEDECIH OBJASNJENJA
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//      EVENT-OVI:      focus/blur
+
+//  focus       EVENT SE TRIGGER-UJE, KADA SE ELEMENT FOKUSIRA
+//  blur        EVENT SE TRIGGER-UJE, KA ELEMENT IZGUBI FOKUS
+
+// SADA CU KORISTITI, POMENUTE EVENT-OVE, PRILIKOM VALIDACIJE input FIELD-A
+// U SLEDECEM PRIMERU:
+//                      - ON   blur    TREBA DA HANDLE-UJE PROVERE, DA LI JE UNESEN TEKST U FORMATU email-A
+                                       // AKO NIJE UNESEN, PRAVI MAIL, TREBA DA SE PRIKAZE ERROR PORUKA
+                        
+//                      - ON   focus   HANDLER, TREBA DA SAKRIJE ERROR
+
+const elementi_primera_focus_blur = `
+    Your email please: <input type="email" id="input_email">
+    <div id="error_element"></div>
+`;
+
+const stilovi_za_primer_focus_blur = `
+    #error_element {
+        color: red;
+    }
+
+    .invalid {
+        border-color: red;
+    }
+`;
+
+input_email.onfocus = function(ev){
+    if(this.classList.contains('invalid')){
+        this.classList.remove('invalid');
+        error_element.innerHTML = "";
+    }
+};
+
+input_email.onblur = function(ev){
+    if(!this.value.includes('@')){
+        this.classList.add('invalid');
+        error_element.innerHTML = "Please enter acorrect email.";
+    }
+};
+
+// (ONO STO SAM PRIMETIO U SLUCAJ UFIREFOX-A, JESTE DA ON CAK TOKOM UNOSA MENJA BOJU BORDER-A, INPUTA
+// KAKO BI UKAZAO DA LI JE UNOS U PRAVOM FORMAT-U)
+
+// MODERNI HTML DOZVOLJAVA UPOTREBU, MNOGIH VALIDACIJA, UZ KORISCENJE ATRIBUTA:     required     pattern
+// ETC.
+// I PONEKAD, TI ATRIBUTI SU TACNO ONO STO M ITREBA
+// JAVASCRIPT SE MOZE KORISTI, KADA ZELIM VISE FLEKSIBILNOSTI; TAKODJE, AUTOMATSKI SE SERVERU MOGU SLATI
+// PROMENJENE VREDNOSTI, AKO SU CORRECT
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//      METODE:     focus/blur
+
+// METODE               element.focus     I      element.blur               SET-UJU/UNSET-UJU
+                                                                            // focus NA ELEMENTU
+
+// NA PRIMER, HAJDE NA DEFINISEM TO, DA KORISNIK NE BUDE U MOGUCNOSTI DA ODE IZ INPUT-A, AKO JE VREDNOST
+// NEVALIDNA 
+
+const html_primer_focus_method = `
+    Your email please: <input type="email" id="email_input" style="margin-top: 4px;">
+    <input
+        type="text"
+        placeholder="ucini email nevalidnim i pokusaj da fokusiras ovde (bilo kojim nacinom)"
+        style="width: 68%; margin-top: 4px;"
+    >
+`;
+
+const style_for_focus_method = `
+    .error_class {
+        background: red;
+    }
+`;
+
+window.email_input.onblur = function(ev){
+
+    if(!this.value.includes('@')){
+        this.classList.add('error_class');
+        this.focus();           // AKO UNOS NIJE VALIDAN, focus METHOD CE UVEK BITI POZIVAN NAKON 
+                                // TRIGGER-INGA    blur    EVENT-A
+    }else{
+        this.classList.remove('error_class');
+    }
+};
+
+// OVO FUNKCIONISE U SVIM BROWSER-IMA, OSIM         FIREFOX-A  (POSTOJI BUG)
+
+// Ako unesemo nešto u input, a zatim pokušamo da koristimo Tab ili kliknete dalje od <input>, onda
+// onblur vraća fokus.
+
+// Imajte na umu da ne možemo "sprečiti gubitak fokusa" pozivanjem      event.preventDefault()      
+// u onblur-u, jer onblur radi nakon što element izgubi fokus
+
+////////
+// JAVASCRIPT-OM INICIRAN GUBITAK focus-A
+
+// GUBITAK FOKUSA MOZE SE POJAVITI, IZ MNOSTVA RAZLOGA
+// JEDAN OD NJIH JESTE KADA KORISNIK KLIKNE NEGDE DRUGDE, AL ITAKODJE SAM JAVASCRIPT MOZE IZAZVATI
+// GUBITAK FOKUSA; NA PRIMER:
+//                              alert POMERA focus, NA SEBE, TAKO DA IZAZIVA GUBITAK FOKUSA NA 
+//                              ELEMENTU (ODNOSNO IZAZIVA TRIGGERING blur-A NA ELEMENTU)
+//                              I KADA JE alet DISMISS-OVAN, FOKUS (focus EVENT) DOLAZI NAZAD DO
+//                              ELEMENTA
+// 
+//                              AKO JE ELEEMNT UKLONJEN IZ DOM-A, ONDA TO TAKODJE IZAZIVA GUBITAK
+//                              FOKUS-A; I AKO SE ELEMENT REINSERT-UJE, KASNIJE, FOKUS, SE NECE
+//                              VRATITI
+//
+// OVI FEATURE-I, PONEKAD IZAZIVAJU     focus/blur     HANDLER-E DA SE MIBEHAVE-UJU (ODNOSNO DA SE
+// TRIGGER-UJU, KADA NISU POTREBNI)
+// NAJBOLJI RECEPT JE BITI OPREZAN, KADA SE KORISTE OVI EVENT-OVI; A AKO ZELIM DA PRATIM GUBITAK
+// FOKUSA, IZAZVANOG OD STRANE KORISNIKA, ONDA TREBAM DA, I JA IZBEGAVAM IZAZIVANJE, TAKVOG
+// GUBITKA FOKUSA
+/////////////////////////////////////////////////////////////////////////////////////////////////// 
+// 
+//                     DOZVOLJAVANJE FOCUSING-A NA ELEMENTU:       tabindex
+// 
+// PO DEFAULT-U, MNOGI ELEMENTI NE PODRZAVAJU FOKUSIRANJE
+// 
+// Lista se razlikuje između pretraživača, ali jedna stvar je uvek tačna: podrška za
+// focus/blur garantuje se za elemente sa kojima posjetitelj može interaktirati: 
+//      <button>    <input>     <select>    <a>             etc. 
+// S druge strane, elementi koji postoje da bi se formatirao nešto poput <div>, <span>, <table> 
+// podrazumevano se ne mogu fokusirati. Metoda      elem.focus()        ne funkcioniše na njima,
+//  a event-OVI     focus/blur   nikada se ne pokreću
+
+// Ovo se može promeniti koristeći HTML-atributa            tabindex
+
+// Svrha ovog atributa je da specificira redosledni broj elementa kada se Tab koristi za 
+// prebacivanje između njih
+
+// To je tako: ako imamo dva elementa: 
+//                                      prvi ima tabindex = "1",
+//                                      a drugi ima tabindex = "2", 
+// a zatim pritiskom Tab-A dok smo u prvom elementu - pomera nas u drugi
+
+// Postoje dve posebne vrednosti:
+//                                      tabindex = "0"      OVO CINI ELEMENT POSLEDNJIM
+//                                      
+//                                      tabindex = "-1"     ZNACI DA BI tab TREBAO IGNORISATI
+//                                                                                  ELEMENT
+// 
+// SVAKI ELEMENT SUPPORT-UJE FOKUSIRANJE, AKO IMA       tabindex
+
+// NA PRIMER, KREIRACU JEDNU LISTU
+
+const unordered_list_primer = `
+    <ul class="u_list">
+        <li tabindex="1">One</li>
+        <li tabindex="0">Zero</li>
+        <li tabindex="2">Two</li>
+        <li tabindex="-1">Minus one</li>
+    </ul>
+`;
+
+const stil_unordered_liste = `
+    .u_list > li {cursor: pointer;}
+    .u_list > li:focus {outline: 1px dashed green;}
+`;
+
+// OVO SAM TREBAO MOZDA DEFINISATI U iframe-U, JER OVAKO NA STRANICI NECU POSTICI DA IMAM
+// REDOSLED FOKUSIRANJA     One-Two-Zero
+// A ZNAM I OD RANIJE, ALI VIDIM I IZ NEKIH CLANAKA DA SE TREBA IZBEGAVATI DEFINISANJE tabindex-A
+// VECEG OD NULE
+
+// POGOTOVO JE ZBUNJUJUCE STO JE PO REDOSLEDU PRVI FOCUSABLE ELEMENT, KOJI IMA 1, A DRUGI KOJI IMA 
+// 2...A 0(nula) JE POSLEDNJA FOCUSABLE
+
+// UGLAVNO, POSTIGAO SAM U OVOM PRIMERU DA LIST ITEM BUDE FOCUSABLE, STO PO DEFAULTO ON NIJE
+// DAKLE tabindex JE NEKIM ELEMENTIMA DAO MOGUCNOST DA BUDU FOCUSABLE
+// A PSEUDO KLASA :focus JE OMOGUCILA DA SE ZADA POSEBAN STIL, KOJI ELEMENT IMA TOKOM FOKUSA 
+/////////////////
+// ELEMENTU, MOGU ZADATI tabindex, I IZ JAVASCRIPT-A, KORISTECI:
+                                                            //       element.tabIndex    PROPERTI
+
+console.log(document.querySelector('.u_list li:last-of-type').tabIndex);    //-->   -1
+document.querySelector('.u_list').lastElementChild.tabIndex = 0;
+console.log(document.querySelector('.u_list').lastElementChild.tabIndex);   //-->    0
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//              DELEGATION:         focusin/focusout
+
+// EVENT-OVI    focus       I         blur        NE BUUBLE-UJU UP
+
+// NA PRIMER, NE MOGU ZAKACITI     onfocus     NA FORMULAR, DA BIH GA HIGHLIGHT-OVAO
+// I SLEDECI PRIMER NE FUNKCIONISE
+
+const cant_put_onfocus_handler = `
+    <form onfocus="this.className = 'focused'" id="wrong_stuff">
+        <input type="text" name="name" value="Name">
+        <input type="text" name="surname" value="Surname">
+    </form>
+`;
+const style_for_wrong = `
+    .focused { outline: 1px solid red; }
+`;
+
+// Gornji primer ne funkcioniše, jer kada korisnik fokusira na <input>, focus EVENT se aktivira
+//  samo na taj input. Ne bubble-uje up. Tako da se         form.onfocus         nikada ne pokreće
+
+//                                          Postoje dva rešenja
+
+// Prvo, tu je smešna istorijska karakteristika: fokus/blur ne      bubble-uju up, 
+// već propagiraju u capturing fazi
+
+// Ovo će raditi:
+
+const can_put_onfocus_handler = `
+    <form id="good_stuff">
+        <input type="text" name="name" value="Name">
+        <input type="text" name="surname" value="Surname">
+    </form>
+`;
+const style_for_good = `
+    .focused_good_stuff { outline: 1px solid red; }
+`;
+
+good_stuff.addEventListener('focus', function(){
+    this.classList.add('focused_good_stuff');
+}, true);
+
+good_stuff.addEventListener('blur', function(){
+    this.classList.remove('focused_good_stuff');
+}, true);
+
+// Drugo, postoje                       focusin          i          focusout           
+// upravo isti kao i focus / blur
+//  ali oni                          BUBBLE-UJU UP
+
+// Imajte na umu da moraju biti dodijeljeni koristeći elem.addEventListener, a ne sa on event handler-om
+
+// Evo još jedna varijanta koja funkcionise:
+
+const focusin_and_out = `
+    <form id="form_in_out">
+        <input type="text" name="name" value="Name">
+        <input type="text" name="surname" value="Surname">
+    </form>
+`;
+const style_for_fin_and_out = `
+    .fo { outline: 1px solid red; }
+`;
+
+form_in_out.addEventListener('focusin', function(){
+    this.classList.add('fo');
+});
+
+form_in_out.addEventListener('focusout', function(){
+    this.classList.remove('fo');
+});

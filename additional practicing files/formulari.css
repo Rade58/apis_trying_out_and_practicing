@@ -1,0 +1,27 @@
+#error_element {
+    color: red;
+}
+
+.invalid {
+    border-color: red;
+}
+
+.error_class {
+    background: red;
+}
+
+.u_list > li {
+    cursor: pointer;
+}
+
+.u_list > li:focus {
+    outline: 1px dashed green;
+}
+
+.focused { outline: 1px solid red; }
+
+
+.focused_good_stuff { outline: 1px solid red; }
+
+.fo { outline: 1px solid red; }
+
