@@ -521,6 +521,12 @@ console.log(document.querySelector('.u_list li:last-of-type').tabIndex);    //--
 document.querySelector('.u_list').lastElementChild.tabIndex = 0;
 console.log(document.querySelector('.u_list').lastElementChild.tabIndex);   //-->    0
 
+/////////////////////////
+// TRENUTNO FOKUSIRANOM ELEMENTU, U JAVASCRIPT-U SE MOZE PRISTUPITI, UZ POMOC:
+
+                                                                            document.activeElement
+setTimeout(()=>{console.log(document.activeElement);}, 2000);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //              DELEGATION:         focusin/focusout
@@ -593,3 +599,611 @@ form_in_out.addEventListener('focusin', function(){
 form_in_out.addEventListener('focusout', function(){
     this.classList.remove('fo');
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// REZIME
+// EVENT-OVI        focus           I               blur            TRIGGER-UJU SE NA
+//                                                                  FOKUSIRANJE / GUBLJENJE FOKUSA
+//    NJIHOVE SPECIJALNOSTI SU:
+//                                      ONI NE BUBBLE-UJU UP (A AKO HOCU TO DA PREVAZIDJEM
+//                                      MOGU IH HVATATI U CAPTURING FAZI; ILI MOGU KORISTITI
+//                                      focusin / focusout    EVENT-OVE)
+// 
+//                                      MNOGI ELEMENTI NE PODRZAVAJU        focus   PO DEFAULT-U
+//                                      A KORISCENJEM   tabindex   ATRIBUTA ILI     tabIndex
+//                                      PROPERTIJA, MOGU BILO STA UCINITI FOCUSABLE-IM
+// 
+// TRENUTNO FOKUSIRANOM ELEMENTU, U JAVASCRIPT-U SE MOZE PRISTUPITI, UZ POMOC:
+                                                                            document.activeElement
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// PRIMERI:
+//  U SLEDECEM PRIMERU TREBA DA KREIRAM  div  ELEMENT, KOJI SE NAKON KLIKA PRETVARA U
+//                                                                                       textarea
+// NAIME, KADA KORISNIK PRITISNE Enter , ILI KADA ELEMENT IZGUBI FOKUS textarea TREBA DA SE
+// PRETVORI NAZAD U     div     I DA NJENA SADRZINA POSTANE     NESTED HTML div-A
+
+const div_tekst_element_primer = `
+    <div style="height: 138px">     /*STAVIO SAM DIV ELEMENT U WRAPPER, ZATO STO MOZE DOCI DO
+                                    'SKOKOVA' (STO UTICE NA OKOLNE ELEMENTE) 
+                                    PRI INSERTOVANJU/EKSERTOVANJU ELEMENTA*/
+
+        <div id="tekst_elem" class="tekst-elem-size">Pocni unos...</div>
+
+    </div>
+`;
+
+const style_div_tekst_element_primer = `
+    .tekst-elem-size {
+        box-sizing: border-box;
+        display: inline-block;
+        width: 200px;
+        height: 120px;
+        margin: 10px;
+        line-height: 18px;
+        margin-bottom: 10px;
+        border: black solid 2px;
+        padding: 10px;
+    }
+
+    .tekst-elem-size:focus {
+        outline: #47ffa9bd solid 1px;
+        border: black solid 1px;
+    }
+`;
+
+tekst_elem.tabIndex = 0;
+
+tekst_elem.onfocus = function(){
+
+    const divElement = this;
+    let textarea = document.createElement('textarea');
+    divElement.insertAdjacentElement('beforebegin', textarea);
+    textarea.innerText = divElement.innerText;
+    
+    textarea.onfocus = function(){
+        divElement.remove();
+    };
+    textarea.onblur = function(){
+        divElement.innerText = this.value;
+        this.insertAdjacentElement('beforebegin', divElement);
+        this.remove();
+        textarea = null;
+    };
+    textarea.onkeydown = function(ev){
+        if(ev.code === 'Enter') this.blur();
+    };
+
+    textarea.classList.add("tekst-elem-size");
+    textarea.focus();
+    
+};
+// OVO JE MOJE RESENJE, KOJE FUNKCIONISE, ALI RESENJE IZ CLANKA JE NESTO DRUGACIJE
+// A TAMO JE KORISCEN I JEDNA METODA, ZA KOJU DO SADA NISAM CUO, A TO JE    
+//                                                                                  
+//                                                                          replaceWidth
+// A POSTOJE I JOS TAKVIH EKSPERIMENTALNIH METODA, KAO STO SU:
+//                                                                after     before      remove
+
+// (OVO SU METODE ChildNode-a (ON SE NE MOZE KONSTRUISATI U KLASICNOM SMISLU, UZ POMOC
+// KONSTRUKTORA, ALI Element KLASA GA IMPLEMENTIRA...(
+// PROCITATI OVDE:      https://developer.mozilla.org/en-US/docs/Web/API/ChildNode       )))
+
+// OVO CE BITI HTML, PRIMERA IZ CLANKA
+
+const html_tarea_div_primer_ruski_clanak = `
+    <div id="view" class="view">Tekst</div>
+`;
+
+// CSS CE BITI NESTO KOMPLEKSNIJI, NEGO U SLUCAJU, MOG PRIMER-A
+
+const css_tarea_div_primer_ruski_clanak = `
+    /*I      div     I       textarea        TREBA DA IMAJU, OVAKVE STILOVE */
+    .view, .edit {
+        height: 150px;
+        width: 428px;
+        font-family: sans-serif;
+        font-size: 14px;
+        display: block;
+    }
+
+    /*div  TREBA DA IMA     padding + border = 3px */
+    .view {
+        padding: 2px;
+        border: 1px solid black;
+    }
+
+    /*KADA SE UMESTO div-A, INSERT-UJE textarea, NJEN BORDER NEKA BUDE 3px ,A PADDING NULA PIKSELA*/
+    /*ZASTO JE OVO URADJENO NA OVAKV NACIN JESTE, PREDPOSTAVLJAM DA NE DODJE DO 'SKOKA'*/
+    /*KOJI SAM RANIJE POMENUO (OVO MORAM PROSTUDIRATI DETALJNO, JEDNOM PRILIKOM)*/
+    .edit {
+        border: 3px solid blue;
+        padding: 0px;
+    }
+
+    .edit:focus {
+        outline: none;      /*OVAKO ZE UKLANJA OUTLINE (A TO JE FOCUS BORDER) U SAFARI BROWSER-U*/
+    }
+`;
+
+// STO SE TICE JAVASCRIPTA, TREBA DEFINISATI VARIJABLU, KOJA CE REFERENCIRATI, TRENUTNI textarea
+let area = null;
+
+const view = document.getElementById('view');
+
+// SLEDECA FUNKCIJA CE BITI POZVANA U   onblur  HANDLERU, KOJI BUDE BIO ZKACEN NA textarea-A    
+// A ONO STO CE TAJ HANDLER URADITI, JESTE DAVANJE value-A OD textarea-A, div ELEMENTU, DA POSTANE
+// NJEGOV innerHTML, I ZAKACICE NAZAD div, A UKLONICE textarea
+
+const editEnd = function(){
+    view.innerHTML = area.value;
+    area.replaceWith(view);
+};
+
+// ZATIM DEFINISANJE, PA ZATIM KACENJE ON click HANDLER-A (JA SAM U GORNJEM PRIMERU KORISTIO onfocus
+// MOZDA KREATOR PRIMERA NE ZELI DA SE Tab-OM, OMOGUCI FOKUSIRANJE, VEC DA KORISNIK MORA
+// KLIKNUTI NA ELEMENT), NA div ELEMENT, I TAJ HANDLER TREBA DA, OBAVI ONO STO JE onfocus HANDLER
+// OBAVIO U MOM PRIMERU 
+
+//OVA FUNKCIJA CE BITI POZVANA U POMENUTOM onclick HANDLER-U
+const editStart = function(){
+    area = document.createElement('textarea');
+    area.className = 'edit';
+    area.value = view.innerHTML;
+
+    //DEFINISEM onkeydown HANDLER ZA texarea-U
+
+    area.onkeydown = function(ev){
+        if(ev.key === 'Enter') this.blur();
+    };
+
+    // DEFINISANJE onblur HANDLERA textare-E
+
+    area.onblur = function(){
+        // POZIVANJE FUNKCIJE KOJA CE DATI textare-IN value, div-U, I div INSERTOVATI NAZAD UMESTO 
+        // textare-E
+        editEnd();
+    }
+
+    // DAKLE U OVOJ FUNKCIJI KOJA CE BITI POZVANA U onclick HANDLER-U; DEFINISEM DA SE
+    // div ZAMENI SA textare-OM U DOM-U, I DA SE textare-A, FOKUSIRA
+
+    view.replaceWith(area);
+    area.focus();
+
+};
+
+view.onclick = function(){
+    editStart();
+}
+
+// MISLIM DA OVAJ PRIMER IMA PAMETNIJI CSS OD MOG I ZATO BI GA TREBAO PROUCITI
+///////////////// 
+// SLEDECI PRIMER, JESTE PRIMER SA BAGUA TABELOM, KOJU SAM KORISTIO (PRI VEZBANJU mouseover/out)
+
+// TREBAM UCITI POLJA TABELE EDITABLE ON click
+// NAIME    
+//        - ON click CELIJA BI TREBALA POSTATI 'EDITABLE' (textarea TREBA DA SE POJAVI UNUTRA)
+//                   (U textare-I, TREBA DA SE NALAZI HTML, ZA EDITOVANJE (HTML CELIJE))
+//                    I TREBAL BI BITI SACUVANA SVA GEOMETRIJA, DAKLE NE TREBA BITI RESIZE (OVO
+//                    POSLEDNJE MORAM SHVATITI KAKO DA URADIM)
+// 
+//        - DUGMAD  OK  I  CANCEL    TREBAJU DA SE POJAVE ISPOD CELIJE, I SLUZICE ZA  finish / cancel 
+//                                                                               EDITOVANJA
+// 
+//        - SAMO JEDNA CELIJA MOZE BITI EDITABLE AT THE MOMENT; ODNOSNO FOK JE      td      U
+//              EDIT MODE-U, click-OVI NA DRUGIM CELIJAMA, TREBA DA SE IGNORISU
+// 
+//        - TABELA MOZE IMATI MNOSTVO CELIJA; KORISTITI EVENT DELEGATION
+
+// OVAKO CE IZGLEDATI HTML I CSS PRIMERA
+const html_tabele_1 = `
+<div class="table_kont_one">
+    <table>
+        <tr>
+            <th colspan="3">Feng Shui <em>Bagua</em> tabela(chart): Smer, Element, Boja, Znacenje </th>            
+        </tr>
+        <tr>
+            <td class="sz">
+                <strong>Severozapad</strong><br>
+                Metal<br>
+                Srebro<br>
+                Starci
+            </td>
+            <td class="s">
+                <strong>Sever</strong><br>
+                Voda<br>
+                Plavo<br>
+                Promena
+            </td>
+            <td class="si">
+                <strong>Severoistok</strong><br>
+                Zemlja<br>
+                Zuta<br>
+                Smer
+            </td>
+            </tr>
+        <tr>
+            <td class="z">
+                <strong>Zapad</strong><br>
+                Metal<br>
+                Zlato<br>
+                Mladost
+            </td>
+            <td class="c">
+                <strong>Centar</strong><br>
+                Sve<br>
+                Purpurno<br>
+                Harmonija
+            </td>
+            <td class="i">
+                <strong>Istok</strong><br>
+                Drvo<br>
+                Plava<br>
+                Buducnost
+            </td>
+        </tr>
+        <tr>
+            <td class="jz">
+                <strong>Jugozapad</strong><br>
+                Zemlja<br>
+                Braun<br>
+                Spokojstvo
+            </td>
+            <td class="j">
+                <strong>Jug</strong><br>
+                Vatra<br>
+                Narandzasta<br>
+                Slava
+            </td>
+            <td class="ji">
+                <strong>Jugoistok</strong><br>
+                Drvo<br>
+                Zelena<br>
+                Romansa
+            </td>
+        </tr>
+    </table>
+`;
+
+const stilovi_tabele_1 = `
+    .table_kont_one {
+        border: 4px solid bisque;
+        width: 92%;
+        padding: 18px;
+    }
+
+    .table_kont_one table {
+        width: 94%;
+        margin: auto;
+        border-collapse: separate;
+        border-spacing: 8px;
+    }
+
+    .table_kont_one td {
+        text-align: center;
+        padding: 18px;
+        line-height: 1.8em;
+        color: blanchedalmond;
+    }
+
+    .table_kont_one .sz {
+        background-color: silver;
+        color: #292f38;
+    }
+    .table_kont_one .s {
+        background-color: royalblue;
+    }
+    .table_kont_one .si {
+        background-color: yellow;
+        color: #292f38;
+    }
+    .table_kont_one .z {
+        background-color: gold;
+        color: #292f38;
+    }
+    .table_kont_one .c {
+        background-color: darkviolet;
+    }
+    .table_kont_one .i {
+        background-color: deepskyblue
+    }
+    .table_kont_one .jz {
+        background-color: saddlebrown
+    }
+    .table_kont_one .j {
+        background-color: orangered;
+    }
+    .table_kont_one .ji {
+        background-color: springgreen;
+    }
+`;
+
+const majorClickHandler =  function(ev){
+    if(!ev.target.closest('td')) return;
+    const td = ev.target.closest('td');
+    const currentTarget = ev.currentTarget;
+    let area = null;
+    const ok = document.createElement('button');
+    const cancel = document.createElement('button');
+    let okCancel = document.createElement('div');
+    let tdTemp = null;
+
+    const tdWidth = td.offsetWidth;
+    const tdHeight = td.offsetHeight;
+    const tdCoordsAndSizes = td.getBoundingClientRect();
+
+    const tdPageBottom = tdCoordsAndSizes.bottom + document.documentElement.scrollTop;
+    const tdPageLeft = tdCoordsAndSizes.left;
+    
+
+    ok.innerText = 'OK';
+    cancel.innerText = 'CANCEL';
+    okCancel.style.dysplay = 'inline-block';
+    okCancel.append(ok);
+    okCancel.append(cancel);
+    okCancel.style.position = 'absolute';
+    okCancel.style.border = 'green solid 1px';
+
+
+    const editStart = function(){
+        tdTemp = document.createElement('td');
+        area = document.createElement('textarea');
+        tdTemp.append(area);
+        area.style.width = tdWidth - 10 + 'px';
+        area.style.height = tdHeight - 10 + 'px';
+        tdTemp.style.width = tdWidth + 'px';
+        tdTemp.style.height = tdHeight + 'px';
+        tdTemp.style.padding = '0px';
+        area.value = td.innerHTML;
+        td.replaceWith(tdTemp);
+        document.documentElement.append(okCancel);
+        okCancel.style.left = tdPageLeft + 'px';
+        okCancel.style.top = tdPageBottom + 'px';
+        area.focus();
+
+        okCancel.onclick = function(ev){
+            if(ev.target.innerHTML === 'OK'){
+                td.innerHTML = area.value;
+                tdTemp.replaceWith(td);
+                okCancel.remove()
+                okCancel = null;
+                area = null;
+                tdTemp = null;
+                currentTarget.onclick = majorClickHandler;
+            }
+            if(ev.target.innerHTML === 'CANCEL'){
+                tdTemp.replaceWith(td);
+                okCancel.remove()
+                okCancel = null;
+                area = null;
+                tdTemp = null;
+                currentTarget.onclick = majorClickHandler;
+            }
+        }
+
+    };
+
+    editStart();
+
+    document.querySelector('.table_kont_one').onclick = null;
+
+};
+
+document.querySelector('.table_kont_one').onclick = majorClickHandler;
+
+// MOJE RESENJE FUNKCIONISE, ALI OPET JE PROBLEM CSS; POGLEDACU KAKAVO JE RESENJE IZ CLANKA
+// PA DA VIDIM STA SE MOZE POMRAVITI
+// MEDJUTIM, GLEDAJUCI RESENJE PRIMERA IZ CLANKA SHVATIO SAM DA I TAMO IMA 'SKOKOVA', PRILIKOM
+// REPLACEMENT-OVA (PROCITACU IPAK CODE POMENUTOG PRIMERA, PA CU VEROVATNO ODRADITI PRIMER,
+// KAKO JE U ORGINALU URADJEN I U CLANKU)
+// IPAK CU OSTAVITI LINK DO RESENJA, PA CU PRIMER ODRADITI, NEKOM DRUGOM PRILIKOM, U CILJU USTEDE
+// VREMENA
+// http://next.plnkr.co/edit/0TJJus0XtFNQYjSNp2rr?p=preview&preview
+////////////////////////////////
+// URADICU SADA JOS JEDAN PRIMER
+// SLEDECI PRIMER JESTE 'MIS (SLIKA SASTAVLJENA OD KARAKTERA)'
+// POTREBNO JE DA SE FOKUSIRA, I DA SE ONDA ARROW KEY-OVIMA POMERA (ELEMENT JE I Tab FOCUSABLE)
+
+// OVO JE HTML I STIL PRIMERA
+const pre_tag_mouse = `
+    <pre id="mouse">
+         _   _
+        (q\_/p)
+         /. .\
+        =\_t_/=   __
+         /   \   (
+        ((   ))   )
+        /\) (/\  /
+        \  Y  /-'
+         nn^nn
+    </pre>
+`;
+const pre_tag_css = `
+#mouse {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  #mouse:focus {
+    outline: 1px dashed black;
+  }
+`;
+
+mouse.tabIndex = 0;
+
+mouse.addEventListener('focus', function(ev){
+
+    this.style.position = 'absolute';
+
+    const offsetW = ev.target.offsetWidth;
+    const offsetH = ev.target.offsetHeight;
+
+    console.log(offsetW, offsetH);
+
+    this.addEventListener('keydown', function(ev){
+
+        const current = ev.currentTarget;
+
+        const offsetLeft = current.offsetLeft;
+
+        const offsetTop = current.offsetTop;
+
+
+        ev.preventDefault();
+
+        if(ev.code === 'Tab'){
+            current.blur();
+            return;
+        }
+
+
+        console.log(ev.code);
+
+        const up = ev.code === 'ArrowUp'?true:false;
+        const down = ev.code === 'ArrowDown'?true:false;
+        const left = ev.code === 'ArrowLeft'?true:false;
+        const right = ev.code === 'ArrowRight'?true:false;
+
+        const vert = up || down?true:false;
+        const horizon = left || right?true:false;
+
+        const moveLeft = left?(-offsetW):0;
+        const moveRight = right?(offsetW):0;
+        const moveUp = up?(-offsetH):0;
+        const moveDown = down?(offsetH):0;
+
+        current.style.left = (horizon?(offsetLeft + moveLeft + moveRight):(offsetLeft)) + 'px';
+        current.style.top = (vert?(offsetTop + moveUp + moveDown):(offsetTop)) + 'px';
+
+    });
+
+});
+
+// MOJ PRIMER FUNKCIONISE, ALI JE OPET, U CLANKU URADJENO DRUGACIJE; KONKRETNO IZMEDJU OSTALOG
+// KORISCENA JE
+//                  switch      IZJAVA
+//                  I UMESTO        addEventListener-A, KORISCENI SU SVUGDE on HANDLERI
+
+// ODRADICU I NACINOM KOJI JE URADJEN U CLANKU, CIJI CU LINK OVDE OSTAVITI
+//                        http://next.plnkr.co/edit/AZLBihrgORhfYdVTxdjD?p=preview&preview
+
+// DAKLE, NEKOM DRUGOM PRILIKOM CU ODRADITI, OVAJ PRIMER IZ RUSKOG CLANKA, CIJI SAM LINK OSTAVIO
+// A SADA CU SE POZABAVITI NOVIM CLANKOM VEZANIM ZA VELIKI NASLOV 'FORMS, CONTROLS'
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+// 
+//                     EVENT-OVI:           change      input       cut         copy        paste
+
+// OVDE CE SE DISKUTOVATI O, RAZNIM EVENT-OVIMA, KOJI PRATE DATA UPDATES
+////////////////////////
+
+//      change      EVENT
+
+// OVAJ EVENT SE TRIGGER-UJE, KADA JE ELEMENT ZAVRSIO SA, SVOJIM MENJANJEM, ODNOSNO KADA SE ZAVRSILA
+// PROMENA NA TO ELEMENTU
+
+// ZA TEKST INPUT-OVE, TO ZNACI DA SE EVENT JAVLJA KADA TAKAV input IZGUBI FOKUS (ALI NECE SE TRIGGER-OVATI
+// SAMO AKO ELEMENT IZGUBI FOKUS, NAIME, MORA DA SE ZADA NOVI value , PA TEK ONDA AKO ELEMENT IZGUBI FOKUS
+// TRIGGER-OVACE SE I change EVENT)
+
+// NA PRIMER, DOK BUDEM KUCAO U TEXT FIELDU (KOJI CU KREIRATI, I CIJI HTML SAM PREDSTAVIO DOLE); NECE BITI 
+// TRIGGERING-A EVENT-A
+// ALI KADA POMERIM FOKUS NEGDE DRUGDE, NA PRIMER, AKO KLIKNEM NA BUTTON; TRIGGER-OVACE SE  change  EVENT, NA
+// POMENUTOM input-U
+const primer_za_change = `
+    <input type="text" onchange="console.log(this.value)">
+    <input type="button" value="Button">
+`;
+// ZA DRUGE ELEMENTE, KAO STO SU:
+//                                      select, input(type=checkbox/radio)
+// TRIGGER-OVACE SE ODMAH KADA SE
+// IZVRSI NOVA SELEKCIJA; ODNOSNO KADA SE SELEKCIJA PROMENI   
+// /////////////////////////////////////////////////////////////
+
+//    input        EVENT
+// 
+// OVOJ EVENT SE TRIGGER-UJE, SVAKI PUT, KADA SE      value         MODIFIKUJE
+// NA PRIMER:
+const primer_za_input_event = `
+    <input id="input" type="text"> oninput: <span id="result"></span>
+`;
+
+input.oninput = function(){
+    result.innerHTML = this.value;
+};
+
+// AKO ZELIM DA HENDLE-UJEM, SVAKU MODIFIKACIJU NA <input> -U, ONDA JE OVAJ EVENT, NAJBOLJI IZBOR
+
+// ZA RAZLIKU OD KEYBOARD EVENT-OVA; OVAJ EVENT RADI NA BILO KOJOJ PROMENI value-A; CAK I ONOJ PROMENI, KOJA
+// NE UKLJUCUJE         KEYBOARD ACTIONS:
+//                                          PASTING UZ POMOC MISA, ILI KORISCENJEM SPEECH RECOGNITION-A ZA
+//                                                                  DIKTIRANJE TEKSTA
+// ////
+// NE MOZE SE NISTA PREVENT-OVATI, U    oninput     HANDLER-U
+// input EVENT SE JAVLJA, NAKON STO JE value MODIFIKOVAN
+// TAKO DA SE NE MOZE KORISTITI: 
+//                                  event.preventDefault()      U POMENUTOM HANDLER-U, JER JE PREKASNO
+//                                                              I TO NE BI DALO NIKAKVOG EFEKTA
+//////////////////////////////////////////////////////////
+// 
+//    cut       copy        paste       EVENT-OVI
+// 
+// OVI EVENT-OVI SE TRIGGER-UJU, ON     cuutting/copying/pasting    VREDNOSTI
+// ONI PRIPADAJU ClipboardEvent  KLASI (https://www.w3.org/TR/clipboard-apis/#clipboard-event-interfaces)
+// I OMOGUCUJU ACCESS PODACIMA, KOJI SU     copied/pasted
+// TAKODJE, MOZE SE KORISTITI       event.preventDefault()      ZA ABORT-OVANJE ACTION-A
+// NA PRIMER, CODE DOLE, PREVENTIRA, SVAKI OD POMENUTIH EVENT-OVA, I POKAZUJE DA ZELIM DA POKUSAVAM DA
+//                                                                                          cut/copy/paste
+// 
+const primer_za_cut_copy_paste = `
+    <input id="input_sec" type="text">
+`;
+ 
+input_sec.oncopy = input_sec.oncut = input_sec.onpaste = function(ev){
+    ev.preventDefault();
+    console.log(
+        'prevented ' + ev.type + ' --> ' + ev.clipboardData.getData('text/plain')
+    );
+
+    // A UMESTO POZIVANJA preventDefault-A, MOGAO SAM IZ OVE FUNKCIJE      return-OVATI  false
+};
+
+// U SLUCAJU paste EVENTA, MOGAO SAM VIDETI I STA BI SE PASTE-OVALO, DA DEFAULT ACTION NIJE PREVENTED
+// A PRISTUPIO SAM CLIPBOARD-U, UZ POMOC
+//                                                      event.clipboardData    (ONDA SAM NAD OBJEKTOM
+//                                                                              KOJEM SAM PRISTUPIO
+//                                                                              PRIMENIO  getData METODU)
+// TEHNICKI, MOZE SE COPY-RATI I PASTE-OVATI BILO STA
+// NA PRIMER, MOZE SE KOPIRATI I FILE U OS FILE MANAGER-U I PASTE-OVATI
+// POSTOJI LISTA METODA U SPECIFIKACIJAMA:
+                        //                  https://www.w3.org/TR/clipboard-apis/#dfn-datatransfer
+// SA KOJIM SE MOZE RADITI SA RAZLICITIM DATA TYPES, READ/WRITE-OVATI U CLIPBOARD
+// ALI MOLIM DA OBRATIS PAZNJU DA JE CLIPBOARD JESTE "GLOBAL" OS-LEVEL THING; VECINA BROWSER-A DOZVOLJAVAJU
+// READ/WRITE U CLIPBOARD, SAMO U OBIMU ODREDJENIH USER ACTION-A, U CILJU SAFETY-JA
+// TAKODJE ZABRANJENO JE KREIRANJE "CUSTOM" CLIPBOARD EVENT-OVA U SVIM BROWSER-IMA, IZUZEV FIREFOX-A
+//////////
+//          REZIME:
+
+//          Event                           OPIS                                SPECIJALI (SPECIALS)
+// 
+//      change                value SE PROMENILO                       ZA text input-E, NKON GUBITKA FOKUSA
+// 
+//      input                 ZA text inpute-E, NA SVAKOJ              ZA RAZLIKU OD chang-A, TRIGGERUJE SE
+//                              PROMENI                                                             ODMAH
+// 
+//      cut/copy/paste        CUT/COPY/PASTE ACTIONS                   ACTION MOZE BITI PREVENTED; I 
+//                                                                     event.clipboardData     PROPERTI
+//                                                                     DAJE READ/WRITE PRISTUP CLIPBOARD-U
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PRIMER:
+// DEPOSIT CALCULATOR
+// 
+// TREBAM, NAIME KREIRATI INTERFEJS, KOJI OMOGUCAVA UNOS SUME BANKOVNOG DEPOZITA I PROCENATA, I KOJI
+// IZRACUNAVA KOLIKI CE BITI IZNOS NAKON, ODREDJENOG VREMENA
+// 
+// 
+// 

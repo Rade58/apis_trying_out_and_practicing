@@ -1,3 +1,7 @@
+#test {
+    display: table-cell;
+}
+
 #error_element {
     color: red;
 }
@@ -24,4 +28,110 @@
 .focused_good_stuff { outline: 1px solid red; }
 
 .fo { outline: 1px solid red; }
+
+.tekst-elem-size {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 200px;
+    height: 120px;
+    margin: 10px;
+    line-height: 18px;
+    margin-bottom: 10px;
+    border: black solid 2px;
+    padding: 10px;
+}
+
+.tekst-elem-size:focus {
+    outline: #47ffa9bd solid 1px;
+    border: black solid 1px;
+}
+
+/*I      div     I       textarea        TREBA DA IMAJU, OVAKVE STILOVE */
+.view, .edit {
+    height: 150px;
+    width: 428px;
+    font-family: sans-serif;
+    font-size: 14px;
+    display: block;
+}
+
+/*div  TREBA DA IMA     padding + border = 3px */
+.view {
+    padding: 2px;
+    border: 1px solid black;
+}
+
+/*KADA SE UMESTO div-A, INSERT-UJE textarea, NJEN BORDER NEKA BUDE 3px ,A PADDING NULA PIKSELA*/
+.edit {
+    border: 3px solid blue;
+    padding: 0px;
+}
+
+.edit:focus {
+    outline: none;      /*OVAKO ZE UKLANJA OUTLINE (A TO JE FOCUS BORDER) U SAFARI BROWSER-U*/
+}
+
+
+
+.table_kont_one {
+    border: 4px solid bisque;
+    width: 92%;
+    padding: 18px;
+}
+
+.table_kont_one table {
+    width: 94%;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 8px;
+}
+
+.table_kont_one td {
+    text-align: center;
+    padding: 18px;
+    line-height: 1.8em;
+    color: blanchedalmond;
+}
+
+.table_kont_one .sz {
+    background-color: silver;
+    color: #292f38;
+}
+.table_kont_one .s {
+    background-color: royalblue;
+}
+.table_kont_one .si {
+    background-color: yellow;
+    color: #292f38;
+}
+.table_kont_one .z {
+    background-color: gold;
+    color: #292f38;
+}
+.table_kont_one .c {
+    background-color: darkviolet;
+}
+.table_kont_one .i {
+    background-color: deepskyblue
+}
+.table_kont_one .jz {
+    background-color: saddlebrown
+}
+.table_kont_one .j {
+    background-color: orangered;
+}
+.table_kont_one .ji {
+    background-color: springgreen;
+}
+
+
+#mouse {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0;
+}
+
+#mouse:focus {
+    outline: 1px dashed black;
+}
 
