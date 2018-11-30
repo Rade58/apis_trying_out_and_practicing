@@ -1529,27 +1529,30 @@ const showPrompt = function(html, callback){
         }
 
         inputField.focus();
-    }
+    };
 
     formEl.onsubmit = function(ev){
         console.log(ev.target);
 
-        if(inputField.value === '') return false;
+        ev.preventDefault();
 
-        coverDiv.remove();
+        if(inputField.value === '') return;
+        
         coverDiv.onkeydown = cancelButton.onblur = 
-        divEl.onfocus = coverDiv.onfocus = 
-        formEl.onsubmit = cancelButton.onmousedown = null;
+        divEl.onfocus = coverDiv.onfocus = cancelButton.onmousedown = null;
 
         callback(inputField.value);
-    }
+
+        coverDiv.remove();
+
+    };
 
     cancelButton.onmousedown = function(){
         coverDiv.remove();
         coverDiv.onkeydown = cancelButton.onblur = divEl.onfocus = coverDiv.onfocus = formEl.onsubmit =
         cancelButton.onmousedown = null;
         callback(null);
-    }
+    };
 
 };
 
@@ -1567,8 +1570,8 @@ dugme.onmousedown = function(ev){
 // NARAVNO, TREBALO BI OPET RESITI, ISTI PRIMER, ALI NACINOM, KAKAV JE KORISCEN U CLANKU
 // http://next.plnkr.co/edit/sKOOkafZh6Bsn1iGBExU?p=preview&preview
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+// 
+// 
 
 
 
