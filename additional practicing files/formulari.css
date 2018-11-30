@@ -1,5 +1,7 @@
 #test {
     display: table-cell;
+    background-color: #c557a448;
+    background-color: #fff;
 }
 
 #error_element {
@@ -134,4 +136,26 @@
 #mouse:focus {
     outline: 1px dashed black;
 }
+
+
+td select, td input {
+    width: 208px;
+}
+
+#diagram td {
+    vertical-align: bottom;
+    text-align: center;
+    padding: 10px;
+}
+
+#diagram div {
+    margin: auto;
+} 
+
+.cover:focus, .modal:focus {
+    border-radius: 18px;
+}
+
+
+
 

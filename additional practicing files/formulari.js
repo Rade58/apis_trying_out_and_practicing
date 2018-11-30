@@ -1205,5 +1205,373 @@ input_sec.oncopy = input_sec.oncut = input_sec.onpaste = function(ev){
 // TREBAM, NAIME KREIRATI INTERFEJS, KOJI OMOGUCAVA UNOS SUME BANKOVNOG DEPOZITA I PROCENATA, I KOJI
 // IZRACUNAVA KOLIKI CE BITI IZNOS NAKON, ODREDJENOG VREMENA
 // 
+// SVAKA PROMENA INPUT-A, TREBA DA BUDE PROCESSED IMMEDIATELLY
+// FORMULA ZA PRIMER JE SLEDECA:
+
+//      initial             -->     INICIJALNA SUMA NOVCA
+//      interestRate        -->     NA PRIMER   0.05    ZNACI       5%  GODISNJE
+//      years               -->     KOLIKO GODINA SE CEKA
+//  
+//      OVAKO     let result = Math.round(initial * interestRate * years + initial)
+//      ODNOSNO OVAKO       result = Math.round(initial * (1 + interestRate * years))
+
+// DEFINISACU HTML I CSS
+
+const html_primera_input_eventa = `
+    Deposit calculator.
+    <form name="calculator">
+        <table>
+            <tr>
+                <td>Initial deposit</td>
+                <td>
+                    <input name="money" type="number" value="10000" required>
+                </td>
+            </tr>
+            <tr>
+                <td>How many months?</td>
+                <td>
+                    <select name="months">
+                        <option value="3">3 (minimum)</option>
+                        <option value="6">6 (half-year)</option>
+                        <option value="12">12 (one-year)</option>
+                        <option value="18">18 (1.5 years)</option>
+                        <option value="24">24 (2 years)</option>
+                        <option value="30">30 (2.5 years)</option>
+                        <option value="36">36 (3 years)</option>
+                        <option value="60">60 (5 years)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Interest per year?</td>
+                <td>
+                    <input name="interest" type="number" value="5" required>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="diagram">
+        <tr>
+            <th>Was:</th>
+            <th>Becomes:</th>
+        </tr>
+        <tr>
+            <th id="money-before"></th>
+            <th id="money-after"></th>
+        </tr>
+        <td>
+            <div style="background: tomato; width: 38px; height: 100px;">
+            </div>
+        </td>
+        <td>
+            <div style="background: olive; width: 38px; height: 0;">
+            </div>
+        </td>
+    </table>
+`;
+
+const css_primera_input_eventa = `
+    td select, td input {
+        width: 208px;
+    }
+
+    #diagram td {
+        vertical-align: bottom;
+        text-align: center;
+        padding: 10px;
+    }
+
+    #diagram div {
+        margin: auto;
+    }
+`;
+
+// A OVO JE JAVASCRIPT
+
+const depositFunc = function(){
+    const formular = document.forms.calculator;
+    const elements = formular.elements;
+    
+    const moneyInput = elements.money;
+    const monthsSelect = elements.months;
+    const rateInput = elements.interest;
+
+    const diagram = window.diagram;
+
+    const divWas = diagram.querySelectorAll('div')[0];
+    const divBecomes = diagram.querySelectorAll('div')[1];
+
+    const moneyBefore = window['money-before'];
+    const moneyAfter = window['money-after'];
+    
+    const equasion = function(deposit, months, rate){
+        return Math.round(deposit * (1 + (months/12) * rate/100));
+    };
+
+    const onInputHandler = function(ev){
+        if(
+            ev.type === 'input' && 
+            ev.target === moneyInput || ev.target === monthsSelect || ev.target === rateInput
+        ){
+            divWas.style.height = (ev.target === moneyInput?(moneyInput.value/100 + 'px'):window.getComputedStyle(divWas).height);
+            divBecomes.style.height = equasion(moneyInput.value, monthsSelect.value, rateInput.value)/100 + 'px';
+            moneyBefore.innerHTML = moneyInput.value;
+            moneyAfter.innerHTML = equasion(moneyInput.value, monthsSelect.value, rateInput.value);
+        }
+    }
+
+    formular.addEventListener('input', onInputHandler);
+
+};
+
+depositFunc();
+
+// USPESNO SAM DEFINISAO, POMENUTI KALKULATOR; ALI OPET DO REZULTATA SE, DO ODREDJENOG NIVOA RESENJE U CLANKU
+// JESTE DRUGACIJE, ALI I BOLJE, ZATO JE DOBRO URADITI TAJ PRIMER, ONAKO KAKO JE I RESENJE U CLANKU, JER
+// IPAK TO JE RADIO ISKUSNI DEVELOPER; OSTAVICU OVDE LINK
+// http://next.plnkr.co/edit/AN8sxfdS7rFo4Et6x2NZ?p=preview&preview
+// ODRADICU OVO TOKOM PONAVLJANJA (MORAM SVE OVE PRIMERE I OBJASNJENJA, JEDNOM PONOVITI), A SADA PRELAZIM NA
+// NOVI CLANAK
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+// *******************************************************************************************************
+//
+//                                  PODNOSENJE FORMULARA (FORM SUBMISSION)
+//
+//                                  EVENT   submit         METODA     submit  
 // 
+// EVENT submit će se trigger-ovati kada se formular podnese, obično se koristi za validaciju obrazca
+// prije slanja na server ili za prekidanje submission-A i processing u JavaScriptu.
+
+// Metoda   form.submit()      omogućava iniciranje slanja obrazaca iz JavaScript-a
+// Možemo je koristiti za dinamičko kreiranje i slanje sopstvenih formulara na server
+
+// Da vidimo više detalja o njima.
+//////////////////////////////////
+//                                             EVENT   submit
 // 
+// POSTOJE DVA OSNOVNA NACINA DA SE SUBMITUJE FORMULAR
+//          1) KADA SE KLIKNE NA          <input type="submit">       ILI         <input type="image">
+//          2) KADA SE PRITISNE      Enter   KEY  NA  input FIELD-U
+// 
+// OBA ACTION-A, VODE DO            submit          EVENT-A NA FORMULARU
+// HANDLER MOZE PROVERITI PODATKE (CHECK THE DATA), I AKO POSTOJE ERROR-I, PRIKAZATI IH I POZVATI:
+// 
+//                                                                              event.preventDefault()
+//                                                                          (ILI return-OVATI   false    )
+//                                                                         I TADA FORMULAR NECE BITI POSLAT
+//                                                                         SERVER-U
+// U FORMULARU, KOJI SAM DOLE KREIRAO
+//                                          1) UCI CU U <input> FIELD I PRITISNUCU Enter
+//                                          2) KLIKNUCU NA <input type="submit"> 
+const html_submit_primera = `
+    <form onsubmit="console.log('SUBMIT!'); return false;">
+        Prvo: pritisni Enter u input polju: <input type="text" value="text"><br>
+        Drugo: Click-ni "submit": <input type="submit" value="Submit">
+    </form>
+`;
+
+// OBA POMENUTA ACTION-A CE STAMPATI ZADATI STRING U KONZOLI, A FORMULAR NIGDE NECE BITI POSLAT, ODNOSNO 
+// SUBMIT-OVAN, ZATO STO SAM U OBIMU HANDLER-A, NAPISAO         
+//                                                              return false;
+///////////////////////////////////////////////////////
+// 
+//      ODNOS IZMEDJU       submit      I       click
+// 
+// KADA JE FORMULAR POSLAT, KORISCENJEM     Enter-A     NA INPUT POLJU,     click      EVENT SE TRIGGER-OVAO
+// NA       <input type="submit">
+// THAT'S RATHER FUNNY, zato sto uopste nije bilo nikakvog KLIKA
+// 
+// EVO JE I DEMONSTRACIJA POMENUTOGA:
+
+const html_drugog_submit_primera = `
+    <form>
+        <input type="text" size="28" value="Focus here and press Enter">
+        <input type="submit" value="Submit" onclick="alert('CLICK!');">
+    </form>
+`;
+/////////////////////////////////////////////////////////
+
+//              METODA      submit
+// 
+// ZA MANUELNO SUBMIT-OVANJE FORMULARA, SERVERU, MOZE SE POZVATI            form.submit()
+// 
+// TADA     submit      EVENT, NIJE GENERISAN; NAIME TADA SE PREDPOSTAVLJA DA AKO JE PROGRAMER POZVAO
+//   form.submit()   , SCRIPT JESTE ODRADIO SAV RELATED PROCESSING
+
+// PONEKAD, POMENUTO SE KORISTI DA SE MANUELNO KREIRA I POSALJE FORMULAR, UPRAVO OVAKO:
+
+const submitingFunk = function(){
+    const form = document.createElement('form');
+
+    form.action = 'https://google.com/search';
+    form.method = 'GET';
+
+    form.innerHTML = '<input name="q" value="test">'
+
+    document.body.append(form);
+
+    form.submit();
+};
+// MOGU OVU FUNKCIJU POZVATI U KONZOLI PA DA VIDIM STA CE SE DOGODITI
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SADA CU DEFINISATI, JEDAN PRIMER VEZAN ZA OVAJ CLANAK
+// TREBAM KREIRATI FUNKCIJU
+//                                              showPrompt(html, callback)
+// KOJA POKAZUJE FORMULAR SA PORUKOM (html ARGUMENT), input POLJE I DUGMADI     OK/CANCEL
+// 
+//                  -KORISNIK BI TREBAO NESTO KUCATI U TEXT FIELD I PRITISNUTI Enter ILI OK DUGME;
+//                          TADA BI TREBALO DA SE POZIVA        callback(value)        ; NARAVNO   value  JE 
+//                                                                            VREDNOST, KOJU JE KORISNIK UNEO
+//                  -U SUPROTNOM, AKO KORISNIK PRITISNE     Esc     ILI     CANCEL    DUGME ,  ONDA TREBA DA
+//                          SE OPOZOVE      callback(null)
+
+//          U OBA SLUCAJA, POMENUTO CE PREKINUTI INPUT PROCES I UKLONICE SE FORMULAR
+
+//      ZAHTEVI (EQUIREMENTS):
+//  - FORMULAR TREBA DA BUDE U CENTRU        window-A
+//  - FORMULAR JE modal. DRUGIM RECIMA, NI JEDNA INTERAKCIJA SA OSTATKOM STRANICE, NIJE MOGUCA DOK, KORISNIK
+//      NE ZATVORI, TAJ modal
+//  - KADA JE FORMULAR PRIKAZAN, FOKUS TREBA DA BUDE UNUTAR     <input>  ZA KORISNIKA 
+//  - KEY-OVI      Tab / Shift + Tab   TREBAJU DA MENJAJU (SHIFT-UJU) FOKUS IZMEDJU FORM POLJA; A NE SME SE 
+//      DOPUSTIT ODLAZAK FOKUSA NA DRUGA PAGE LEMENTE
+
+const showPrompt = function(html, callback){
+    const divEl = document.createElement('div');
+    const formEl = document.createElement('form');
+    const inputField = document.createElement('input');
+    const coverDiv = document.createElement('div');
+
+    coverDiv.classList.add('cover');
+    divEl.classList.add('modal');
+
+    inputField.type = 'text';
+    inputField.value = 'Unesi tekst';
+    
+    inputField.style.margin = '8px';
+
+    const okButton = document.createElement('input');
+    const cancelButton = document.createElement('input');
+
+    okButton.type = 'submit';
+    cancelButton.type = 'button';
+
+    okButton.value = 'OK';
+    cancelButton.value = 'CANCEL';
+
+    cancelButton.setAttribute('cancel_btn', '');
+
+    divEl.innerHTML = html;
+    formEl.append(inputField);
+    divEl.appendChild(document.createElement('br'));
+    divEl.append(formEl);
+    formEl.appendChild(document.createElement('br'));
+    formEl.append(okButton);
+    formEl.append(cancelButton);
+
+    coverDiv.style.position = 'fixed';
+    coverDiv.style.left = '0px';
+    coverDiv.style.top = '0px';
+    coverDiv.style.zIndex = '1000';
+    coverDiv.style.width = /* document.documentElement.clientWidth + 'px'; */ '100%';
+    coverDiv.style.height = /* document.documentElement.clientHeight + 'px'; */ '100%';
+    coverDiv.style.border = 'olive solid 4px';
+    coverDiv.style.backgroundColor = '#c557a448';
+    coverDiv.style.boxSizing = 'border-box';
+    
+    divEl.style.position = 'absolute';
+    divEl.style.textAlign = 'center';
+    divEl.style.backgroundColor = '#fff';
+    
+    coverDiv.appendChild(divEl);
+    document.body.appendChild(coverDiv);
+
+    /* divEl.style.left = coverDiv.clientWidth/2 - divEl.clientWidth/2 + 'px';
+    divEl.style.top = coverDiv.clientHeight/2 - divEl.clientHeight/2 + 'px'; */
+
+    const catcher = document.createElement('div');
+    coverDiv.appendChild(catcher);
+    catcher.tabIndex = 0;
+
+
+
+    // ZELIM DA IMAM VREDNOSTI U PROCENTIMA, JER KADA RESIZE-UJEM window BROWSERA, ZELIM, DA MODAL UVEK
+    // BUDE NA SREDINI window-A
+
+    divEl.style.left = ((coverDiv.clientWidth/2 - divEl.clientWidth/2) / coverDiv.clientWidth) * 100 + '%';
+    divEl.style.top = ((coverDiv.clientHeight/2 - divEl.clientHeight/2) / coverDiv.clientHeight) * 100 + '%';
+
+
+    coverDiv.tabIndex = 0;
+    divEl.tabIndex = 0; 
+
+    inputField.focus();
+
+    let shiftKey = false;
+
+
+    coverDiv.onkeydown = coverDiv.onkeyup = function(ev){
+        console.log(ev.shiftKey);
+
+        shiftKey = ev.shiftKey;
+    }
+
+    cancelButton.onblur = function(ev){
+        if(!shiftKey) inputField.focus();
+    };
+
+    divEl.onfocus = coverDiv.onfocus = function(){
+        if(shiftKey){
+            cancelButton.focus();
+            return;
+        }
+
+        inputField.focus();
+    }
+
+    formEl.onsubmit = function(ev){
+        console.log(ev.target);
+
+        if(inputField.value === '') return false;
+
+        coverDiv.remove();
+        coverDiv.onkeydown = cancelButton.onblur = 
+        divEl.onfocus = coverDiv.onfocus = 
+        formEl.onsubmit = cancelButton.onmousedown = null;
+
+        callback(inputField.value);
+    }
+
+    cancelButton.onmousedown = function(){
+        coverDiv.remove();
+        coverDiv.onkeydown = cancelButton.onblur = divEl.onfocus = coverDiv.onfocus = formEl.onsubmit =
+        cancelButton.onmousedown = null;
+        callback(null);
+    }
+
+};
+
+// showPrompt('neki tekst');
+// KACIM showPrompt FUNKCIJU, KAO onmousedown HANDLER, NA NEKI BUTTON U HTML-U
+const neki_button_za_showing_prompt = `
+    <button id="dugme">Click to show the form</button>
+`;
+
+dugme.onmousedown = function(ev){
+    showPrompt('Tekstualni tekst blah blah', function(param){alert(param);})
+};
+
+// MISLIM DA SAM USPESNO DEFINISAO, POMENUTI PRIMER, I OSTAJE MI DA VIDIM, KAKVO JE ONE RESENJE U CLANKU
+// NARAVNO, TREBALO BI OPET RESITI, ISTI PRIMER, ALI NACINOM, KAKAV JE KORISCEN U CLANKU
+// http://next.plnkr.co/edit/sKOOkafZh6Bsn1iGBExU?p=preview&preview
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+

@@ -952,6 +952,89 @@ KOMENTARE, ODNOSNO SVE STO JE POTREBNO DA BOLJE NAUCIM SVE STO JE VEZANO ZA
         <hr>
         <br>
         <hr>
+        <br>
+        Deposit calculator.
+        <form name="calculator">
+            <table>
+                <tr>
+                    <td>Initial deposit</td>
+                    <td>
+                        <input name="money" type="number" value="10000" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>How many months?</td>
+                    <td>
+                        <select name="months">
+                            <option value="3">3 (minimum)</option>
+                            <option value="6">6 (half-year)</option>
+                            <option value="12">12 (one-year)</option>
+                            <option value="18">18 (1.5 years)</option>
+                            <option value="24">24 (2 years)</option>
+                            <option value="30">30 (2.5 years)</option>
+                            <option value="36">36 (3 years)</option>
+                            <option value="60">60 (5 years)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Interest per year?</td>
+                    <td>
+                        <input name="interest" type="number" value="5" required>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <table id="diagram">
+            <tr>
+                <th>Was:</th>
+                <th>Becomes:</th>
+            </tr>
+            <tr>
+                <th id="money-before"></th>
+                <th id="money-after"></th>
+            </tr>
+            <td>
+                <div style="background: tomato; width: 38px; height: 100px;">
+                </div>
+            </td>
+            <td>
+                <div style="background: olive; width: 38px; height: 0;">
+                </div>
+            </td>
+        </table>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <form onsubmit="console.log('SUBMIT!'); return false;">
+            Prvo: pritisni Enter u input polju: <input type="text" value="text"><br>
+            Drugo: Click-ni "submit": <input type="submit" value="Submit">
+        </form>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <form>
+            <input type="text" size="28" value="Focus here and press Enter">
+            <input type="submit" value="Submit" onclick="alert('CLICK!');">
+        </form>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <button id="dugme">Click to show the form</button>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
         <!-- ****************************************************************************************** -->
         <!-- ****************************************************************************************** -->
         <!-- ****************************************************************************************** -->
