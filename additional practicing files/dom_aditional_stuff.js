@@ -201,8 +201,29 @@ Insertion and removal of nodes:
 // **********************************************************************************************************
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // **********************************************************************************************************
-
+// SADA CU SE POZABAVITI, MOZDA ONIM CIME SAM SE, PRVO TREBAO POZABAVITI (PRE BILO CEGA DRUGOG
+// NAIME, PRE EVENT-OVA, KOORDINATA, SCROLLING-A, MODIFYING-A document-A ETC), A TO JE
+//                  
+//                              BROWSER ENVIROMENT, SPECS
 // 
+// JavaScript je inicijalno kreiran za web pregledače. Od tada je evoluirao i postao jezik sa mnoštvom
+// upotreba i platformi. Platforma može biti pretraživač, web server ili mašina za pranje veša ili drugi host.
+//  Svaki od njih pruža funkcionalnost specifične za platformu. Specifikacija JavaScript-a naziva to 
+// okruženje domaćina (HOST ENVIROMENT).
+// Lokalno okruženje pruža objektima i funkcijama specifičnim za platformu dodatak jezičnom jezgru (LANGUAGE
+// CORE)
+// Web pretraživači daju sredstva za kontrolu veb stranica. Node.JS nudi funkcije na serveru i tako dalje.
+// NA SLICI, KOJU SAM UCITAO, I KOJU SAM PREUZEO IZ RUSKOG CLANKA, NALAZI SE 
+
+
+
+
+
+
+
+
+
+
 
 console.log('////////////////////////////////////////////////////////////////////////////////////////////');
 const nekiDiv = document.createElement('div');
