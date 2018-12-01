@@ -14,7 +14,7 @@ ONO STO KONKRETNO JESTE POKRIVENO U OVOM FAJLU JESU
 1. SCROLLING (ELEMENT SIZES AND SCROLLING I WINDOW SIZES AND SCROLLING)
 1. KOORDINATE
 
-(SVE OSTAL OVEZANO ZA DOM NALAZIĆE SE U FAJLU   additional practicing files/dom_sditional_stuff.js  )
+(SVE OSTAL OVEZANO ZA DOM NALAZIĆE SE U FAJLU   additional practicing files/dom_aditional_stuff.js  )
 
 ### FAJL        additional practicing files/formulari.js       (LOADED U         pageLifecycleEventsSec.html    )
 POKRIVA ONO NAJVAŽNIJE O FORMULARIMA I KONTROLAMA (KONKRETNO O SVIM EVENT-OVIMA VEZANIM ZA FORMULAR I KONTROLE FORMULARA)

@@ -1571,7 +1571,11 @@ dugme.onmousedown = function(ev){
 // http://next.plnkr.co/edit/sKOOkafZh6Bsn1iGBExU?p=preview&preview
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
-// 
+// U JAVASCRIPT FAJLU       dom_aditional_stuff.js          BAVICU SE, SVIME OSTALIM
+// VEZANIM ZA       Document
+// TU CU PRECI METODE ZA MODIFIKOVANJE  DOCUMENTA, PONOVICU DOSTA TOGA VEZANOG ZA
+// ATRIBUTE, ZATIM TRAVERSING etc
+
 
 
 
