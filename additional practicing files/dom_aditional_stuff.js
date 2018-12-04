@@ -628,7 +628,7 @@ document.body.prepend(elementDiv);
 // DISKUTOVACU SADA O SVIM TIM PROPERTIJIMA (IN MORE DETAIL)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
-//                  NA TOP-U:      documentElement      I       body
+//                  ***** NA TOP-U:      documentElement      I       body       ******
 
 // top-most  node-OVI  drveta su dostupni direktno kao propertiji  document-A:
 
@@ -670,7 +670,7 @@ const example_with_body_null = `
 // **********************************************************************************************************
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//             DECA (CHILDREN):            childNodes          firstChild          lastChild
+//*******   DECA (CHILDREN):            childNodes          firstChild          lastChild       **********
 // 
 // POSTOJE DVA TERMINA KOJA TREBAM KORISTITI (KORISTIO SAM IH I RANIJE), A TO SU:
 
@@ -695,13 +695,293 @@ const blah_dom = `
 </html>`;
 // ... I ako tražimo sve descendante <body>-JA, onda dobijamo direktnu decu <div>, <ul> , alii takođe i više
 // ugnežene elemenate kao što je <li> (dijete <ul>-A) i <b> (dijete <li>-A) - odnosno cijelo poddrvo (SUBTREE)
-
+// *******************************************************************************************************
 // KOLEKCIJA        childNodes       omogućava pristup svim child node-OVIMA, uključujući i text node-OVE
 // I NAPOMINJEM DA NIJE REC OSVIM DESCENDANT-IMA, VEC O DIREKTNOJ DECI
+// *******************************************************************************************************
+// SLEDECI PRIMER POKAZUJE CHILDREN     document.body -JA
+const another_blah_dom = `
+<html>
+<body>
+  <div>Begin</div>
+
+  <ul>
+    <li>Information</li>
+  </ul>
+
+  <div>End</div>
+
+  <script>
+
+    for(let i = 0; i < document.body.childNodes.length; i++){
+        console.log(    document.body.childNodes[i]     );          // Text, DIV, Text, UL, ..., SCRIPT
+    }
+
+  </script>
+  ...more stuff...
+</body>
+</html>
+`;
+// Imajte na umu zanimljiv detalj ovde. Ako pokrenemo gornji primer, poslednji prikazani element je <script>.
+// Zapravo, dokument ima više stvari ispod ('...more stuff...'), ali u trenutku izvršenja skripte pretraživač
+// ga još nije pročitao, tako da skripta to ne vidi
+// *******************************************************************************************************
+// PROPERTIJI       firstChild      I       lastChild       DAJU BRZ PRISTUP PRVOM I, POSLEDNJEM CHILD-U
+// ONI SU SAMO SHORTHANDI
+// *******************************************************************************************************
+// KREIRACU PARENT I CHILD ELEMENT
+const divElementPaps = document.createElement('div');
+const divElementJunior1 = document.createElement('div');
+const divElementJunior2 = document.createElement('div');
+divElementJunior1.id = 'junior1';
+divElementJunior2.id = 'junior2';
+divElementPaps.append(divElementJunior1);
+divElementPaps.append(divElementJunior2);
+// AKO ELEMNT IMA DECU, ONDA SU SLEDECE IZJAVE, UVEK        true
+console.log(  divElementPaps.childNodes[0] === divElementPaps.firstChild  );
+console.log(  divElementPaps.childNodes[divElementPaps.childNodes.length - 1] === divElementPaps.lastChild  );
+//  I U KONZOLI SE STAMPALO         true        ZA OBE IZJAVE
+
+// TAKODJE POSTOJI I SPECIJALNA FUNKCIJA, A TO JE:                  hasChildNodes
+
+console.log(    divElementPaps.hasChildNodes()    );      //  true
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    DOM KOLEKCIJE       (DOM collections)              
+// 
+// Kao što vidimo,      childNodes          izgleda kao niz. Ali zapravo to nije Array, već collection 
+// - poseban objekat, koji se ponaša kao array
+// Postoje dve važne posledice koriscenja, pomenutog objekta:
+
+//      1. MOZEMO KORISTITI         for of          KAKO BI ITERAT-OVAO, PREKO TOG OBJEKTA
+//         to je zato sto je pomenuti objekat iterable (PROVIDED JE     Symbol.iterator     properti, STO JE I
+//                                                      REQUIRED DA BI NEKI OBJEKAT MOGAO BITI KORISCEN SA
+//                                                      for-of  PETLOM)
+        
+                    for(let child of divElementPaps.childNodes){
+                        console.log(child);                             //-->   <div></div>
+                    }
+
+//      2. METODE NIZA SE NE MOGU PRIMENITI (ODNOSNO NECE RADITI), ZATO STO KOLEKCIJA NIJE   Array   INSTANCA
+
+                    console.log(  document.body.childNodes.filter  );       //-->   undefined
+        
+    //PRVA STVAR JE NICE, DRUGA JE TOLERABLE IZ JEDNOG RAZLOGA
+    // NAIME POSTOJI METODA:
+                                    Array.from
+
+                    // KOJU KORISTIM, KADA ZELIM DA 'OD KOLEKCIJE NAPRAVIM "NOVI" NIZ'
+                    // (JA USTVARI PRVIM NOVI NIZ, A NE MODIFIKUJEM KOLEKCIJU)
+                    // 
+                    // 
+            
+        console.log(    Array.from(document.body.childNodes).filter    );          // SADA JE METODA TU
+                                                                                   // DAKLE MOZE SE PRIMENITI
+                                                                                   // NA OVAJ NOVI NIZ
+// **********************************************************************************************************
+// DOM  collections SU READ-ONLY
+// DOM COLLECTIONS, ALI I SVI DRUGI NAVIGACIONI PROPERTIJI SPOMENUTI U OVOM CLANKU SU READ-ONLY
+// NE MOZE SE REPLACE-OVATI CHILD ELEMENT, DODELOM NOVOG ELEMENTA childNodes[0] = ...
+// promena doma zahteva druge metode, koje sam vec spominjao
+// **********************************************************************************************************
+// DOM collections SU ZIVE
+// GOTOVO SVE DOM KOLEKCIJE, SA MANJIM IZUZECIMA, JESU ZIVE; DRUGIM RECIMA. ONE REFLECT-UJU CURRENT STATE
+// DOM-A
+// AKO ZADRZIM NEGDE REFERENCU ZA   elem.childNodes I AKO ADD/REMOVE node-OVE U/IZ DOM-A; ONDA CE SE TI
+// ELEMENTI, AUTOMATSKI POJAVITI U POMENUTIM KOLEKCIJAMA
+// **********************************************************************************************************
+// NE KORISTITI        for in       PETLJU, PREKO KOLEKCIJE
+// KOLEKCIJE SU ITERABLE UZ KORISCENJE  for of  PETLJE. PONEKAD, LJUDI POKUSAVAJU DA KORISTE KOLEKCIJE SA
+//      for in
+//                      ******MOLIM VAS NE MOJTE OVO RADITI*********
+// JER KOLEKCIJA IMA ODREDJENE 'EXTRA', RETKO KORISCENE PROPERTIJE; KOJIMA PO OBICAJU NE ZELIM DA PRISTUPIM
+// JER, OBICNO ZELIM DA, SAMO PRISTUPIM node ELEMENTIMA KOLEKCIJE
+
+    for(let dete in divElementPaps.childNodes){
+        console.log(dete);                          //--> 0     length      item        entries     forEach
+     }                                              //                  keys     values
+                                                    // (DAKLE NECU KORISTITI for in PETLJU SA KOLEKCIJAMA)
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                      ****    SIBLINGS    AND THE     PARENT    ****
+// 
+// Siblings su node-OVI koji su deca istog roditelja. Na primer, <head> i <body> su SIBLINGS-I (RODITELJ
+// IM JE html):
+// 
+//                   ZA   <body>   SE KAZE DA JE    'next'    ILI    'right'    SIBLING  <head> -A
+//                   ZA   <head>   SE KAZE DA JE    'previous'  ILI  'left'     SIBLING  <body> -JA
+// 
+// NAIME, PARENT JESTE DOSTUPAN, KAO          parentNode
+
+// NEXT node (NEXT SIBLING) U ISTOM PARENTU JESTE:               
+//                                                                  nextSibling
+// PREVIOUS node (PREVIOUS SIBLING) U ISTOM PARENTU, JESTE:
+//                                                                  previousSibling
 
 
 
+console.log(      document.body.parentNode === document.documentElement      );         //-->   true
 
+console.log(      document.body.previousSibling      );                                 //-->   #text
+
+console.log(      document.head.nextSibling     );                                      //-->   #text
+
+console.log(      document.body.nextSibling === document.head.previousSibling      );   //-->   true
+
+
+console.log(      divElementJunior1.parentNode === divElementPaps     );                //-->   true
+
+console.log(      divElementJunior1 === divElementJunior2.previousSibling    );         //-->   true
+
+console.log(      divElementJunior2 === divElementJunior1.nextSibling      );           //-->   true
+
+// PRIMECUJEM GORE DA JE       
+//                                  previousSibling       body ELEMENT-A, UPRAVO      text node
+// I PRIMECUJEM DA JE          
+//                                  nextSibling           head ELEMENT-A, UPRAVO      text node
+
+// I TAJ text node, JESTI ISTI text node KOJI SE NALAZI IZMEDJU     <head>-A    I   <body>-JA
+
+// TAJ text node, JESTE ONAJ NODE KOJI REPREZENTUJE WHITE SPACE, KADA SAM PRISTISNUO ENTER, DA BIH
+// MI body TAG POCINJAO U NOVOM REDU HTML DOKUMENTA
+
+// U SLEDECEM PODNASLOVU CU SE UPRAVO POZABAVITI, KAKO DA ZAOBIDJEM OVU SITUACIJU, KOJA MOZE BITI NEZELJENA
+// AKO SAM ZELO DA PREDHODNIM NACINOM PRISTUPIM element node-U, A NE text node-U
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//              ELEMENT-ONLY NAVIGATION
+
+// NAVIGACIONI PROPERTIJI, KOJI SU NAVEDENI U PREDHODNOM DELU OVOG CLANKA, ODNOSE SE NA SVE node ELEMENTE
+// NA PRIMER , U      childNodes        KOLEKCIJI, MOZEMO VIDETI I        text node-OVE    I    elemnt node-
+// OVE, PA CAK I      comment none-OVE     , AKO POSTOJE
+
+// ALI, U NAJVISE SLUCAJEVA, MENI       NE TREBAJU  text node-OVI  I  comment  node-OVI; DAKLE, U NAJVECEM
+// BROJU SLUCAJEVA JA ZELIM DA MANIPULISEM SA     element node-OVIMA    ,KOJI REPREZENTUJU TAGOVE I FORMIRAJU
+// STRUKTURU STRANICE
+// **********************************************************************************************************
+// (OPET SAM PEUZEO SLIKU IZ RUSKOG CLANKA I POSTAVIO SAM JE, U HTML STRANICI, U KOJU JE UCITAN OVAJ SCRIPT)
+// **********************************************************************************************************
+// NAVIGACIONI PROPERTIJI, ILI KAKO IH U CLANKU ZOVU 'NAVIGACIONI LINKOVI', SLICNI SU ONIMA, KOJI SU NAVEDENI
+// U PREDHODNIM DELOVIMA OVOG CLANKA; SAM OSTO JE U OVOM SLUCAJU,
+// U IMENU PROPERTIJA PRISUTNA I ODREDNICA:
+                                    //              'Element' 
+
+// TO SU SLEDECI NAVIGACIONI PROPERTIJI:
+
+//              children                                                 -SAMO ONI CHILD-OVI, KOJI JESU
+//                                                                        element node-OVI
+
+//              firstElementChild         lastElementChild               -PRVI I POSLEDNJI CHILD element node
+
+//              previousElementSibling    nextElementSibling             -SUSEDNI  element node-OVI
+
+//              parentElement                                            -PARENT ELEMENT
+
+// *********************************************************************************************************
+// ZASTO        parentElement      ? ZAR POSTOJI MOGUCNOST DA PARENT NE BUDE ELEMENT? (OVO PITANJE SE
+//                                                                                  POSTAVLJA, PREDPOSTAVLJAM
+//                                                                                  ZATO STO SE U PREDHODNOM 
+//                                                                                  DELU, OVOM ELEMENTU
+//                                                                                  PRISTUPALO PUTEM
+//                                                                                   parentNode 
+//                                                                                                PROPERTIJA)
+
+// PROPERTI parentElement return-UJE parent "element", dok parentNode vraća "bilo koji node" parent. Ovi 
+// propertiji su obično isti: oba gett-uju roditelja
+// AL ISA IZUZETKOM:
+                            document.documentElement
+
+// NAIME,       documentElement (<html>) JESTE ROOT node
+
+console.log(       document.documentElement.parentNode       );         //-->   #document
+
+console.log(       document.documentElement.parentElement    );         //-->   null
+
+// FORMALNO, IMA    document     , ZA PARENT-A
+// ALI   document    NIJE element node; TAKO DA JE      parentNode      return-UJE OBJEKAT, DOK
+// parentElement    return-UJE     null
+// PONEKAD OVO MATTERS, KADA HODAMO PREKO CHAIN-A PARENT-OVA I POZIVAMO NEKU METODU, NA SVAKOM OD PARENT-OVA
+// ALI U TOM SLUCAJU        document        NE BI IMAO PARENT-A, TAKO DA GA MORAM EXCLUDE-OVATI
+// **********************************************************************************************************
+// PRIMER SA    children    PROPERTIJEM:
+// 
+        for(let childElement of document.head.children){
+            console.log(childElement);                      // SAD SAU SE STAMPALI SAMO element node-OVI
+        }                                                   // DA SAM KORISTIO childNodes BILI BI STAMPANI
+                                                            // PRAZNI text node-OVI, ALI I comment
+                                                            // node-ovi, KOJIH IMA OGROMAN BROJ, JER SAM
+                                                            // OSTAVIO, OGROMAN BROJ KOMENTARA, U RELATED
+                                                            // HTML ELEMENTU
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//          JOS NAVIGACIONIH LINKOVA: TABELE
+
+// Do sada smo opisali osnovne navigacijske propertije
+// Pojedini tipovi DOM elemenata mogu pružiti dodatne propertije, specifična za njihov tip, radi praktičnosti.
+// Tabele su sjajan primer i važan poseban slučaj toga.
+// Element <table> podržava (pored gore navedenog) ova svojstva:
+
+//              table.rows                               - kolekcija <tr> elemenata tabele
+
+//              table.caption/tHead/tFoot                - reference na elemente
+//                                                               <caption>, <thead>, <tfoot>.
+
+//              table.tBodies                            - kolekcija <tbody> elemenata (MOZE IH BITI VISE
+//                                                                                      TAKO KAZE STANDARD)
+
+//   <thead>, <tfoot>, <tbodi>      IMAJU   roes    PROPERTI:
+
+//              tbody.rows                               - kolekcija <tr> unutra
+
+//   <tr>:
+
+//              tr.cells               - kolekcija <td> i <th> ćelija unutar datog <tr>.
+
+//              tr.sectionRowIndex     - pozicija (indeks) datog <tr> u enclosing:
+//                                                                               <thead> / <tbody> / <tfoot>
+
+//              tr.rowIndex            - broj <tr> u tabeli kao celini (uključujući sve table row-OVE)
+
+//   <td> i <th>:
+
+//              td.cellIndex           - broj ćelije u okruženju <tr>
+
+const tabela_neka = `
+    <table id="tabela1">
+        <tr>
+            <td>one</td><td>two</td>
+        </tr>
+        <tr>
+            <td>three</td><td>four</td>
+        </tr>
+    </table>
+`;
+
+console.log(    tabela1.rows[0].cells[1].innerHTML    );         //--> 2
+
+// OVDE CU OSTAVITI I LINK SPECIFIKACIJA ZA  TABULAR DATA   https://html.spec.whatwg.org/multipage/tables.html
+
+// POSTOJE, TAKODJE I DODATNI NAVIGACIONI PROPERTIJI ZA HTML FORMULARE, KOJIMA SAM SE POZABAVIO RANIJE, ALI
+// MORAM DA IH PONOVIM, NEKOM PRILIKOM
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//      REZIME:
+// 
+// ZAMISLJAJUCI DA SAM NA DOM node-U, mogu da odem do njegovih neposrednih susjeda koristeći
+// propertije navigacije
+// Postoje dve glavne grupe:
+
+//              ZA SVE node-OVE:        parentNode      childNodes      firstChild      lastChild
+//                                              previousSibling                 nextSibling
+
+//              ZA SAMO element node-OVE:           parentElement       children
+//                                              firstElementChild       lastElementChild
+//                                             previousElementSibling   nextElementSibling
+
+// Neke vrste DOM elemenata, npr. tabele, pružaju dodatne propertije i kolekcije za pristup njihovoj
+// sadrzine (MISLI SE NA TABELE I FORMULARE I NJIHOVE, SPECIJALNE NAVIGACIONE PROPERTIJE)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PRIMERI:
 
 
 console.log('////////////////////////////////////////////////////////////////////////////////////////////');
