@@ -569,6 +569,8 @@ KOMENTARE, ODNOSNO SVE STO JE POTREBNO DA BOLJE NAUCIM SVE STO JE VEZANO ZA
             <img src="./images/dom-links.png" alt="dom links"><hr><br>
             Traveling between element nodes:<br>
             <img src="./images/dom-links-elements.png" alt="dom links"><hr><br>
+            DOM class HIJERARHIJA:<br>
+            <img src="./images/dom-class-hierarchy.png" alt="dom links"><hr><br>
             <caption> All Pictures above, taken from <a href="https://javascript.info/">javascript.info/</a></caption>
         </div>
 
@@ -1075,6 +1077,29 @@ KOMENTARE, ODNOSNO SVE STO JE POTREBNO DA BOLJE NAUCIM SVE STO JE VEZANO ZA
         <br>
         <hr>
         <br>
+        <a href="http://example.com/file.zip">...</a>
+        <a href="http://ya.ru">...</a>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <br>
+        <hr>
+        <div>First div</div>
+        <script>
+            const nodeLista = document.querySelectorAll('div');
+            console.log(nodeLista);              
+        </script>
+        <div>Second div</div>
+
+        <script>
+            console.log(nodeLista);       
+        </script>
+        <br>
+        <hr>
         <hr>
         <br>
         <hr>
@@ -1095,6 +1120,21 @@ KOMENTARE, ODNOSNO SVE STO JE POTREBNO DA BOLJE NAUCIM SVE STO JE VEZANO ZA
 
         <script src="./formulari.js"></script>
         <script src="./dom_aditional_stuff.js"></script>
+
+        <div>First div</div>
+        <script>
+    
+        const divsovi = document.getElementsByTagName('div');
+            console.log(divsovi);
+
+        </script>
+        <div>Second div</div>
+
+        <script>
+            console.log(divsovi)
+        </script>
+
+
     </body>
     <div>Neki Tekst</div>
     <div>Neki Tekst</div>

@@ -981,10 +981,356 @@ console.log(    tabela1.rows[0].cells[1].innerHTML    );         //--> 2
 // Neke vrste DOM elemenata, npr. tabele, pružaju dodatne propertije i kolekcije za pristup njihovoj
 // sadrzine (MISLI SE NA TABELE I FORMULARE I NJIHOVE, SPECIJALNE NAVIGACIONE PROPERTIJE)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// PRIMERI:
+// PRIMERI: OSTAVICU, NJIHOV LINK DA BI IH ODRADIO KASNIJE
+// https://javascript.info/dom-navigation
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+// 
+//                              SEARCHING:      getElement/s*             querySelector*                            
+// 
+// DOM navigation propertiji su odlični kada su elementi blizu jedni drugih. Šta ako nisu? Kako dobiti
+// arbitrary element na stranice?
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                           document.getElementById        ILI         id
+
+// DOBRO SADA VEC ZNAM DA ELEMENTU MOGU PRISTUPITI, SAMO PREKO VREDNOSTI id-JA, JER JE TA VREDNOST, POSTALA
+// IME PROPERTIJA       window      OBJEKTA
+
+// ALI MORAM VODITI RACUNA DA NE DEKLARISEM GLOBALNU VARIJABLU, CIJE BI IME BILO ISTO KAO VREDNOST, 
+// POMENUTOG id-JA
+
+// TADA DOLAZI DO OVERRIDING-A (JER KAO STO SAM SE UVERIO, VARIJABLE SU USTVARI PROPERTIJI   window  OBJEKTA)
+// *********************************************************************************************************
+// ID MORA BITI UNIQUE
+// DAKLE, U document-u, MORA POSTOJATI, SAMO JEDAN ELEMENT, SA JEDNIM id-JEM, JER U SUPROTNOM IMAO BI
+// NEPREDVIDIVO PONASANJE, CORRESPONDING METODA
+// JER BI BROWSER MOGAO RANDOMLY return-OVATI, BILO KOJI ELEMENT SA ISTIM ID-JEM
+// *********************************************************************************************************
+// *********************************************************************************************************
+// MOGUCE JE ZABORAVITI SE I PRIMENITI getElementById, NA BILO KOJI node; TO NAIME NE TREBA RADITI JER:
+// POMENUTA METODA SE MOZE PRIMENITI SAMO NA           document             OBJEKAT
+// DAKLE, METODA TRAZI DATI id, PO CELOM DOKUMENTU
+// I OPET PONAVLJAM, JEDINO JE OVAKO, KOREKTNO, POZIVANJE, POMENUTE METODE:
+                                                                        document.getElementById('neki_id')
+// *********************************************************************************************************
+// U RANIJIM CLANCIMA (ALI I U BUDUCIM CLANCIMA CU TO RADITI U CILJU SAZETOSTI), PREKO NJIHOVOG ID-JA, JA SAM 
+// PRISTUPAO ELEMENTIMA, TAKO STO SAM KORISTIO   ID-JEVE, KAO PROPERTIJE window OBJEKTA
+// MEDJUTIM, TO U PRAKSI (IN REAL LIFE) NE TREBA RADITI, VEC TREBA KORISTITI METODU:
+//                                                                  document.getElementById 
+// *********************************************************************************************************
+// ISTO TAKO MOGUCE JE NAPRAVITI POCETNICKU GRESKU (KOJU SAM PRAVIO), KOJA SE OGLEDA U TOME
+// DA, POKUSAVAJUCI DA PRIMENIM METODU NPISEM      'Elements'   UMESTO      'Element'
+// POMENUTO JE NARAVNO POGRESNO
+// A I STVAR JE SASVIM LOGICNA DA TREBA KORISTITI JEDNINU, JER JEDAN ELEMENT IMA JEDAN KARAKTERISTICAN ID
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                         elem.getElementsBy*                     
+
+// POSTOJI NEKOLIKO OVAKVIH METODA:
+// 
+//      elem.getElementsByTagName       elem.getElementsByClassName         elem.getElementsByName
+// 
+// PRVIM DVEMA SU IMENA PRILICNO SUGESTIVNA, A I ZNAM OD RANIJE KAKO SE KORISTE I STA RETURN-UJU
+// ALI PREDPOSTAVLJAM I PREKO KOJE KARAKTERISTIKE ELEMENTA, SE PRISTUPA ELEMENTU, PUTEM POMENUTE TRECE
+// METODE
+// ZA       elem.getElementsByTagName       SAMO CU RECI DA POSTOJI MOGUCNOST, DA SE U KOLEKCIJI, KOJA JE
+// POVRATNA VREDNOST, POMENUTE METODE, SVI ELEMENI CELOG   document-A; TADA, KAO ARGUMENT, PRIMENI POMENUTE
+// METODE, DODAJEM:
+                            '*'     // ZVEZDICU
+// UPRAVO OVAKO
+const kolekcija_svih_elemenata = document.getElementsByTagName('*');
+
+console.log(    kolekcija_svih_elemenata    );       //-->    HTMLCollection INSTANCA (U SLUCAJU OVE STRANICE
+//                                                            VIDIM DA OVAJ ITERABLE OBJEKAT OBUHVATA PREKO 
+//                                                            420 ITEM-A (ODNOSNO HTML ELEMENATA))
+// BEZ DODATNIH PRIMERA, SAMO CU RECI DA SE, POMENUTOM METODOM
+// KADA SE NJENOJ PRIMENI DODA STRING IMENA TAGA, ONDA JE POVRATNA VREDNOST TE METODE, KOJEKCIJA, TAGOVA
+// ******************************************************************************************************
+// A SVE TRI POMENUTE METODE SE MOGU PRIMENITI NA BILO KOJEM ELEMENTU (DAKLE, TO NE MORA BITI SAMO document)
+// U SLUCAJU POZIVANJA    elem.getElementsByTagName
+//          U KOLKICIJI CE SE NACI, SVI ELEMENTI KOJI SU DESCENDANTS-I, POMENUTOG ELEMENTA, A KOJI SU U 
+//          HTML-U REPREZENTOVANI, SA TAGOM, CIJE SAM STRING IMENA, ZADAO DA BUDE ARGUMENT, POMENUTE METODE
+// *********************************************************************************************************
+// VEC SAM REKAO ALI CU PONOVITI DA SU POMENUTE METODE CALLABLE, U KONTEKSTU BILO KOG DOM ELEMENTA
+// A NE SAMO    document-A
+// *********************************************************************************************************
+// I OPET GOVORIM DA OBRATIM PAZNJU DA OVDE PRISTUPAM KOLEKCIJI, STO ZNACI DA KORISTIM MNOZINU, KADA PISEM
+// IME OVIH METODA, ODNOSNO U OVO MSLUCAJU PISEM ODREDNICU  'Elements'  A NE   'Element'
+// *********************************************************************************************************
+// OSTALE DVE METODE (U CLANKU PISE), DA SE REDJE KORISTE
+
+//    METODA       elem.getElementsByClassName        return-UJE ELEMENTE (kolekciju), 
+//                                                              KOJI ODGOVARAJU STRINGU IMENA KLASE
+//                                                              KOJI JE DODAT KAO ARGUMENT
+
+// ****SLEDECA METODA SE MOZE PRIMENITI SAMO NA         document        OBJEKTU**** 
+
+//    METODA       document.getElementsByName             return-uje KOLEKCIJU KOJA SE SASTOJI OD ELEMENATA, KOJI
+//                                                              SVI IMAJU     name   ATRIBUT, SA VREDNUSCU
+//                                                              KOJU SAM NAVEO KAO ARGUMENT, PRI POZIVANJU
+//                                                              OVE METODE
+
+// U CLANKU PISE DA SE OVA POSLEDNJA METODA, RETKO KORISTI, I DA POSTOJI SAMO IZ ISTORIJSKIH RAZLOGA
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// SLEDECE METODE, KOJIMA CU SE POZABAVITI JESU METODE KOJE SAM NAJVISE KORISTIO
+// PRVA OD NJIH JE:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                 elem.querySelectorAll
+// 
+// KAO STO SU REKLI U CLANKU 'SADA IDE TESKA ARTILJERIJA' (MISLECI NA METODE, KOJE IMAJU ODREDNICU 'query'
+// U SEBI)
+
+// POMENUTA METODA MATCHUJE ELEMENTE, SA CSS SELECTOR-OM (CIJI STRING DODAJEM, KAO ARGUMENT POMENUTOJ METODI)
+// TO SU ELEMENTI, INSIDE ELEMENT (DESCENDANTI ELEMENTA), NAD KOJIM SE METODA PRIMENILA
+//**********************************************************************************************************
+// POMENUTOJ METODI SE MOZE ZADATI I STRING PSEUDO KLASE
+// DODACU OVDE TEKST IZ CLANKA, U ORIGINALU (PREVEDEN)
+// Pseudo-klase u CSS selektoru kao što su:     :hover     i     :active     su takođe podržani. Na primer, 
+//          document.querySelectorAll (':hover') return-uje kolekciju elemenata preko kojih, se kursor
+//                                                                                 trenutno nalazi
+//                                                                                 (u nesting order-u: 
+//                                                                                 od najspolasnijeg (<html>) 
+//                                                                                 do najunutrasnjeg)
+                                                                            // ODNOSNO OD OUTERMOST DO 
+                                                                            // INNERMOST
+//**********************************************************************************************************
+const lastDatas = document.querySelectorAll('td:last-child');
+
+console.log(      lastDatas instanceof NodeList      );    //--> true
+                                                           // POVRATNA VREDNOST JESTE OBJEKAT, ODNOSNO
+                                                           // NodeList INSTANCA, CIJI ELEMENTI JESU node-OVI
+                                                           // KOJI SE MOGU SELKTOVATI, POMENUTIM CSS
+                                                           // SELEKTOROM
+for(let node of lastDatas){
+    console.log(node);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                 elem.querySelector
+// 
+// PREDHODNA METODA JE RETURN-OVALA CELU LISTU node-OVA, A OVA METODA RETURN-UJE PRVI ELEMENT KOJI ODGOVARA
+// ZADATOM CSS SELEKTORU
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                                 elem.matches
+//                                  
+// PREDHODNE METODE SU TRAZILE PO DOM-U
+// OVA CIJI LINK SPECIFIKACIJE CU OVDE OSTAVITI https://dom.spec.whatwg.org/#dom-element-matches
+// JESTE METODA KOJA NE SEARCH-UJE, ZA ICIM, VEC MERELY(SAMO) PROVERI, DA LI SE ELEMENT MATCH-UJE, SA DATIM
+// CSS SELEKTOROM (STRING SELEKTORA SE DODAJE, KAO ARGUMENT, POMENUTE METODE)
+// AKO SELEKTOR ODGOVARA ELEMENT, METODA CE return-OVATI    true        , A AKO CSS SELECTOR NE ODGOVARA
+// ELEMENTU, METODA CE return-OVATI     false
+// METODA SE POKAZUJE, KAO KORISNOM, PRILIKOM ITERATING-A, OVER THE ELEMENTS (KAO STO TO RADIM S NIZOM)
+// I FILTRIRANJA ONOG ELEMENTA, KOJI ME INTERESUJE
+// PRIKAZACU TO PUTEM PRIMERA
+// KREIRACU DVA ANCHOR ELEMENTA:
+const dva_anchora = `
+    <a href="http://example.com/file.zip">...</a>
+    <a href="http://ya.ru">...</a>
+`;
+
+// SADA CU PROVERITI DA LI NEKI OD element node-OVA, MOJE STRANICE, JESTE ANCHOR ELEMENT, KOJI IMA href 
+// ATRIBUT, A DA SE VREDNOST TOG ATRIBUTA ZAVRSAVA SA KARAKTERIMA     'zip'
+
+for(let nodeEl of document.body.children){
+    
+    if(nodeEl.matches('a[href$=zip]')){
+
+        console.log('adresa: ', nodeEl.href);
+
+    }
+
+}
+// I PRISTUPIO SAM PRAVOM ELEMENTU, ZATO STO JE OBEZBEDJEN MATCHING, UZ POMOC POVRATNE VREDNOSTI, POMENUTE
+// METODE
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                             elem.closest
+// 
+// DAKLE, OVA METODA return-UJE NAJBLIZE ANCESTOR, KOJI ODGOVARA CSS SELEKTORU, DODATOM, KAO ARGUMENT,
+// POMENUTE METODE
+// AKO NE PRONADJE NI JEDAN ELEMENT, KOJI ODGOVARA, ONDA return-UJE null (TAKVA JE SITUACIJA I SA OSTALIM
+// METODAMA)
+// NECU DODATNO KOMENTARISATI OVU METODU, I NECU RADITI DODATNE PRIMERE, U CILJU USTEDE VREMENA, JER SAM 
+// TO VEC, MNOGO PUTA RADIO
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                      ZIVA KOLEKCIJA (LIVE COLLECTION)
+// 
+// SVE METODE       getElementsBy*      return-UJU, 'LIVE COLLECTION'
+// TAKVA KOLEKCIJA, UVEK REFLEKTUJE TRENUTNO STANJE     document-A     I 'AUTO-UPDATE-UJE' SE, PRI SVAKOJ
+// PROMENI
+// POMENUTA TVRDNJA SE, NAJLAKSE MOZE PROVERITI, UZ POMOC PRIMERA
+// SLEDECI PRIMER SE SASTOJI OD DVA script-A
+
+//      1)  U PRVOM SCRIPT-U CU KREIRATI REFERENCU, KOJA CE BITI REFERENCA NA KOLEKCIJU <div> ELEMENATA
+//          MOG document-A
+//      2)  'IZMEDJU TIH SCRIPT-OVA' DODACU, JEDAN <div>    ELEMENT, I JASNO JE DA TAJ DIV ELEMENT, NIJE
+//          BIO UCITAN, KADA SE KREIRALA REFERENCA NA KOLEKCIJU <div> ELEMENATA
+//      3)  TRECI SCRIPT CE KORISTITI, POMENUTU, KREIRANU REFERENCU KOLEKCIJE
+
+const primer_divovi_i_scriptovi_kolekcija = `
+    <div>First div</div>
+    <script>
+    
+        const divsovi = document.getElementsByTagName('div');
+        
+        console.log(divsovi);         //--> U KOLEKCIJI SE NE NALAZI div NESTOVAN, NAKON OVOG script-A
+
+    </script>
+    <div>Second div</div>
+
+    <script>
+        console.log(divsovi);         //--> KOLEKCIJA SADA IMA JEDAN DIV VISE
+    </script>
+`;
+//*********************************************************************************************************
+// ZA RAZLIKU OD POMENUTIH KOLEKCIJA, ONA KOLEKCIJA, KOJU return-UJE        elem.querySelectorAll
+// JESTO KOLEKCIJA, KOJA 'NIJE ZIVA' KOLEKCIJA; ODNOSNO TO JE STATICNA KOLEKCIJA, ILI FIXED ARRAY,
+// SASTAVLJEN OD ELEMENATA
+
+const primer_divovi_i_scriptovi_node_lista = `
+    <div>First div</div>
+    <script>
+    
+        const nodeLista = document.querySelectorAll('div');
+        
+        console.log(nodeLista);       //-->   OVA    NodeList INSTANCA IMA 10 CLANOVA
+
+    </script>
+    <div>Second div</div>
+
+    <script>
+        console.log(nodeLista);       //-->   I DALJE, ISTA  NodeList INSTANCA  IMA 10 CLANOVA
+    </script>
+`;
+
+// Sada možemo lako videti razliku. Statička kolekcija se nije povećala nakon pojavljivanja novog div-A
+// u dokumentu.
+// Ovde smo koristili odvojene skripte kako bismo ilustrovali kako dodavanje elementa utiče na collection
+// ALI SVAKA DOM MANIPULACIJA UTICE NA TE KOLEKCIJE ()
+//*********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// REZIME:
+// Postoji 6 glavnih metoda za pretraživanje node-OVA u DOM-u
+// 
+//      METODA                          TRAZENJE PREMA           MOZE BITI POZVANA NA           return-UJE       
+//                                                               BILO KOJEM ELEMENTU        LIVE COLLECTION
+
+//  document.getElementById                 id-JU                   NE (SAMO document)             NE
+// 
+//  document.getElementsByName              name-U                  NE (SAMO document)             DA
+// 
+//  elem.getElementsByTagName               tag-U  ILI  '*'         DA                             DA
+// 
+//  elem.getElementsByClassName             class-I                 DA                             DA
+// 
+//  elem.querySelector                      CSS selector-U          DA                             NE
+// 
+//  elem.querySelectorAll                   CSS selector-U          DA                             NE
 
 
-console.log('////////////////////////////////////////////////////////////////////////////////////////////');
+// Imajte na umu da se metode    getElementById    i    getElementsByName     mogu pozvati samo u kontekst
+// document-A:    document.getElementById(...) .   Ali ne na elementu:   elem.getElementById(...)
+// bi izazvao ERROR
+// Druge metode se mogu pozvati i na elemente. Na primer:
+// elem.querySelectorAll(...) će pretraživati unutar elementa (DOM subtree-JU)
+
+// PORED TOGA:
+
+// --  POSTOJI I   elem.matches(css)    U CILJU PROVERE DA LI ELEMNTU, ODGOVARA DATI CSS SELECTOR
+// 
+// --  POSTOJI I   elem.closest(css)    KOJI TRAZI NAJBLIZEG ANCESTOR-A, KOJEM ODGOVARA DATI CSS SELECTOR
+//                                      AKO SAMOM    elem      ODGOVARA, DATI SELECTOR, ONDA JE ELEMENT, KOJI
+//                                      CE SE return-OVATI, BITI elem   
+// 
+//**********************************************************************************************************
+//     ZA KRAJ JE U CLANKU POMENUTA, I JOS JEDNA METODA, KOJOM SE PROVERAVA     DESCENDANT-ANCESTOR    ODNOS
+//     TO JE METODA:
+//                              contains
+//     A OVAKO SE PRIMENJUJE:
+//                              elemA.contains(elemB)
+// 
+//     BICE RETURNED      true       AKO      elemA     SADRZI      elemB   , ODNOSNO AKO JE        elemB
+//                                                                                DESCENDANT    elemA-A
+//          ALI TREBA OBRATITI PAZNJU DA CE,  true      BITI RETURNED I KADA
+//          JE SLEDECI IZRAZ true:
+//                                      elemA === elemB
+//**********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//      PRIMERI:       (U OVOM PRIMERU SE RADI O ZAMISLJENOJ TABELI, KOJA IMA id="age-table")
+// 
+//      1) PRONALAZENJE table-A SA id="age-table"
+            document.getElementById('age-table');
+//      2) PRONALAZENJE SVIH label ELEMENATA, UNUTAR table-A
+            document.getElementsByTagName('table')[0].getElementsByTagName('label');
+//      3) PRONALAZENJE PRVOG td U TABELI 
+            document.getElementsByTagName('table')[0].getElementsByTagName('td')[0];
+//      4) PRONALAZENJE form-A ,KOJI IMA name ATRIBUT SA VREDNOSCU 'search'
+            let search_form;
+            Array.from(document.getElementsByName('search')).forEach(function(elem){
+                if(elem.nodeName === 'FORM'){
+                    search_form = elem;
+                }
+            });
+//      5) PRONALAZENJE PRVOG input-A FORMULARA
+            document.querySelector('form input:first-of-type');
+//      6) PRONALAZENJE POSLEDNJEG input-A FORMULARA
+            document.querySelector('form').querySelectorAll('input')[
+                document.querySelector('form').querySelectorAll('input').length - 1
+            ];
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+// 
+//              Node  PROPERTIJI:
+//                                         type         tag         contents
+// 
+// SADA CU MALO DUBLJE (MORE IN-DEPTH) GLEDATI DOM nodes
+// U OVOM CLANKU POGLEDACU CAK VISE O TOME, STA SU USTVARI DOM node-OVI, I KOJI SU NJIHOVI, NAJCESCE
+// KORISCENI PROPERTIJI
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                         class -E     DOM node-OVA     (JAVASCRIPT class -E) 
+// 
+// DOM node-OVI imaju različita propertije u zavisnosti od njihove klase. Na primer, element node-OVI, 
+// kojima odgovara tag <a> imaju link-related osobine, a onima kojima odgovara <input> imaju propertije
+// corresponding do input-A ETC.
+// text node-OVI, nisu isti kao element node-OVI. Međutim, postoje i zajednička svojstva
+// i metode među njima, jer sve klase DOM node-OVA, predstavljaju jedinstvenu hijerarhiju
+// Svaki DOM node pripada odgovarajućoj built-in klasi
+// Koren hijerarhije jeste:
+                                EventTarget
+                                // (https://dom.spec.whatwg.org/#interface-eventtarget)
+// iz koje nasledjuje:
+                                Node
+                                // (https://dom.spec.whatwg.org/#interface-node)
+// a drugi DOM node-OVI nasleđuju od njega
+//**********************************************************************************************************
+// SLIKU KOJU SAM UCITAO U HTML PAGE (pageLifecycleEventsSec.html),će pratiti sva objašnjenja
+// koja će slediti
+//**********************************************************************************************************
+// KLASE SU:
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
 const nekiDiv = document.createElement('div');
 const drugiDiv = document.createElement('div');
 drugiDiv.innerHTML = '<strong>Neki Tekst</strong> a pored teksta weak';
@@ -1000,5 +1346,13 @@ const divCloneShallow = nekiDiv.cloneNode(false);
 
 window.console.log(divCloneDeep, '<-------->', divCloneShallow);
 window.console.log('SOMETHING BLAH');
-console.log('////////////////////////////////////////////////////////////////////////////////////////////');
+console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
+
+
+
+
+
+
+
+
 
