@@ -1325,9 +1325,632 @@ const primer_divovi_i_scriptovi_node_lista = `
 // koja će slediti
 //**********************************************************************************************************
 // KLASE SU:
+    //********************************//
+                EventTarget
+    // POMENUTA KLASA, JESTE ROOT 'ABSTRACT' KLASA
+    // OBJEKTI VOE KLASE SE NIKAD NE KREIRAJU
+    // SLUZI KAO BAZA, ODNOSNO OSNOVA, TAKO DA SVI DOM node-OVI PODRZAVAJU, TAKOZVANE 'events'
+    //********************************//
+                Node
+    // JE ISTO TAKO 'ABSTRACT' KLASA, KOJA SLUZI KAO OSNOVA ZA DOM node-OVE
+    // OBEZBEDJUJE, OSNOVNI, ODNOSNO CORE TREE FUNCTIONALITY:
+    //      parentNode, nextSibling, childNodes     etc.(SVI SU ONI GETTER-I)
+    // OBJEKTI Node KLASE, NIKAD NISU KREIRANI; ALI POSTOJE CONCRETE(KONKRETNE)   node  KLASE, KOJE
+    // NASLEDJUJU OD NJIH, I TO SU:
+                // ZA text node-OVE
+                            Text
+                // ZA element node-OVE
+                            Element
+                // ZA comment node-OVE
+                            Comment
+    //*********************************//
+                Element
+    // JE OSNOVNA KLASA ZA DOM ELEMENT-E
+    // OBEZBEDJUJE ELEMENT-LEVEL NAVIGACIJU, KAO STO JE               nextElementSibling     children        
+    // I METODE         getElementsByTagName        querySelector
+    // U BROWSER-U NE MORA BITI SAMO HTML DOKUMENT, VEC TU MOGU BITI I XML I SVG DOKUMENTI
+    // Element KLASA SLUZI KAO OSNOVA(BASE), ZA VISE SPECIFICNEKLASE, KAO STO SU:
+                                                                        SVGElement
 
+                                                                //      XMLElement  (MISLIM DA
+                                                                            //      JE OVA KALSA NEPOSTOJECA
+                                                                            //      JER DOLAZI DO REFERENCE
+                                                                            //      ERROR-A, KADA JE
+                                                                            //      KORISTIM)
+
+                                                                        HTMLElement
+    //*********************************//
+               HTMLElement
+    // CIJE LINK SPECIFIKACIJA CU OSTAVITI OVDE    
+    //                                         https://html.spec.whatwg.org/multipage/dom.html#htmlelement
+    // JE, KONACNO OSNOVNA KLASA HTML ELEMENATA
+    // NASLEDJUJU JE RAZNI HTML ELEMENTI:
+                                            // KLASA ZA <input> ELEMENTE
+                                                    HTMLInputElement
+                                            // KLASA ZA <body> ELEMENTE
+                                                    HTMLBodyElement
+                                            // KLASA ZA <a> ELEMENTE
+                                                    HTMLAnchorElement
+                                            // ...and so on, SVAKI TAG IMA SVOJU KLASU, KOJA MOZE
+                                            // OBEZBEDJIVATI, SPECIFICNE PROPERTIJE I METODE
+    //*********************************//
+// 
+// Dakle, puni skup propertija i metoda određenog node-A dolazi kao rezultat nasleđivanja.
+// Na primer, uzecu u obzir DOM objekat <input> elementa. ON PRIPADA
+                                                            //          HTMLInputElement        klasi
+// i on dobija propertije i metode kao suppozicija 
+// sledecih klasa:
+
+                            //          HTMLInputElement
+
+                            // POMENUTA KLASA OBEZBEDJUJE input-SPECIFIC PROPERTIJE, I NASLEDJUJE OD...
+
+                            //          HTMLElement
+
+                            // KLASE, KOJA OBEZBEDJUJE COMMON, ODNOSNO ZAJEDNICKE METODE I PROPERTIJE
+                            // HTML ELEMENATA, I NASLEDJUJE OD
+
+                            //          Element
+
+                            // KLASE, KOJA OBEZBEDJUJE GENERIC ELEMENT METODE I NASLEDJUJE OD
+
+                            //          Node
+
+                            // KLASE, KOJA OBEZBEDJUJE COMMON DOM node PROPERTIJE, I NASLEDJUJE OD
+
+                            //          EventTarget
+
+                            // KOJA PRUZA PODRSKU ZA EVENT-OVE; I KONACNO OVA KLASA NASLEDJUJE OD
+
+                            //          Object
+
+                            // KLASE, TAKO DA SU   'PURE OBJECT'  METODE, POPUT     hasOwnProperty
+                            // TAKODJE DOSTUPNE
+
+// KAKO BIH VIDEO KLASU, ODNOSNO KAKO BIH DOSAO DO IMENA KLASE DOM node-A, TO MOGU POSTICI, AKO SE PODSETIM
+// DA OBJEKAT , OBICNO IMA      constructor     PROPERTI
+// KOJI REFERENCIRA NAZAD DO    class  constructor-A
+// A KAKO BI SAMO PRISTUPIO IMENU, KORISTIM name PROPERTI
+
+console.log(      document.body.constructor         );          //-->      function HTMLBodyElement {...}
+console.log(      document.body.constructor.name    );          //-->      "HTMLBodyElement"
+
+// ILI SAM MOGAO PRIMENITI      toString        METODU, NAD ELEMENTOM
+
+console.log(      document.body.toString()      );              //-->      [object HTMLBodyElement]
+
+// A TAKODJE SAM MOGAO KORISTITI        instanceof          KAKO BI PROVERIO INHERITANCE
+
+console.log(    document.body instanceof HTMLBodyElement    );          //-->       true
+console.log(    document.body instanceof HTMLElement        );          //-->       true
+console.log(    document.body instanceof Element            );          //-->       true
+console.log(    document.body instanceof Node               );          //-->       true
+console.log(    document.body instanceof EventTarget        );          //-->       true
+
+// KAO STO MOZEMO VIDETI, DOM nodes, JESU REGULARNI JAVASCRIPT OBJEKTI; I ONI KORISTE
+
+//               PROTOTYPE-BASED CLASSES FOR INHERITANCE
+
+// DAKLE KORISTE        KLASE BAZIRANE NA PROTOTIPU ZA NASLEDJIVANJE
+
+//**********************************************************************************************************
+// TO JE TAKODJE LAKO VIDETI, KADA OUTPUT-UJEM ELEMENT, UZ KORISCENJE       
+                                                                            console.dir
+                                                                            // OVAKO
+                                                                            //              console.dir(elem)
+                                                                            // U BROWSER-U
+// TAMO U KONZOLI MOGU VIDETI
+                                    HTMLElement.prototype
+// I                                
+                                    Element.prototype
+// I TAKO DALJE...
+
+//                 ****      console.log         VERSUS         console.dir      ******
+
+// MNOGI BROWSERI PODRZAVAJU DVE KOMANDE U SVOJIM DEVELOPER TOOLS-IMA
+// TO SU:
+                            console.log
+
+                            console.dir
+
+// TE KOMANDE OUTPUT-UJU, ARGUMENTE U KONZOLI
+// ZA JAVASCRIPT OBJEKTE, OVE KOMANDE, OBICNO OUTPUT-UJU, ISTE VREDNOSTI
+// ALI U SLUCAJU    DOM         ELEMENATA, POZIVANJE OVIH METODE DAJE RAZLICIT REZULTAT
+
+console.log(    document.body    );             //-->           PRIKAZUJE ELEMENT-OVO DOM DRVO 
+//                                                              (MISLIM DA JE BOLJE RECI: DOM GRANU)
+
+console.dir(    document.body    );             //-->           PRIKAZUJE ELEMENT, KAO DOM OBJEKAT; POGODAN
+//                                                              JER MOGU ISTRAZITI, NJEGOVE PROPERTIJE
+
+//**********************************************************************************************************
+
+//          IDL IN THE SPEC (INTERFACE DESCRIPTION LANGUAGE U SPECIFIKACIJAMA)     
+//            https://en.wikipedia.org/wiki/Interface_description_language
+// 
+// U specifikaciji se KLASE SU OPISANE BEZ KORISCENJA JAVASCRIPT-A, već posebnog jezika za opis interfejsa 
+//                  (IDL  -->      INTERFACE DESCRIPTION LANGUAGE)
+// koji je obično lako razumjeti
+// U IDL-u svi propertiji su prepended sa svojim tipovima. Na primer, DOMString, boolean i tako dalje.
+// Evo izgovora iz IDL-A, sa komentarima:
+const idl_htmlinput = `
+
+    // DEFINISANJE HTMLInputElement-A
+    // COLON (DVE TACKE ':' ZNACI DA HTMLInputElement NASLEDJUJE OD HTMLElement-A)
+    
+    interface HTMLInputElement: HTMLElement {
+        // OVDE IDU PROPERTIJI I METODE <input> ELEMENATA
+
+        // "DOMString" ZNACI DA SU VREDNOSTI OVIH PROPERTIJA STRINGOVI
+
+        attribute DOMString accept;
+        attribute DOMString alt;
+        attribute DOMString autocomplete;
+        attribute DOMString value;
+
+        // boolean value PROPERTI (true/false)
+        
+        attribute boolean autofocus;
+
+        ...
+        // SADA METODA: 'void', ZNACI DA METODA NE return-UJE I JEDNU VREDNOST
+        void select();
+        ...
+    }
+
+`;
+// DRUGE KLASE SU DONEKLE(SOMEWHAT) SLICNE
+//**********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                              'nodeType'      PROPERTI
+
+// Properti nodeType pruža staromodan način da dobije "tip" DOM node-A
+// Ima numeričku vrednost:
+
+// ZA element node JESTE 1
+console.log(    document.createElement('div').nodeType === 1    );              //-->   true
+// ZA text node JESTE 3
+console.log(    document.createTextNode('Neki tekst').nodeType === 3    );      //-->   true
+// ZA document JESTE 9
+console.log(    document.nodeType === 9    );                                   //-->   true
+
+// POSTOJE I NEKOLIKO DRUGIH VREDNOSTI; STO SE MOZE VIDETI U SPECIFIKACIJI:
+// (NE MOGU DA DODJEM DO LINKA TE SPECIFIKACIJE, MOZDA ZATO STO JE OVAJ PROPERTI OBSOLETE(KAKO SAM PROCITAO
+//                                                                                          NA MDN-U)) 
+
+// U savremenim script-OVIMA možemo da koristimo:
+//                                                  instanceof 
+// i druge class-based testove da vidimo tip
+// node-A, ali ponekad nodeType može biti jednostavniji izbor
+
+// NAIME,   nodeType    JE SAMO READ ONLY, STO ZNACI DA GA NE MOZEMO MENJATI
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                        TAG:        nodeName        I           tagName
+
+// Za dati DOM node, možemo da pročitamo ime, njegovog taga putem:
+                //                                                 nodeName     ili    tagName     propertija:
+console.log(    document.body.nodeName    );     //-->   'BODY'
+console.log(    document.body.tagName     );     //-->   'BODY'
+
+// Postoji li razlika između        tagName     i     nodeName      ?
+// Naravno, razlika se ogleda u njihovim imenima, ali je zaista manje suptilna.
+    
+    //   tagName     PROPERTI, POSTOJI SAMO ZA Element node-OVE
+
+    //   nodeName    JESTE DEFINISANO ZA BILO KOJI Node :
+                            //                             ZE elements ZNACI ISTO STO I     tagName
+                            
+                            //                             ZA DRUGE node types (text, comment, etc.)
+                            //                                      NJEGOVA VREDNOST JE STRING node type-A
+
+// DRUGIM RECIMA, tagName JE SAMO PODRZANO OD STRANE element node-OVA (ZATO STO POTICE OD Element KLASE)
+// DOK nodeName MOZE DA KEZE NESTO I O DRUGIM node TIPOVIMA
+
+// NA PRIMER, UPOREDJIVACU      tagName    I    nodeName    ZA  document , I ZA      comment  node
+// (UNECU  comment U HTML, KAO FIRST CHILD body-JA (URADICU TO JAVASCRIPT-OM, JER SAM VEC RANIJE
+// PREPEND-OVAO, JEDAN DIV ELEMENT))
+// MOGU KREIRATI comment node, KORISCENJEM METODE:
+//                                                      document.createComment
+const komentar = document.createComment('komentar');
+// SADA CU OVAJ comment node, PREPEND-OVATI U body
+document.body.prepend(komentar);
+
+// ZA comment STAMPAM    tagName   I   nodeName   PROPERTIJE
+console.log(    document.body.firstChild.tagName     );         //-->   undefined       (nije element node)
+console.log(    document.body.firstChild.nodeName    );         //-->   #comment
+// ZA document STAMPAM    tagName   I   nodeName   PROPERTIJE
+console.log(    document.tagName     );                         //-->   undefined       (nije element node)
+console.log(    document.nodeName    );                         //-->   #document
+// 
+// AKO SAMO RUKUJEM SA ELEMENTIMA, ODNOSO element node-OVIMA, ONDA SAM OTREBAM DA KORISTIM      tagName
+// *********************************************************************************************************
+//          tag name JE UVEK U  UPPER CASE-U, IZUZEV       XHTML-A
+// Pregledač ima dva načina obrade dokumenata: HTML  i   XML. Obično se HTML-mode koristi za web stranice.
+// XML-mode je omogućen kada pregledač prima XML dokument sa header-OM: 
+//                                                                       Content-Type: application/xml+xhtml
+// U HTML-mode-U,   tagName/nodeName            je uvek U UPPERCASE-U: 
+//                                                      to je, UVEK  'BODY'  bilo za    <body>  ili  <BoDy>
+// U XML-mode-U case(VELICINA SLOVA U TEKSTU) se čuva "kao što i jeste".
+// Danas se XML režim rijetko koristi
+// *********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                              innerHTML   :    sadrzine (contents)
+
+// SPECIFIKACIJA:   https://w3c.github.io/DOM-Parsing/#widl-Element-innerHTML
+// 
+// innerHTML properti dozvoljava da se HTML postavi unutar elementa kao string
+// Takođe možemo da modifikujemo, pomenuti properti.
+// Dakle, to je jedan od najsnažnijih načina za promjenu na page-U.
+// Primer prikazuje sadržaj, JEDNOG DIV-A     document.body-JA     , a zatim ga u potpunosti zamenjuje
+// content, POMENUTOG DIV-A:
+
+console.log(    document.querySelector('div').innerHTML   );      //-->  'Neki blah tekst'
+document.querySelector('div').innerHTML = 'Novi DIV!'
+console.log(    document.querySelector('div').innerHTML   );      //-->  'Novi DIV!'
+
+// MOGU I DA POKUSAM DA UNESEM INVALID HTML; AKO TO URADIM, BROWSER CE POPRAVITI MOJE ERRORE (GRESKE)
+
+document.querySelector('div').innerHTML = '<b>Neki tekst';     // KAO STO SE VIDI ZABORAVIO SAM DA CLOSE-UJEM
+                                                               // TAG
+console.log(   document.querySelector('div').innerHTML   );             //-->  <b>Neki tekst</b> 
+                                                                        // (KAO STO VIDIM, TAG JE FIXED)
+// *********************************************************************************************************
+//                  SCRIPT-OVI SE NE EXECUTE-UJU
+// Ako innerHTML insert-uje <script> tag u document - taj script se ne izvršava.
+// Postaje deo HTML-a, baš kao i script koji je već, ranije pokrenut i zavrsio je s radom.
+// *********************************************************************************************************
+//      TREBA VODITI RACUNA O SLEDECEM:
+//                                              innerHTML+=    
+//                                                                  OBAVLJA POTPUNI OVERWRITE
+// 
+// POMOCU POMENUTOGA, MOGU APPEND-OVATI, JOS HTML-A; OVAKO:
+document.querySelector('div').innerHTML += '<div>Hello<img src="./images/icon.png"> !</div>';
+document.querySelector('div').innerHTML += 'Kako ide?';
+
+// Ali trebali bismo biti vrlo pažljivi kada to radimo, jer ono što se dešava nije addition, već 
+// potpuni overwrite.
+// Tehnički gledano, ove dvije linije (dva reda code-a) su iste:
+document.querySelector('div').innerHTML += "...";
+document.querySelector('div').innerHTML = document.querySelector('div').innerHTML + "...";
+
+// Drugim rečima, innerHTML + = čini ovo:
+//           1)   Stari sadržaj je uklonjen.
+//           2)   Umesto toga napisan je novi unutrašnji HTML (concatenation starog i novog).
+// Kako je sadržaj "zeroed out" i rewritten from the scratch, sve slike i drugi resursi će se ponovo učitati.
+// U primeru div ELEMENT, iznad innerHTML + = "Kako ide?" ponovo kreira HTML sadržaj i 
+// ponovo učitava icon.png (nadam se da je keširan). Ako taj div ima puno drugih tekstova i slika,
+// onda se oni ponovno učitavanje i to postaje jasno vidljivo.
+// Postoje i drugi neželjeni efekti. Na primer, ako je postojeći tekst izabran pomoću miša, 
+// većina pretraživača će ukloniti izbor nakon rewriting-a innerHTML-a. A ako je bio <input>
+// sa tekstom koji je unesio user, onda će tekst biti uklonjen. I tako dalje.
+// Srećom, postoje i drugi načini dodavanja HTML-a pored innerHTML-a, i uskoro ćemo ih proučavati.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                              outerHTML    :  full HTML, ELEMENTA
+
+//      outerHTML       properti sadrži pun HTML elementa. To je kao innerHTML plus sam element. Evo primera:
+
+console.log(   document.querySelector('div').outerHTML   );     //-->   '<div><b>Neki tekst</b>...</div>'
+
+// Pazite: za razliku od innerHTML-a, pisanje u outerHTML ne menja element
+// Umesto toga, u celini ga zamenjuje u spoljašnjem kontekstu
+// Da, zvuči čudno, i to je čudno, zato smo napravili posebnu napomenu o tome. Pogledaj.
+// Razmotrite primer:
+
+const divEl = document.querySelector('div');
+// ZAMENA POMENUTOG DIV-A SA PARGRAFOM
+divEl.outerHTML = '<p>Novi element!</p>';    // (*)
+// SAD JE PARAGRAF RENDERED NA STRANICI UMESTO DIV-A
+
+// AKO STAMPAM DIV, VIDECU DA JE I DALJE ISTI (ODNOSNO AKO STAMPAM NJEGOV outerHTML)
+
+console.log(    divEl.outerHTML    );       //-->     '<div><b>Neki tekst</b>...</div>'
+
+// U gornjem redu oznacenom sa (*), uzimamo pun HTML od <div>...</ div> i zamijenimo ga <p>...</ p>
+// U outer document-U možemo videti novi sadržaj umesto <div>. Ali stara div varijabla je i dalje ista
+// outerHTML assignment ne mijenja DOM element, već ga izvlači iz spoljašnjeg konteksta i umjesto njega
+// insert-uje, novi deo HTML-a
+// NOVICE DEVELOPERS ponekad prave grešku: oni modifikuju div.outerHTML i onda nastavljaju da rade sa 
+// divom kao da ima novi sadržaj u njemu
+// To je moguće sa innerHTML, ali ne sa outerHTML-om.
+// Možemo da napišemo u outerHTML, ali treba imati u vidu da ne menja element kojem pišemo
+// On stvara novi sadržaj na svom mestu umesto samog sebe
+// Možemo dobiti referencu za nove elemente tako što ćemo ureaditi querying DOM-A
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                  nodeValue     data            :  TEXT SADRZINA node-OVA
+
+// innerHTML PROPERTI JE SAMO VALIDAN ZA element node-OVE
+// OSTALI nodeTypes IMAJU SVOJ COUNTERPART:
+//                                            nodeValue    I    data                    PROPERTIJE
+// 
+// Ove dva propertija su, skoro ista za praktičnu upotrebu; postoje samo manje specifikacijske razlike
+// U RUSKOM CLANKU, INSISTIRAJU NA KORISCENJU
+//                                                  data
+// JER JE KRACE PISANJE
+// (PRE NEGO STO ISPITAM OVAJ PROPERTI, PREPEND-OVACU, text node, NA POCETAK body-JA)
+document.body.prepend(document.createTextNode('Neki tekst nested na pocetku body-ja'));
+// PRISTUPICU texr node-U
+const textNaPocetku = document.body.firstChild;
+// PRISTUPICU I comment node-U, KOJI TREBA DA JE nextSibling TEXT node-A
+const commentNode = textNaPocetku.nextSibling;
+// SADA CU PRISTUPATI   data    PROPERTIJU, POMENUTIH NODE-OVA
+console.log(    textNaPocetku.data    );   //-->    'Neki tekst nested na pocetku body-ja'
+
+console.log(    commentNode    );          //-->    <!--komentar-->
+
+console.log(    commentNode.data    );     //-->    'komentar'
+
+// Za text node-OVE možemo zamisliti razlog da ih čitamo ili modifikujemo, ali ZASTO BI CITALI COMENTARE?
+// Uobičajeno, oni uopšte nisu zanimljivi, ali ponekad programeri ugrađuju informacije u HTML u njima,
+// ovako:
+const html_s_komentrima = `
+
+    <!-- if isAdmin-->
+        <div>Welcome, Admin!</div>
+    <!--/if-->
+
+`;  
+//...ONDA TO JAVASCRIPT MOZE PROCITATI I PROCESS-OVATI EMBEDDED INSTRUCTIONS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                    textContent           :  CISTI TEKST (PURE TEXT)
+
+// textContent       omogućava pristup tekstu unutar elementa: samo tekst, minus svi <tagovi>
+// DA VIDIM TO, PUTEM PRIMERA
+// 
+const vesti = `
+    <div id="news">
+        <h1>Headline!</h1>
+        <p>Martians attack people!</p>
+    </div>
+`;
+
+console.log(    news.textContent    );      //-->   Headline!
+//                                                  Martians attack people!
+
+// Kao što vidimo, vraćen je samo tekst, kao da su svi <tagovi> isključeni, ali je tekst u njima ostao.
+// U praksi, čitanje takvog teksta retko je potrebno.
+// ********************************************************************************************************
+//  WRITTING U textContent JE MNOGO VISE KORISNO, ZATO STO OMOGUCAVA WRITING TEXT-A, NA SIGURAN NACIN 
+                                                                                        // (SAFE WAY)
+// RECIMO DA IMAMO ARBITRARY(PROIZVOLJAN) STRING, NA PRIMER UNESEN OD STRANE KORISNIKA, I ZELIM DA GA
+// PRIKAZEM 
+                //      SA      innerHTML   MORAO BI GA INSERT-OVATI 'KAO HTML-A', SA SVIM HTML TAGOVIMA
+                //      SA      textContent MORAO BI GA INSERTOVATI 'KAO TEXT-A', I SVI SIMBOLI 
+                                //                                  (UKLJUCUJUCI TAGOVE) BI BILI TRETIRANI 
+                                //                                   LITERALY, ODNOSNO DOSLOVNO
+
+// **KORISTICU DUGME U PRIMERU JER NE ZELIM DA MI SE PROPMPT OTVARA PRI SVAKOM RELOAD-U
+const promptDugmeIElement = `
+    <button id="prompt_dugme">Pritisni za prompt</button>
+    <div id="element1">Neki tekst</div>
+    <div id="element2">Drugi tekst</div>
+`;
+
+prompt_dugme.onmousedown = function(ev){
+    let ime = prompt('Kako se zoves?', '<b>Winnie-the-poop!</b>');
+
+    window.element1.innerHTML = ime;
+
+    window.element2.textContent = ime;
+
+};
+
+// 1)  Prvi <div> dobiva ime "kao HTML": svi tagovi postaju tagovi, pa vidimo bold ime.
+// 2)  Drugi <div> dobiva ime "kao tekst", tako da bukvalno vidimo <b>Winnie-the-poop!</b>.
+
+// U većini slučajeva očekujemo tekst od korisnika i želimo ga tretirati kao tekst.
+
+// Ne želimo neočekivan HTML na našem sajtu. ASSIGNMENT-OM textContent-U UPRAVO POSTIZE TO.
+
+// ********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                          'hidden'        PROPERTI
+
+// Atribut     hidden      i istoimeni properti DOM-A određuju da li je element vidljiv ili ne.
+// Možemo ga koristiti u HTML-u ili dodeliti pomoću JavaScript-a, ovako:
+
+// OBA DIV-A DOLE JESU SKRIVENA
+const skriveni_divovi = `
+    <div hidden>Neki tekst u divu</div>
+    <div class="div_za_sakriti">Neki sadrzajni tekst u drugom divu</div>
+`;
+document.querySelector('.div_za_sakriti').hidden = true;
+
+// Tehnički,    hidden       radi isto kao i        style="display: none"          Ali, kraće ga je pisati.
+
+// Evo treperavog elementa:
+setInterval(function(){
+    document.querySelector('.div_za_sakriti').hidden = !document.querySelector('.div_za_sakriti').hidden
+}, 580);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                              JOS PROPERTIJA
+
+// Elementi DOM-a takođe imaju dodatne propertije, od kojih su mnogi obezbedjeni od strane klase:
+//    -  value  -  vrednost za <input>, <select> i <textarea> (HTMLInputElement, HTMLSelectElement ...)
+//    -  href   -  "href" za <a href="..."> (HTMLAnchorElement)
+//    -  id     -  vrednost atributa "id", za sve elemente (HTMLElement).
+//    -  …i još mnogo toga…
+
+// Većina standardnih HTML atributa ima odgovarajuće osobine DOM-a, i mi možemo pristupiti tako.
+
+// Ako želimo da saznamo potpunu listu podržanih propertija za određenu klasu, možemo ih naći u 
+// specifikaciji. Na primer, HTMLInputElement je dokumentovan na
+//                                                           https://html.spec.whatwg.org/#htmlinputelement
+
+// Ili, ako želimo da ih gett-ujemo brzo ili smo zainteresovani za konkretniju browser specifikaciju
+// - uvek možemo da output-UJEMO element pomoću console.dir (elem) i pročitamo propertije.
+//  Ili istražite "DOM propertije" na kartici Elements u developer alatkama pretraživača.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//      REZIME: 
+
+// Svaki DOM node pripada određenoj klasi. Klase formiraju hijerarhiju. Puni skup propertija i metoda
+//  dolazi kao rezultat nasleđivanja.
+
+// Glavne osobine DOM node-OVA su:
+
+//              nodeType
+// nodeType  možemo dobiti od DOM object class-A, ali često nam je potrebno samo da vidimo da li je to
+// text ili element node. nodeType properti je dobar za to. Ima numeričke vrednosti, najvažnije su: 
+            // 1 - za element, 3 - za text node-OVE. 
+//POMENUTI PROPERTI JE READ ONLY
+
+//             nodeName/tagName
+// Za elemente, ime tag-A (velika slova, osim ako nije XML-mode). Za node-OVE koji nisu elementi nodeName 
+// opisuje šta je taj node.
+// READ-ONLY
+
+//             innerHTML
+// HTML sadržaj elementa. 
+// Može se mijenjati.
+
+//             outerHTML
+// Puni HTML elementa. 
+// Operacija pisanja u elem.outerHTML ne dodiruje sam elem. Umesto toga, zamenjuje se novim HTML-om 
+// u spoljnom kontekstu.
+
+//             nodeValue / data
+// Sadržaj non-element node-A (text, comment). Ove dva propertija su skoro ista, a obično koristimo    data
+//  Može se modifikovati
+        
+//             textContent
+// Tekst unutar elementa, u osnovi HTML minus svi <tagovi>.
+// Pisanje u njega stavlja tekst unutar elementa, sa svim specijalnim karakterima i oznakama tretiranim 
+// tačno kao tekst. Može safely insert-ovati tekst generisan od strane korisnika i zaštititi od neželjenih 
+// HTML umetaka (insertion-a)
+
+//             hidden
+// Kada je postavljen na true, to isto radi CSS        display: none
+
+// DOM node-OVI takođe imaju druge propertije u zavisnosti od njihove klase. Na primer, elementi
+//  <input> (HTMLInputElement) podržavaju   value, type, 
+// dok <a> elementi (HTMLAnchorElement) podržavaju href itd.
+// Većina standardnih HTML atributa ima i odgovarajući properti DOM-a.
+
+// Ali HTML atributi i propertiji DOM-a nisu uvijek isti, kao što ćemo videti u sledećem clanku
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PRIMERI:
+
+// 1) PREBROJ DESCENDANTE
+
+// POSTOJI TREE STRUKTURA, NESTOVANIH ul/li
+// ZA SVASKI LIST ITEM TREBA PRIKAZATI
+//                                         - text UNUTAR NJEGA (BEZ SUBTREE-JA)
+//                                         - BROJ NESTED LIST ITEM-A U NJEMU 
+//                                          (BROJ SVIH LIST ITEM DESCENDANATA, UKLJUCUJUCI I ONE
+//                                          DEEPLY NESTED)
+
+const drvo_blah = `
+<ul id="zivotinje">
+<li>Animals
+  <ul>
+    <li>Mammals
+      <ul>
+        <li>Cows</li>
+        <li>Donkeys</li>
+        <li>Dogs</li>
+        <li>Tigers</li>
+      </ul>
+    </li>
+    <li>Other
+      <ul>
+        <li>Snakes</li>
+        <li>Birds</li>
+        <li>Lizards</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>Fishes
+  <ul>
+    <li>Aquarium
+      <ul>
+        <li>Guppy</li>
+        <li>Angelfish</li>
+      </ul>
+    </li>
+    <li>Sea
+      <ul>
+        <li>Sea trout</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+</ul>
+`;
+
+
+Array.from(zivotinje.querySelectorAll('li')).forEach(function(ajtem){
+    
+    alert(ajtem.firstChild.data.trim() + ", " +  ajtem.getElementsByTagName('li').length);
+    
+});
+// UMESTO Array.from, MOGLA JE DA SE KORISTI I for of PETLJA
+// http://plnkr.co/edit/IK1QDDSRKvoMvdD7psXY?p=preview
+
+// 2) STA JE U nodeType-U
+
+// STA SLEDECI SCRIPT POKAZUJE
+
+const sledeci_script = `
+<html>
+
+    <body>
+        <script>
+            alert(document.body.lastChild.nodeType);
+        </script>
+    </body>
+
+</html>
+`;
+// Tu postoji cka
+// U trenutku izvršenja <script>-A poslednji DOM node je upravo <script>,
+// jer pretraživač još nije obrađivao ostatak stranice.
+// Dakle rezultat je 1 (element node).
+
+// DA SAM NA PRIMER TRAZIO firstChild REZULTAT BI BIO 3 (text node)
+// A DA SAM TADA UKLONIO WHITESPACE IZMEDJU sctipt I body TAGA, firstChild I lastChild BI BIO <script>
+
+// 3)   STA SLEDECI CODE POKAZUJE?
+
+const sledeci_code = `
+<script>
+  let body = document.body;
+
+  body.innerHTML = "<!--" + body.tagName + "-->";
+
+  alert( body.firstChild.data ); // what's here?
+</script>`
+
+// POKAZUJE         'BODY'
+
+// 4) GDE JE document U HIJERARHIJI?
+//      DA LI NASLEDJUJE OD Node ILI Element KLASE  ILI MOZDA HTMLElement?
+
+// KORISCENJEM      __proto__       LANCANO, MOGU VIDETI DA JE TO Node
+// A MOZE SE KORISTITI I        console.dir     KAKO BI TO VIDEO
+
+console.log(document); // [object HTMLDocument]
+console.log(document.constructor.name); // HTMLDocument
+console.log(HTMLDocument.prototype.constructor === HTMLDocument); // true
+console.log(HTMLDocument.prototype.constructor.name); // HTMLDocument
+console.log(HTMLDocument.prototype.__proto__.constructor.name); // Document
+console.log(HTMLDocument.prototype.__proto__.__proto__.constructor.name); // Node
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
 
 
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
@@ -1347,6 +1970,12 @@ const divCloneShallow = nekiDiv.cloneNode(false);
 window.console.log(divCloneDeep, '<-------->', divCloneShallow);
 window.console.log('SOMETHING BLAH');
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
+
+
+
+
+
+
 
 
 
