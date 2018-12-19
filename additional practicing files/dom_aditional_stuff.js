@@ -1890,7 +1890,7 @@ const drvo_blah = `
 
 Array.from(zivotinje.querySelectorAll('li')).forEach(function(ajtem){
     
-    alert(ajtem.firstChild.data.trim() + ", " +  ajtem.getElementsByTagName('li').length);
+    console.log(ajtem.firstChild.data.trim() + ", " +  ajtem.getElementsByTagName('li').length);
     
 });
 // UMESTO Array.from, MOGLA JE DA SE KORISTI I for of PETLJA
@@ -1951,6 +1951,192 @@ console.log(HTMLDocument.prototype.__proto__.__proto__.constructor.name); // Nod
 // **********************************************************************************************************
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // **********************************************************************************************************
+// 
+//                              ATRIBUTI I PROPERTIJI
+// 
+// KADA BROWSER LOAD-UJE STRANICU, ON 'CITA'(DRUGA REC: 'PARSE-UJE') HTML I GENERISE DOM Object Model IZ,
+// TOG HTML-A
+// ZA element node-OVE, NAJSTANDARDNIJI HTML ATRIBUTI AUTOMATSKI POSTAJU I PROPERTIJI DOM OBJEKTA
+// NA PRIMER, AKO SE HTML-U SASTOJI OD SLEDECI TAG-A:
+//                                                            <body id="page"></body> 
+// ONDA DOM Object IMA SLEDECE:
+//                                                            body.id === "page"
+// 
+// ALI attribute-property mapping NIJE one-to-one
+// U OVOM CLANKU VODICE SE RACUNA O RAZDVAJANJU, OVA DVA POJMA(NOTION-A), ZATIM O NACINUKAKO DA RADIM SA
+// NJIMA, KADA SU ONI ISTI, I KADA SU RAZLICITI
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//                  DOM properties
+
+// Već smo videli built-in DOM propertije. Ima ih mnogo. Ali tehnički niko nas ne ograničava, da dodamo
+// svoje propertije
+// DOM čvorovi su redovni JavaScript objekti. Možemo ih promeniti.
+// Na primer, kreirajmo novi properti u document.body
+
+document.body.myData = {
+    name: 'Caesar',
+    title: 'Imperator'
+};
+
+console.log(  document.body.myData.title  );        //-->   'Imperator'
+
+// A MOGU, TAKODJE DODATI I METODE
+
+document.body.sayTagName = function(){
+    console.log(this.tagName);
+}
+
+document.body.sayTagName();                 //-->   'BODY'      
+                                                                    //  VREDNOST this-A JE KAO STO SE VIDI
+                                                                    //  document.body
+
+// TAKO DA JA MOGU MODIFIKOVATI BUILT-IN PROPERTIJE, KAO STO JE     Element.prototype
+
+Element.prototype.sayHi = function(){
+    console.log(`Hello, I'm ${this.tagName}`);
+};
+
+document.documentElement.sayHi();               //-->   'Hello, I'm HTML'
+document.body.sayHi();                          //-->   'Hello, I'm BODY'
+
+// DAKLE, DOM PROPERTIJI I METODE SE PONASAJU, UPRAVO KAO ONI U REGULARNIM JAVASCRIPT OBJEKTIMA
+
+//                      - MOGU DA IMAJU BILO KOJU VREDNOST
+//                      - ONI SU CASE-SENSITIVE (  DAKLE OVO JE PRAVILNO     elem.nodeType     
+//                                                 A OVO JE NEPRAVILNO       elem.NoDeTyPe  )
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//              HTML attributes
+
+// U HTML-u, tagovi mogu imati atribute. Kada pregledač parse-uje HTML za kreiranje DOM objekata za tagove,
+// browser prepoznaje standardne atribute i kreira DOM propertije od njih.
+
+// Dakle, kada element ima id ili neki drugi 'standardni' atribut, odgovarajući properti se kreira
+// Ali to se ne dešava ako je atribut nestandardan (non-standard)
+
+// NA PRIMER:
+// 
+const neki_html_sa_atributima = `
+    <body id="test" something="non-standard">
+    </body>
+`;
+
+console.log(document.body.id);          //-->   'test'
+console.log(document.body.something);   //-->   undefined
+
+// Imajte na umu da standardni atribut za jedan element može biti undefined za drugi. 
+// Na primjer, "type" je standardan za <input> (HTMLInputElement), ali ne i za <body> (HTMLBodiElement)
+// Standardni atributi su opisani u specifikaciji za odgovarajuću klasu elemenata.
+
+// Ovde možemo, pomenuti i da vidimo:
+
+const neki_html_sa_atributima_dodatno = `
+    <body id="test" something="non-standard" type="louis">
+        ...
+        <input id="neki_unos" type="text">
+        ...
+    </body>
+`;
+
+console.log(neki_unos.type);       //-->   'text'
+console.log(document.body.type);    //-->   undefined
+//                                                      DOM properti nije kreiran jer nije standardni
+
+// Dakle, ako je atribut nestandardan, za njega nece biti kreiran DOM properti.
+
+// Postoji li način pristupa takvim atributima?
+
+// Naravno. Svi atributi su dostupni korišćenjem sledećih metoda:
+
+//              elem.hasAttribute(name)         -->    PROVERAVA POSTOJANJE
+
+//              elem.getAttribute(name)         -->    GETT-UJE VREDNOST
+
+//              elem.setAttribute(name, value)  -->    SETT-UJE VREDNOST
+
+//              elem.removeAttribute(name)      -->    UKLANJA ATRIBUT
+
+// OVE METODE OPERISU, TACNO SA ONIM STO JE NAPISANO U HTML-U
+
+// TAKODJE, POSTOJI JEDAN PROPERTI
+//                                      elem.attributes
+//                                                           TO JE COLLECTION OBJEKATA KOJI PRIPADAJU
+//                                                           BUILT-IN   Attr    class-I
+//                                                           TI OBJEKTI IMAJU PROPERTIJE  name  I  value
+// EVO JE DEMONSTRACIJA, KAKO TO CITATI
+// NESTANDARDNE PROPERTIJE:
+
+console.log(    document.body.getAttribute('something')    );       //-->       'non-standard'
+
+// HTML ATRIBUTI IMAJU SLEDECE FEATURE-E:
+
+//          NJIHOVO     name    JESTE CASE-INSENSITIVE      (id     JE ISTO KAO I     ID)
+//          NJIHOVO     value   JESTE UVEK STRING
+
+// EVO JE PROSIRENA DEMONSTRACIJA RADA SA ATRIBUTIMA:
+
+const neki_html_za_rad_s_atributima = `
+    <div id="some_elem" about="Elephant"></div>
+`;
+
+console.log(  some_elem.getAttribute('About')  );   //-->   'Elephant'
+some_elem.setAttribute('Test', 123);                     // writting
+console.log(  some_elem.outerHTML  );               // provera da li je novododati atribut, zaista tamo
+
+for(let attr of some_elem.attributes){              // LISTANJE SVIH ATRIBUTA
+    
+    console.log(`${attr.name}="${attr.value}"`);
+
+}
+// TREBA ZABELEZITI SLEDECE U VEZI PREDHODNOG CODE-A
+
+//   (1)        getAttribute('About') - prvo slovo je veliko, a u HTML-u su sve male slova.
+//              Ali to nije važno: name-OVI atributa su case-insensitive
+
+//   (2)        Mi možemo dodeliti bilo šta atributu, ali to ce postati string
+//              Dakle, ovde imamo "123" kao vrednost.
+
+//   (3)        Svi atributi uključujući one koji smo postavili su vidljivi u      outerHTML-U
+
+//   (4)        KOLEKCIJA atributa je iterable i ima sve atribute elementa (standardne ili nestandardne) kao
+//              objekte sa      name    I   value    PROPERTIJIMA
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//        PROPERTI-ATRIBUT SINHRONIZACIJA     (Property-attribute synchronization)
+// 
+// Kada se standardni atribut promeni, odgovarajući properti se automatski ažurira (updateuje) 
+// i (uz izuzetke) obrnuto.
+// U dolje navedenom primeru id je modifikovan kao atribut, a mi možemo vidjeti i promjenu propertija. 
+// I onda isto to unazad:
+
+let inputElement = document.querySelector('input');
+
+//      atribut ----->  properti
+inputElement.setAttribute('id', 'id');
+console.log(    inputElement.id    );       //-->   'id'    (updated)
+
+//      properti ----->  atribut
+inputElement.id = "newID";
+console.log(    inputElement.getAttribute('id')   );    //-->    'newID'    (updated)
+
+// Ali postoje izuzeci, na primer, input.value sinhronizuje se samo od atributa → na properti, ali ne i 
+// nazad:
+
+//      atribut ----->  properti
+inputElement.setAttribute('value', 'text');
+console.log(    inputElement.value    );        //-->   'text'
+
+//      NOT   properti ----->  atribut
+inputElement.value = 'newValue';
+console.log(    inputElement.getAttribute('value')    );    //-->    'text'     (not updated)
+
+// U gore navedenom primeru:
+//     ----     Promena vrijednosti atributa ažurira properti
+//     ----     Ali promena propertija ne utiče na atribut
+// Taj "feature" može zapravo biti zgodan, jer korisnik može modificirati vrijednost, a nakon toga,
+// ako želimo da vratimo "prvobitnu" vrijednost iz HTML-a, ona je u atributu.
+
 
 
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
