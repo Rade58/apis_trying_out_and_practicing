@@ -2136,6 +2136,292 @@ console.log(    inputElement.getAttribute('value')    );    //-->    'text'     
 //     ----     Ali promena propertija ne utiče na atribut
 // Taj "feature" može zapravo biti zgodan, jer korisnik može modificirati vrijednost, a nakon toga,
 // ako želimo da vratimo "prvobitnu" vrijednost iz HTML-a, ona je u atributu.
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//          DOM propertiji su       TYPED       (IMAJU SVOJ TIP)
+
+// DOM PROPERTIJI NISU UVEK STRING-OVI
+// NA PRIMER        input.checked       PROPERTI (ZA checkboxes) JESTE BOOLEAN
+
+const inputElementBla = `
+    <input id="neki_input_element" type="checkbox" checked> blah
+`;
+
+console.log(    neki_input_element.getAttribute('checked')    );     // VREDNOST ATRIBUTA JESTE PRAZAN
+                                                                                            // STRING
+
+console.log(    neki_input_element.checked    );                     //VREDNOST PROPERTIJ JE BOOLEAN true
+
+// POSTOJE I DRUGI PRIMERI POMENUTOGA
+//                                           VREDNOST       style       ATRIBUTA, JESTE STRING
+
+//                                           VREDNOST       style       PROPERTIJA, JESTE OBJEKAT
+
+const neki_div_sa_style_atributom = `
+    <div id="nekidiv" style="color: red; font-size: 120%;">Hello</div>
+`;
+
+console.log(    nekidiv.style    );                     //-->       CSSStyleDeclaration     INSTANCA
+
+console.log(    nekidiv.style.color    );               //-->       'red'
+
+console.log(    nekidiv.getAttribute('style')    );     //-->       'color: red; font-size: 120%;'
+
+// To je bitna razlika. Ali čak i ako tip DOM propertija jeste string , može se razlikovati od atributa!
+// Na primer, href DOM properti je uvek potpuna URL adresa, čak i ako atribut sadrži relativni URL ili samo
+// #hash.
+// Evo primera:
+
+const neki_anchor_el = `
+    <a id="a" href="#hello">link</a>
+`;
+
+console.log(    a.getAttribute('href')    );        //-->   '#hello'
+
+console.log(    a.href    );        //--> e:///C:/Users/Documents/vezbe_za_web_aplikacije/
+//                                          apis_trying_out_and_practicing/additional%20practicing%20files/
+//                                          pageLifecyleEventsSec.html#hello
+
+// Ako nam treba vrednost href ili bilo kojeg drugog atributa, tačno onakva kakva je napisana u HTML-u,
+// možemo koristiti         getAttribute
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//              NESTANDARDNI (non-standard) ATRIBUTI       I        dataset     PROPERTI 
+
+// Prilikom pisanja HTML-a koristimo dosta standardnih atributa. Ali šta je sa nestandardnim, onim custom?
+// Prvo, da vidimo da li su korisni ili ne? I Za šta, ako jesu?
+// Ponekad se nestandardni atributi koriste za prenošenje custom podataka iz HTML-a u JavaScript ili za
+// "označavanje" ('mark') HTML-elemenata za JavaScript.
+// Ovako:
+
+const markirani_html_sa_custom_atributima = `
+        <!--markiran div, za pokazivanje 'name'-A u njemu-->
+    <div show-info="name"></div>
+        <!--markiran div, za pokazivanje 'age'-A u njemu-->
+    <div show-info="age"></div>
+`;
+
+let user = {
+    name: "Pete",
+    age: 25
+};
+
+// SLEDECI CODE PRONALAZI ELEMENT, OZNACEN POMENUTIM ATRIBUTOM, I PRIKAZUJE, U NJEMU ONO STO JE REQUESTED
+
+for(let div of document.querySelectorAll('[show-info]')){
+    let infoValue = div.getAttribute('show-info');
+    div.innerHTML = user[infoValue];                    // JEDNOM DIV-U CE SE DODATI Pete, A DRUGOM 25
+}
+
+// TAKODJE SE MOZE KORISTITI ZA STILIZOVANJE ELEMENATA
+// NA PRIMER OVDE, ZA STATE ORDER-A ODNOSNO ZA STANJE NARUDZBINU, KORISTI SE ATRIBUT   order-state
+
+const stilovi_za_elemente_sa_pomenutim_atributom = `
+    /* STILOVI SE OSLANJAJU NA CUSTOM ATRIBUT     order-state   */
+
+    .order[order-state="new"] {
+        color: green;
+    }
+
+    .order[order-state="pending"] {
+        color: blue;
+    }
+
+    .order[order-state="canceled"] {
+        color: red;
+    }
+`;
+
+const html_elemenata_sa_order_state_atributom = `
+    <div class="order" order-state="new">
+        A new order.
+    </div>
+    <div class="order" order-state="pending">
+        A pending order.
+    </div>
+    <div class="order" order-state="canceled">
+        A canceled order.
+    </div>
+`;
+
+// Zašto atribut može biti poželjniji za klase kao što su   .order-state-new    ,   .order-state-pending    , 
+// order-state-canceled ?
+// To je zato što je atribut pogodniji za upravljanje. State se može promeniti jednostavno kao:
+
+document.querySelector('.order').setAttribute('order-state', 'pending');
+
+// Ali može postojati problem sa prilagođenim (custom) atributima
+// Šta ako koristimo nestandardni atribut u naše svrhe, a kasnije ga standard uvodi i učini da taj atribut 
+// ima neku drugu svthu?
+// HTML jezik je živ, raste.
+// U tom slučaju mogu biti neočekivani efekti.
+// Da bi se izbegli sukobi, postoje atributi            data-*             atributi
+
+// https://html.spec.whatwg.org/#embedding-custom-non-visible-data-with-the-data-*-attributes
+
+//      SVI ATRIBUTI, KOJI POCINJU SA:                          data-
+//      REZERVISANI SU ZA KORISCENJE OD STRANE PROGRAMERA
+//      DOSTUPNI SU U           dataset         PROPERTIJU
+// 
+// NA PRIMER AKO ELEMENT IMA ATRIBUT, KOJI SE ZOVE      data-about   ON JE DOSTUPAN KAO
+//                                                                                      elem.dataset.about
+// OVAKO:
+// 
+const nekiDivSa_data_Atributom = `
+    <div id="el" data-about="Elephants"></div>
+`;
+
+console.log(    el.dataset.about    );          //-->   'Elephants'
+
+// MULTIWORD ATRIBUTI, ODNOSNO ATRIBUTI SASTAVLJENI OD VISE RECI, KAO STO JE        data-order-state
+// POSTAJU      camelCased      PROPERTIJI   dataset-A
+
+// EVO GA REWRITTEN 'order-state' PRIMER
+const stilovi_za_elemente_sa_data_atributima = `
+
+    .ord[dat-order-state="new"] {
+        color: green;
+    }
+
+    .ord[data-order-state="pending"] {
+        color: blue;
+    }
+
+    .ord[data-order-state="canceled"] {
+        color: red;
+    }
+`;
+
+const html_elemenata_sa_data_attr = `
+    <div class="ord" data-order-state="new">
+        A new order.
+    </div>
+    <div class="ord" data-order-state="pending">
+        A pending order.
+    </div>
+    <div class="ord" data-order-state="canceled">
+        A canceled order.
+    </div>
+`;
+
+console.log(    document.querySelector('.ord').dataset.orderState    );         //-->   'new'
+
+document.querySelector('.ord').dataset.orderState = 'pending';     //(*)
+
+// Korišćenje      data-*      atributa je validan, i siguran način za prosleđivanje custom podataka
+// Imajte na umu da ne možemo samo pročitati, već i modifikovati    data     atribute
+// Zatim CSS ažurira prikaz prema tome: u primeru iznad poslednji red(*) menja color
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//     REZIME:
+// 
+//  -    ATRIBUTI       ono sto je napisano u HTML-U
+//  -    PROPERTIJI     ono sto je u DOM objektima
+// 
+//   MALO UPOREDJIVANJE:
+// 
+//              PROPERTIJI                                                      ATRIBUTI
+
+//   tip         bilo koja vrednost, standardni propertiji imaju tipove           string
+//               opisane u specifikaciji
+
+//   ime         ime propertija je case-sensitive                                 ime atributa je
+//                                                                                case-insensitive
+// METODE ZA RAD SA ATRIBUTIMA:
+// 
+//              elem.hasAttribute(name)         -->    PROVERAVA POSTOJANJE
+
+//              elem.getAttribute(name)         -->    GETT-UJE VREDNOST
+
+//              elem.setAttribute(name, value)  -->    SETT-UJE VREDNOST
+
+//              elem.removeAttribute(name)      -->    UKLANJA ATRIBUT
+
+//              elem.attributes         JE KOLEKCIJA SVIH ATRIBUTA
+
+
+// Za većinu potreba, propertiji DOM-a nam mogu dobro poslužiti
+// Trebali bismo da refer-ujemo na atribute samo kada nam se DOM propertiji ne uklapaju, kada nam trebaju
+// tačno atributi, na primer:
+
+//         -     Potreban nam je nestandardni atribut. Ali ako pocinje sa     data-      , onda treba 
+//               koristiti      dataset
+
+//         -     Želimo da pročitamo vrednost "tacno onako kako je napisana" u HTML-u
+//               Vrednost propertija DOM-a može biti drugačija, na primer, properti href-a je uvek pun URL,
+//               a možda ćemo želeti da dobijemo i "originalnu" vrednost
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//  PRIMERI:
+
+//      (1) 
+// CITANJE VREDNOSTI    data-widget-name     ATRIBUTA IZ DOKUMENTA
+
+const html_primera_sa_atributom = `
+    <div data-widget-name="menu">Chose the genre</div>
+`;
+
+// PRVI NACIN
+console.log(    document.querySelector('[data-widget-name]').dataset.widgetName     );      //-->   'menu'
+// DRUGI NACIN
+console.log( document.querySelector('[data-widget-name]').getAttribute('data-widget-name') );  //-->  'menu'
+
+//      (2)
+// CINJENJE DA SVI EXTERNAL LINKOVI, SLEDECEG PRIMERA BUDU ORANGE
+const html_linkova = `
+    <a name="list">the list</a>
+    <ul>
+        <li><a href="http://google.com">http://google.com</a></li>
+        <li><a href="/tutorial">/tutorial.html</a></li>
+        <li><a href="local/path">local/path</a></li>
+        <li><a href="ftp://ftp.com/my.zip">ftp://ftp.com/my.zip</a></li>
+        <li><a href="http://nodejs.org">http://nodejs.org</a></li>
+        <li><a href="http://internal.com/test">http://internal.com/test</a></li>
+    </ul>
+`;
+// PRE NEGO STO POCNEM SA RESAVANJEM POTREBNO JE RECI DA, DA JE EXTERNAL LINK, ONAJ LINK
+
+//          ----        KOJI IMA    href    ATRIBUT SA VREDNOSCU, KOJA IMA SLEDECE KARAKTERE:
+//                                                                                                ://
+//          ----        I CIJA VREDNOST NE SME DA POCINJE SA SLEDECIM KARAKTERIMA:
+//                                                                                       http://internal.com
+
+const ajtems = document.getElementsByName('list')[0].nextElementSibling.children;
+
+// OPET PONAVLJAM, TREBA DA KORISTIM VREDNOST href ATRIBUTA, A NE href PROPERTIJA
+
+for(let ajtem of ajtems){
+
+    if(!ajtem.querySelector('a').getAttribute('href')) continue;  // ZA SLUCAJ DA JE PRAZAN STRING VREDNOST
+
+    if(!ajtem.querySelector('a').getAttribute('href').includes('://')) continue;
+
+    if(ajtem.querySelector('a').getAttribute('href').startsWith('http://internal.com')) continue;
+
+    ajtem.querySelector('a').style.color = 'orange';
+
+}
+
+// DRUGI NACIN BI BIO DA KORISTIM ATRIBUT SELEKTOR, VECINM KAPACITETOM, ALI I   :not        SELECTOR
+
+const links = document.getElementsByName('list')[0].nextElementSibling
+                .querySelectorAll('a[href*="://"]:not([href^="http://internal.com"])');
+ 
+Array.from(links).forEach(function(link){
+    link.style.color = "tomato";
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// **********************************************************************************************************
+// 
+//                      STILOVI I KLASE     (Styles  and    classes)
+// 
+// 
+
 
 
 

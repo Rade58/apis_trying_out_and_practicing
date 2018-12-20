@@ -1,0 +1,25 @@
+/* STILOVI SE OSLANJAJU NA CUSTOM ATRIBUT     order-state   */
+.order[order-state="new"] {
+    color: green;
+}
+
+.order[order-state="pending"] {
+    color: blue;
+}
+
+.order[order-state="canceled"] {
+    color: red;
+}
+
+/*************************************************/
+.ord[dat-order-state="new"] {
+    color: green;
+}
+
+.ord[data-order-state="pending"] {
+    color: blue;
+}
+
+.ord[data-order-state="canceled"] {
+    color: red;
+}
