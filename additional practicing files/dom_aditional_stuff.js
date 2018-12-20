@@ -2420,9 +2420,122 @@ Array.from(links).forEach(function(link){
 // 
 //                      STILOVI I KLASE     (Styles  and    classes)
 // 
+// Pre nego što pređemo na načine JavaScripta u dealing-u sa stilovima i klasama - evo ga važno pravilo.
+// Nadam se da je dovoljno očigledno, ali moramo i dalje pomenuti
+// Obično postoje dva načina za stilizovanje elementa:
+
+//              Kreiranje klase u CSS-u i njeno dodavanje 
+                                        // <div class = "..."> 
+
+//              Pisanje propertija direktno u style:
+                                        // <div stile = "...">
+
+// CSS je uvek najpoželjniji način - ne samo za HTML, već i za JavaScript
+
+// Trebali bismo samo manipulisati      style    propertijem, ako klase "to ne mogu handle-OVATI"
+
+// Na primer,    style    je prihvatljiv ako dinamički izračunamo koordinate elementa i želimo da ih
+// postavimo iz JavaScripta, ovako
 // 
 
+//              let top = /* kompleksne kalkulacije */;
+//              let left = /* kompleksne kalkulacije */;
+// 
+//              elem.style.left = left      //eg.   '148px'
+//              elem.style.top = top        //eg.   '448px'
 
+// U drugim slučajevima, kao što je napraviti tekst crvenim, dodavanje ikone pozadine - opišite to u
+// CSS-u, a zatim primenite CSS class. To je fleksibilniji i lakse za odrzavati (support)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                      className       I       classList
+// 
+// Promena klase je jedna od najčešće korišćenih akcija u script-OVIMA
+// U drevnim vremenu, bilo je ograničenja u JavaScriptu: rezervirana reč kao što je "class" nije 
+// mogla biti objektov properti
+// To ograničenje trenutno ne postoji, ali u to vrijeme bilo je nemoguće imati properti "class",
+// kao što je:
+//                      elem.class
+
+// Dakle, za klase je predstavljen sličan properti          "className" 
+
+//  elem.className      odgovara atributu       "class"
+
+// Na primer:
+
+const body_sa_klasom = `
+    <body class="main page">...</body>
+`;
+
+console.log(    document.body.className    );       //-->   'main page'
+
+// Ako dodelimo nešto           elem.className -U         , on zamenjuje čitave stringove klasa
+// Ponekad nam je to potrebno, ali često želimo da dodamo / uklonimo jednu klasu
+// Za to postoji još jedna karakteristika: 
+//                                                  elem.classList
+
+// elem.classList       je poseban objekat sa metodama za   dodavanje/uklanjanje/prebacivanje   klasa
+// Na primer:
+
+document.body.classList.add('article');
+
+console.log(        document.body.className         );      //-->   'main page article'
+
+// Dakle, možemo raditi i sa punim stringom klasa, koristeći className ili pojedinačnim klasama 
+// koristeći classList. Ono što izaberemo zavisi od naših potreba
+
+//                  Metode  classList    :
+//                                               elem.classList.add('class')         DODAJE KLASU
+
+//                                               elem.classList.remove('class)       ODUZIMA KLASU
+
+//                                               elem.classList.toggle('class')      AKO KLASA POSTOJI
+//                                                                                      UKLANJA JE
+//                                                                                   U SUPROTNOM JE DODAJE
+
+//                                               elem.classList.contains('class')    return-UJE  true  ILI 
+//                                                                                      false ; PROVERAVA
+//                                                                                   POSTOJANJE DATE KLASE
+// 
+// PORED TOGA       classList       JE ITERABLE; TAKO DA MOGU DA IZLISTAM SVE KLASE, OVAKO:
+// 
+for(let imeKlase of document.body.classList){
+    console.log(imeKlase);                          //-->   (0)    'main'             (1)   'page'
+                                                    //                    (2)   'article'     
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                         Element   style
+// 
+// Properti 
+//              elem.style 
+//                             je objekat koji odgovara onome što je napisano u atributu "style"
+// Podešavanje elem.style.width = "100px" radi kao da smo imali atribut     style = "width: 100px"
+
+// Za multi-word propertije, koristi se camelCase:
+                                                    //  background-color  => elem.style.backgroundColor
+                                                    //  z-index           => elem.style.zIndex
+                                                    //  border-left-width => elem.style.borderLeftWidth
+
+//      document.body.style.backgroundColor = prompt('background color?', 'green');
+//**********************************************************************************************************
+//      PREFIXED PROPERTIJI
+// 
+// BROWSER-PREFIXED PROPERTIJIKAO STO SU:
+//                                          -moz-border-radius
+//                                          -webkit-border-radius
+// PRATE ISTA PRAVILA, NA PRIMER:
+//                                        button.style.MozBorderRadius = "8px";
+//                                        button.style.WebkitBorderRadius = "8px";
+// 
+// KAO STO VIDIM       dash (-)     SE "PRETVORILO" U       UPPERCASE
+//********************************************************************************************************** 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                       RESETOVANJE style PROPERTIJA
+// 
+// NEKAD ZELIMO DA ASSIGN-UJRMO style PROPERTI, I KASNIJE DA GA UKLONIMO
+// 
 
 
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
