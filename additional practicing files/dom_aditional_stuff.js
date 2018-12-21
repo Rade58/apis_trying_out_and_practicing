@@ -2530,13 +2530,91 @@ for(let imeKlase of document.body.classList){
 // 
 // KAO STO VIDIM       dash (-)     SE "PRETVORILO" U       UPPERCASE
 //********************************************************************************************************** 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
 //                       RESETOVANJE style PROPERTIJA
 // 
 // NEKAD ZELIMO DA ASSIGN-UJRMO style PROPERTI, I KASNIJE DA GA UKLONIMO
-// 
+// Na primer, da sakrijemo element, možemo podesiti elem.style.display = "none"
+// Zatim ćemo možda želeti da uklonimo styl.display kao da nije postavljen. Umesto da izbrišemo 
+// elem.style.display, trebamo mu dodijeliti prazan string:     elem.style.display = ""
 
+document.body.style.display = "none"; // sakrivanje (ili bolje reci 'uklanjanje')
+
+setTimeout(() => document.body.style.display = "", 1000); // nazad u normalu
+
+// Ako postavimo display da bude prazan string, pretraživač, normalno primenjuje CSS klase i njegove 
+// built-in stilove, kao da uopšte nije ni postojao      display    PROPERTI
+//**********************************************************************************************************
+//      POTPUNI REWRITE SA      style.cssText
+
+// Obično koristimo     style     Za dodjelu individualnih stilova
+//                      NE MOZEMO podesiti pun stil kao: 
+//                                                         div.style = "color: red, width: 100px"
+// jer      div.style   je objekat i samo je za čitanje
+// Da biste postavili ceo stil kao string, postoji poseban properti     
+//                                                                          style.cssText
+// 
+const neki_div_kojem_menjam_css_tekst = `
+    <div id="some_div_blah">Button</div>
+`;
+
+some_div_blah.style.cssText = `
+    color: red !important;
+    background-color: yellow;
+    width: 100px;
+    text-align: center;
+`;
+
+console.log(some_div_blah.style.cssText);
+
+// Redko ga koristimo, jer ovakav zadatak uklanja sve postojeće stilove: ne dodaje, već ih zamenjuje
+// Može ponekad izbrisati nešto što je potrebno. Ali i dalje se može uraditi za nove elemente kada 
+// znamo da nećemo izbrisati nešto važno.
+
+// ISTO SE MOZE POSTICI SETTING-OM ATRIBUTA
+
+some_div_blah.setAttribute('style', `
+    color: tomato !important;
+    background-color: olive;
+    width: 108px;
+    text-align: left;
+`);
+//**********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                          OBRATI PAZNJU NA JEDINICE
+// 
+// CSS JEDINICE SE MORAJU OBEZBEDITI U STIL VREDNOSTIMA
+// NA PRIMER 
+// NE TREBA SE      elem.style.top      PODESITI NA    '10'        
+// VEC SE TREBA                         PODESITI NA    '10px'
+
+document.body.style.margin = 20;
+console.log(document.body.style.margin); // --> '' (PRAZAN STRING, ASSIGMENT JE IGNORISAN)
+
+// SADA CU DODATI CSS JEDINICE, I RADICE
+document.body.style.margin = '20px';
+console.log(document.body.style.margin);      // --> 20px
+console.log(document.body.style.marginTop);   // --> 20px
+console.log(document.body.style.marginLeft);  // --> 20px
+document.body.style.margin = '0px';
+
+// Obratite pažnju na to kako pretraživač "unpacks" properti        style.margin
+// style.marginLeft I style.marginTop (i druge delimične margine)   TAKODJE SE:
+//                                                                              MENJAJU, KADA SE IZVRSI
+//                                                                             ASSIGNMENT, margin PROPERTIJU 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//                         COMPUTED STILOVI:      getComputedStyle
+// 
+// MODIFIKOVANJ STILA JE LAKO.      ALI KAKO CITATI STIL?
+// Na primer, želimo da znamo veličinu, margin, color elementa. Kako se to radi?
+// 
+//      NAIME,  style   PROPERTI OPERISE SAMO NA VREDNOSTI      'style'     ATRIBUTA, BEZ BILO KOJE CSS
+//                                                                                                  cascade
+
+// 
 
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
 const nekiDiv = document.createElement('div');
