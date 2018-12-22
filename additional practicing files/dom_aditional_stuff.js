@@ -2614,7 +2614,216 @@ document.body.style.margin = '0px';
 //      NAIME,  style   PROPERTI OPERISE SAMO NA VREDNOSTI      'style'     ATRIBUTA, BEZ BILO KOJE CSS
 //                                                                                                  cascade
 
+// TAKO DA, KORISCENJEM    elem.style    NE MOGU CITATI BILO STA, STO DOLAZI IZ CSS KLASA
 // 
+const neki_div_html_blah = `
+    <div id="diva_blah" class="neka_pokus">Tekst</div>
+`;
+
+const css_za_taj_div = `
+    #diva_blah {
+        color: red;
+        margin: 5px;
+    }
+
+    /* NE VEZANO KONKRETNO ZA TEMU OVOG CLANKA, ALI MORAM DODATI SLEDECE */
+    /* STILOVI ZA PSEUDO ELEMENT SE NE MOGU DEFINISATI UZ POMOC ID SELECTORA (TO MORA BITI CLASS
+                                                                                ILI TAG SELECTOR) */ 
+    /* DAKLE OVO NE MOZE */
+    #div_blah::after {
+        width: 82px;
+        height: 82px;
+        border: tomato solid 2px;
+        display: inline-block;
+    }
+
+    /* MOZE UZ POMOC CLASS SELECTORA */
+
+    div.neka_pokus::before {
+        content: 'Tekst';
+        width: 82px;
+        height: 82px;
+        border: tomato solid 2px;
+        display: inline-block;
+    }
+`;
+
+console.log(    diva_blah.style.color    );         //-->   prazan string
+console.log(    diva_blah.style.marginTop    );     //-->   prazan string
+
+// .. Ali šta ako je potrebno, recimo, da povećamo marginu za 20px?
+// Tada zelimo trenutnu vrednost na početku
+
+// POSTOJI DRUGA METODA ZA TE POTREBE I ZOVE SE:
+//                                                      window.getComputedStyle
+// SINTAKSA JE:
+//                  getComputedStyle(element[, pseudo])
+//     
+//       OVDE SE:
+//                  element         ODNOSI NA ELEMENT ZA KOJI CITAM VREDNOSTI
+//
+//                  pseudo          ODNOSI NA PSEUDO-ELEMENT, AKO JE POTREBAN; NA PRIMER, TO MOZE BITI
+//                                  PRAZAN STRING, ILI ODSUSTVO, OVOG ARGUMENTA ZNACI, DA TRAZIM COMPUTED
+//                                  STILOVE ZA SAM ELEMENT, BEZ PSEUDO-A
+// 
+console.log(  getComputedStyle(diva_blah).color  );         //-->   'rgb(255, 0, 0)'
+console.log(  getComputedStyle(diva_blah).margin  );        //-->   '5px'
+// ZA PSEUDO
+console.log(  getComputedStyle(diva_blah, '::before').borderTop  );   //-->    '2px solid rgb(255, 99, 71)'
+console.log(  getComputedStyle(diva_blah, '::before').width  );       //-->    '82px'
+//**********************************************************************************************************
+
+//     **** COMPUTED I RESOLVED VREDNOSTI ****
+// 
+// POSTOJE DVA KNCEPTA U CSS-U:
+//                               1) ** COMPUTED STYLE VALUE **, JESTE ONA VREDNOST, POSLE PRIMENE SVIH CSS 
+//                                      PRAVILA I POSLE PRIMENE CSS INHERITANCE-A, KAO REZULTAT CSS CASCDE-A
+//                                      MOZE IZGLEDATI KAO      height: 1em     ILI     font-size: 125%
+// 
+//                               2) ** RESOLVED STYLE VALUE **, JESTE ONA VREDNOST, KONACNO (FINALLY)
+//                                      PRIMENJENA NA ELEMENT;
+//                                      VREDNOSTI, KAO STO SU:       1em     I       125%     SU RELATIVNE
+//                                      BROWSER UZIMA COMPUTED VREDNOST I CINI SVE JEDINICE (UNITS)
+//                                      FIKSNIM I APSOLUTNIM
+//                                      NA PRIMER:              height: 20px    ILI     font-size: 16px
+//                                      ZA GEOMETRIJSKE PROPERTIJE RESOLVED VALUES MOGU IMATI FLOATING
+//                                      POINT, KAO STO JE, NA PRIMER:       width: 50.68px
+// 
+// NEKADA DAVNO     getComputedStyle    JE BIO KREIRAN, DA BI SE MOGLE GETT-OVATI COMPUTED VREDNOSTI, ALI SE
+// ISPOSTAVILO DA RESOLVED VREDNOSTI, JESU MNOGO VISE POGODNE, I STANDARD SE PROMENIO
+// 
+//  **** TAKO DA DANAS,     window.getComputedStyle     ,USTVARI, RETURNUJE, RESOLVED VREDNOSTI PROPERTIJA
+//                                          (POMENUTO TREBA ZAPAMTITI) ****
+//**********************************************************************************************************
+
+//      **** getComputedStyle    ZAHTEVA FULL PROPERTY NAME ****
+// 
+// Uvek treba da tražimo tačan properti koji želimo, kao što je:
+//                                                          paddingLeft  ILI   marginTop  ILI  borderTopWidth
+// u drugom slucaju ispravan rezultat nije zagarantovan
+
+// Na primer, ako postoje propertiji paddingLeft / paddingTop, šta onda treba da dobijemo za:
+//                                                                        getComputedStyle(elem).padding    ?
+// Ništa, ili možda "generisanu" vrednost od poznatih padding-A? 
+// Ovde nema standardnog pravila.
+// Postoje i druge nedoslednosti. Na primer, neki pregledači (Chrome) prikazuju 10px u dole navedenom
+// dokumentu, a neki od njih (Firefox) - ne:
+const neki_div_element_ = `
+    <div class="neki"></div>
+`;
+const css_za_neki_div_ = `
+    .neki {
+        margin: 10px;
+    }
+`;
+console.log(    getComputedStyle(document.querySelector('.neki')).margin    );      
+                        //-->       U SLUCAJU CHROME-A          '10px'
+                        //-->       U SLUCAJU FIREFOX-A         ''        (PRAZAN STRING)
+//**********************************************************************************************************
+
+//      **** STILOVI "Visited" LINKOVA SU SAKRIVENI ****
+// 
+// VISITED LINKOVI MOGU BITI BOJENI (COLORED), KORISCENJEM      :visited       CSS PSEUDO KLASE
+// Ali   getComputedStyle    ne daje pristup toj boji, jer bi u suprotnom proizvoljna stranica mogla saznati
+// da li je korisnik posjetio vezu kreirajući je na stranici i provjeravajući stilove
+
+// JavaScript-OM možda nećemo videti stilove koje je primenio :visited
+// Takođe, postoji ograničenje u CSS-u koje zabranjuje primenu stilova koji su definisani u :visited, 
+// a menjaju geometriju
+// To je garancija da ne postoji sideway ('zaobilaznica') za evil stranicu, kako bi ta stranica testirala
+// da li je posećena veza i time da se prekine privatnost
+//**********************************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//   REZIME:
+
+// Da biste upravljali klasama, postoje dva propertija DOM-a:
+
+//                  className - string vrednost, dobra za upravljanje cijelim skupom klasa.
+
+//                  classList - objekat sa metodama add/remove/ toggle/contains, dobar za pojedinacne klase
+
+// Da biste promenili stilove:
+
+//                  style PROPERTI - je objekat sa camelCase stilovima
+//                                   Čitanje i pisanje u njemu ima isto značenje kao i 
+//                                   modifikovanje pojedinačnih propertija u atributu "style"
+//                                   Da biste videli kako da primenite važne i druge retke stvari postoji 
+//                                   lista metoda u MDN-u:
+//                                     https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
+
+//                  style.cssText PROPERTI - odgovara cijelom atributu "style", cijelom stringu stilova
+
+// Da bi se pročitali RESOLVED stilove 
+// (u odnosu na sve klase, nakon primene celog CSS-a i izračunavanja konačnih vrednosti):
+
+//                  getComputedStyle(elem [, pseudo])  - return-UJE style-like OBJEKAT. (read-only)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+//   PRIMER:
+// 
+// KREIRATI FUNKCIJU        showNotification(options)       KOJA KREIRA OBAVESTENJE:
+//                                                                           <div class="notification"></div>
+//                                                                                  SA DATOM SADRZINOM
+// OBAVESTENJE BI TREBALO, AUTOMATSKI DA NESTANE, NAKON 1.5 SEKUNDI
+
+const showNotification = function({top, right, html, className}){
+    const element = document.createElement('div');
+
+    element.className = 'notification';
+
+    element.innerHTML = html;
+
+    element.style.position = 'fixed';
+    element.style.top = top + 'px';
+    element.style.right = right + 'px';
+
+    element.classList.add(className);
+
+    document.body.append(element);
+
+    let appended = true;
+    let brojac = 0;
+
+    setInterval(function(){ 
+        element.innerHTML = appended?(html + " " + (++brojac)):element.innerHTML;
+        document.body[appended?'removeChild':'append'](element);
+        appended = !appended;
+    }, 1500);
+
+}
+
+
+showNotification({
+    top: 10, 
+    right: 10,
+    html: "Hello!", 
+    className: "welcome" 
+});
+
+//  OVAJ PRIMER JA SAM URADIO MOJIM NACINOM, A NACIN IZ CLANKA JE NA SLEDECOJ STRANICI
+// http://plnkr.co/edit/B1HmsrucP9yazZXL0bTx?p=preview
+
+// U PRIMERU IZ CLANKA, DEFINISANU SU I STILOVI ZA POMENUTE KLASE
+const stilovi_za_notification_i_welcome_klase = `
+    .notification{
+        z-index: 1000;
+        padding: 5px;
+        border: 1px solid black;
+        font-size: 20px;
+        background: white;
+        text-align: center;
+    }
+
+    .welcome {
+        background: #b80000;
+        color: yellow;
+    }
+`;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
 console.log('/////////////////////////////////////////////////////////////////////////////////////////////');
 const nekiDiv = document.createElement('div');

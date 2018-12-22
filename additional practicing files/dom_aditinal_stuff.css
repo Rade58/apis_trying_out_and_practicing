@@ -23,3 +23,40 @@
 .ord[data-order-state="canceled"] {
     color: red;
 }
+/************************************************/
+
+#diva_blah {
+    color: red;
+    margin: 5px;
+    
+}
+
+
+div.neka_pokus::before {
+    content: 'Tekst';
+    width: 82px;
+    height: 82px;
+    border: tomato solid 2px;
+    display: inline-block;
+}
+
+
+/********************************************/
+.neki {
+    margin: 10px;
+}
+
+/********************************************/
+.notification{
+    z-index: 1000;
+    padding: 5px;
+    border: 1px solid black;
+    font-size: 20px;
+    background: white;
+    text-align: center;
+}
+
+.welcome {
+    background: #b80000;
+    color: yellow;
+}
