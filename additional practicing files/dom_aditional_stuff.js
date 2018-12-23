@@ -2792,13 +2792,12 @@ const showNotification = function({top, right, html, className}){
 
 }
 
-
-showNotification({
+/* showNotification({
     top: 10, 
     right: 10,
     html: "Hello!", 
     className: "welcome" 
-});
+}); */
 
 //  OVAJ PRIMER JA SAM URADIO MOJIM NACINOM, A NACIN IZ CLANKA JE NA SLEDECOJ STRANICI
 // http://plnkr.co/edit/B1HmsrucP9yazZXL0bTx?p=preview
