@@ -1,4 +1,42 @@
 .boje {
     color: #e24c60;
+    color: orange;
 }
 
+/* RAZUMEVANJE cascade-A I specificity-A */
+
+.olive {
+    color: olive;
+}
+
+.orange {
+    color: orange;
+}
+
+/* KADA SE OVAKO ZAJEDNO PISU TAG I ID SELECTOR (BEZ RAZMAKA) */
+/* TO ZNACI DA SE SELEKTUJE TAG KOJI IMA TAJ ID ILI CLASS SELECTOR */
+
+li#glavni_item {
+    color: red;
+}
+
+li.neki_item {
+    color: blue;
+}
+
+/*GENERALNI SIBLING SELECTOR*/
+/*BIRA SUSEDNE ELEMENTE (MNOZINA) KOJI SU U ISTOM NESTING NIVOU KAO I ELEMENT*/
+/* ALI BIRA SUSEDNE ELEMENTE, KOJI DOLAZE NAKON ONOG ELEMENTE, U ODNOSU NA KOJI SE
+SELEKTUJE */
+
+li.neki_item ~ li {
+    color: green;
+}
+
+/*ADJACENT (SUSEDNI) SIBLING SELEKTOR*/
+/* BIRA SAMO JEDNOG SIBLINGSA (JEDNINA), NA ISTI NACIN KAO I KOD GENERAL SIBLING 
+SELECTORA */
+
+li.neki_item + li {
+    color: yellow;
+}

@@ -9,6 +9,32 @@
         <title>CSS 3 in dept and CSS2</title>
     </head>
     <body>
+
+        <!-- PRIMER VEZAN ZA RAZUMEVANJE SELECTOR-A -->
+        <ol>
+            <li id="glavni_item">item 1</li>
+            <li>item 2</li>
+            <li>item 3
+                <ul>
+                    <li>item a</li>
+                    <li>item b</li>
+                    <li>item c</li>
+                </ul>
+            </li>
+            <li class="neki_item">item 4</li>
+            <li>item 5</li>
+            <li>item 6</li>
+            <li>item 7</li>
+        </ol>
+
+        <!-- PRIMERI VEZANI ZA RAZUMEVANJE CASCADE-A -->
+        <!-- TREBA POSMATRATI STYLESHEET I IMATI U VIDU CASCADE PRAVILO-->
+        <!-- POSTO SE U STYLSHEET-U   .orange   KLASA NALAZI NAKON
+        .olive   ZNACI DA CE OBA ELEMENTA IMATI ORANGE TEKST (PRAVILO CASCADE-A) -->
+        
+        <div class="olive orange">TEXT</div>
+        <div class="orange olive">TEXT</div>
+
         <script src="./index.js"></script>
     </body>
 </html>
