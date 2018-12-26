@@ -17,3 +17,7 @@ console.log(document.querySelector('img[sign~=bull-cow]'))
 console.log(document.querySelector('img[sign^=bull-cow]'))
 console.log(document.querySelector('img[sign$=bull-cow]'))
 console.log(document.querySelector('img[sign*=bull-cow]'))
+
+
+console.log(document.querySelector('div[custom^=nesto]'));
+
