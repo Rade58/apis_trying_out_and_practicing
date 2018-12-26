@@ -32,17 +32,18 @@ PRE NEGO STO OBRATIM PAZNJU DA KONKRETNO ATRIBUT SELEKTORE MORAM RECI SLEDECE, A
 
 NAIME, KADA NAPISEM
 
-`
+```
     .neka_klasa {
         color: tomato;
     }
-`
+```
 
 TO ZNACI DA SAM IMPLICITNO DEFINISAO I ZVEZDICU * (SELEKTOR KOJI SELEKTUJE SVE), OVAKO
 
-`
-    *.neka_klasa {
-        color: tomato
-    }
-`
+`*.neka_klasa {
+color: tomato;
+}`
 
+DA BI 'SUZIO POTRAGU', ODNOSNO SELEKCIJU, NAJBOLJE JE U SELEKTORU POSTAVITI TAG, OVAKO
+
+``
