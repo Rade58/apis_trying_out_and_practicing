@@ -292,4 +292,14 @@ OVDE TREBA IMA TI U VIDU DA EXTERNAL LINKOVI, ODNOSNO ANCHORI, KOJI IH REPREZENT
 
 KAO STO VIDIM UZ POMOC PSEUDO ELEMENTA ::after(:after) OMOGUCIO SAM DA NA PAPIRU BUDE STAMPAN LINK KAO DEO SADRZINE PSEUDO ELEMENTA
 
+2.ISTO SAM MOGAO UCINITI I ZA  abbr TAG-OVE (KOJI ZNAM DA 'KRIJU' ZNACENJE RECI (VREDNOST title ATRIBUTA), I SAMO SE POKAZUJE HOVEROM)(E PA SADA CE NA PRINTOVANOM PAPIRU BITI VIDLJIVO ZNACENJE TE RECI)
+
+```CSS
+    @media print {
+        abbr[title]:after {
+            content: "(" attr(title) ")";
+        }
+    }
+```
+
 *************************************************************************
