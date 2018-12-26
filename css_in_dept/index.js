@@ -21,3 +21,11 @@ console.log(document.querySelector('img[sign*=bull-cow]'))
 
 console.log(document.querySelector('div[custom^=nesto]'));
 
+console.log(document.querySelector('img[sign=bull-cow][alt=baklava]'));
+
+console.log(document.querySelectorAll('section[face|=miki]'));
+console.log(document.querySelectorAll('section[face|=maus]'));
+
+/* console.log(document.querySelector('section[face=miki]'));
+console.log(document.querySelector('section[face=miki]')); */
+
