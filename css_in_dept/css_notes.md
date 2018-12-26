@@ -71,3 +71,48 @@ VEC PISATI OVAKO (SA img TAG SELECTOROM):
         width: 500px;
     }
 ```
+
+### STO SE TICE ATRIBUT SELEKTORA, JA BI IH PODELIO U TRI GRUPE
+
+`1 .JEDNOSTAVNIJI (ZA MENE)`
+
+```CSS
+    img[alt] {
+        /* SELEKTUJE SVAKU SLIKU KOJA IMA alt ATRIBUT */
+    }
+```
+
+```CSS
+
+    div[name=element] {
+        /*SELEKTUJE ATRIBUT KOJI IMA TACNO TU VREDNOST (element U OVOM SLUCAJU) */
+    }
+
+    /*AKO SE VREDNOST ATRIBUTA SASTOJI OD VISE RECI,*/
+    /* OBAVEZNO VREDNOST ATRIBUTA OGRANICITI NAVODNICIMA */
+    img[alt="fotografija drveta"] {
+        width: 480px;
+    }
+```
+
+`2. ONI CIJA VREDNOST "IMA VEZE" SA SPACEOM (RAZMAKOM)` ***~***
+
+sledeci elementi:
+
+```HTML
+    <div nesto="blah ajovaska"></div>
+    <div nesto="filip sejmur"></div>
+```
+
+SELEKTUJU SE OVAKO
+
+```CSS
+    div[nesto~=blah] {  
+        /*SELEKTOVACE ELEMENT KOJI IMA POMENUTI ATRIBUT I U NJEMU SUBSTRING ODVOJEN SPACEOM*/
+
+    }
+
+    div[nesto~=sejmur] {
+        /* NEMA VEZE GDE SE SPACE NALAZI, PRE ILI POSLE SUBSTRING-A */
+    }
+```
