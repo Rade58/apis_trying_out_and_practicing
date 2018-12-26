@@ -27,13 +27,60 @@
             <li>item 7</li>
         </ol>
 
+
         <!-- PRIMERI VEZANI ZA RAZUMEVANJE CASCADE-A -->
         <!-- TREBA POSMATRATI STYLESHEET I IMATI U VIDU CASCADE PRAVILO-->
         <!-- POSTO SE U STYLSHEET-U   .orange   KLASA NALAZI NAKON
         .olive   ZNACI DA CE OBA ELEMENTA IMATI ORANGE TEKST (PRAVILO CASCADE-A) -->
-        
+
         <div class="olive orange">TEXT</div>
         <div class="orange olive">TEXT</div>
+
+
+        <!-- PRIMER ZA RAZUMEVANJE SPECIFICITY-JA -->
+        <!-- KONKRETNO POSMTRAM GENERAL SIBLING I ADJACENT SIBLING SELEKTORE -->
+        <!-- I POSMATRACU DESCENDANT I CHILD SELECTOR-E -->
+        <!-- A ELEMENT CIJE SUSEDE POSMATRAM JE ELEMENT S KLASOM .bro -->
+
+        <ul>
+            <li>item1</li>
+            <li>item2</li>
+            <li class="bro">item3</li>
+            <li>item4</li>
+            <li>item5</li>
+            <li>item6</li>
+        </ul>
+
+        <!-- ONO STO SAM UVIDEO U PRIMERIMA JESTE DA NEMA SPECIFICITIJA IZMEDJU GENERAL
+        SIBLINGS SELEKTORA I ADJACENT SIBLING SELEKTORA, VEC I TU 'IGRA ULOGU' CASCADE -->
+
+        <!-- POSMATRACU OPET DRUGU LISTU U POGLEDU SPECIFICITY-JA VEZANOG ZA
+        DESCENDANT I CHILD SELECTORE -->
+
+        <ol class="neka_lista">
+            <li>item1</li>
+            <li>item2</li>
+            <li>item3
+                <ul>
+                    <li>item A</li>
+                    <li>item B</li>
+                    <li>item C</li>
+                </ul>
+            </li>
+            <li>item4</li>
+            <li>item5</li>
+            <li>item6</li>
+        </ol>
+
+        <!-- DAKLE NE MORAM POSMATRATI SPECIFICITY, ODNOSNO NE MORAM GA IMATI U VIDU
+        KADA KORISTIM ZAJEDNO GENERAL SIBLINGS I ADJACENT SIBLING
+    
+        ILI KAD POSMATRAM ZAJEDNO DESCENDANT I CHILD SELECTOR-E
+    
+            TU OPET MOGU VIDETI, POMENUTU OSOBINU CASCADE-A
+            I MOGU VIDETI KAKO SE DESAVA OVERRIDE
+        -->
+
 
         <script src="./index.js"></script>
     </body>

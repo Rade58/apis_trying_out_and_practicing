@@ -40,3 +40,28 @@ SELECTORA */
 li.neki_item + li {
     color: yellow;
 }
+
+/* POSMATRAM SPECIFICITY ZA GENERAL SIBLING I ADJACENT */
+
+/* NAIME NEMA SPECIFICITYJA, VEC KAD POSMATRAM CASCADE, SVE IMA SMISLA */
+
+.bro + li {
+    color: olive;
+}
+
+.bro ~ li {
+    color: tomato;
+}
+
+/* ISTU STVAR POSMATRAM ZA CHILD I DESCENDANT SELECTORE */
+
+.neka_lista > li {
+    color: purple;
+}
+
+.neka_lista li {
+    color: pink;
+}
+
+/* I OPET KADA IMAM U VIDU CASCADING, I TOKOM 'PERMUTOVANJA' (MENJANJA MESTA OVIM
+SELECTORIMA) JASNO MI JE STA SE MOZE DESITI */
