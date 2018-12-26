@@ -32,21 +32,24 @@ PRE NEGO STO OBRATIM PAZNJU DA KONKRETNO ATRIBUT SELEKTORE MORAM RECI SLEDECE, A
 
 NAIME, KADA NAPISEM
 
-```.neka_klasa {
+```CSS
+    .neka_klasa {
         color: tomato;
     }
 ```
 
 TO ZNACI DA SAM IMPLICITNO DEFINISAO I ZVEZDICU * (SELEKTOR KOJI SELEKTUJE SVE), OVAKO
 
-```*.neka_klasa {
+```CSS
+    *.neka_klasa {
         color: tomato;
     }
 ```
 
 DA BI 'SUZIO POTRAGU', ODNOSNO SELEKCIJU, STO CE POPRAVITI PERFORMANSE; NAJBOLJE JE U SELEKTORU POSTAVITI TAG, OVAKO
 
-```div.neka_klasa {
+```CSS
+    div.neka_klasa {
         color: tomato;
     }
 ```
@@ -55,14 +58,16 @@ UPRAVO SVE OVO VAZI I ZA ATRIBUT SELEKTORE
 
 DAKLE, NIKAD NE RADITI OVO
 
-```[alt] {
+```CSS
+    [alt] {
         width: 500px;
     }
 ```
 
 VEC PISATI OVAKO (SA img TAG SELECTOROM):
 
-```img[alt] {
+```CSS
+    img[alt] {
         width: 500px;
     }
 ```
