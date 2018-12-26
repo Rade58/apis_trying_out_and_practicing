@@ -272,3 +272,24 @@ MOGUCE JE MATCH-OVATI I ELEMENT, UZ POMOC VISE DATIH ATRIBUTA
 
 NEMA SMISLA OVO KORISTITI, ALI IMA SMISLA OBRATITI PAZNJU JER MOZE DOCI DO NEZELJENIH SELEKCIJA, AKO OVU MOGUCNOST NE UZMEM U OBZIR
 *************************************************************************
+
+*************************************************************************
+////////////////////////////////////////////////////////////////////////
+
+NEKA KORISNA RESENJA
+
+1. OMOGUCAVANJE DA AKO NEKO ZELI DA STAMPA MOJU STRANICU, NA PAPIRU DOBIJE VIDLJIVE URL (KOJI SU SAKRIVENI OD GOLOG OKA NA STRANICI, ODNOSNO PRITISKOM NA LINK ODLAZI SE NA URL)
+
+OVDE TREBA IMA TI U VIDU DA EXTERNAL LINKOVI, ODNOSNO ANCHORI, KOJI IH REPREZENTUJU, IMAJU href ATRIBUT, KOJI POCINJE SA 'http'
+
+```CSS
+    @media print {
+        a[href^=http]:after {
+            content: " (" attr(href) ")";
+        }
+    }
+```
+
+KAO STO VIDIM UZ POMOC PSEUDO ELEMENTA ::after(:after) OMOGUCIO SAM DA NA PAPIRU BUDE STAMPAN LINK KAO DEO SADRZINE PSEUDO ELEMENTA
+
+*************************************************************************

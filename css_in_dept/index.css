@@ -65,3 +65,19 @@ li.neki_item + li {
 
 /* I OPET KADA IMAM U VIDU CASCADING, I TOKOM 'PERMUTOVANJA' (MENJANJA MESTA OVIM
 SELECTORIMA) JASNO MI JE STA SE MOZE DESITI */
+
+
+
+/* ATRIBUT SELEKTOR ZAJEDNO SA PSEUDO ELEMENTOM */
+
+a[href^=http] {
+    color: #e24c60;    
+}
+
+a[href^=http]:after {
+    font-weight: 600;
+    color: olive;
+    content: "(" attr(href) ")";
+
+}
+
