@@ -10,4 +10,10 @@ console.log('********************************************************');
 console.log(document.querySelectorAll('section[nesto^=blah]'));
 console.log(document.querySelectorAll('section[nesto$=ajovaska]'));
 
-console.log(document.querySelector('div[neki*=sand]'))
+console.log(document.querySelector('div[neki*=sand]'));
+
+console.log(document.querySelector('img[sign|=bull-cow]'))
+console.log(document.querySelector('img[sign~=bull-cow]'))
+console.log(document.querySelector('img[sign^=bull-cow]'))
+console.log(document.querySelector('img[sign$=bull-cow]'))
+console.log(document.querySelector('img[sign*=bull-cow]'))
