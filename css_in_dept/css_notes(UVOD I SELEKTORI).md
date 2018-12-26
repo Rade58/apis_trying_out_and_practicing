@@ -1,8 +1,14 @@
 # OVE BELESKE SE, U VELIKOJ MERI OSLANJAJU NA SLEDECE RESURSE: [estelle github page](https://github.com/estelle/CSS-Workshop) I [standardista](http://www.standardista.com/webstock/#slide1)
 
+## TAKODJE BELESKE CE SE OSLANJATI I NA SLEDECU KLNJIGU
+
+[KNJIGA](https://www.amazon.com/CSS-Visual-Dictionary-Greg-Sidelnikov-ebook/dp/B07DQMNHF5)
+
+## SLEDECI LINK JE LINK CSS PROPERTIJA
+
 [CSS PROPERTIJI](https://meiert.com/en/indices/css-properties/)
 
-## DOBAR CLANAK ZA RAZUMEVANJE 'CASCADE'-A I 'SPECIFICITY'-JA
+## NA SLEDECEM LINKU SE NALAZI DOBAR CLANAK ZA RAZUMEVANJE 'CASCADE'-A I 'SPECIFICITY'-JA
 
 [cascade and specificity](https://gomakethings.com/understanding-the-cascade-and-specificity-in-css/)
 
@@ -83,7 +89,7 @@ DAKLE, NIKADA NE TREBA KORISTITI EKSPLICITNI ILI IMPLICITNI GLOBALNI SELEKTOR (S
     }
 ```
 
-### STO SE TICE ATRIBUT SELEKTORA, JA BI IH PODELIO U NEKOLIKO GRUPE
+### STO SE TICE ATRIBUT SELEKTORA, JA BI IH PODELIO U NEKOLIKO GRUPA
 
 #### 1. JEDNOSTAVNIJI (ZA MENE)
 
