@@ -1,60 +1,30 @@
 <!DOCTYPE html>
 <html>
-        
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="theme-color" content="#000000">
         <title>Practicing cocntenteditable</title>
-        
         <style>
-            /* NAIME POTREBNO JE DA head SEKCIJA BUDE DISPLAYED */
-            /* ALI POSTO, PO DEFAULT-U I SVI NESTED ELEMENTI U head SEKCIJI, ZAISTA NISU DISPLAY-OVANI*/
-            /* POTREBNO JE DA DISPLAY-UJEM ONE ELEMENTE, KOJE JA ZELIM */
-            /* MEDJUTIM MENI JE POTREBAN, SAMO POSLEDNJI, U head-U NESTED <style> */
-            /* TAJ style ZELIM DA BUDE DISPLAYED NA STRANICI I DA NJEGOV SADRZAJ BUDE EDITABLE */
-            
-            /* 'OTKRIVANJE' head  ELEMENTA */
-            
-            head {
-                display: inline-block;
-            }
 
-            /* NE ZNAM DA LI JE DOBRO ALI JA VOLIM DA URADIM I SLEDECE */
-            /* NAIME, SVI ELEMENTI head SEKCIJE, ISTO TAKO NISU DISPLAYED */
-            /* ALI ONO STO JA ZELIM DA URADIM JESTE DA BUDEM SIGURA U TO */
-            /* ZATO CU SAKRITI SVE ELEMENTE JER NE ZELIM DA IMAM NEZELJENU SITUACIJU DA NESTO STO NE 
-            TREBA DA BUDE DISPLAYED, SLUCAJNO BUDE DISPLAYED */
-
-            head > * {
-                display: none;
-            }
-
-            /* SAD CU DISPLAY-OVATI ONO STO ZELIM DA BUDE DISPLAYED */
-            /* TO style ELEMENT, POSLEDNJI NESTED U head SEKCIJI */
-
-            head > style:last-of-type {
+            head, head > style {
                 display: block;
+            }
+
+            head > style:not(:last-of-type) {
+                display: none;
             }
 
         </style>
 
-        <!-- SADA MOGU DA DEFINISEM DA, POSLEDNJI NESTED <style> BUDE EDITABLE
-        TAKO STO CU MU DODATI contenteditable ATRIBUT SA VREDNOSCU true -->
 
-        <!-- OVO JE EDITABLE style ELEMENT, ODNOSNO KORINIK, 
-        DIREKTNO NA STRANICI MOZE MENJATI NJEGOVU SADRZINU, CIME CE SE
-        IN REAL TIME APLICIRATI STILOVI -->
-
-        <style contenteditable="true">      
-            
+        <style contenteditable="true">
             div {
                 color: indianred;
                 width: 200px;
                 height: 100px;
                 border: tomato solid 4px;
             }
-            
         </style>
 
     </head>
