@@ -81,3 +81,27 @@ a[href^=http]:after {
 
 }
 
+/* ZA SELEKTOTRE VEZANE ZA STANJE (UI SELEKTORI) */
+
+/* ZA FORMULARE */
+
+input[type=number] {
+    width: 158px;
+    height: 38px;
+}
+
+input[type=number]:in-range {
+    background-color: green;
+}
+
+input[type=number]:out-of-range {
+    background-color: red;
+}
+
+input[type=email]:valid {
+    outline: 4px solid olive;
+}
+
+input[type=email]:invalid {
+    outline: 2px solid tomato;
+}
