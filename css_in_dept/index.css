@@ -139,3 +139,9 @@ ul.nes_lis :first-of-type {
 
 
 
+div.neki_kontejner :first-child {
+    color: tomato;
+}
+
+
+

@@ -163,6 +163,43 @@
             
         </table>
 
+
+
+        <div class="neki_kontejner">
+                <ul>                        <!-- OVAJ ul JESTE FIRST CHILD, div ELEMENTA I ZATO CE SE -->
+                    <li>ISTOK</li>          <!-- NA NJEMU APLICIRATI POMENUTI STIL, ALI ZBOG INHERITANCE-A -->
+                    <li>ZAPAD</li>          <!-- CE SE I NJA NJEGOVIM LIST ITEMIMA, APLICIRATI ISTI STIL -->
+                    <li>SEVER</li>
+                    <li>JUG</li>
+                </ul>
+                <ul>
+                    <li>item 1</li>         <!-- OVAJ LIST ITYMEM JESTE FIRST CHILD, I NA NJEMU CE SE APLICIRATI STIL -->
+                    <li>item 2</li>
+                    <li>item 3
+                        <ul>                   <!-- OVAJ ul JESTE, UJEDNO I FIRS CHILD I LAST CHILD, AJTEMA -->
+                            <li>item a</li>    <!-- NA NJEMU APLICIRATI POMENUTI STIL, ALI ZBOG INHERITANCE-A -->
+                            <li>item b</li>    <!-- CE SE I NJA NJEGOVIM LIST ITEMIMA, APLICIRATI ISTI STIL -->
+                            <li>item c</li>
+                            <li>item d</li>
+                        </ul>
+                    </li>
+                    <li>item 4</li>
+                    <li>item 5</li>
+                    <li>item 6</li>
+                    <li>item 7
+                        <ul>                    <!-- OVAJ ul JESTE, UJEDNO I FIRS CHILD I LAST CHILD, AJTEMA -->
+                            <li>item e</li>     <!-- NA NJEMU APLICIRATI POMENUTI STIL, ALI ZBOG INHERITANCE-A -->
+                            <li>item f</li>     <!-- CE SE I NJA NJEGOVIM LIST ITEMIMA, APLICIRATI ISTI STIL -->
+                            <li>item g</li>
+                            <li>item h</li>
+                        </ul>
+                    </li>
+                    <li>item 8</li>
+                    <li>item 9</li>
+                    <li>item 10</li>
+                </ul>
+            </div>
+
         <script src="./index.js"></script>
     </body>
 </html>
