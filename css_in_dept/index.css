@@ -154,3 +154,11 @@ div.neki_kontejner :first-of-type {
 .kontejner_neki ul:first-of-type {
     background-color: yellow;
 }
+
+.kont1 :only-child {
+    background-color: olive;
+}
+
+.kont2 :only-of-type {
+    color: tomato;
+}
