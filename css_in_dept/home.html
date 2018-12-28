@@ -200,6 +200,27 @@
                 </ul>
             </div>
 
+
+            <div class="kontejner_neki">
+                    <p>Neki tekst</p>      <!-- OVAJ ELEMENT JE PRVI ELEMENT, TOG TIPA NESTED UPARENTU (NA TAJ PARAGRAF CE BITI PRIMENJEN STIL) -->
+                    <p>Neki drugi tekst</p>
+                    <ul>                   <!-- OVA UNORDERED LISTA JE LISTA, KOJA JE PRVI ELEMENT TOG TIPA U SVOM PARENTU -->
+                        <li>item 1</li>    <!-- NA NJU CE BITI APLICITRAN STIL, ALI I NA NJENE NESTED LIST ITEME, ZBOG-->
+                        <li>item 2</li>    <!-- INHERITANCE-A -->
+                        <li>item 3</li>
+                        <li>item 4</li>
+                    </ul>
+                    <p>Opet neki paragraf</p>
+                    <ul>
+                        <li>item a</li>   <!-- NA OVAJ LIST ITEM CE BITI APLICIRAN STIL, JER JE ON PRI TOG TIPA U SVOM PARENT-U -->
+                        <li>item b</li>
+                        <li>item c</li>
+                        <li>item d</li>
+                    </ul>
+                </div>
+
+
+
         <script src="./index.js"></script>
     </body>
 </html>

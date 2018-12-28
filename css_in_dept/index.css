@@ -147,5 +147,10 @@ div.neki_kontejner :first-of-type {
     color: tomato;
 }
 
+.kontejner_neki :first-of-type {
+    color: olive;
+}
 
-
+.kontejner_neki ul:first-of-type {
+    background-color: yellow;
+}
