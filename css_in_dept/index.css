@@ -52,7 +52,7 @@ li.neki_item + li {
 
 .bro ~ li {
     color: tomato;
-    
+
 }
 
 /* ISTU STVAR POSMATRAM ZA CHILD I DESCENDANT SELECTORE */
@@ -115,7 +115,7 @@ input[type=email]:invalid {
 
 /* ZA STRUCTURAL UI PSEUDO KLASE */
 
-html > :first-child {
+/* html > :first-child {
     display: block;
 }
 
@@ -127,5 +127,15 @@ body :last-of-type {
     color: slateblue;
     font-weight: bold;
     font-style: italic;
-} 
+}  */
+
+
+
+ul.nes_lis :first-of-type {
+    color: greenyellow;
+    font-weight: bolder;
+    font-style: italic;
+}
+
+
 
