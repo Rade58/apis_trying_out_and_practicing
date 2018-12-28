@@ -139,7 +139,11 @@ ul.nes_lis :first-of-type {
 
 
 
-div.neki_kontejner :first-child {
+/* div.neki_kontejner :first-child {
+    color: tomato;
+} */
+
+div.neki_kontejner :first-of-type {
     color: tomato;
 }
 
