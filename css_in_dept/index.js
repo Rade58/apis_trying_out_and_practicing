@@ -29,3 +29,4 @@ console.log(document.querySelectorAll('section[face|=maus]'));
 /* console.log(document.querySelector('section[face=miki]'));
 console.log(document.querySelector('section[face=miki]')); */
 
+console.log(    document.querySelectorAll(':first-child')    );

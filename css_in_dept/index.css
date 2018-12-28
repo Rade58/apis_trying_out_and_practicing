@@ -47,10 +47,12 @@ li.neki_item + li {
 
 .bro + li {
     color: olive;
+    font-weight: lighter;
 }
 
 .bro ~ li {
     color: tomato;
+    
 }
 
 /* ISTU STVAR POSMATRAM ZA CHILD I DESCENDANT SELECTORE */
@@ -109,3 +111,21 @@ input[type=email]:valid {
 input[type=email]:invalid {
     outline: 2px solid tomato;
 }
+
+
+/* ZA STRUCTURAL UI PSEUDO KLASE */
+
+html > :first-child {
+    display: block;
+}
+
+html > :first-child > * {
+    display: block;
+}
+
+body :last-of-type {
+    color: slateblue;
+    font-weight: bold;
+    font-style: italic;
+} 
+
