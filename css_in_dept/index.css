@@ -162,3 +162,16 @@ div.neki_kontejner :first-of-type {
 .kont2 :only-of-type {
     color: tomato;
 }
+
+
+
+.kont4 :last-child {
+    color: orange;
+}
+
+.kont8 :last-of-type {
+    background-color: purple;
+}
+
+
+
