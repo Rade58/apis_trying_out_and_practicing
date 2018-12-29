@@ -173,5 +173,15 @@ div.neki_kontejner :first-of-type {
     background-color: purple;
 }
 
+.unr_lista :nth-child(8) {
+    background-color: tomato;
+}
 
+ul.unr_lista :nth-child(2n) {
+    font-style: italic;
+}
+
+ul.unr_lista :nth-child(2n + 1) {
+    font-weight: bold;
+}
 
