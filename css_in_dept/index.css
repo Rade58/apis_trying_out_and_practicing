@@ -185,3 +185,17 @@ ul.unr_lista :nth-child(2n + 1) {
     font-weight: bold;
 }
 
+
+
+div.kont_za_el :nth-of-type(4n + 1) {
+    background-color: tomato;
+}
+
+div.kont_za_el p:nth-of-type(4n + 1) {
+    color: olive;
+}
+
+div.kont_za_el div:nth-last-child(2n + 2) {
+    font-weight: bold;
+    font-size: 4em;
+}
