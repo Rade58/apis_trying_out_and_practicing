@@ -38,4 +38,4 @@ console.log(document.querySelector('.kont_blah_blah li:nth-child(2):nth-last-chi
 console.log(document.querySelector('.kont_blah_blah ul:nth-child(2)').clientWidth);
 console.log(document.querySelector('.kont_blah_blah li:nth-child(1):nth-last-child(2)').clientWidth + document.querySelector('.kont_blah_blah li:nth-child(2):nth-last-child(1)').clientWidth);
 
-
+console.log(document.querySelector(':root'));

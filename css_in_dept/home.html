@@ -326,24 +326,22 @@
 
         <style>
 
-            body {
-                margin: 0px;
-            }
-
-            .kont_blah_blah ul {
-                border: olive solid 2px;
-                list-style-type: none;
-                padding: 0px;
-                box-sizing: border-box;
-                font-size: 0;
-            }
-
             .kont_blah_blah li {
                 display: inline-block;
-                border: tomato solid 1px;
+                border: tomato solid 2px;
+                box-sizing: border-box;     /* OVO SAM DEFINISAO AKO BORDER ZASMETA PRI
+                                            ZADAVANJU PROCENTNIH (RELATIVNIH) SIRINA*/
+            }
+            .kont_blah_blah ul {
+                font-size: 0px;
+
+                border: olive solid 1px;
+                padding: 0;
                 text-align: center;
+            }
+            .kont_blah_blah li {
                 font-size: 2rem;
-                box-sizing: border-box;
+                
             }
         
         </style>
