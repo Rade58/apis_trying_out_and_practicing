@@ -1,6 +1,7 @@
 .boje {
     color: #e24c60;
     color: orange;
+    text-decoration: underline;
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
@@ -198,4 +199,19 @@ div.kont_za_el p:nth-of-type(4n + 1) {
 div.kont_za_el div:nth-last-child(2n + 2) {
     font-weight: bold;
     font-size: 4em;
+}
+
+div.kont_za_el div:nth-last-of-type(2n + 2) {
+    text-decoration: underline;
+}
+
+/* DEMONSTRACIJA STRUKTURALNIH PSEUDO KLASA */
+
+.kont_blah_blah li:nth-child(1):nth-last-child(1) {
+    width: 100%;
+}
+
+.kont_blah_blah li:nth-child(1):nth-last-child(2),
+.kont_blah_blah li:nth-last-child(1):nth-child(2) {
+    width: 50%;
 }
