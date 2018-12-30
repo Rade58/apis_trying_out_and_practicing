@@ -215,3 +215,9 @@ div.kont_za_el div:nth-last-of-type(2n + 2) {
 .kont_blah_blah li:nth-last-child(1):nth-child(2) {
     width: 50%;
 }
+
+.kont_blah_blah li:nth-child(1):nth-last-child(3),
+.kont_blah_blah li:nth-last-child(1):nth-child(3),
+.kont_blah_blah li:nth-child(2):nth-last-child(2) {
+    width: 33.3%;
+}
