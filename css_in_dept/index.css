@@ -235,15 +235,37 @@ table.neka_tabela {
 }
 
 table.neka_tabela td {
-    font-size: 2rem;
-    padding: 0.4em;
+    /* font-size: 2rem; */
+    /* padding: 0.4em; */
 }
 
-table.neka_tabela tr:nth-of-type(odd) td:nth-of-type(even),
+/* table.neka_tabela tr:nth-of-type(odd) td:nth-of-type(even),
 table.neka_tabela tr:nth-of-type(even) td:nth-of-type(odd) {
+    background-color: tomato;
+    color: #fff;
+} */
+
+table.neka_tabela tr:nth-of-type(3n) td:nth-of-type(3n)
+, table.neka_tabela tr:nth-of-type(3n + 1) td:nth-of-type(3n + 1)
+, table.neka_tabela tr:nth-of-type(3n + 2) td:nth-of-type(3n + 2)
+{ 
     background-color: tomato;
     color: #fff;
 }
 
+table.us_flag {
+    /* border: tomato solid 1px; */
+    width: 100%;
+}
+
+table.us_flag > tr > td {
+    border: olive solid 1px;
+    text-align: center;
+    height: 5vw;
+}
+
+table.us_flag table td {
+    border: tomato solid 1px;
+}
 
 
