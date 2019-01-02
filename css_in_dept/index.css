@@ -258,7 +258,7 @@ table.neka_tabela tr:nth-of-type(3n) td:nth-of-type(3n)
 table.us_flag > tr:first-child > td:first-child table {
     width: 100%;
     height: 100%;
-    table-layout: fixed;
+    /* table-layout: fixed; */
     color: #ffffff;
     border: 6px solid #3C3B6E;
 }
@@ -277,8 +277,8 @@ table.us_flag > tr:first-child > td:first-child td {
     border: #e60939 solid 0px;
     text-align: center;
     padding: 0px;
-    word-wrap: break-word;
-    font-size: 1.1rem;
+    /* word-wrap: break-word; */
+    font-size: 1.2rem;
 }
 
 /* SVAKI TABLE DATA KOJI (IZUZEV ONIH NESTED TABELE) */
@@ -297,7 +297,6 @@ table.us_flag {
 
 /* table.us_flag > tr:nth-of-type(8) {
     background-color: #e24c60;
-
 } */
 
 /* STAVLJANJE CRVENIH PRUGA NA SVAKI NEPARNI TABLE ROW TABELE */
@@ -310,4 +309,52 @@ table.us_flag > tr:nth-child(2n) {
     background-color: #ffffff;
 }
 
+/* PRVO STO CU DEFINISATI JESTE DA BACKGROUND COLOR I FONT IMAJU #FFF BOJU */
+#flag td {
+    background-color: #fff;
+    color: #fff;
+}
+
+/* DODAVANJE CRVENOG DELA (N NACIN DA SE IZBEGNE STILIZOVANJA PROSTORA SA ZVEZDICAMA) (PLAVOG DELA) */
+/* U SVAKOM NEPARNOM TABELE ROW-U, TREBAM DA PRONADJEM OSMI TABLE DATA, I TREBAM SVAKI ADJACENT SIBLING
+(TOG, SVAKOG OSMOG TD-A) DA STILIZUJEM NA SLEDDECI NACIN */
+/* NARAVNO, POCEV OD, PETOG NEPARNOG REDA (ODNOSNO UKUPNOG DEVETOG REDA) (UKLJUCUJUCI I NJEGA); SVI TI REDOVI TREBAJU DA IMAJU
+APLICIRAN, POMENUTI CRVENI BACKGROUND COLOR */
+#flag tr:nth-of-type(odd) td:nth-of-type(8) ~ td,
+#flag tr:nth-of-type(2n + 9) td {      /* OVAJ DRUGI SELEKTOR JE JAKO BITAN (SAGLEDATI GA I IMATI GA UVIDU) (JER ODLICNO KORISTI OSOBINE STRUCTURAL PSEUDO CLASS-A) */
+    background-color: #900;
+    color: #900;
+}
+
+/* ISTA STVAR JE I SA VAZNOSCU SLEDECEG SELEKTORA */
+/* ON CE, OD KRAJA IZABRATI n + 7 TABLE ROW (STO ZNACI DA BIRA ONAJ RED U KOJEM OD KRAJA POCINJE SEKCIJA SA
+ ZVEZDICAMA) (DAKLE OD TOG SEDMOG BIRA SVE DALJE REDOVE KA POCETKU), U SVAKOM OD TIH REDOVA TREBA
+ IZABRATICSVAKI TABLE DATA, ALI KAD SE GLEDA SA SUPROTNE STRANE, BIRAM SVE TABLE DATA POCEV OD DEVETOG, KA
+ PRVOM */   /*TREBA DODATI DA SVIM TIM IZABRANIM TABLE DATA-OVIMA, DAJEM PLAVU POZADINU, ISTO RADIM I SA
+ TEKSTOM, A VELICINU FONTA PODESAVAM NA NULU (OVO POSLEDNJE RADIM JER VELICINA FONTA NECE BITI BITN, JER CU
+ KASNIJE, PODESITI DA ZVEZDICE BUDU SADRZINE PSEUDO ELEMENATA) */
+ #flag tr:nth-last-of-type(n + 7) td:nth-last-of-type(n + 9) {
+    color: #009;
+    background-color: #009;
+    font-size: 0;
+}
+
+/* SADA CU SVAKOM OD TABLE DATE-OVA (KOJE SAM GORE STILIZOVAO) DODATI I :after PSEUDO ELEMENT (NJEGOV
+content CE BITI ZVEZDICA (KADA SE UNICODE DODAJE U CSS, ONDA SE PISE U SLEDECEM FORMATU ) */
+#flag tr:nth-last-of-type(n + 7) td:nth-last-of-type(n + 9)::after {
+    content: '\2605';
+    font-size: 15px;
+    color:white;
+}
+
+#flag tr:nth-last-of-type(2n +7) td::after { /* SVAKA PARNA ZVEZDICA TREBA DA BUDE POMERENA U DESNO NEKOLIKO PIKSELA */
+    position: relative;
+    left: 15px;
+}
+
+/* FONT ZA SVAKI TABLE DATA */
+#flag td {
+    font-family:Verdana, Geneva, sans-serif;
+    padding:3px 5px;
+}
 

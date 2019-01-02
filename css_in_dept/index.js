@@ -117,6 +117,9 @@ firstCell.append(document.createElement('table'));
 
 const nestedTable = firstCell.querySelector('table');
 
+nestedTable.cellPadding = 0;
+nestedTable.cellSpacing = 0;
+
 for(let i = 0; i < 9; i++){
     let tempRow = usRow.cloneNode();
 
@@ -140,4 +143,33 @@ nestedTable.querySelectorAll('tr:nth-of-type(2n) > td:nth-of-type(2n)').forEach(
     tData.appendChild(star.cloneNode());          // UMECEM ZVEZDICU U SVAKI PARNI RED, U SVAKU PARNU CELIJU
 
 });
+
+document.body.append(document.createElement('br'));
+
+const flagTabela = document.createElement('table');
+flagTabela.id = 'flag';
+
+for(let i = 0; i < 13; i++){
+
+    let tRow = document.createElement('tr');
+
+    for(let j = 0; j < 16; j++){
+        
+        let tData = document.createElement('td');
+        tData.textContent = 'cell';
+        tRow.appendChild(tData);
+    
+    }
+
+    flagTabela.appendChild(tRow);
+}
+
+// TABELA CE IMATI SLEDECE ATRIBUTE
+
+flagTabela.border = 0;          // NEMA GRANICE
+flagTabela.cellPadding = 0;     // NEMA PADDING-A
+flagTabela.cellSpacing = 0;     // NEMA PROSTORA MEDJU CELIJAMA
+
+document.body.append(flagTabela);
+
 
