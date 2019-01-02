@@ -127,11 +127,6 @@ for(let i = 0; i < 9; i++){
     nestedTable.append(tempRow);
 }
 
-firstCell.style.width = `${100/(30/12)}%`;  // DA IZRACUNAM KOLIKO PROCENATA TREBA DA ZAUZIMA
-// firstCell.style.height = `${100/(13/7)}%`;  
-
-nestedTable.width = '100%';
-nestedTable.height = '100%';
 // SADA MOGU DA SE POSVETIM, UMETANJEM ZVEZDICA
 
 nestedTable.querySelectorAll('tr:nth-of-type(2n + 1) > td:nth-of-type(2n + 1)').forEach(tData => {

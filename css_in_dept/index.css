@@ -253,19 +253,61 @@ table.neka_tabela tr:nth-of-type(3n) td:nth-of-type(3n)
     color: #fff;
 }
 
-table.us_flag {
-    /* border: tomato solid 1px; */
+
+/* NESTED TABELA */
+table.us_flag > tr:first-child > td:first-child table {
     width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    color: #ffffff;
+    border: 6px solid #3C3B6E;
 }
 
-table.us_flag > tr > td {
-    border: olive solid 1px;
+table.us_flag > tr:first-child > td:first-child table > tr {
+    min-height: 26.44px;
+}
+
+/* TABLE DATA U KOJEM JE TABELA SA ZVEZDICAMA */
+table.us_flag > tr:first-child > td:first-child {
+    background-color: #3C3B6E;
+}
+/* SVAKI TABLE DATA NESTED TABELE */
+table.us_flag > tr:first-child > td:first-child td {
+    /* box-sizing: border-box; */
+    border: #e60939 solid 0px;
     text-align: center;
-    height: 5vw;
+    padding: 0px;
+    word-wrap: break-word;
+    font-size: 1.1rem;
 }
 
-table.us_flag table td {
-    border: tomato solid 1px;
+/* SVAKI TABLE DATA KOJI (IZUZEV ONIH NESTED TABELE) */
+table.us_flag > tr > td {
+    /* box-sizing: border-box; */
+    border: olivedrab solid 0px;
+    height: 34px;
+}
+
+table.us_flag {
+    border: yellow solid 0px;
+    width: 960px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* table.us_flag > tr:nth-of-type(8) {
+    background-color: #e24c60;
+
+} */
+
+/* STAVLJANJE CRVENIH PRUGA NA SVAKI NEPARNI TABLE ROW TABELE */
+
+table.us_flag > tr:nth-child(2n + 1) {
+    background-color: #B22234;
+}
+
+table.us_flag > tr:nth-child(2n) {
+    background-color: #ffffff;
 }
 
 
