@@ -173,3 +173,7 @@ flagTabela.cellSpacing = 0;     // NEMA PROSTORA MEDJU CELIJAMA
 document.body.prepend(flagTabela);
 
 
+console.log(    document.querySelectorAll('div.blah_div div:empty')    );  //-->  NodeList      od dva prazna div-a
+console.log(    document.querySelectorAll('div.blah_div p:empty')    );  //-->    NodeList     od jednog praznog paragrafa  
+
+
