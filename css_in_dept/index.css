@@ -234,11 +234,11 @@ table.neka_tabela {
     width: 100%;
 }
 
-table.neka_tabela td {
-    /* font-size: 2rem; */
-    /* padding: 0.4em; */
+/* table.neka_tabela td {
+    font-size: 2rem;
+    padding: 0.4em;
 }
-
+ */
 /* table.neka_tabela tr:nth-of-type(odd) td:nth-of-type(even),
 table.neka_tabela tr:nth-of-type(even) td:nth-of-type(odd) {
     background-color: tomato;
@@ -368,3 +368,24 @@ content CE BITI ZVEZDICA (KADA SE UNICODE DODAJE U CSS, ONDA SE PISE U SLEDECEM 
 section div:not(:nth-of-type(4)){
     outline: rgb(204, 23, 50) solid 4px;
 }
+
+
+/* SPECIFICITY */
+
+#blah.vrmVrm {                  /*NJEGOV SPECIFICITY JE       1-1-0      */
+    background-color: tomato;   /* I ZATO JE OVAJ STIL APLICIRAN, A NE, OVAJ DONJI */
+}
+
+#blah {                         /*NJEGOV SPECIFICITY JE       1-0-0      */
+    background-color: olive;
+}
+
+.nekiBlah div:nth-last-of-type(10n + 3) {       /*   0-2-1    */
+    background-color: olive;
+}
+
+div.nekiBlah > :nth-of-type(4n + 3) {           /*   0-2-1    */
+    background-color: tomato;
+}
+
+
