@@ -403,6 +403,50 @@
 
         <br>
 
+        <div id="divkont">
+            <div>1</div>
+            <div>2</div>
+            <div class="excludeMe">3</div>
+            <div>4</div>
+            <div class="excludeMe">5</div>
+            <div>6</div>
+        </div>
+
+        <br>
+
+        <style>
+
+            section div:not([title]) {
+                background-color: pink;
+            }
+        
+        </style>
+
+        <section>
+            <div>1</div>
+            <div title="blah">2</div>
+            <div>3</div>
+            <div>4</div>
+            <div title="blah blah">5</div>
+        </section>
+
+        <style>
+                div.neki_blah div:not(:nth-of-type(2n + 1)){
+                    background-color: tomato;
+                }
+            </style>
+            
+            <div class="neki_blah">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+                <div>7</div>
+                <div>8</div>
+            </div>
+
         <script src="./index.js"></script>
     </body>
 </html>

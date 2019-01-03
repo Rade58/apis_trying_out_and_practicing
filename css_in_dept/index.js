@@ -59,10 +59,10 @@ for(let i = 0; i < 22; i++){
     tableEl.appendChild(rowClone);
 }
 
-document.body.append(tableEl);
+document.body.prepend(tableEl);
 
 
-document.body.append(document.createElement('br'));
+document.body.prepend(document.createElement('br'));
 
 
 const usTable = document.createElement('table');
@@ -101,7 +101,7 @@ for(let i = 0; i < 13; i++){
     usTable.appendChild(rowClone);
 }
 
-document.body.appendChild(usTable);
+document.body.prepend(usTable);
 
 // PRISTUPAM PRVOJ CELIJI DA BIH JE PROSIRIO
 let firstCell =  document.querySelector('table.us_flag tr:first-child td:first-child');
@@ -144,7 +144,7 @@ nestedTable.querySelectorAll('tr:nth-of-type(2n) > td:nth-of-type(2n)').forEach(
 
 });
 
-document.body.append(document.createElement('br'));
+document.body.prepend(document.createElement('br'));
 
 const flagTabela = document.createElement('table');
 flagTabela.id = 'flag';
@@ -170,6 +170,6 @@ flagTabela.border = 0;          // NEMA GRANICE
 flagTabela.cellPadding = 0;     // NEMA PADDING-A
 flagTabela.cellSpacing = 0;     // NEMA PROSTORA MEDJU CELIJAMA
 
-document.body.append(flagTabela);
+document.body.prepend(flagTabela);
 
 
