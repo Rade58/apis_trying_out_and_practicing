@@ -388,4 +388,11 @@ div.nekiBlah > :nth-of-type(4n + 3) {           /*   0-2-1    */
     background-color: tomato;
 }
 
+/*/////////*/
 
+#oblikac {
+    width: 200px;
+    height: 180px;
+    border: tomato solid 1px;
+    overflow: auto;
+}

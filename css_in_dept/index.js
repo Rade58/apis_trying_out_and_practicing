@@ -176,4 +176,22 @@ document.body.prepend(flagTabela);
 console.log(    document.querySelectorAll('div.blah_div div:empty')    );  //-->  NodeList      od dva prazna div-a
 console.log(    document.querySelectorAll('div.blah_div p:empty')    );  //-->    NodeList     od jednog praznog paragrafa  
 
+// NEKA PROVERA
+/* window.oblikac.onscroll = function(ev){
 
+    console.log(ev.cancelable);
+
+    console.log(this.scrollTop);
+    console.log(this.scrollHeight);
+} */
+
+window.oblikac.onwheel = function(ev){
+
+    console.log(ev.cancelable);
+
+    console.log(this.scrollTop);
+    console.log(this.scrollHeight);
+
+    ev.preventDefault();
+}
+////////////////////////////////////////////////
