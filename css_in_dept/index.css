@@ -431,3 +431,22 @@ input.inpEl:invalid {
     border: tomato solid 2px;
 }
 
+/*//////////////////////////////*/
+
+/* KREIRANJE COUNTERA ODNOSNO, NJEGOVO RESETOVANJE */
+body {
+    counter-reset: brojInvalida;
+}
+
+/* INKREMENTIRANJE COUNTER-A, KADA ELEMENT POSTANE NEVALIDAN*/
+ul.blahKlasa :invalid {
+    background-color: tomato;
+    counter-increment: brojInvalida;
+}
+
+/* KORISCENJE PSEUDO ELEMENTA, PARAGRAFA, KAKO BI PRIKAZAO KOLIKO IMA INVALID INPUT ELEMENATA */
+
+ul.blahKlasa + p:before {
+    content: 'Imas ' counter(brojInvalida) ' nevalidnih unosa';
+}
+
