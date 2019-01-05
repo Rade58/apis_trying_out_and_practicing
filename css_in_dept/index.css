@@ -450,3 +450,14 @@ ul.blahKlasa + p:before {
     content: 'Imas ' counter(brojInvalida) ' nevalidnih unosa';
 }
 
+/*//////////////////////////////////////////*/
+
+.nekaBlahKlasa:placeholder-shown {
+    outline: tomato solid 4px;
+}
+
+
+input.numKlasa:user-invalid {
+    border: tomato solid 4px;
+    color: tomato;
+}
