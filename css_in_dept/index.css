@@ -88,7 +88,7 @@ a[href^=http]:after {
 
 /* ZA FORMULARE */
 
-input[type=number] {
+/* input[type=number] {
     width: 158px;
     height: 38px;
 }
@@ -111,7 +111,7 @@ input[type=email]:valid {
 
 input[type=email]:invalid {
     outline: 2px solid tomato;
-}
+} */
 
 
 /* ZA STRUCTURAL UI PSEUDO KLASE */
@@ -396,3 +396,38 @@ div.nekiBlah > :nth-of-type(4n + 3) {           /*   0-2-1    */
     border: tomato solid 1px;
     overflow: auto;
 }
+
+input#kibput:read-write {
+    border: tomato solid 4px;
+}
+
+
+select#kabung :default {
+    background: tomato;
+}
+
+/*****************************/
+
+
+input.inpEl {
+    font-weight: bolder;
+    font-size: 2rem;
+}
+
+
+input.inpEl:in-range {
+    color: olive;
+}
+
+input.inpEl:out-of-range {
+    color: tomato;
+}
+
+input.inpEl:valid {
+    border: olive solid 2px;
+}
+
+input.inpEl:invalid {
+    border: tomato solid 2px;
+}
+
