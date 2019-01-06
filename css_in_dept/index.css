@@ -467,3 +467,18 @@ input.numKlasa:user-invalid {
 div.prazniEl > :-moz-only-whitespace {
     border: tomato solid 8px;
 }
+
+
+/*/////////////////////////////////////////*/
+
+/* nav h1, section h1, article h1, aside h1 {
+    color: #BADA55;
+} */
+
+:-moz-any(nav, section, article, aside, [title]) h1 {
+    color: #BADA55;
+}
+
+:matches(nav, section, article, aside, [title]) {
+    color: #BADA55;
+}
