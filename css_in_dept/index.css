@@ -461,3 +461,9 @@ input.numKlasa:user-invalid {
     border: tomato solid 4px;
     color: tomato;
 }
+
+/*//////////////////////////////////////////*/
+
+div.prazniEl > :-moz-only-whitespace {
+    border: tomato solid 8px;
+}
