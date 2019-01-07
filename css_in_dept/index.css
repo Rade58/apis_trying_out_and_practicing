@@ -479,6 +479,31 @@ div.prazniEl > :-moz-only-whitespace {
     color: #BADA55;
 }
 
+:-webkit-any(nav, section, article, aside, [title]) h1 {
+    color: #BADA55;
+}
+
 :matches(nav, section, article, aside, [title]) {
     color: #BADA55;
 }
+
+
+:matches(div.tekst_kont, section.tekst_sek) p {
+    background-color: #e24c60;
+}
+
+/* :is(div.tekst_kont, section.tekst_sek) p {
+    background-color: #e24c60;
+}
+
+:any(div.tekst_kont, section.tekst_sek) p {
+    background-color: #e24c60;
+} */
+
+:-webkit-any(.tekst_kont, .tekst_sek) p {
+    background-color: #e24c60;
+} 
+
+/* :-moz-any(div.tekst_kont, section.tekst_sek) p {
+    background-color: #e24c60;
+} */
