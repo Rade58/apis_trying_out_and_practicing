@@ -195,3 +195,11 @@ window.oblikac.onwheel = function(ev){
     ev.preventDefault();
 }
 ////////////////////////////////////////////////
+
+/* let paragrafi =  document.querySelectorAll(`:-moz-any(div.tekst_kont, section.tekst_sek) p`) ||
+document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); */
+
+// console.log(paragrafi);
+
+
+console.log(document.querySelectorAll(':-webkit-any(article, aside) :-webkit-any(article, aside)'))
