@@ -202,4 +202,4 @@ document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); 
 // console.log(paragrafi);
 
 
-console.log(document.querySelectorAll(':-webkit-any(article, aside) :-webkit-any(article, aside)'))
+// console.log(document.querySelectorAll(':-webkit-any(article, aside) :-webkit-any(article, aside)'))
