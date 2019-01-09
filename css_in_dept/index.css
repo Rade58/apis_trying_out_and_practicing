@@ -507,3 +507,14 @@ div.prazniEl > :-moz-only-whitespace {
 /* :-moz-any(div.tekst_kont, section.tekst_sek) p {
     background-color: #e24c60;
 } */
+
+
+
+
+p:dir(rtl){
+    background-color: tomato;
+}
+
+p:not(:dir(ltr)) {
+    color: olive;
+}

@@ -203,3 +203,11 @@ document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); 
 
 
 // console.log(document.querySelectorAll(':-webkit-any(article, aside) :-webkit-any(article, aside)'))
+
+
+// console.log(document.querySelector('html:lang(fr)'));
+// console.log(document.querySelector('p:lang(*-CS)'));
+
+
+
+
