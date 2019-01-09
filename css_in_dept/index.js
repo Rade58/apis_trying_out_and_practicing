@@ -209,5 +209,7 @@ document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); 
 // console.log(document.querySelector('p:lang(*-CS)'));
 
 
-
+console.log(document.querySelectorAll(':link'));
+console.log(document.querySelectorAll(':any-link'));
+console.log(document.querySelectorAll(':visited'));
 
