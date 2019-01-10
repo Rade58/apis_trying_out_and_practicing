@@ -509,7 +509,7 @@ div.prazniEl > :-moz-only-whitespace {
 } */
 
 
-
+/*//////////////////////////////////////*/
 
 p:dir(rtl){
     background-color: tomato;
@@ -518,3 +518,30 @@ p:dir(rtl){
 p:not(:dir(ltr)) {
     color: olive;
 }
+
+/*///////////////////////////////////////*/
+
+/* body > div:nth-last-child(11):focus {
+    color:#053634;
+}
+
+body > div:nth-last-child(11):active {
+    background-color: #e24c60;
+} */
+
+/* body > div:nth-last-child(11):-moz-any(:focus, :active) {
+    outline: #e4a411 4px solid;
+}  */
+
+/* body > p:nth-last-of-type(5):focus {
+    outline: #BADA55 solid 2px;
+} */
+
+
+
+
+
+
+
+
+

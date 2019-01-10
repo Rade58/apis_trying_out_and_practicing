@@ -212,4 +212,55 @@ document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); 
 console.log(document.querySelectorAll(':link'));
 console.log(document.querySelectorAll(':any-link'));
 console.log(document.querySelectorAll(':visited'));
+document.querySelector('body > div:nth-last-child(11)').tabIndex = 0;
+
+console.log(document.querySelector('body > div:nth-last-child(11)'));
+
+document.querySelector('body > div:nth-last-of-type(2)').tabIndex = 0;
+
+
+
+document.querySelector('body > div:nth-last-of-type(2)').addEventListener('mousedown', ev => {
+    // ev.currentTarget.nextElementSibling.focus({preventScroll: false});
+    // ev.currentTarget.blur();
+    // ev.preventDefault()
+    console.log(ev.currentTarget);
+    console.log(ev.currentTarget.nextElementSibling);
+  
+
+    /* window.scrollBy(200, -200);
+    window.scrollTo(20,400); */
+});
+
+
+console.log(document.querySelector('body > p:nth-last-of-type(5)'));
+
+const focusEvent = new KeyboardEvent('art-focus');
+
+focusEvent.code = "Tab";
+
+document.querySelector('body > p:nth-last-of-type(5)').addEventListener('mousedown', function(ev){
+    console.log(ev);
+
+    ev.currentTarget.addEventListener('art-focus', function(){
+        console.log('fokusirano');
+        console.log(ev.code);
+        console.log(ev.key);
+    });
+
+    ev.currentTarget.dispatchEvent(focusEvent);
+
+    ev.currentTarget.focus();
+
+});
+
+document.querySelector('body > p:nth-last-of-type(5)').addEventListener('focus', ev => {
+    console.log(ev);
+
+    console.log(ev instanceof FocusEvent, ev instanceof Event)
+});
+
+
+
+
 
