@@ -539,7 +539,20 @@ body > div:nth-last-child(11):active {
 
 
 
+/* body > p:nth-last-of-type(3):-webkit-any(:focus, :active) {
+    outline: 4px solid #43eb19;
+} */
 
+body > p:nth-last-of-type(3):-webkit-any(:focus, :active)
+{
+    outline: 4px solid #43eb19;
+}
+
+
+body > p:nth-last-of-type(3):-moz-any(:focus, :active)
+ {
+    outline: 4px solid #43eb19;
+}
 
 
 
