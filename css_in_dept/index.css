@@ -555,6 +555,14 @@ body > p:nth-last-of-type(3):-moz-any(:focus, :active)
 }
 
 
+div.paraf_kont p:focus, 
+div.paraf_kont p:active {
+    outline: #e24c60 solid 4px;
+}
 
+div.paraf_kont p:active {
+    color: #c50c78;
+    font-weight: bolder;
+}
 
 
