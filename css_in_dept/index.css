@@ -1,6 +1,10 @@
 .boje {
     color: #e24c60;
     color: orange;
+    color: #25a88c;
+    color: #6d668d;
+    color: #c80942;
+    outline-style: ridge;
     text-decoration: underline;
 }
 
@@ -565,4 +569,27 @@ div.paraf_kont p:active {
     font-weight: bolder;
 }
 
+/* ////////////////////////////////////// */
+
+div.some_kont * {
+    margin: 18px;
+}
+
+
+/* KADA SE PARAGRAF FOKUSIRA, ZELIM DA div DOBIJE, ODGOVARAJUCI outline */
+div.some_kont:focus-within {
+    outline: #e24c60 dotted 4px;
+}
+
+/* KADA SE PARAGRAF FOKUSIRA, ZELIM DA section DOBIJE, ODGOVARAJUCI color TEKSTA */
+div.some_kont > section:focus-within {
+    outline: #25a88c ridge 4px;
+}
+
+/* A UZ POMOC POMENUTE PSEUDO KLASE, MOGU DEFINISATI, KAKAV CE STIL BITI (KADA SE FOKUSIRA), ONOG ELEMENTA, KOJI JE FOCUSABLE, A U OVOM SLUCAJU TO JE PARAGRAF (KOJI IMA tabindex ATRIBUT) */
+
+div.some_kont p:focus-within {
+    background: #6d668d;
+    color: #c80942;
+}
 

@@ -212,7 +212,7 @@ document.querySelectorAll(`:-webkit-any(div.tekst_kont, section.tekst_sek) p`); 
 console.log(document.querySelectorAll(':link'));
 console.log(document.querySelectorAll(':any-link'));
 console.log(document.querySelectorAll(':visited'));
-document.querySelector('body > div:nth-last-child(11)').tabIndex = 0;
+// document.querySelector('body > div:nth-last-child(11)').tabIndex = 0;
 
 console.log(document.querySelector('body > div:nth-last-child(11)'));
 
