@@ -675,3 +675,65 @@ html, body {
     border: olive solid 10px;
 }
 
+/*//////////////////////*/
+
+div.ankoreri > a:visited {
+    background-color: blue;
+}
+div.ankoreri > a:link {
+    background-color: purple;
+}
+
+/*//////////////////////*/
+
+
+div.jezici {
+    width: 50vw;
+    margin: 10px auto;
+}
+
+div.jezici div.navigacija {
+    border: tomato solid 1px;
+    text-align: center;
+    border-bottom: 0px;
+}
+
+div.jezici div.navigacija button {
+    margin-right: 2vw;
+    margin-left: 2vw;
+    height: 5vw;
+    width: 10vw;
+    border: 2px solid #6d668d;
+    background-color: darkslategray;
+    font-size: 1.2rem;
+    border-bottom: 0px;
+    color: honeydew;
+    padding-top: 0px;
+    cursor: pointer;
+}
+
+div.jezici div.sadrzina {
+    border: tomato solid 1px;
+    height: 10vh;
+    padding: 4%;
+    border-top: 0px;
+    background-color: #e24c60;
+    margin-top: -10px;
+    overflow: hidden;
+    position: relative;
+}
+
+div.jezici div.sadrzina div {
+    overflow: auto;
+    height: 100%;
+    position: absolute;
+    z-index: -2;
+}
+
+div.jezici div.sadrzina div:target {
+    z-index: 1;
+}
+
+
+
+/* div.jezici div.navigacija  */
