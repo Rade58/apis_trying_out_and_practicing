@@ -577,30 +577,31 @@ div.some_kont * {
 
 
 /* KADA SE PARAGRAF FOKUSIRA, ZELIM DA div DOBIJE, ODGOVARAJUCI outline */
-div.some_kont:focus-within {
+/* div.some_kont:focus-within {
     outline: #e24c60 dotted 4px;
-}
+} */
 
 /* KADA SE PARAGRAF FOKUSIRA, ZELIM DA section DOBIJE, ODGOVARAJUCI color TEKSTA */
-div.some_kont > section:focus-within {
+/* div.some_kont > section:focus-within {
     outline: #25a88c ridge 4px;
-}
+} */
 
 /* A UZ POMOC POMENUTE PSEUDO KLASE, MOGU DEFINISATI, KAKAV CE STIL BITI (KADA SE FOKUSIRA), ONOG ELEMENTA, KOJI JE FOCUSABLE, A U OVOM SLUCAJU TO JE PARAGRAF (KOJI IMA tabindex ATRIBUT) */
 
-div p:focus-within {
+/* div p:focus-within {
     background: #6d668d;
     color: #c80942;
 }
 
 div.some_kont p::-moz-focus-outer {
     border: 4px dotted red;
-}
+} */
 
-div.some_kont p:only-of-type:focus {
-    border: 4px dotted red;
+/* div.some_kont p:focus {
+    border: 10px solid red;
+    background: #25a88c;
 }
-
+ */
 /*///////////////////////////////////////*/
 
 /* div.kontrol_kont button:focus-visible {
@@ -625,11 +626,11 @@ div.kontrol_kont button:-moz-focusring {
 } */
 
 
-:-moz-focusring {
+/* :-moz-focusring {
     color: #BADA55;
     font-weight: 800;
 }
-
+ */
 
 button.dugme::-moz-focus-inner {
     /* UKLANJAM BORDER TAK OSTO MU DEFINISEM DEBLJINU, ODNOSNO OFFSET, NA NULA */
@@ -642,4 +643,14 @@ button.dugme::-moz-focus-inner {
     /* I KADA SE FOKUSIRA DUGME U FIREFOXU, NECE VISE BITI VIDLJIV, TAJ UNUTRASNJI BORDER
     KOJI IMA DOTTED STILL */
 }
+
+.some_kont p:focus {
+    border: red solid 4px;
+    outline: none;
+}
+
+.some_kont p::-moz-focus-inner {
+    outline: 4px solid pink;
+}
+
 
