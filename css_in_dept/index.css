@@ -588,8 +588,58 @@ div.some_kont > section:focus-within {
 
 /* A UZ POMOC POMENUTE PSEUDO KLASE, MOGU DEFINISATI, KAKAV CE STIL BITI (KADA SE FOKUSIRA), ONOG ELEMENTA, KOJI JE FOCUSABLE, A U OVOM SLUCAJU TO JE PARAGRAF (KOJI IMA tabindex ATRIBUT) */
 
-div.some_kont p:focus-within {
+div p:focus-within {
     background: #6d668d;
     color: #c80942;
+}
+
+div.some_kont p::-moz-focus-outer {
+    border: 4px dotted red;
+}
+
+div.some_kont p:only-of-type:focus {
+    border: 4px dotted red;
+}
+
+/*///////////////////////////////////////*/
+
+/* div.kontrol_kont button:focus-visible {
+    font-weight: 800;
+    color: antiquewhite;
+} */
+
+/* div.kontrol_kont button:focus {
+    outline: #25a88c solid 4px;
+} */
+
+/* div.kontrol_kont button:focus {
+    font-weight: 800;
+    color: antiquewhite;
+    outline: #25a88c solid 2px;
+}
+
+div.kontrol_kont button:-moz-focusring {
+    font-weight: 800;
+    color: antiquewhite;
+    outline: #25a88c solid 2px;
+} */
+
+
+:-moz-focusring {
+    color: #BADA55;
+    font-weight: 800;
+}
+
+
+button.dugme::-moz-focus-inner {
+    /* UKLANJAM BORDER TAK OSTO MU DEFINISEM DEBLJINU, ODNOSNO OFFSET, NA NULA */
+    
+    /* border: #3C3B6E solid 0px; */
+    
+    /* A MOGAO SAM PROSTO, PODESITI I SLEDECE */
+    border: none;
+
+    /* I KADA SE FOKUSIRA DUGME U FIREFOXU, NECE VISE BITI VIDLJIV, TAJ UNUTRASNJI BORDER
+    KOJI IMA DOTTED STILL */
 }
 

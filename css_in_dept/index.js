@@ -216,7 +216,7 @@ console.log(document.querySelectorAll(':visited'));
 
 console.log(document.querySelector('body > div:nth-last-child(11)'));
 
-document.querySelector('body > div:nth-last-of-type(2)').tabIndex = 0;
+// document.querySelector('body > div:nth-last-of-type(2)').tabIndex = 0;
 
 
 
