@@ -654,3 +654,24 @@ button.dugme::-moz-focus-inner {
 }
 
 
+/*////////////////////////////////////*/
+
+html, body {
+    scroll-behavior: smooth;
+}
+
+
+#lorem:target {
+    color: pink;
+    
+}
+
+#ipsum:target {
+    background-color: #BADA55;
+}
+
+#lorem, #ipsum {
+    padding: 20px;
+    border: olive solid 10px;
+}
+
