@@ -6,6 +6,7 @@
     color: #c80942;
     outline-style: ridge;
     text-decoration: underline;
+    
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
@@ -698,7 +699,8 @@ div.jezici div.navigacija {
     border-bottom: 0px;
 }
 
-div.jezici div.navigacija button {
+div.jezici div.navigacija a {
+    display: inline-block;
     margin-right: 2vw;
     margin-left: 2vw;
     height: 5vw;
@@ -709,8 +711,17 @@ div.jezici div.navigacija button {
     border-bottom: 0px;
     color: honeydew;
     padding-top: 0px;
-    cursor: pointer;
+
 }
+
+div.jezici div.navigacija a {
+    /* pointer-events: none; */
+}
+
+div.jezici div.navigacija a:target {
+    background-color: #B22234;
+}
+
 
 div.jezici div.sadrzina {
     border: tomato solid 1px;
@@ -734,6 +745,71 @@ div.jezici div.sadrzina div:target {
     z-index: 1;
 }
 
-
-
 /* div.jezici div.navigacija  */
+
+
+
+/*/////////////////////////////////////////////////*/
+
+div.tabovi {
+    border: tomato solid 0px;
+    width: 78vw;
+    height: 300px;
+    margin: 20vw auto;
+    position: relative;
+    overflow: hidden;
+}
+
+div.tabovi section {
+    border: olive solid 0px;
+    padding: 10px;
+    position: absolute;
+    overflow: auto;
+    height: 80%;
+    box-sizing: border-box;
+    top: 20%;
+    background-color: #BADA55;
+}
+
+div.tabovi a {
+    position: absolute;
+    top: 34px;
+    display: inline-block;
+    border: rgb(194, 60, 154) solid 1px;
+    width: 58px;
+    height: 28px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration-line: none;
+    border-bottom: 0;
+    color: #180618;
+}
+
+div.tabovi a:nth-of-type(1) {
+    left: 5%;
+}
+
+div.tabovi a:nth-of-type(2) {
+    left: 33.3%
+}
+
+div.tabovi a:nth-of-type(3) {
+    left: 66.6%;
+}
+
+div.tabovi a:active, div.tabovi a:visited {
+    color: #180618;
+}
+
+div.tabovi section:not(:target) {
+    z-index: -2;
+}
+
+div.tabovi section:target {
+    z-index: 1;
+}
+
+div.tabovi section:target + a {
+    background-color: #BADA55;
+}
+
