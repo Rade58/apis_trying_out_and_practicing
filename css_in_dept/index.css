@@ -813,3 +813,74 @@ div.tabovi section:target + a {
     background-color: #BADA55;
 }
 
+/*////////////////////////////////////////////////////////*/
+
+div.tabs {
+    border: tomato solid 0px;
+    width: 78vw;
+    height: 300px;
+    margin: 20vw auto;
+    position: relative;
+    overflow: hidden;
+}
+
+div.tabs section {
+    border: olive solid 0px;
+    padding: 10px;
+    position: absolute;
+    overflow: auto;
+    height: 80%;
+    box-sizing: border-box;
+    top: 20%;
+    background-color: #BADA55;
+}
+
+div.tabs label {
+    position: absolute;
+    top: 34px;
+    display: inline-block;
+    border: rgb(194, 60, 154) solid 1px;
+    width: 58px;
+    height: 28px;
+    font-size: 1.2rem;
+    text-align: center;
+    border-bottom: 0;
+    color: #180618;
+    cursor: pointer;
+}
+
+div.tabs label:nth-of-type(1) {
+    left: 5%;
+}
+
+div.tabs label:nth-of-type(2) {
+    left: 33.3%
+}
+
+div.tabs label:nth-of-type(3) {
+    left: 66.6%;
+}
+
+div.tabs input {
+    display: none;
+}
+
+
+div.tabs input:not(:checked) + section {
+    z-index: -1;
+}
+
+div.tabs input:checked + section {
+    z-index: 1;
+}
+
+div.tabs input:not(:checked) + section + label {
+    background-color: #6d668d;
+}
+
+div.tabs input:checked + section + label {
+    background-color: #BADA55;
+}
+
+
+
