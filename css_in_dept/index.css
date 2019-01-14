@@ -713,9 +713,9 @@ div.jezici div.navigacija a {
 
 }
 
-div.jezici div.navigacija a {
+/* div.jezici div.navigacija a { */
     /* pointer-events: none; */
-}
+/* } */
 
 div.jezici div.navigacija a:target {
     background-color: #B22234;
@@ -897,4 +897,21 @@ div.tabs input:checked + section + label {
 p.btn {                 /* SPECIFICITY 0-1-1 */
     cursor: pointer;
 }
+
+/* //////////////////////////////////////////////////////////////// */
+
+/* WIDGET-OV CSS FAJL: */
+
+#TheirWidget {
+    background-color: blue !important;
+}
+
+
+/* MOJ CSS FAJL: */
+/* A OVO JE ID SELEKTOR, KOJI SAM JA ZADAO WIDGET-U, ODNOSNO, PRE NEGO STO SAM ODLUCIO DA UVEDEM
+WIDGET JA SAM NJEGOVOM CONTAINERU ZADO ID */
+
+#thirdPartyWidget {
+    background-color: #BADA55;       /* JASNO JE DA AKO POSTOJI GORNJI SELECTOR, DA ZAISTA NE POSTOJI NISTA */
+}                                   /* STO BIH MOGAO URADITI, KAKO BI POVECO SPECIFICITY OVOG SELECTORA */
 
