@@ -6,6 +6,7 @@
     color: #c80942;
     outline-style: ridge;
     text-decoration: underline;
+    animation: forwards;
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
@@ -915,3 +916,18 @@ WIDGET JA SAM NJEGOVOM CONTAINERU ZADO ID */
     background-color: #BADA55;       /* JASNO JE DA AKO POSTOJI GORNJI SELECTOR, DA ZAISTA NE POSTOJI NISTA */
 }                                   /* STO BIH MOGAO URADITI, KAKO BI POVECO SPECIFICITY OVOG SELECTORA */
 
+/*///////////////////////////////////////*/
+
+ul.foo_bar li {
+    color: tomato !important;
+}
+
+ul.foo_bar li {
+    animation: promenaBoje forwards;
+}
+
+@keyframes promenaBoje {
+    100% {
+        color: #BADA55;
+    }
+}
