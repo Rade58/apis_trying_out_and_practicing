@@ -931,3 +931,61 @@ ul.foo_bar li {
         color: #BADA55;
     }
 }
+
+
+/* ////////////////////////////////////////// */
+
+div.blah_page p:first-of-type::first-letter {
+    font-size: 3em;
+    line-height: 1;
+    color: hsl(150, 56%, 47%);
+    padding: 0 4px 2px 0;
+    font-weight: bold;
+
+    float: left;    /* DA NISAM STAVIO OVO, FIRST LETTER BI BIO U PRVOM LINE-U, CIME BI IMAO IZGLED */
+                    /* TAKAV DA BI FIRST LETTER U FIRST LINE-U, BIO VECI OD OSTALIH SLOVA */
+                    /* ODNOSNO PRECIZNIJE RECENO IMAO BIH JEDNO OGROMNO SLOVO U PRVOM REDU A PORED NJEGA
+                    OSTALA SLOVA PRVOG REDA, TAK ODA BI TO PRVO SLOVO 'STRCALO', A TAKO NE TREBA DA IZGLEDA
+                    DROP CAP, JER ON TREBA DA BUDE S SVOJE DESNE STRANE 'PREPLAVLJEN' TEKSTOM 
+                    ODNOSNO MA KOLIKO TEKSTA IMA PORED NJEGA, TREBALO BI DA SE TAJ TEKST NALAZI DESNO OD NJEGA
+                    CELOM NJEGOVOM VISINOM */
+
+    /* UPRAVO UZ KORISCENJE float-A, POSTIGNUTO JE DA SE SAV OSTALI TEKST WRAPP-UJE, UZ FIRST LETTER, JER TAKVA
+    JE OSOBINA FLOATING ELEMENTA, DA ONO STO MU JE SUSED, ODMA POCNE DA FLOAT-UJE UZ NJEGA */
+}
+
+/* ////////////////////////////////////////// */
+
+div.some_text {
+    border: #e24c60 solid 1px;
+    float: left;
+}
+
+div.some_text + p {
+    display: inline-block;
+}
+
+div.fl_kont p:first-of-type {
+    float: right;
+}
+
+/* ////////////////////////////////////////// */
+
+div.f_kont {
+    border: tomato solid 4px;
+    padding: 28px;
+}
+
+div.f_kont * {
+    border: olive solid 4px;
+    margin: 10px;
+}
+
+/* div.f_kont div.f_e {
+    float: left;
+} */
+
+div.f_kont div.f_e + div {
+    float: left;
+}
+
