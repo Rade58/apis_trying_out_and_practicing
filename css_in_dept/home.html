@@ -992,6 +992,39 @@
                 <div>Opet neki tekst</div>
             </div>
 
+            <div class="nekiKont">
+                <style style="display: block; width: 280px; height: 168px" contenteditable>
+                    div.nekiKont *::selection {
+                        background-color: tomato;
+                        color: olive;
+                        cursor: progress;
+                        caret-color: transparent;
+                    }
+                </style>
+                <h1>SELEKCIJA</h1>
+            </div>
+
+            <p class="par_el">the content</p>
+
+            <div class="edit_kont" contenteditable>
+                    <style>
+                        div.edit_kont style {
+                            display: block
+                        }
+                
+                        div.edit_kont div.content p::before {
+                            content: "Macke ";
+                        }
+                
+                        div.edit_kont div.content p::after {
+                            content: " Slatke"
+                        }
+                    </style>
+                    <div class="content">
+                        <p>Su</p>
+                    </div>
+                </div>
+
         <script src="./index.js"></script>
     </body>
 </html>
