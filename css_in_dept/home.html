@@ -1007,23 +1007,67 @@
             <p class="par_el">the content</p>
 
             <div class="edit_kont" contenteditable>
-                    <style>
-                        div.edit_kont style {
-                            display: block
-                        }
-                
-                        div.edit_kont div.content p::before {
-                            content: "Macke ";
-                        }
-                
-                        div.edit_kont div.content p::after {
-                            content: " Slatke"
-                        }
-                    </style>
+                    <pre>
+                        <style>
+                            div.edit_kont style {
+                                display: block
+                            }
+                    
+                            div.edit_kont div.content p::before {
+                                content: "Macke ";
+                            }
+                    
+                            div.edit_kont div.content p::after {
+                                content: " Slatke"
+                            }
+                        </style>
+                    </pre>
                     <div class="content">
                         <p>Su</p>
                     </div>
                 </div>
+
+                <hr>
+                <br>
+
+                    <style>
+                        ul.invalid_counter {
+                            counter-reset: invCount;
+                        }
+                    
+                        ul.invalid_counter input[type=number] + label::after {
+                            content: " (6, 7 or 8)";
+                        }
+                    
+                        ul.invalid_counter input[type=email] + label::after {
+                            content: " (email)";
+                        }
+                    
+                        ul.invalid_counter input:invalid {
+                            counter-increment: invCount;
+                        }
+                    
+                        ul.invalid_counter + p::before {
+                            content: "You have " counter(invCount) " invalid entries.";
+                        }
+                    
+                    </style>
+                    
+                    <ul class="invalid_counter">
+                        <li>
+                            <input id="1" type="number" min="6" max="8"><label for="1"></label>
+                        </li>
+                        <li>
+                            <input id="2" type="number" min="6" max="8"><label for="2"></label>
+                        </li>
+                        <li>
+                            <input id="3" type="number" min="6" max="8"><label for="3"></label>
+                        </li>
+                        <li>
+                            <input id="10" type="email"><label for="10"></label>
+                        </li>
+                    </ul>
+                    <p></p>
 
         <script src="./index.js"></script>
     </body>
