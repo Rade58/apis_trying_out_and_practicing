@@ -1006,6 +1006,20 @@ p.par_el::after {
 .bezveze {
     counter-increment: none;
     content: "/3682";
+    -webkit-tap-highlight-color: indianred;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
+/* //////////////////////////////////////// */
 
+p.paraBtn {
+    /* user-select: none; */
+    /* -moz-user-select: none; */
+    /* -webkit-user-select: none; */
+    -ms-user-select: none;
+
+    -webkit-touch-callout: none;
+
+    -webkit-tap-highlight-color: #BADA55;
+}
