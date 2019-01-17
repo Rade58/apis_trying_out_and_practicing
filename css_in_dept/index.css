@@ -1002,15 +1002,22 @@ p.par_el::after {
 }
 
 /* /////////////////////////////////////// */
+/* SAMO ZA VEZBU */
 
-.bezveze {
+.bezveze:window-inactive {
     counter-increment: none;
     content: "/3682";
     -webkit-tap-highlight-color: indianred;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+
+
 }
 
+/* .bezveze::-webkit-scrollbar {
+    scrollbAr
+}
+ */
 /* //////////////////////////////////////// */
 
 p.paraBtn {
@@ -1022,4 +1029,28 @@ p.paraBtn {
     -webkit-touch-callout: none;
 
     -webkit-tap-highlight-color: #BADA55;
+
+
+}
+
+/* ///////////////////////////////////////////////// */
+
+div.neki_el_blah:-moz-window-inactive {
+    background-color: #d7e4f0;
+}
+
+/*MOZZILA*/
+
+div.neki_el_blah {
+    scrollbar-face-color: #43eb19; /* NE RADI */
+    scrollbar-arrow-color: #ebd5d5 pink; /* NE RADI */
+    /* scroll-snap-type: proximity; */
+
+    background-color: antiquewhite;
+    
+    scrollbar-width: thin;
+
+    scrollbar-color: #449fc3 rgb(5, 21, 32);
+
+
 }
