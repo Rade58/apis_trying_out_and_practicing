@@ -1034,23 +1034,58 @@ p.paraBtn {
 }
 
 /* ///////////////////////////////////////////////// */
+/* ///////////////////////////////////////////////// */
 
+/* KADA JE WINDOW INACTIVE, (KADA SAM U NEKOM DRUGOM PROGRAMU, A AKO MOGU VIDETI BROWSER-OW WINDOW, 
+I ELEMENT U NJEMU, VIDECU DA CE ELEMNT IMATI DRUGI BACKGROUND COLOR, KAO POSLEDICA STILA KOJI SAM ZADAO
+SELEKTUJUCI ELEMENTE SLEDECOM PSEUDO KLASOM) */ /* SAMO ZA FIREFOX */
 div.neki_el_blah:-moz-window-inactive {
     background-color: #d7e4f0;
 }
 
-/*MOZZILA*/
-
+/* MOZZILA */
 div.neki_el_blah {
-    scrollbar-face-color: #43eb19; /* NE RADI */
-    scrollbar-arrow-color: #ebd5d5 pink; /* NE RADI */
-    /* scroll-snap-type: proximity; */
-
+    
     background-color: antiquewhite;
     
+    /* SAMO, OGRANICENO STILIZOVANJE, UZ SLEDECA DVA PROPERTIJA */
+
     scrollbar-width: thin;
-
     scrollbar-color: #449fc3 rgb(5, 21, 32);
-
-
 }
+
+/*CHROME, OPERA, SAFARI*/
+div.neki_el_blah::-webkit-scrollbar {
+    width: 18px;
+    background-color: #ee8080;
+    margin-right: 18px;  /* NEMA EFEKTA (A ESTELLE JE DEFINISALA, NE ZNAM ZASTO) */
+    border-radius: 6px;
+}
+
+div.neki_el_blah::-webkit-scrollbar-track {
+    box-shadow: 0 2px 2px #8b908dd7;
+    
+}
+
+div.neki_el_blah::-webkit-scrollbar-thumb {
+    border: 2px solid #e33ce9;
+    border-radius: 6px;
+    background-color: #27375d;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3) inset;
+    transition: all .3s ease-out;
+}
+
+div.neki_el_blah::-webkit-scrollbar-thumb:window-inactive {
+    background-color: #BADA55;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3) inset;
+}
+
+div.neki_el_blah::-webkit-scrollbar-thumb:hover {
+    background-color: darkolivegreen;
+}
+
+/* div.neki_el_blah pre {  OVO JE ESTELLE DEFINISALA, JER JE STAVILA TEKST U pre TAG, DA BI IMALA SCROLLBAR
+    width: 700px;           MENI NE TREBA, ALI NEKA OVDE COMMENTED OUT CODEA
+    height: 200px;
+    overflow: auto;
+} */
