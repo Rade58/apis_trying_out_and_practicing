@@ -1089,3 +1089,33 @@ div.neki_el_blah::-webkit-scrollbar-thumb:hover {
     height: 200px;
     overflow: auto;
 } */
+
+
+/* /////////////////////////////////////////////////////////////// */
+
+p.cure::before {
+    content: "Dimethyltryptamine ";
+
+    position: absolute;
+    transform: rotate(48deg);
+    left: 12px;
+}
+
+p.cure::after {
+    content: " Lysergic acid diethylamide";
+
+    position: absolute;
+    transform: rotate(148deg);
+}
+
+p.cure {
+    font-weight: 800;
+    font-size: 2rem;
+    color: #2d2e47;
+    /* text-decoration-line: overline;
+    text-decoration-style: wavy; */   /* OVI STILOVI NISU INHERITED */
+    
+    width: 56%;
+    margin: 12% auto;
+    border: tomato solid 2px;
+}
