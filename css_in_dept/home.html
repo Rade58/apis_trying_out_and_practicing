@@ -1126,6 +1126,62 @@
 
                     <p class="cure">AYOHUASCA</p>
 
+                    <hr>
+                    <br>
+
+                    <style>
+                        
+                        :root {
+                            counter-reset: parCount;
+                        }
+
+                        
+
+                        div.para_list > p {
+                            font-weight: 800;
+                            margin-left: 4em;
+                        }
+
+                        div.para_list p {
+                            font-weight: 400;
+                            margin-left: 12em;
+                        }
+
+                        div.para_list p::before {
+                            counter-increment: parCount;
+                            content: counter(parCount) "~~~~";
+                        }
+
+                        div.para_list > p > span {
+                            margin-left: 58em;
+                            color:chartreuse;
+                            font-style: italic;
+                        }
+                        
+                    </style>
+
+                    
+
+
+                    <hr>
+                    <br>
+
+                    <div class="start_div">
+
+                        <div>
+                            <p>tekst</p>
+                        </div>
+
+                    </div>
+
+                    <hr>
+                    <br>
+
+                    <p class="wrap_para">
+                        Neki Tekst
+                        <p>Inner Paragraph</p>
+                    </p>
+
         <script src="./index.js"></script>
     </body>
 </html>
