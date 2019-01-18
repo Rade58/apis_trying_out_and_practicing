@@ -1093,6 +1093,9 @@ div.neki_el_blah::-webkit-scrollbar-thumb:hover {
 
 /* /////////////////////////////////////////////////////////////// */
 
+/* STILIZOVANJE GENERISANE SADRZINE */
+/* GDE CU POKAZATI DA JE MOGUCE POZICIONIRATI I TRANSFORMISATI GENERATED CONTENT */
+
 p.cure::before {
     content: "Dimethyltryptamine ";
 
@@ -1105,17 +1108,26 @@ p.cure::after {
     content: " Lysergic acid diethylamide";
 
     position: absolute;
-    transform: rotate(148deg);
+    transform: rotate(168deg);
 }
 
+/* STILIZOVANJE 'NORMALNE' SADRZINE */
+
 p.cure {
-    font-weight: 800;
-    font-size: 2rem;
-    color: #2d2e47;
-    /* text-decoration-line: overline;
-    text-decoration-style: wavy; */   /* OVI STILOVI NISU INHERITED */
-    
+
     width: 56%;
     margin: 12% auto;
-    border: tomato solid 2px;
+    border: tomato solid 2px;    /* AKO POGLEDAM BORDER, VIDECU DA ON OKRUZUJE I 
+                                    GENERATED CONTENT*/
+                                    /*MOGU TO JASNO VIDETI, PRE APSOLUTNOG POZICIONIRANJA
+                                    I ROTACIJE*/
+
+    font-weight: 800;       /* OVE STILOVE JE NASLEDILA I GENERATED CONTENT */
+    font-size: 2rem;
+    color: #2d2e47;
+    
+    text-decoration-line: overline;
+    text-decoration-style: wavy;    /* OVI STILOVI NISU INHERITED, IMA JE SAMO NORMALNI
+                                    CONTENT */
 }
+
