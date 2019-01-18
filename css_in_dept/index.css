@@ -1106,28 +1106,29 @@ p.cure::before {
 
 p.cure::after {
     content: " Lysergic acid diethylamide";
-
-    position: absolute;
-    transform: rotate(168deg);
 }
 
-/* STILIZOVANJE 'NORMALNE' SADRZINE */
+/* STILIZOVANJE 'NORMALNE' SADRZINE (STO NASLEDJUJE I GENERATED CONTENT 
+    (BAR U SLUCAJU, VECINE STILOVA) */
 
 p.cure {
+
+    /* APSOLUTNO POZICIONIRANJE GENERATED CONTENT-A, UCINICE DA SE NA
+    GENERATED CONTENT-U, NE PRIMENE NEKI STILOVI */
 
     width: 56%;
     margin: 12% auto;
     border: tomato solid 2px;    /* AKO POGLEDAM BORDER, VIDECU DA ON OKRUZUJE I 
-                                    GENERATED CONTENT*/
-                                    /*MOGU TO JASNO VIDETI, PRE APSOLUTNOG POZICIONIRANJA
-                                    I ROTACIJE*/
+                                    GENERATED CONTENT */
+                                    /* MOGU TO JASNO VIDETI, ZA AFTER JER ON NIJE
+                                    APSOLUTNO POZICIONIRAN */
 
     font-weight: 800;       /* OVE STILOVE JE NASLEDILA I GENERATED CONTENT */
     font-size: 2rem;
     color: #2d2e47;
     
     text-decoration-line: overline;
-    text-decoration-style: wavy;    /* OVI STILOVI NISU INHERITED, IMA JE SAMO NORMALNI
-                                    CONTENT */
+    text-decoration-style: wavy;    /* AKO APSOLUTNO POZICIONIRAM GENERATED CONTENT
+                                    OVI STILOVI SE NECE PRIMENITI*/
 }
 
