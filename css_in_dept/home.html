@@ -1129,34 +1129,7 @@
                     <hr>
                     <br>
 
-                    <!-- <style>
-                        
-                        :root {
-                            counter-reset: parCount;
-                        }
-
-                        div.para_list > p {
-                            font-weight: 800;
-                            margin-left: 4em;
-                        }
-
-                        div.para_list p {
-                            font-weight: 400;
-                            margin-left: 12em;
-                        }
-
-                        div.para_list p::before {
-                            counter-increment: parCount;
-                            content: counter(parCount) "~~~~";
-                        }
-
-                        div.para_list > p > span {
-                            margin-left: 58em;
-                            color:chartreuse;
-                            font-style: italic;
-                        }
-                        
-                    </style> -->
+                    
 
                     <hr>
                     <br>
@@ -1177,6 +1150,347 @@
                         <p>Inner Paragraph</p>
                     </p>
 
+                    <!-- /////////////////////////////////////////////////////////////// -->
+
+                    <style>
+                    
+                        div.num_list {
+                            display: inline-block;
+                            border: tomato solid 1px;
+                            padding: 2em;
+                            counter-reset: itCounter;
+                        }
+
+                        div.num_list div.wrapper {
+                            margin-left: 14em;
+                        }
+
+                        div.num_list div.wrapper {
+                            font-size: 1.6em;
+                        }
+
+                        div.num_list div.wrapper {
+                            counter-reset: itCounter;
+                        }
+
+                        div.num_list div:not(.wrapper)::before {
+                            counter-increment: itCounter;
+                            content: counters(itCounter, " / ") " --> ";
+                        } 
+                        
+
+                    </style>
+
+                    <div class="num_list">
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item
+                            <div class="wrapper">
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest
+                                    <div class="wrapper">
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                        <div>Item deep nest</div>
+                                    </div>
+                                </div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                                <div>Item nest</div>
+                            </div>
+                        </div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                        <div>Item</div>
+                    </div>
+
+                    <hr>
+                    <br>
+
+                    <style>
+                        
+                        /* div.kunter {
+                            counter-reset: palmalK;
+                            border: tomato solid 2px;
+                        } */
+
+                        h1.palmal ~ h1::before {
+                            counter-increment: palmalK;
+                            content: counter(palmalK) "~~~~~";
+                        }
+
+                        div.kumbaru::before {
+                            content: "NEKI TEKST BLAH" counter(palmalK);
+                        }
+
+                        div.kumbaru::after {
+                            content: "NEKI TEKST BLAH" counter(palmalK);
+                        }
+                    
+                    </style>
+
+                    <!-- /////////////////////////////////////////////////////////// -->
+
+                <div class="kumbaru" style="border: pink solid 4px;">
+                    <h1 class="palmal">Element</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h2 class="chocko">Chocko</h2>
+                    <!-- <div><div class="kunter">Blah</div></div> -->
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                    <h1 class="vanila">Vanila</h1>
+                </div>
+
+
+
+                <div class="kunter"></div>
+
+                <hr>
+                <br>
+
+                <style>
+
+                        /* KAO STO VIDIM, OVAJ COUNTER, NIGDE NIJE FORMALNO DEKLARISAN */
+
+                       /*  :root {
+                            counter-reset: nekiBrojacBlah;
+                        } */
+
+                        ul {
+                            counter-reset: nekiBrojacBlah;
+                        }
+                        
+                        ul.neka_u_lista li::after {
+                            content: " broj " counter(nekiBrojacBlah);
+                            counter-increment: nekiBrojacBlah;
+                            color: darksalmon;
+                        }
+
+                        
+                
+                    </style>
+                
+                    <ul class="neka_u_lista">
+                        <li>Item</li>
+                        <li>Item</li>
+                        <li>Item</li>
+                        <li>Item</li>
+                    </ul>
+
+                    <style>
+                    
+                        
+
+                    </style>
+
+        <div class="brojacKont"></div>
+
+
+
+
+
+
+        <!-- <div> -->
+                            
+        <!-- </div> -->
+
+        
+
+        <div class="numerisano">
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <div class="secondCounter">
+                <section></section>        <!-- ELEMENT KOJI SAM SELEKTOVAO DA BIH  -->
+            </div>                         <!-- DEKLARISAO DRUGI COUNTER (counter-reset) -->
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+            <p>tekst paragrafa</p>
+        </div>
+
+        <div class="firstCounter"></div>  <!-- ELEMENT KOJI SAM SELEKTOVAO KAKO BIH -->
+                                           <!-- DEKLARISAO PRVI COUNTER -->
+
+        <style>
+
+            /* NAMERA JE DA PRVI COUNTER BUDE DEO GENERISANE SADRZINE BEFORE-A,
+            ODREDJENIH PARAGRAFA */
+            div.numerisano p:nth-last-child(2n + 3)::before {
+                counter-increment: firsCount;
+                content: counter(firsCount) " ";
+                color: darkseagreen;
+                font-size: 1.4em;
+            }
+
+            /* div.firstCounter {
+                counter-reset: firsCount;
+            } */
+
+
+            /* NAMERA JE DA DRUGI COUNTER BUDE DEO GENERISANE SADRZINE AFTER-A,
+            ODREDJENIH PARAGRAFA */
+            /* div.secondCounter section {
+                counter-reset: secCount;
+            } */
+
+            div.numerisano p:nth-last-child(3n + 2)::after {
+                counter-increment: secCount;
+                content: " " counter(secCount);
+                color: darkorchid;
+                font-size: 1.4em;
+            }
+
+            :root {                                 /* VODI RACUNA O SLEDECEM */
+                counter-reset: firsCount secCount;  /* AKO SELEKTUJEM JEDAN ELEMENT */
+            }                                       /* I DA U NJEGOVOM SELEKTORU DEKLARISEM */
+                                                    /* DVA COUNTERA, MOGU DOCU U ISKUSENJE */
+                                                    /* DA DEFINISEM DVA counter-reset PROPERTIJA */
+                                                    /* I TU BI SE DOGODIO OVERRIDING, TACNIJE
+                                                    OVERWRITING, I UPRAVO ZBOG TOGA, counter-reset*/
+                                                    /*IMA MOGUCNOST DA DEKLARISE VISE OD JEDNOG 
+                                                    COUNTERA*/
+
+            /*SADA FUNKCIONISU OBA COUNTER-A, I GENERISANA SADRZINA JESTE 'NUMERISANA' */ 
+
+                
+        </style>
+
+        <!-- I NI JEDAN OD OVIH COUNTERA, NECE RADITI KAKO TREBA -->
+        <!-- TO CE SE DOGODITI, ZBOG MESTA, GDE SU DEKLARISANI -->
+        <!-- ODNOSNO ZBOG SELEKTORA, U KOJEM SU DEKLARISANI -->
+
+        <!-- ONO STO CE SE DOGODITI, ZBOG POSTAVLJANJA INKREMENCIJE JESTE, DA CE SE
+        U GENERISANOJ SADRZINI, PRIKAZANOJ NA EKRANU, VIDI ETI JEDINICA,
+        A NE NULA, KAO POSLEDICA TE INKREMENCIJE, KOJA SE (STO JE NA KRAJU KRAJEVA NEVAZNO) -->
+        <!-- DAKLE, SAMO JE VAZNO DA NECE FUNKCIONISATI, ONO STO ZELIM DA FUNKCIONISE -->
+
+        <!-- ODNOSNO, POKAZANO JE GDE DA DEKLARISEM COUNTER, DA ON NE BI FUNKCIONISAO KAKO
+        TREBA -->
+        
+        <hr>
+        <br>
+
+        <div class="para_count_cont">
+            <h1 id="glavni_naslov">GLAVNI NASLOV</h1>
+
+            <h2>Naslov blah</h2>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+            <h2>Naslov blah</h2>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+            <h2>Naslov blah</h2>
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+        </div>
+
+        <style>
+        
+            h1#glavni_naslov {
+                counter-reset: paraCoun;
+            }
+
+            /* KADA BI TREBALO DA SE RESETUJE BROJAC, ODNOSNO DA OPET POCINJE OD NULE */
+            /* PA TO TREBA DA SE DEFINISE, ZA SVAKI SELEKTED h2 , KOJI JE ADJACENT SIBLING h1 ELEMENTA */
+            /* ZATO CU DA KORISTIM GENERAL SIBLING SELECTOR */
+
+            h1#glavni_naslov ~ h2 {
+                counter-reset: paraCoun;
+            }
+
+            /* A PARAGRAFI TREBA DA BUDU 'NUMERISANI' */
+            /* ODNOSNO SVAKI PARAGRAF POCEVSI OD h2 (SVAKI PRVI PARAGRAF ADJACENT SIBLING h2 TREBA DA IMA
+            'PREFIKS' 1, I SVAKI SLEDECI ZA PO 1 VECI "PREFIKS") */
+
+            h1#glavni_naslov ~ p::before {
+                counter-increment: paraCoun;
+                content: counter(paraCoun) ". ";
+            }
+        
+        </style>
+
+
         <script src="./index.js"></script>
+
     </body>
 </html>
