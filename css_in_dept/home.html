@@ -1489,6 +1489,32 @@
         
         </style>
 
+        <hr>
+        <br>
+
+        <style>
+
+            body {
+                counter-reset: divCountBlah;
+            }
+    
+            div.divovi_blah div::after {
+                counter-increment: divCountBlah 8; /* U SVAKOM 'KORAKU', OVAJ COUNTER SE POVECAVA */
+                                                   /* ZA 8*/
+                content: " " counter(divCountBlah);
+            }
+    
+        </style>
+    
+        <div class="divovi_blah">
+            <div>DIV</div>
+            <div>DIV</div>
+            <div>DIV</div>
+            <div>DIV</div>
+            <div>DIV</div>
+            <div>DIV</div>
+            <div>DIV</div>
+        </div>
 
         <script src="./index.js"></script>
 
