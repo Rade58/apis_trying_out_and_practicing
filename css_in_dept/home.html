@@ -1674,6 +1674,35 @@
             Postoje <a href="./junk/junk.html">lokalni</a> primeri, ili mozes pretraziti <a href="http://lmgtfy.com/?q=css+generated+content+attributes">Google</a>
         </p>
 
+        <hr>
+        <br>
+
+        <style>
+
+            /* MOGU DEFINISATI quotes ZA <q></q> ELEMENTE, ALI POSTO JE PROPERTI 
+            INHERITABLE, IZABRAO SAM DA DEFINISEM, KAKO CE QUOTES IZGLEDATI, AKO SE
+            UGRADJUJU U SADRZINU, JEDNOG PARAGRAFA*/
+        
+            p.novel {
+                quotes: "\2039\2039" "\203A\203A" "~" "~";
+            }
+
+            /* NIJE TESKO INTERPRETIRATI DEFINISANU VREDNOST, quotes PROPERTIJA */
+            /* PRVA DVA STRINGA (SASTAVLJENA OD CHAR ENTITY-JA) SU ONI SPOLJASNJI (OPENING AND CLOSING)
+            QUOTE-OVI*/
+            /* DRUGA DVA STRINGA '~' (ISTI KARAKTER U OBA SLUCAJA), BICE QUOTE-OVI KOJI CE SE NALAZITI
+            UNUTAR, DAKLE 'NESTED QUOTE-OVI' */
+
+        </style>
+
+        <p class="novel">
+            Neki tekst blah blah
+            <q>     <!-- 'SPOLASNJI' QUOTE -->
+                In the '16th'; century, Christian missionaries from <q><!-- 'UNUTRASNJI' QUOTE-->Spain</q> and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </q>
+            Ovo je neki tekst blah blah.
+        </p>
 
         <script src="./index.js"></script>
 
