@@ -1635,6 +1635,41 @@
         <hr>
         <br>
 
+        <style>
+
+            /* SLEDECI STIL SAMO VERRIDE-UJE, STIL KOJI SAM ZA SVE ANCHORE DEFINISAO RANIJE
+            U OVOM DOKUMENTU */
+            p.info_p a[href^=http]::after {
+                content: normal;
+            }
+
+
+            /* ZASTO SAM DEFINISAO DA ANCHOR BUDE RELATIVNO POZICIONIRAN? */
+            /* ODNOSNO JOS BOLJE RECENO, ZASTO SAM DEFINISAO DA ANCHOR BUDE CSS POSITIONED?*/
+            p.info_p a[href^=http]:hover {
+                position: relative;
+            }
+
+            /* ZATO STO ZELIM DA GENERATED CONTENT POZICIONIRA APSOLUTNO */
+            /* A KADA NESTO POZICIONIRAM APSOLUTNO, JA GA POZICIONIRAM U ODNOSU NA NAJBLIZI,
+            CSS POSITIONED ANCESTOR; E PA U OVOM SLUCAJU ZAELIM DA GENERATED CONTENT POZICIONIRAM
+             U ODNSU NA <a>...</a> (CSS POSITIONED), KOJI POSEDUJE TU GENERISANU SADRZINU */
+            p.info_p a[href^=http]:hover::after {
+                content: attr(href);
+                position: absolute;
+                top: 1em;          /* KAKO BI SE GENERATED CONTENT NASAO ZA JEDNU VELICINU FONTA */
+                left: 0;           /* OD GORNJE IVICE ANCHORA, NA DOLE (TO CE GENERATED CONTENT */    
+                                   /* POZICIONIRATI ISPOD ANCHORA) */
+                                   /* A OD LEVE IVICE ANCHORA ZELIM DA GENERISANA SADRZINA BUDE
+                                    UDALJENA ZA NULA PIKSELA */
+                background-color: darkseagreen;
+                color: #161413;
+                padding: 3px 5px;
+                line-height: 1;
+            }
+
+        </style>
+
         <p class="info_p">
             Postoje <a href="./junk/junk.html">lokalni</a> primeri, ili mozes pretraziti <a href="http://lmgtfy.com/?q=css+generated+content+attributes">Google</a>
         </p>
