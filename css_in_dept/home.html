@@ -1908,6 +1908,47 @@
         </style>
 
 
+        <div class="icon">Icons made by 
+            <a href="https://www.flaticon.com/authors/monkik" title="monkik">monkik</a>
+            from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+            is licensed by
+            <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">
+                CC 3.0 BY
+            </a>
+        </div>
+
+        <style>
+        
+            div.icon a::after {
+                content: "";
+            }
+
+            div.icon {              /* ZELIM DA ELEMENT, (ZA KOJEG GENERISEM CONTENT), USTVARI */
+                position: relative; /* BUDE CSS POZICIONIRAN, JER ZELIM DA NJEGOVU */
+            }                       /* GENERISANU SADRZINU, POZICIONIRAM, APSOLUTNO U ODNOSU */
+                                    /* NA POMENUTI ELEMENT */
+                                    /* TO RADIM, JER CE ELEMENT, ONDA ZA SVOJ GENERATED CONTENT,
+                                    BITI NAJBLIZI CSS POZICIONIRANI ANCESTOR */
+            
+            div.icon:hover::after {
+                content: url(./images/woman.svg);
+                display: inline-block;    /* NE ZABORAVI DA JE GENERATED COCNTENT inline */
+                width: 200px;             /* ZATO SAM MU PROMENIO display NA inline-block */      
+                height: 200px;            /* DA NISAM, NE BIH MOGAO MENJATI DIMENZIJE */
+                
+                /* MEDJUTIM TO NISAM NI MORAO RADITI, JER GENERATED CONTENT, JA POZICIONIRAM
+                APSOLUTNO (A TAKVIM, CSS POSITIONED ELEMENTIMA, MOGU MENJATI DIMENZIJE BEZ
+                OBZIRA, KAKO SU BILI, RANIJE display-OVANI) */
+
+                position: absolute;
+                left: 0;
+                top: -200px;
+                color: bisque;
+            } 
+
+        </style>
+
+
         <script src="./index.js"></script>
 
     </body>
