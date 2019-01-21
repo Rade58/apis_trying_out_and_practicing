@@ -1726,13 +1726,185 @@
             ALI CISTO DA POKAZEM INHERITANCE, DEFINISAO SAM IH ZA DIV ELEMENT*/
             /* ODNOSNO, HOCU DA KAZEM DA SAM quotes PROPERTI, MOGAO DEFINISATI I U OBIMU ::after ILI
             ::before SELEKTORA (NE BIH POGRESIO DA SAM TO URADIO) */
-
         
             /* GENERISANU SADRZINU, ZELIM DA GENERISEM UZ POMOC ::after PSEUDO ELEMENTA, ZA PARAGRAF OVOG PRIMERA */
             div.blah_tekst_kont p::after {
                 content: open-quote "OVO JE NEKI TEKST KOJI JE TEKST BLAH" open-quote "medjutim ovaj tekst je guba" close-quote "MEDJUTIM OVAJ TEKST JE SLJUS" close-quote;
             }
         
+        </style>
+
+        <hr>
+        <br>
+
+        <q class="kvoti">Tekst blah za kvoti</q>
+
+        <style>
+        
+            q.kvoti {
+                quotes: "\25C0" "\25b6";
+            }
+
+            q.kvoti::before {
+                content: "some" open-quote;
+            }
+
+            q.kvoti::after {
+                content: no-close-quote " some";
+            }
+        
+        </style>
+
+
+        <hr>
+        <br>
+
+        <q class="neki_kvoti">Tekst, neki, navodni blah.</q>
+
+
+        <style>
+            q.neki_kvoti::before {
+                content: no-open-quote;
+            }
+
+            /* A ZA AFTER, IPAK SAM ODLUCIO DA NE KORISTIM no-close-quote */
+            /* MOGU KORISTITI, I PRAZAN STRING, KAO VREDNOST, content PROPERTIJA, I TO CE IMATI, POTPUNO ISTI EFEKAT, KAO DA
+            SAM BIO EKSPLICITAN I IZABRAO no-close-quote VREDNOST */
+
+            q.neki_kvoti::after {
+                content: "";
+            }
+        </style>
+
+        <hr>
+        <br>
+
+        <p class="tekst_fest">
+            Ovo je neki Teskst sa navodnicima.
+            <br>
+            <q class="kvoti">Tekst blah za kvoti</q>
+            <q class="bloti">Tekst blah za bloti</q>
+            <br>
+            I TAJ TEKST JE BLAH BLAH BLAH.
+        </p>
+        
+        <style>
+        
+            /* PROMENICU ZA SVAKI q ELEMNATA, NJIHOVE QUOTATION-E */
+            q.kvoti {
+                quotes: "\25C0" "\25b6";
+            }
+        
+            q.bloti {
+                quotes: "\2039\2039" "\203A\203A";
+            }
+        
+        
+            /* SADA MOGU DA DEFINISEM ILI REDEFINISEM GENERISANU SADRZINU PRVO ZA PRVI q */
+            q.kvoti::before {
+                content: "SOME BLAH ";    /*OVO CE POTPUNO OVERWRITE-OVATI QUOTE, GENERISANU SADRZINU, I NJIH NECE BITI */
+            }
+        
+            q.kvoti::after {
+                content: " SOME OTHER BLAH";    /*OVO CE POTPUNO OVERWRITE-OVATI QUOTE, GENERISANU SADRZINU, I NJIH NECE BITI */
+            }
+            /* DAKLE DEFINISUCI GENERISANU SADRZINU, JA SAM POTPUNO OVERWRITE-OVAO QUOTATION MARKS, KOJI SU BILI DEFAULT
+            GENERISANA SADRZINA (JA SAM USTVARI REDEFINISAO GENERATED CONTENT q ELEMENTA) */
+        
+        
+        
+            /* DEFINISACU I GENERISANU SADRZINU (BEFORE I AFTER) ZA DRUGI OD q ELEMENATA, S TIM STO U OVOM SLUCAJU, JA ZELIM
+            DA IMAM QUOTATION-E */
+            /* IMAM MOGUCNOST DA DEFINISEM TE QUOTATION-E, UZ POMOC
+        
+                open-quote
+        
+                close-quote
+        
+            VREDNOSTI, content PROPERTIJA
+        
+            */
+        
+            q.bloti::before {
+                content: "BLAH" open-quote;
+            }
+        
+            q.bloti::after {
+                content: close-quote "BLAH";
+            }
+        
+            /* SADA SU ZAISTA QUOTATIOBN MARKS DEO GENERISANE (AFTER, BEFORE) SADRZINE */
+        
+        </style>
+
+        <hr>
+        <br>
+
+        <article class="my_article">
+            <p>
+                As she lay her head on the pillow, she whispered in my ear, <q>Did you feed the cats?</q>
+                This wasn't the first time time she woke me up this way. Nor was it the most annoying.
+            </p>
+            <p lang="fr">
+                Dans diverses communautés <q>indigènes amazoniennes, l’ayahuasca est traditionnellement utilisé pour</q>
+                entrer en transe dans un but divinatoire ou comme outil thérapeutique et comme puissant outil de purification
+                 lors de rituels de <q>guérison sacrés</q>. Cette boisson semble être consommée depuis 4 000 à 5 000 ans.
+            </p>
+            <p>
+                As she lay her head on the pillow, she whispered in my ear, <q>Did you feed the cats?</q>
+                This wasn't the first time time she woke me up this way. Nor was it the most annoying.
+            </p>
+            <p>
+                As she lay her head on the pillow, she whispered in my ear, <q>Did you feed the cats?</q>
+                This wasn't the first time time she woke me up this way. Nor was it the most annoying.
+            </p>
+            <p lang="fr">
+                Dans diverses communautés <q>indigènes amazoniennes, l’ayahuasca est traditionnellement utilisé pour</q>
+                entrer en transe dans un but divinatoire ou comme outil thérapeutique et comme puissant outil de purification
+                 lors de rituels de <q>guérison sacrés</q>. Cette boisson semble être consommée depuis 4 000 à 5 000 ans.
+            </p>
+            <p>
+                As she lay her head on the pillow, she whispered in my ear, <q>Did you feed the cats?</q>
+                This wasn't the first time time she woke me up this way. Nor was it the most annoying.
+            </p>
+        </article>
+
+        <style>
+        
+            /* INACE ZELIM DA QUOTATIONS ZA BILO KOJI JEZIK OSIM FRANCUSKOG BUDU JEDNI KARAKTERI, A SPECIJALNO ZA 
+            QUOTING FRANCUSKI, ZELIM POMENUTI SPECIFICAN OBLIK QUOTATION-A */
+
+            article.my_article p:not(:lang(fr)) {  /* ZA NE FRANCUSKE PARAGRAFE */
+                quotes: "\201C" "\201D";          /* DUPLI NAVODNICI ('OBICNOG' IZGLEDA) */
+            }
+
+            article.my_article p:lang(fr) {     /* ZA FRANCUSKE PARAGRAFE */
+                quotes: "\00ab" "\00bb";        /* SPECIJALNI QUOTATION-I (UGLASTI) */
+            }
+
+            /* KAO STO SAM REKAO, ZELIM DA SE PRIKAZUJU, SAMO QUOTATIONI, KOJI SU DEO FRANCUSKOG TEKSTA, A DA SVI
+            OSTALI NE BUDU PRIKAZANI NA STRANICI*/
+
+            article.my_article p:not(:lang(fr)) q::before {
+                content: no-open-quote;
+            }
+
+            article.my_article p:not(:lang(fr)) q::after {
+                content: no-close-quote;
+            }
+
+            /* ZBOG OGROMNE KOLICINE QUOTE-OVA U TEKSTU, NAIME, ODLUCIO SAM DA CEO CLANAK BUDE OGRANICEN QUOTE-OVIMA */
+            /* ONO STO CU URADITI, JESTE STAVIVU OPENEING QUOTE, ISPRED PRVOG PARAGRAFA, I STAVICU, CLOSING QUOTE IZA
+            POSLEDNJEG PARAGRAFA, MOG CLANKA, ODNOSNO ARTICLE-A */
+
+            article.my_article p:nth-of-type(1)::before {
+                content: open-quote;
+            }
+
+            article.my_article p:nth-last-of-type(1)::after {
+                content: close-quote;
+            }
+
         </style>
 
 
