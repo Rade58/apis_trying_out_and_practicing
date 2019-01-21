@@ -1704,6 +1704,38 @@
             Ovo je neki tekst blah blah.
         </p>
 
+
+        <hr>
+        <br>
+
+        <div class="blah_tekst_kont">
+            <p>
+                In the 16th century, Christian missionaries from Spain and Portugal first
+                encountered indigenous South Americans using ayahuasca.
+            </p>
+        </div>
+        
+        <style>
+        
+            /* DEFINISEM STILOVE ZA NAVODNIKE, U POMENUTOM CONTAINER-U */
+            div.blah_tekst_kont {
+                quotes: "\2039\2039" "\203A\203A" "\25C0" "\25b6";
+            }
+
+            /* MOGAO SAM IH DEFINISATI I ZA PARAGRAF, JER PARAGRAF CONTAIN-UJE GENERISANU SADRZINU,
+            ALI CISTO DA POKAZEM INHERITANCE, DEFINISAO SAM IH ZA DIV ELEMENT*/
+            /* ODNOSNO, HOCU DA KAZEM DA SAM quotes PROPERTI, MOGAO DEFINISATI I U OBIMU ::after ILI
+            ::before SELEKTORA (NE BIH POGRESIO DA SAM TO URADIO) */
+
+        
+            /* GENERISANU SADRZINU, ZELIM DA GENERISEM UZ POMOC ::after PSEUDO ELEMENTA, ZA PARAGRAF OVOG PRIMERA */
+            div.blah_tekst_kont p::after {
+                content: open-quote "OVO JE NEKI TEKST KOJI JE TEKST BLAH" open-quote "medjutim ovaj tekst je guba" close-quote "MEDJUTIM OVAJ TEKST JE SLJUS" close-quote;
+            }
+        
+        </style>
+
+
         <script src="./index.js"></script>
 
     </body>
