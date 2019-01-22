@@ -1961,6 +1961,93 @@
             }
         </style>
 
+        <a href="tel:+381656893339">pozovi</a>
+
+        <blockquote class="bk_blah">
+            <p>With generated content you can create text effects.</p>
+            <p>We'll cover other uses next.</p>
+        </blockquote>
+          
+        <style>
+          
+            /* PRVO CU DEFINISATI, ILI UVESTI SPECIJALNE QUOTE KARAKTERE U GENERISANU SADRZINU, A
+            ZATIM CU PODESITI ZELJENE MARGINE, UZ POMOC margin SHORTHAND-A */
+            blockquote.bk_blah p:first-of-type::before {
+                content: "\201C";
+                margin: 0 8px 0 -42px;
+            }
+          
+            blockquote.bk_blah p:last-of-type::after {
+                content: "\201D";
+                margin: 0 -42px 0 8px;
+            }
+
+            /* SADA CU DA DEFINISEM ZAJEDNICKE STILOVE, ZA POMENUTU GENERISANU SADRZINU */
+
+            blockquote.bk_blah p::after, blockquote.bk_blah p::before {  /*NE MORAM SADA DA BUDEM TOLIKO RIGIDAN U SELEKCIJI, VEC SELEKTUJEM GENERISANU SADRZINU SVAKOG PARAGRAFA*/
+                color: coral;
+                font-size: 2em;
+                line-height: 0;
+                vertical-align: middle;
+            }
+
+        </style>
+
+        <hr>
+        <br>
+
+        <div class="links">
+            <a href="mailto:spam@mail.com">spam@mail.com</a>
+            <br>
+            <br>
+            <a href="tel:18005551212">1.800.555.1212</a>
+            <br>
+            <br>
+            <a href="ical.vcs">Add to calendar</a>
+        </div>
+
+        <style>
+
+            /* STAVLJANJE SPECIJALNIH KARAKTERA ('SLIKA') U GENERATED CONTENT */
+
+            div.links a[href^=mailto]::before {
+                content: "\2709";
+            }
+
+            div.links a[href^=tel]::before {
+                content: "\2706";
+            }
+
+            div.links a[href$=vcs]::before {
+                content: "\231A";
+            }
+
+            /* SADA CU DA STILIZUJEM SVE SPECIJALNE KARAKTERE ('SLIKE') */
+
+            div.links a::before {
+                font-size: 120%;
+                background-color: #000000;
+                color: #ffffff;
+                padding: 2px 6px;
+                display: inline-block;
+                width: 1.2em;
+                margin-right: 10px;
+                text-align: center;
+            }
+
+        </style>
+
+        <div class="spec_kar">Neki div element</div>
+
+        <style>
+
+            div.spec_kar::after {
+                content: "☏";         /* KAO STO SE VIDI, UNEO SAM SPECIJALNI KARAKTER, A NE NJEGOV CHARACTER ENTITY */
+            }
+
+        </style>
+
+
         <script src="./index.js"></script>
 
     </body>
