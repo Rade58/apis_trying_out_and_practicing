@@ -2047,6 +2047,47 @@
 
         </style>
 
+        <p class="quote">Ovo je neki navod
+            <a href="https://estelle.github.io/cssmastery/generated/files/03_bubbles.html">✍</a>
+        </p>
+
+        <style>
+
+            a[href]::after {
+                content: "";
+            }
+
+            p.quote a {
+                font-size: 2rem;
+                color: #fff;
+            }
+
+            p.quote a:visited {
+                color: #ffffff;
+            }
+        
+            p.quote {
+                background-color: tomato;
+                color: #fff;
+                position: relative;      /* SUVISNO JE OBJASNJAVATI ZASTO JE POZICIONIRANJE relative */
+                border-radius: 8px;
+                padding: 18px;
+                font-size: 2rem;
+                display: inline-block;
+            }
+
+            p.quote::after {
+                position: absolute;
+                content: "";
+                width: 0;
+                height: 0;
+                border: 22px solid transparent;
+                border-top-color: tomato;
+                bottom: -43px;                  /*ZASTO NE 44, PA ZELIM DA PSEUDO ELEMENT, MALO PREKRIVA ELEMENT*/
+                left: 20px;                     /* CISTO DA SAM SIGURAN DA CE SVE IZGLEDATI 'POVEZANO' */
+            }
+        
+        </style>
 
         <script src="./index.js"></script>
 
