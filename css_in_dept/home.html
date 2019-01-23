@@ -2156,6 +2156,46 @@
 
         </style>
 
+        <hr>
+        <br>
+
+        <div class="accessibility"></div>
+
+        <style>
+        
+            div.accessibility::after {
+                content: '👐';
+            }
+
+        </style>
+
+        <hr>
+        <br>
+
+        <p class="lice"></p>
+
+
+        <style>
+        
+            /* STRILOVI, KADA JE  font-feature-settings: 'liga'*/
+            p.lice::after {
+                content: '🐵';
+            }
+        
+            /* KADA JE font-feature-settings: 'liga' SUPPORTED (DEFINISEM KORISCENJE MATERIAL ICON FONT-A)*/
+            /* SLEDECI DEFINISANI STILOVI, AKO JE POMENUTO SUPPORTED CE OVERRIDE-OVATI PREDHODNE */
+        
+            @supports (font-feature-settings: 'liga') {
+        
+                p.lice::after {
+                    font-family: 'Material Icons';
+                    content: "face";
+                }
+        
+            }
+        
+        </style>
+
         <script src="./index.js"></script>
 
     </body>
