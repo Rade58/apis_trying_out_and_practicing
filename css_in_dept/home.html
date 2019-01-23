@@ -2095,6 +2095,67 @@
 
         <div class="material-icons">face</div>
 
+        <div class="material-icons">accessibility_new</div>
+
+        <div class="material-icons veslo"></div>
+
+        <style>
+        
+            div.veslo::after {
+                content: "rowing";
+                font-size: 2rem;
+                background-color: #9c394e;
+            }
+
+        </style>
+
+        <div class="nekaMikona">face</div>
+
+        <style>
+            
+            div.nekaMikona {
+                font-family: 'Material Icons'; /* OVO JE VAZNO */
+                
+                font-weight: normal;
+                font-style: normal;
+                font-size: 48px;
+                line-height: 1;
+                letter-spacing: none;
+                text-transform: none;
+                display: inline-block;
+                word-wrap: normal;
+
+                /* ESTELLE JE OVO KORISTILA, ALI BI BAS I NIJE JASNO STA ZANACI */
+                /* DRUGOM PRILIKOM CU SAZNATI */
+                font-feature-settings: "liga";
+                -webkit-font-feature-settings: "liga";
+                /* OVAJ PROPERTI NISAM USPEO DA PRONADJEM NI U JEDNIM SPECIFIKACIJAMA */
+                /* A I NJEGA JE ESTELLE KORISTILA */
+                -webkit-font-smoothing: antialiased;
+                font-smooth:antialiased;
+
+                /* NEKOM DRUGOM PRILIKOM CU ISPITATI, KONKRETNIJE CEMU SLUZE POMENUTI PROPERTIJI
+                (MOZDA CU TO URADITI, KADA SE DETALJNIJE BUDEM BAVIO FONT-OVIMA) */
+            } 
+        
+        </style>
+
+        <hr>
+        <br>
+
+        <p class="material-icons"></p>
+
+        <style>
+
+            p[class|='material-icons']::after {
+                content: 'accessibility';
+                background-color: #801f2f;
+                color: #ffffff;
+                font-size: 4rem;
+            }
+
+        </style>
+
         <script src="./index.js"></script>
 
     </body>
