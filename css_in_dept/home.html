@@ -2196,6 +2196,27 @@
         
         </style>
 
+        <hr>
+        <br>
+
+        <a class="myMail" href="mailto:noone@nowhere.org">my email</a>
+
+        <style>
+        
+            @media only screen and (orientation: landscape) {
+
+                /* NARAVNO, KORISTICU GENERATED CONTENT */
+
+                a.myMail[href^=mailto]::after {
+                    font-family: "Material Icons";
+                    content: " contact_mail";
+                }
+
+            }
+        
+        </style>
+
+
         <script src="./index.js"></script>
 
     </body>

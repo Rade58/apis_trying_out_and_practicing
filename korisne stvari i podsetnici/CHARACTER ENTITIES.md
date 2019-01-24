@@ -31,3 +31,7 @@ OVO MI JE KONKRETNO KORISTILO DA PRONADJEM SPECIJALNI KARAKTER, KOJI JE "U VIDU 
 ESTELLE JE NAPRAVILA NESTO STO SE ZOVE [ENTITY CONVERSION CALCULATOR](https://estelle.github.io/cssmastery/generated/#slide27) (OVO JE SA NJENOG SLAJDA)
 
 A PRONASAO SAM, I [SKORO ISTOVETAN ENTITY CONVERSION CALCULATOR](https://www.evotech.net/articles/testjsentities.html)
+
+## MATERIAL DESIGN ICON FONT
+
+[MATERIAL ICON FONT](https://material.io/tools/icons/?icon=contact_mail&style=baseline)
