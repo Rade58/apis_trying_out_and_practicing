@@ -1,3 +1,5 @@
+@import './junk/junkForimporting.css' only screen and (max-width: 600px) and (orientation: landscape);
+
 .boje {
     color: #e24c60;
     color: orange;

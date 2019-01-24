@@ -1,0 +1,86 @@
+# MOGUCE JE, DEFINISATI OPTIMIZOVANJE CELOG STYLESHEET-A (BIO ON INTERNAL ILI EXTERNAL), UZ KORISCENJE MEDIA QUERY-JA, KOJI SE DEFINISE INLINE (DAKLE U HTML-U)
+
+KAD KAZEM OPTIMIZOVANJE, MISLIM NA INLINE DEFINISANJE MEDIA QUERY-JA, I U TO MSLUCAJU CEO STYLSHEET SE UCITAVA, AKO JE VREDNSOT MEDIA QUERY-JA, *true* VREDNOST
+
+**TO JE MOGUCE URADITI UZ POMOC **media** ATRIBUTA** (NIJE MOGUCE, PUTEM style ATRIBUTA)
+
+PODRZANI ELEMENTI SU:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`<link>`**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`<style>...</style>`**
+
+&nbsp;&nbsp;&nbsp;&nbsp; OVI POMENUTI SU NAJVAZNIJI (BAR PO MOJOJ PROCENI), A JOS GA JE MOGUCE DEFINISATI I ZA
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`<a>...</a>`**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`<area>...</area>`**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`<source>`**
+
+**PRIKAZACU SADA JEDAN PRIMER, KORISCENJA *media* ATRIBUTA SA *EXTERNAL* I *INTERNAL* STYLESHEET**
+
+**
+
+```HTML
+
+<!-- EXTERNAL -->
+
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="junk/junk.css"
+
+    media="only screen and (max-width: 608px) and (orientation: portrait)"
+>
+
+<!-- INTERNAL -->
+
+<style media="only screen and (max-width: 608px) and (orientation: landscape)">
+
+    div.nekaKlasa {
+        width: 86vw;
+        background-color: olive;
+    }
+
+</style>
+
+```
+
+POTREBNO SE POIGRATI SA REZIZING-OM BROWSEROVOG WINDOW-A, KAKO BI VIDEO PROMENE, STILA, KOJE SE DESAVAJU PRI ZADOVOLJENJU DEFINISANE MAKSIMALNE MOGUCE SIRINE I ORIENTACIJE
+
+**
+
+## IMPORTING STYLSHEET, BASED ON MEDIA QUERIES
+
+MOGUCE JE KORISTITI I *@import* AT-RULE, ZAJEDNO SA MEDIA QUERY-IMA, KAKO BI OMOGUCIO DA DA SE  STILOVI (ODNOSNO STILSKA PRAVILA) UVEZU, IZ DRUGOG STYLESHEET-A, SAMO AKO MEDIA QUERY RETURN-UJE true VREDNOST
+
+SINTAKSA SE SASTOJI, OD: *@import* KEYWORD-A, POSLE KOJEG SLEDI URL , KAO I OBICNO (URL MOZE BITI SAMO STRING URL ILI DEFINISANJE *url()* FUNKCIJE); A NAKON TOGA SE DEFINISE MEDIA QUERY
+
+***
+***
+
+PRIKAZACU TO PUTEM PRIMERA
+
+ZAMISLICU DA IMAM DVA STYLESHEETA:
+
+*main.css* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I &nbsp;&nbsp;&nbsp;&nbsp; *junk_widget.css* 
+
+MOJ *main.css* LINKED SA PAGE-OM, A ONO STO ZELIM JE DA UVEZEM STILOVE IZ *junk_widget.css*, ALI *SAMO ONDA KADA JE MAXIMALNA SIRINA BROWSER-OVOG WINDOW-A 608px; I KADA JE ORIENTATION PORTRETNI (NARAVNO, I KADA JE U PITANJU, SAMO screen MEDIJSKI TIP)*
+
+```CSS
+
+/* U FAJLU main.css */
+
+@import '../folder/junk_widget.css' only screen and (max-width: 608px) and (orientation: portrait);
+
+```
+
+I STILOVI IZ STYLESHEET-A CE BITI IMPORTED, KADA MEDIA QUERY RETURN-UJE TRUE
+
+***
+***
+
+STO SE TICE OSTALOGA, OSTAVICU [INTRODUCTION STANDARDA](https://www.w3.org/TR/mediaqueries-4/#intro), GDE JE SVE OVO OBJASNJENO, KADA SE NESTO PROMENI, ILI KADA BUDEM ZELEO DA NESTO DETALJNIJE NAUCIM, TREBAO BI PROCITATI STANDARD
+
+(U STANDARDIMA STOJI DA SE MOZDA TREBA NAPUSTITI UPOTREBA *only* OPERATORA)
