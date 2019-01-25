@@ -1141,3 +1141,29 @@ p.cure {
 
 
 /* /////////////////////////////////////////////////////////// */
+
+
+/* ////////////////////////////////////////////////////////////// */
+div.cameleon_el {
+    display: inline-block;
+    border: #c50c78 solid 4px;
+    width: 58vw;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+/* resolution */
+
+@media screen and (max-resolution: 4dppx) and (min-resolution: 2dppx) {
+
+    div.cameleon_el {
+        border-color: #3e9578;
+        border-width: 10px;
+        width: 100vw;
+        font-size: 2rem;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+}
+
