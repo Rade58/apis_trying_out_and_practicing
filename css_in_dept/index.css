@@ -1167,3 +1167,17 @@ div.cameleon_el {
 
 }
 
+
+
+/* @media screen and (width >= 800px) {
+    body {
+        background-color: pink;
+    }
+} */
+
+
+@media not (width) {
+    body {
+        background-color: antiquewhite;
+    }
+}
