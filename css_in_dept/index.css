@@ -1176,8 +1176,18 @@ div.cameleon_el {
 } */
 
 
-@media not (width) {
+@media not screen and (width) {
     body {
         background-color: antiquewhite;
     }
 }
+
+
+/* @media screen and (max-width: 500px) {
+    body {
+        border: olive solid 10px;
+    }
+} */
+
+
+
