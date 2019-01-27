@@ -1191,7 +1191,7 @@ div.cameleon_el {
 
 
 
-@media screen and (width >= 380px) and (width <= 648px) {
+/* @media screen and (width >= 380px) and (width <= 648px) {
 
     body {
         background-color: #4ed4ec;
@@ -1201,11 +1201,53 @@ div.cameleon_el {
 
 
 
-@media (orientation: landscape), (not (max-width: 800px)) {
+@media (not (max-width: 800px)) {
     
-    body{ 
-       background-color: #d33838;
+    
+
+}
+
+
+@media ((min-width: 480px) and (max-width: 680px)) {
+
+    body { 
+        background-color: #d33838;
+    }
+
+} */
+
+
+@supports not (transform-origin: 10em 10em 10em) {
+
+    body {
+        background: tomato;
     }
 
 }
+
+/* @supports not (not (transform-origin: 10em 10em 10em)) {
+
+    body {
+        background-color: #9db0b8;
+    }
+
+} */
+
+@supports not (selector(:first-child)) {
+
+    body {
+        outline: #BADA55 solid 28px;
+    }
+
+}
+
+/* @supports (selector(:-webkit-any())) {
+
+    body {
+
+        background-color: pink
+
+    }
+
+} */
 
