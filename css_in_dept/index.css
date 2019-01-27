@@ -1171,9 +1171,9 @@ div.cameleon_el {
 
 /* @media screen and (width >= 800px) {
     body {
-        background-color: pink;
+        background-color: #71f3d2;
     }
-} */
+} 
 
 
 @media not screen and (width) {
@@ -1181,7 +1181,7 @@ div.cameleon_el {
         background-color: antiquewhite;
     }
 }
-
+ */
 
 /* @media screen and (max-width: 500px) {
     body {
@@ -1190,4 +1190,22 @@ div.cameleon_el {
 } */
 
 
+
+@media screen and (width >= 380px) and (width <= 648px) {
+
+    body {
+        background-color: #4ed4ec;
+    }
+
+}
+
+
+
+@media (orientation: landscape), (not (max-width: 800px)) {
+    
+    body{ 
+       background-color: #d33838;
+    }
+
+}
 
