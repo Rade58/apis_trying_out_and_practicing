@@ -1233,7 +1233,7 @@ div.cameleon_el {
 
 } */
 
-@supports not (selector(:first-child)) {
+/* @supports not (selector(:first-child)) {
 
     body {
         outline: #BADA55 solid 28px;
@@ -1241,7 +1241,7 @@ div.cameleon_el {
 
 }
 
-/* @supports (selector(:-webkit-any())) {
+@supports selector(:-webkit-any()) {
 
     body {
 
@@ -1249,5 +1249,5 @@ div.cameleon_el {
 
     }
 
-} */
-
+}
+ */
