@@ -4,6 +4,10 @@ OVO JE JAKO DOBAR RESURS JER POSTOJI KARAKTER, OPIS KARAKTERA, KAKO SE ON PREDST
 
 [CHARACTER ENTITIES](https://brajeshwar.github.io/entities/)
 
+## U CSS-U (KORISNO ZA GENERETED CONTENT)
+
+[CSS ENTITY(w3school)](https://www.w3schools.com/cssref/css_entities.asp)
+
 ## OVDE MOGU VIDETI I URL ENCODING
 
 [URL ENCODING](http://www.cheat-sheets.org/sites/html.su/urlencoding.html)
@@ -35,3 +39,5 @@ A PRONASAO SAM, I [SKORO ISTOVETAN ENTITY CONVERSION CALCULATOR](https://www.evo
 ## MATERIAL DESIGN ICON FONT
 
 [MATERIAL ICON FONT](https://material.io/tools/icons/?icon=contact_mail&style=baseline)
+
+(NAUCI I KAKO DA KORISTIS FONT-AWESOME ICON FONT)

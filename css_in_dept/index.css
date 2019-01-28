@@ -1251,3 +1251,27 @@ div.cameleon_el {
 
 }
  */
+
+/* ////////////////////////////////////////////////////// */
+
+/* @media screen and (min-width: 38em) {
+
+    p.bacon_lorem {
+        padding: 0% 22%;
+    }
+
+} */
+
+p.bacon_lorem {
+    margin: auto;
+    max-width: 38em;
+
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+}
+
+/* p.bacon_lorem::after {
+    content: "NEKITEK\00ADTKRUPAN BLAH BLAH";
+} */
+
