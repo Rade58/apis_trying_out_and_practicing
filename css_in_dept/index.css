@@ -1323,3 +1323,44 @@ article.clanak > :-moz-any(h1, h2) {
     background-color: #d58adfb9;
     text-align: center;
 }
+
+
+/* //////////////////////////////////////////////////// */
+
+
+svg.kont_kruga circle {
+
+    r: 46%;
+
+}
+
+@media screen and (min-width: 38em) {
+
+    svg.kont_kruga circle {
+        r: 36%;
+        stroke: orange;
+        fill: wheat;
+    }
+
+}
+@media screen and (min-width: 42em) {
+
+    svg.kont_kruga circle {
+        r: 28%;
+        stroke: #25a88c;
+        fill: #6d668d;
+    }
+
+}
+@media screen and (min-width: 68em) {
+
+    svg.kont_kruga circle {
+        r: 18%;
+        stroke: #c80942;
+        fill: greenyellow;
+    }
+
+}
+
+
+
