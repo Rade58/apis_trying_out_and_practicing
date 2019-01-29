@@ -1264,14 +1264,62 @@ div.cameleon_el {
 
 p.bacon_lorem {
     margin: auto;
-    max-width: 38em;
+
+    border: tomato solid 2px;
+
+    max-width: 48em;
+
 
     hyphens: auto;
-    -webkit-hyphens: auto;
-    -ms-hyphens: auto;
+    
+     /* -webkit-hyphens: auto; */
+    /* -ms-hyphens: auto; */ 
+
+    column-count: 4;
+
+    column-fill: balance;
+
+    column-width: 14em;
+
+    /* -wbkit-column-fill: balance; */
+    /* -moz-column-fill: balance; */
+
 }
 
 /* p.bacon_lorem::after {
     content: "NEKITEK\00ADTKRUPAN BLAH BLAH";
 } */
 
+
+article.clanak {
+    max-width: 58em;        /* SMANJUJUCI VIEWPORT ISPOD OVE SIRINE, DESICE SE SVE ONO STO */
+    margin: auto;           /* SAM GORE OBJASNJAVAO, U POGLEDU COLLAPSINGA BROJA KOLONA I PROMENI SIRINE KOLONE */
+
+    column-count: 6;
+    column-width: 9em;
+
+    column-rule: tomato solid 2px;
+
+}
+
+article.clanak > :-webkit-any(h1, h2) {
+    column-span: all;
+    /* -webkit-column-span: all; */
+    color: olive;
+    background-color: gainsboro;
+    text-align: center;
+}
+
+/* column-span NIJE PODRZAN U FIREFOX-U */
+/* NE TREBAM OBRACATI PAZNJU NA OVO */
+/* SAMO DODAJRM NEKE STILOVE HEADER-IMA, U FIREFOX-U */
+article.clanak > :-moz-any(h1, h2) {
+
+    /* KAKO column-span NIJE PODRZAN U FIREFOX-U, ONO STO SAM MOGAO URADITI
+    JESTE APSOLUTNO POZICIONIRANJE, OVIH HEADER-A U FIREFOX-U
+    UZ TO BIH IM DODAO I SIRINU OD 100% (NARAVNO PRE TOGA BIH article-U DODAO position: relative)*/
+    
+    color: darkslategray;
+    background-color: #d58adfb9;
+    text-align: center;
+}
