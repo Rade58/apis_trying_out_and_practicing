@@ -10,6 +10,7 @@
     text-decoration: underline;
     animation: forwards;
     color: #29299921;
+    color: palevioletred;
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
