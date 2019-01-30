@@ -4,11 +4,12 @@
     color: #e24c60;
     color: orange;
     color: #25a88c;
-    color: #6d668d;
+    color: #6d668d00;
     color: #c80942;
     outline-style: ridge;
     text-decoration: underline;
     animation: forwards;
+    color: #29299921;
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
@@ -1343,7 +1344,7 @@ svg.kont_kruga circle {
     }
 
 }
-@media screen and (min-width: 42em) {
+@media screen and (min-width: 49em) {
 
     svg.kont_kruga circle {
         r: 28%;
