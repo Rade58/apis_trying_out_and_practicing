@@ -2400,60 +2400,60 @@
 
         
         <div class="op_tr">
-            <div>Lorem Ipsum Blah Something</div>
-            <div>Lorem Ipsum Blah Something</div>
-        </div>
-        <!-- UVEO SAM direction PROPERTY RIGHT TO LEFT, JER ZELIM DA MENJANJE VREDNOSTI
-        OD JEDAN DO NULA, IDE OD LEVE KA DESNOJ STRANI -->
-        <input style="direction: rtl;" value="1" type="range" max="1" min="0" step="0.1">
-
-        <style>
-
-            div.op_tr {
-                background-color: tomato;
-                text-align: center;
-            }
-
-            div.op_tr > div {
-                display: inline-block;
-                border: olive solid 6px;
-                padding: 48px;
-                margin: 18px;
-                font-size: 2.8rem;
-                text-shadow: rgb(19, 18, 18) 2px 2px 2px;
-            }
-        
-            div.op_tr div:nth-of-type(odd) {
-                color: rgb(78, 6, 22);
-                background-color: rgb(151, 50, 160);
-            }
+                <div>Lorem Ipsum Blah Something</div>
+                <div>Lorem Ipsum Blah Something</div>
+            </div>
+            <!-- UVEO SAM direction PROPERTY RIGHT TO LEFT, JER ZELIM DA MENJANJE VREDNOSTI
+            OD JEDAN DO NULA, IDE OD LEVE KA DESNOJ STRANI -->
+            <input style="direction: rtl;" value="1" type="range" max="1" min="0" step="0.1">
             
-            div.op_tr div:nth-of-type(even) {
-                color: rgba(78, 6, 22, 1);
-                background-color: rgba(151, 50, 160, 1);
-            }
-        
-        </style>
-
-        <script defer>
+            <style>
             
-            const divKont = document.querySelector('div.op_tr');
-            const firstDiv = divKont.querySelector(':first-child');
-            const secDiv = divKont.querySelector(':last-child');
-            const inputEl = divKont.nextElementSibling;
-            let colorFirs = window.getComputedStyle(firstDiv).getPropertyValue('color');
-            let bColorFirs = window.getComputedStyle(firstDiv).getPropertyValue('background-color'); 
-
-            colorFirs = colorFirs.substring(0, colorFirs.length - 1);
-            bColorFirs = bColorFirs.substring(0, bColorFirs.length - 1);
-
-            inputEl.addEventListener('input', ev => {
-                firstDiv.style.opacity = ev.target.value;
-                secDiv.style.color = `${colorFirs}, ${ev.target.value})`;
-                secDiv.style.backgroundColor = `${bColorFirs}, ${ev.target.value})`;
-            }, false);
+                div.op_tr {
+                    background-color: tomato;
+                    text-align: center;
+                }
             
-        </script>        
+                div.op_tr > div {
+                    display: inline-block;
+                    padding: 48px;
+                    border: olive solid 8px;
+                    margin: 18px;
+                    font-size: 2.8rem;
+                    text-shadow: rgb(19, 18, 18) 2px 2px 2px;
+                }
+            
+                div.op_tr div:nth-of-type(odd) {
+                    color: rgb(78, 6, 22);
+                    background-color: rgb(151, 50, 160);
+                }
+            
+                div.op_tr div:nth-of-type(even) {
+                    color: rgba(78, 6, 22, 1);
+                    background-color: rgba(151, 50, 160, 1);
+                }
+            
+            </style>
+            
+            <script defer>
+            
+                const divKont = document.querySelector('div.op_tr');
+                const firstDiv = divKont.querySelector(':first-child');
+                const secDiv = divKont.querySelector(':last-child');
+                const inputEl = divKont.nextElementSibling;
+                let colorSec = window.getComputedStyle(secDiv).getPropertyValue('color');
+                let bColorSec = window.getComputedStyle(secDiv).getPropertyValue('background-color');
+            
+                colorSec = colorSec.substring(0, colorSec.length - 1);
+                bColorSec = bColorSec.substring(0, bColorSec.length - 1);
+            
+                inputEl.addEventListener('input', ev => {
+                    firstDiv.style.opacity = ev.target.value;
+                    secDiv.style.color = `${colorSec}, ${ev.target.value})`;
+                    secDiv.style.backgroundColor = `${bColorSec}, ${ev.target.value})`;
+                }, false);
+            
+            </script>        
 
         
         <script src="./index.js"></script>
