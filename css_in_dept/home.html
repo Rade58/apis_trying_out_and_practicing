@@ -2444,16 +2444,56 @@
                 let colorSec = window.getComputedStyle(secDiv).getPropertyValue('color');
                 let bColorSec = window.getComputedStyle(secDiv).getPropertyValue('background-color');
             
-                colorSec = colorSec.substring(0, colorSec.length - 1);
-                bColorSec = bColorSec.substring(0, bColorSec.length - 1);
-            
+                colorSec = colorSec.substring(3, colorSec.length - 1);
+                bColorSec = bColorSec.substring(3, bColorSec.length - 1);
+
+                console.log(colorSec);
+
                 inputEl.addEventListener('input', ev => {
                     firstDiv.style.opacity = ev.target.value;
-                    secDiv.style.color = `${colorSec}, ${ev.target.value})`;
-                    secDiv.style.backgroundColor = `${bColorSec}, ${ev.target.value})`;
+                    secDiv.style.color = `rgba${colorSec}, ${ev.target.value})`;
+                    secDiv.style.backgroundColor = `rgba${bColorSec}, ${ev.target.value})`;
                 }, false);
             
-            </script>        
+            </script>
+            
+            
+            <div class="trans_op">
+                <div>Lorem Ipsum TRANSPARENTNE SENKE</div>
+                <div>Lorem Ipsum NEPROZIRNE SENKE</div>
+            </div>
+            
+            <style>
+            
+                div.trans_op {
+                    background-color: tomato;
+                    text-align: center;
+                }
+            
+                div.trans_op div {
+                    padding: 48px;
+                    font-size: 2rem;
+                    border-radius: 4px;
+                    margin: 48px;
+                    display: inline-block;
+                    background-color: #b3d870;
+                    color: hsl(195, 67%, 5%);
+                }
+            
+                /* TRANSPARENT SENKE */
+                div.trans_op div:nth-of-type(1) {
+                    box-shadow: -14px 14px rgba(0, 0, 0, 0.3);
+                    text-shadow: 0 -2rem 1px rgba(0, 0, 0, 0.3)
+                }
+            
+                /* OPAQUE SENKE */
+                div.trans_op div:nth-of-type(2) {
+                    box-shadow: -14px 14px #999;
+                    text-shadow: 0 -2rem 1px #999;
+                }
+            
+            
+            </style>
 
         
         <script src="./index.js"></script>

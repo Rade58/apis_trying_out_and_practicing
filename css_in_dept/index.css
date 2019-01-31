@@ -11,6 +11,7 @@
     animation: forwards;
     color: #29299921;
     color: palevioletred;
+    color: hsl(195, 67%, 5%)
 }
 
 /* RAZUMEVANJE cascade-A I specificity-A */
