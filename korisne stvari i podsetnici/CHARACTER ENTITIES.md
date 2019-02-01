@@ -41,3 +41,8 @@ A PRONASAO SAM, I [SKORO ISTOVETAN ENTITY CONVERSION CALCULATOR](https://www.evo
 [MATERIAL ICON FONT](https://material.io/tools/icons/?icon=contact_mail&style=baseline)
 
 (NAUCI I KAKO DA KORISTIS FONT-AWESOME ICON FONT)
+
+## OVO SU EMOJIS
+
+[EMOJY CHEATSHEET](https://www.webfx.com/tools/emoji-cheat-sheet/)
+
