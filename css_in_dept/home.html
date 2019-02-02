@@ -2852,6 +2852,55 @@
         <br>
         <br>
         <br>
+        <style>
+
+            .body {
+                height: 800px;
+            }
+
+            header.header, header.header + main > *, header.header ~ footer {
+                background-color: gray;
+                font: 2em sans-serif;
+                color: white;
+                padding: .5em;
+                border-radius: .5em;
+                margin: .5em;
+            }
+
+
+            .body {
+                display: flex;
+                flex-flow: column; /* OVO JE SHORTHAND, KOJI IZMEDJU OSTALOG POKRIVA I flex-direction KOJI SAM SADA PODESIO */
+            }
+
+            .body main {
+                display: flex;
+                flex: 1; /* UJEDNO I FLEX CONTAINER I FLEX ITEM */
+                        /* JEDINI FLEX ITEM SVOG CONTAINER-A, KOJI RASTE I KOJI SE SUZAVA (PO VISINI U OVOM SLUCAJU) */
+                /* flex-direction: row; */  /* OVO JE DEFAULT, CISTO OPET NAPOMINJEM */
+            }
+
+            .body article {
+                flex: 1;        /* JEDINI FLEX ITEM SVOG CONTAINERA KOJI MOZE DA RASTE I KOJ ISE SUZAVA */
+                                /* PO SIRINI U OVOM SLUCAJU */
+            }
+
+            .body nav {
+                order: -1;      /* OVO CE UCINITI DA SE nav DISPALY-UJE, PRE article-A */
+                                /* KOJI U HTML ORDER-U, JESTE PRE NAVIGACIJE */
+            }
+
+        
+        </style>
+        <div class="body">
+            <header class="header">header</header>
+            <main>
+                <article>article</article>
+                <nav>nav</nav>
+                <aside>aside</aside>
+            </main>
+            <footer>footer</footer>
+        </div>
         <br>
         <br>
         <br>
