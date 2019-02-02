@@ -260,6 +260,24 @@ document.querySelector('body > p:nth-last-of-type(5)').addEventListener('focus',
     console.log(ev instanceof FocusEvent, ev instanceof Event)
 });
 
+let aNiz = [];
 
+let elementNekiBlah = document.querySelector('div.sticky_tekst')
 
+do{
 
+    if(elementNekiBlah.nodeName === 'HTML'){
+
+        console.log("break");
+
+        break;
+    }
+
+    aNiz.push(
+        {position: window.getComputedStyle(elementNekiBlah).getPropertyValue('position'),
+         element: elementNekiBlah})
+    
+}
+while(elementNekiBlah = elementNekiBlah.parentElement)
+
+console.log(aNiz);
