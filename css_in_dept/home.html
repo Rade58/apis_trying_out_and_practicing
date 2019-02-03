@@ -2708,8 +2708,7 @@
             }
 
             div.kont_el_2 div:nth-of-type(1) {
-                background-color: #dee8eb;
-                
+                background-color: #dee8eb; 
             }
         
             div.kont_el_2 div:nth-of-type(2) {
@@ -2988,6 +2987,7 @@
         
             div#nekiKont {
                 display: flex;
+                border: olive solid 4px;
             }
         
             /* STA CE SE SADA DOGODITI? */
@@ -3001,19 +3001,23 @@
         
             /* OBA POMENUTA PROPERTIJA PO DEFAULTU, IMAJU JEDINICU KAO VREDNOST */
         
-            /* flex-grow KOJA MU DOZVOLJAVA DA SE SIRI */         /* flex-shrink KOJA MU DOZVOLJAVA DA SE SUZAVA */
+            /* flex-grow KOJA MU DOZVOLJAVA DA SE SIRI A FAKTOR RASTA (1) JE JEDNAK ZA SVAKI ITEM*/
+
+            /* flex-shrink KOJA MU DOZVOLJAVA DA SE SUZAVA A FAKTOR SMANJIVANJA (1) JE ISTI ZA SVAKI ITEM */
         
-            /* TO NE MORA BITI JEDINICA (JER UJEDNO JE OVO I VREDNSOT KOJA DEFINISE PROPORCIJU )
-                DA IMAM TRI ELEMENT SA SLEDECI MVREDNOSTIMA:
+            /* DA SAM DEFINISAO DRUGI FAKTOR RASTA */
+            /* FAKTOR RASTA NE MORA BITI JEDINICA (JER UJEDNO JE OVO I VREDNSOT KOJA DEFINISE PROPORCIJU )
+                DA IMAM TRI ELEMENT SA SLEDECIM VREDNOSTIMA:
         
                 .prvi {                .drugi {               .treci {
                     flex-grow: 1           flex-grow: 4           flex-grow: 8
                 }                      }                      }
         
-            MOGAO BIH IZRACUNATI KOLIKO ONI PROCENATA, SIRINSKI ZAUZIMAJU, OD  SIRINE SVOG KONTEJNERA 
+            MOGAO BIH IZRACUNATI KOLIKO ONI PROCENATA, SIRINSKI ZAUZIMAJU, OD  SIRINE SVOG KONTEJNERA, DOK RASTU 
         
-            CINJENICA JE DA ZAJEDNO ZUZIMAJU 100%
-        
+            CINJENICA JE DA ZAJEDNO ZUZIMAJU 100% (ZBOG flex-basis: auto (DEFAULT))
+            
+            DA NE ZAUZIMAJU TOLIKO, I DA JE FLEX BASIS NEKA FIKSNA VREDNOST ONI 
         
             1 + 4 + 8 = 1 + 4 + 8;
         
@@ -3024,30 +3028,50 @@
             100% = 7.69% + 30.76% + 61.52%
         
             (MISLIM DA JE VAZNO RAZUMETI DA flex-grow NIJE SAMO NEKI 'SWITCH' KOJI DOZVOLJAVA ELEMENTIMA DA RASTU
-            VEC DA DEFINISE I KOLIKO MOGU DA NARASTU UZ POMOC TIH PROPORCIJSKIH VREDNOSTI)
+            VEC DA DEFINISE I KOLIKO PROSTORA ZAUZIMAJU, STO JE MOGU DA NARASTU UZ POMOC TIH PROPORCIJSKIH VREDNOSTI)
         
-            ISTO TO VAZI I ZA flex-shrink (PREDPOSTAVLJAM ALI TO CU KASNIJE PROVERITI)
-        
-        
-            NISAM REKAO DA, PO DEFULTU flex-basis USTVARI IMA VREDNOST auto (STO ZNACI DA DEFAULT SIRINE NEMA, VEC DA SE 
-            KORISTI DOSTUPNI PROSTOR)
+            
         
             */
-        
-            /* SADA CU KORISTITI SHORTHAND DA BIH DEFINISAO NEKE OFD POMENUTIH VREDNOSTI */
         
             div#nekiKont div {
                 
                 border: tomato solid 4px;
 
-                flex: 60%;
+                flex: 0 1 20%;
         
             }
-        
-        
+
         </style>
     
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
 
+        <div class="blah_para_some">
+            Tekst
+            <!-- <b>Neki tekst</b> -->
+            Neki Tekst
+            <a href="#">Neki tekst</a>
+        </div>
+        
+        <style>
+        
+            div.blah_para {
+                /* display: flex; */
+            }
+        
+        </style>
+
+        <script defer>
+        
+        for(let nodeEl1 of document.querySelector('div.blah_para_some').children){
+            console.log(nodeEl1);
+            nodeEl1.style.border = "tomato solid 2px";
+        }
+        </script>
 
         <script src="./index.js"></script>
 

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link rel="stylesheet" type="text/css" href="./fleks.css">
+        <title>FLEKS</title>
+    </head>
+    <body>
+        
+        <p class="p1">
+            Neki tekst ovo je
+            <span style="font-weight: bold;">nesto bold</span> jos nesto tekst ali i linkovi slede
+            <a href="#">Neki link</a> ali i jos nesto
+            teksta izmedju; <a href="#">Neki drugi link</a>
+            opet tekst nakon.
+        </p>
+
+        <style>
+
+            p.p1 {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            p.p1 * {
+                border: tomato solid 2px;
+                font-size: 2rem;
+            }
+
+            
+
+        </style>
+
+        <hr>
+        <br>
+
+        <div class="f_kont">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div></div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+        </div>
+        
+        <style>
+        
+            div.f_kont {
+                border: tomato solid 4px;
+                display: flex;
+            }
+        
+            div.f_kont * {
+                text-align: center;
+                border: olive solid 2px;
+                flex: 1 1 100px;
+            }
+
+            div.f_kont div:nth-last-of-type(2) {
+                position: absolute;
+                top: 180px;
+            }
+
+            div.f_kont div:empty::before {
+                content: open-quote "Tekst" close-quote; 
+            }
+
+        </style>
+    
+        <script src="./fleks.js"></script>
+    </body>
+</html>
