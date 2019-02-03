@@ -2904,14 +2904,148 @@
         <br>
         <br>
         <br>
+        <style>
+            div.bubble {
+                display: inline-block;
+                padding: 20px;
+                margin: 10px;
+                border: tomato solid 4px;
+                box-sizing: border-box;
+            }
+
+            div.bubble:nth-last-of-type(4) {
+                border: 10px solid olive;
+                display: block;
+                padding: unset;
+                box-sizing: border-box;
+                clear: both;
+            }
+
+        </style>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
+        <div class="bubble">Tekst</div>
         <br>
         <br>
         <br>
         <br>
+        <div class="blubber">Neki tekst</div>
+
+        <style>
+
+            /* @media screen and (resolution){
+                div.blubber {
+                    border: tomato solid 4px;
+                    font-size: 2rem;
+                    font-family: arial;
+                    color: white;
+                    background-color: #999;
+                }
+
+            } */
+
+            @supports (display: block) {
+
+                div.blubber {
+                    border: tomato solid 4px;
+                    font-size: 2rem;
+                    font-family: arial;
+                    color: white;
+                    background-color: #999;
+                }
+            }
+
+
+
+            @supports (display: flex){
+
+                div.blubber {
+                    background-color: palevioletred;
+                    text-align: center;
+                }
+
+            }
+
+        </style>
         <br>
         <br>
         <br>
         <br>
+        <div id="nekiKont">
+            <div class="box a">First Box</div>
+            <div class="box b">Second Box</div>
+            <div class="box c">Third Box</div>
+        </div>
+        
+        <style>
+        
+            /* PRVO CU UCINITI DA BLOCK ELEMENT, POSTANE FLEX CONTAINER */
+        
+            div#nekiKont {
+                display: flex;
+            }
+        
+            /* STA CE SE SADA DOGODITI? */
+        
+            /* SVI ITEMI CE PO DEFAULT-U BITI U JEDNOM REDU */
+        
+            /* SVAKI ISTE SIRINE, SVAKI ZAUZEO ISTU KOLICINU DOSTUPNOG (DAKLE, SVOM SIRINOK CONTAINERA CE SE PROSTIRATI ITEMI)
+            PROSTORA */
+        
+            /* ZASTO? */            /* ZBOG DEFAULT VREDNOSTI ZA flex-grow , flex-shrink I flex-basis */
+        
+            /* OBA POMENUTA PROPERTIJA PO DEFAULTU, IMAJU JEDINICU KAO VREDNOST */
+        
+            /* flex-grow KOJA MU DOZVOLJAVA DA SE SIRI */         /* flex-shrink KOJA MU DOZVOLJAVA DA SE SUZAVA */
+        
+            /* TO NE MORA BITI JEDINICA (JER UJEDNO JE OVO I VREDNSOT KOJA DEFINISE PROPORCIJU )
+                DA IMAM TRI ELEMENT SA SLEDECI MVREDNOSTIMA:
+        
+                .prvi {                .drugi {               .treci {
+                    flex-grow: 1           flex-grow: 4           flex-grow: 8
+                }                      }                      }
+        
+            MOGAO BIH IZRACUNATI KOLIKO ONI PROCENATA, SIRINSKI ZAUZIMAJU, OD  SIRINE SVOG KONTEJNERA 
+        
+            CINJENICA JE DA ZAJEDNO ZUZIMAJU 100%
+        
+        
+            1 + 4 + 8 = 1 + 4 + 8;
+        
+            13 = 1 + 4 + 8; / * 7,69%
+        
+            100% = 1 * 7.69% + 4 * 7.69% + 8 * 7.69
+        
+            100% = 7.69% + 30.76% + 61.52%
+        
+            (MISLIM DA JE VAZNO RAZUMETI DA flex-grow NIJE SAMO NEKI 'SWITCH' KOJI DOZVOLJAVA ELEMENTIMA DA RASTU
+            VEC DA DEFINISE I KOLIKO MOGU DA NARASTU UZ POMOC TIH PROPORCIJSKIH VREDNOSTI)
+        
+            ISTO TO VAZI I ZA flex-shrink (PREDPOSTAVLJAM ALI TO CU KASNIJE PROVERITI)
+        
+        
+            NISAM REKAO DA, PO DEFULTU flex-basis USTVARI IMA VREDNOST auto (STO ZNACI DA DEFAULT SIRINE NEMA, VEC DA SE 
+            KORISTI DOSTUPNI PROSTOR)
+        
+            */
+        
+            /* SADA CU KORISTITI SHORTHAND DA BIH DEFINISAO NEKE OFD POMENUTIH VREDNOSTI */
+        
+            div#nekiKont div {
+                
+                border: tomato solid 4px;
+
+                flex: 60%;
+        
+            }
+        
+        
+        </style>
     
 
 
