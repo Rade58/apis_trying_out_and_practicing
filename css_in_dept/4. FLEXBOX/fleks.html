@@ -346,14 +346,6 @@
             }
 
             p[contenteditable][dir^=r]::-webkit-resizer {
-                color: #e02d2d;
-
-
-                border: 9px solid rgba(0,0,0,.1);
-                border-bottom-color: rgba(0,0,0,.5);
-                border-right-color: rgba(0,0,0,.5);
-                outline: 1px solid rgba(0,0,0,.2);
-                box-shadow: 0 0 5px 3px rgba(0,0,0,.1);
 
             }
     
@@ -378,7 +370,9 @@
 
         <style>
             
-            
+            video input#scrubber.scrubber {
+                background-color: tomato;
+            }
 
         </style>
 
@@ -390,19 +384,13 @@
         <textarea class="tekstoblast">Neki tekst</textarea>
 
         <style>
-            textarea::-webkit-resizer:window-inactive {
-                color: #e02d2d;
-
-
-                border: 9px solid rgba(0,0,0,.1);
-                border-bottom-color: rgba(0,0,0,.5);
-                border-right-color: rgba(0,0,0,.5);
-                outline: 1px solid rgba(0,0,0,.2);
-                box-shadow: 0 0 5px 3px rgba(0,0,0,.1);
-
-            }
+            
         </style>
 
+        <video width="300" is="my-video" controls>
+            <source src="../images/videos/Frank Reynolds Best Moments.mp4">
+            <source src="../images/videos/Frank Reynolds Best Moments.ogg">
+        </video>
 
         <script src="./fleks.js"></script>
     </body>
