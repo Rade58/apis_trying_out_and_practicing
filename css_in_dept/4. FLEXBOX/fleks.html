@@ -325,6 +325,37 @@
         <br>
         <br>
         <br>
+        
+        <p contenteditable="true" dir="rtl">        <!-- OVOGA PUTA DEFINISEM direction PUTEM ATRIBUTA -->
+            Ovo je neki HEBREJSKI tekst
+        </p>
+    
+        <style>
+    
+            p[contenteditable][dir^=r] {
+                width: 380px;
+                height: 210px;
+                border: tomato solid 4px;
+                color: hsl(60, 3%, 24%);
+
+                overflow: auto;
+                resize: both;
+                
+                unicode-bidi: bidi-override;
+            }
+
+            p[contenteditable][dir^=r]::-webkit-resizer {
+                color: #e02d2d;
+
+            }
+    
+        </style>
+        
+        <br>
+        <hr>
+        <br>
+        <br>
+        <br>
         <br>
 
         <input type="text" style="unicode-bidi: bidi-override;" dir="rtl">

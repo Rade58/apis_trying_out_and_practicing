@@ -49,7 +49,8 @@ DA CE ONA NAKON PROMENE DIRECTIONA (NA rtl) IZGLEDATI OVAKO:
         border: tomato solid 2px;
 
         direction: rtl;             /* UPAMTI DA OVO NE ZNACI NIKAKVO POMERANJE PARAGRAFA, VEC SAMO ONOGA
-                                    NESTED U NJEMU */
+                                    NESTED U NJEMU (MOZDA SAM S POGRESNO IZRAZIO), TREBAO SAM RECI DA CE ONO
+                                    STO JE NESTED U PARAGRAFU SADA POCINJATI SA DESNE STRANE A NE  */
     }
 
     /* UZ DESNU STRANU PARAGRAFA NALAZICE SE TEKST     'rishloo'    (KAO STO SAM REKAO, SLOVA NIAU 'PROMENILA POLOZAJ')*/
@@ -72,7 +73,32 @@ O VREDNOSTIMA OVOG PROPERTIJA NECU GOVORITI, VEC CU SAMO NAVESTI ONU KOJA MENI T
 
 - *bidi-override* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OVO CE IZVRSITI OVERRIDE ZA INLINE-LEVEL DESCENDANT-E (ILI TEKST, JER ON JE INLINE)), KAKO BI DIRECTION TEKSTA, BIO U SKLADU SA VREDNOSCU *direction* PROPERTIJA (ILI *dir* ATRIBUTA)
 
-SADA MOGU PRIKAZATI JEDAN PRIMER, KOJI BI SE TICA UNOSA HEBREJSKOG TEKSTA U 
+****
 
+SADA MOGU PRIKAZATI JEDAN PRIMER, KOJI BI SE TICAO UNOSA HEBREJSKOG TEKSTA U ELEMENT, KOJI CE BITI **CONTENTEDITABLE** I **RESIZABLE** (RESIZABLE I CONTENTEDITABLE NIJE VAZAN U OVOM PRIMERU, SAMO GA SE PODSECAM) (ONO STO SAM MOGAO URADITI, JESTE 'DEFINISATI' PRAVILAN UNOS HEBREJSKOG TEKSTA U input ILI textarea, ALI KAO STO REKOH ZELIM DA PROVEZBAM SVE)
 
-**NAUCI I   TEXT-ORIENTATION **
+```HTML
+
+    <p contenteditable="true" dir="rtl">        <!-- OVOGA PUTA DEFINISEM direction PUTEM ATRIBUTA -->
+        Ovo je neki HEBREJSKI tekst
+    </p>
+
+    <style>
+
+        p[contenteditable][dir^=r] {
+            width: 380px;
+            height: 210px;
+            border: tomato solid 4px;
+            overflow: auto;
+            resize: both;
+
+            unicode-bidi: bidi-override;
+        }
+
+    </style>
+
+```
+
+****
+
+**NAUCI I   text-orientation **
