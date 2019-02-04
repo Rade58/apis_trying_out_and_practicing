@@ -337,6 +337,7 @@
                 height: 210px;
                 border: tomato solid 4px;
                 color: hsl(60, 3%, 24%);
+                text-shadow: #e02d2d 2px 2px 2px;
 
                 overflow: auto;
                 resize: both;
@@ -346,6 +347,13 @@
 
             p[contenteditable][dir^=r]::-webkit-resizer {
                 color: #e02d2d;
+
+
+                border: 9px solid rgba(0,0,0,.1);
+                border-bottom-color: rgba(0,0,0,.5);
+                border-right-color: rgba(0,0,0,.5);
+                outline: 1px solid rgba(0,0,0,.2);
+                box-shadow: 0 0 5px 3px rgba(0,0,0,.1);
 
             }
     
@@ -359,6 +367,42 @@
         <br>
 
         <input type="text" style="unicode-bidi: bidi-override;" dir="rtl">
+
+        <hr>
+        <br>
+
+        <video width="280" controls class="frank">
+            <source src="../images/videos/Frank Reynolds Best Moments.mp4">
+            <source src="../images/videos/Frank Reynolds Best Moments.ogg">
+        </video>
+
+        <style>
+            
+            
+
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+
+        <textarea class="tekstoblast">Neki tekst</textarea>
+
+        <style>
+            textarea::-webkit-resizer:window-inactive {
+                color: #e02d2d;
+
+
+                border: 9px solid rgba(0,0,0,.1);
+                border-bottom-color: rgba(0,0,0,.5);
+                border-right-color: rgba(0,0,0,.5);
+                outline: 1px solid rgba(0,0,0,.2);
+                box-shadow: 0 0 5px 3px rgba(0,0,0,.1);
+
+            }
+        </style>
+
 
         <script src="./fleks.js"></script>
     </body>
