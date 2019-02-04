@@ -16,4 +16,4 @@
 
 - **resize**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *none*(DEFAULT) | *horizontal* | *vertical* | *both*
 
-- **overflow**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  *visible* (DEFAULT) |*none* | *auto* | *hidden* | *scroll*
+- **overflow**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  *visible* (DEFAULT) | *auto* | *hidden* | *scroll*
