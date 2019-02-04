@@ -83,6 +83,220 @@
         <div class="isti_blah" 
         style="display: inline-block; border: tomato solid 4px; width: 100px; margin: 100px; box-sizing:border-box;"
         >Tekst</div></div>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="kont_el_2">
+            <div class="a">
+                BOX A
+            </div>
+            <div class="b">
+                BOX B
+            </div>
+            <div class="c">
+                BOX C
+            </div>
+        </div>
+        
+        <style>
+        div.kont_el_2 {
+            width: 58%;
+            border: olive solid 8px;
+            background-color: hsl(194, 10%, 25%);
+        
+            /* FLEX CONTAINER */
+            display: flex;
+
+            /* FLEX DIRECTION  (OVO ME SADA ZANIMA)*/
+
+        }
+        
+        div.kont_el_2 div {
+            border: dotted 4px #999;
+            padding: 18px;
+        
+            /* HOW TO FLEX */
+            flex: 1;
+        }
+        
+        div.kont_el_2 div:nth-of-type(1) {
+            background-color: #dee8eb; 
+        }
+        
+        div.kont_el_2 div:nth-of-type(2) {
+            background-color: #a8afb1;
+        }
+        
+        div.kont_el_2 div:nth-of-type(3) {
+            background-color: #646869;
+        }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+
+<div class="kont_el">
+        <div class="a">
+            BOX A
+        </div>
+        <div class="b">
+            BOX B
+        </div>
+        <div class="c">
+            BOX C
+        </div>
+    </div>
+    
+    <style>
+    
+        div.kont_el {
+            width: 58%;
+            border: olive solid 8px;
+            background-color: hsl(194, 10%, 25%);
+    
+            /* FLEX CONTAINER */
+            display: flex;
+        }
+    
+        div.kont_el div {
+            border: dotted 4px #999;
+            padding: 18px;
+    
+            /* HOW TO FLEX (GROW)*/
+            flex: 1;
+
+        }
+    
+        div.kont_el div:nth-of-type(1) {
+            background-color: #dee8eb; 
+        }
+    
+        div.kont_el div:nth-of-type(2) {
+            background-color: #a8afb1;
+        }
+    
+        div.kont_el div:nth-of-type(3) {
+            background-color: #646869;
+        }
+    
+        /* SELEKTOVACU OPET FLEX CONTAINER DA BI DEFINISAO FLEX DIRECTION */
+        div.kont_el {
+            flex-direction: row; /* DEFAULT (FLEX ITEMI SE POLAZU U RED) (JEDNIM DRUGIM PROPERTIJEM (flex-wrap)
+                                     JE KASNIJE MOGUCE DEFINISATI DA SE ITEMI WRAPP-UJU U SLEDECI RED, AKO
+                                     NEMAJU MESTA (ALI TO CU OPET POSEBNO OBJASNITI)*/
+
+            flex-direction: column; /* ITEMI SE POLAZU U KOLONU */ /* U OVOM SLUCAJU VREDNOST flex-basis, SE
+                                    APLICIRA NA VISINU, A NE NA SIRINU (TESKO JE VIDETI, KAKO BI FLEX ITEMI
+                                    U SLUCAJU OVOG DIRECTIONA) RASLI, SUZAVALI SE JER SE SADA PROMENIO 
+                                    'UGAO GLEDANJA' I KADA BIH VERTIKALNO SUZAVAO FLEX CONTAINER, VIDEO BI 
+                                    KAKO SE PONASAJ UFLEX ITEMI, JER SE SASDA FLEX-UJU PO VERTIKALI */
+
+            flex-direction: row-reverse; /* U OVOM FLEX ITEMI 'FLOAT-UJU' POCEV OD DESNE STRANE CONTAINERA
+                                            STO ZNACI DA JE ONAJ KOJI JE TOKOM row DIRECTION-A, BIO UZ LEVU IVICU CONTAINRA
+                                            SADA JE UZ DESNU (ODNOSNO SVI ITEMI SU ZAMENILI MESTA, ALI ZADRZALI ISTI REDOSLED
+                                            KOJI SADA POCINJE OD DESNE STRANE)*/
+
+            flex-direction: column-reverse; /* 'SVE KRECE OD DNA' */
+
+        }
+    
+    
+    </style>
+
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <p class="first_para">
+            Neki tekst blah blah. I supercalyfragelisticexpyalysocious neki tekst dalje.
+            jos tekstai <a href="#">Link 1 i dva</a> ZAJEDNO SA LINKOM 3, <a href="#">evo ga</a> blah blah.
+        </p>
+
+        <style>
+        
+            p.first_para {
+                /* writing-mode: sideways-rl; */
+                /* writing-mode: vertical-rl; */
+            }
+
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="kont_f">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+        </div>
+
+        <style>
+            
+            div.kont_f {
+                border: tomato solid 4px;
+                font-size: 2rem;
+
+                resize: both;
+                overflow: auto;
+
+                display: flex;
+                flex-direction: row;
+                writing-mode: vertical-rl;
+            }
+
+            div.kont_f div {
+                border: olive solid 2px;
+                margin: 4px;
+                padding: 4px;
+                text-align: center;
+
+                flex: 1;
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br><hr>
+        <br>
+        <br>
+        <br>
+        <br><hr>
+        <br>
+        <br>
+        <br>
+        <br><hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+
+
         <script src="./fleks.js"></script>
     </body>
 </html>
