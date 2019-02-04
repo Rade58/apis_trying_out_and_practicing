@@ -370,9 +370,14 @@
 
         <style>
             
-            video input#scrubber.scrubber {
-                background-color: tomato;
-            }
+            video::-internal-track-segment-background {
+    position: absolute;
+    width: 100%;
+    top: 20px;
+    height: 4px;
+    overflow: hidden;
+    background-color: #e02d2d;
+}
 
         </style>
 
@@ -387,11 +392,7 @@
             
         </style>
 
-        <video width="300" is="my-video" controls>
-            <source src="../images/videos/Frank Reynolds Best Moments.mp4">
-            <source src="../images/videos/Frank Reynolds Best Moments.ogg">
-        </video>
-
+        
         <script src="./fleks.js"></script>
     </body>
 </html>

@@ -1,4 +1,4 @@
-console.log('external script');
+/* console.log('external script');
 
 customElements.define('my-video', class extends HTMLVideoElement {
     constructor(){
@@ -18,5 +18,5 @@ customElements.define('my-video', class extends HTMLVideoElement {
         // console.log(this.shadowRoot);
     }
 
-}, {extends: 'video'});
+}, {extends: 'video'}); */
 
