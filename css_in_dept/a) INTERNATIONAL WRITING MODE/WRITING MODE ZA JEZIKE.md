@@ -85,15 +85,17 @@ SADA MOGU PRIKAZATI JEDAN PRIMER, KOJI BI SE TICAO UNOSA HEBREJSKOG TEKSTA U ELE
 
     <style>
 
-        p[contenteditable][dir^=r] {
+        p[contenteditable]:dir() {
             width: 380px;
             height: 210px;
             border: tomato solid 4px;
+
             overflow: auto;
             resize: both;
 
-            unicode-bidi: bidi-override;
-        }
+            unicode-bidi: bidi-override;  /* OVO CE UCINITI DA SE TEKST ZAISTA PROSTIRE OD DESNE KA LEVOJ STRANI */
+        }                                 /* PRVO SLOVO RECI CE SE ZAISTA NALAZITI UZ DENIU STRANU, A POSLEDNJE
+                                            NADESNO */
 
     </style>
 
