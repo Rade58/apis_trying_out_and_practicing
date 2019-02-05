@@ -53,15 +53,17 @@ const resizing_element_with_arrows = function(elem){
         
     };
     
+    // IGNORE THE NAME OF THIS HANDLER, THEY
+
     const flekKontDown = function(ev){
-        document.body.addEventListener('keydown', onKeysResize, false);
         isMousedDown = true;
+        document.body.addEventListener('keydown', onKeysResize, false);
     };
     
     const onBodyUp = function(ev){
         if(!isMousedDown) return;
         document.body.removeEventListener('keydown', onKeysResize);
-        console.log("removed");
+        isMousedDown = false;
     };
     
     elem.addEventListener('mousedown', flekKontDown, false);
