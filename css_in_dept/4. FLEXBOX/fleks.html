@@ -469,6 +469,71 @@
         <br>
         <br>
         <br>
+        <div class="kont_fleksing">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+        </div>
+
+        <style>
+            
+            div.kont_fleksing {
+                border: tomato solid 4px;
+                font-size: 2rem;
+                padding: 0;
+                overflow: auto;
+
+                width: 800px;
+                /* height: 400px; */
+
+                display: flex;
+                /* flex-direction: row-reverse;
+                flex-wrap: wrap-reverse; */
+            }
+
+            div.kont_fleksing div {
+                border: olive solid 2px;
+                margin: 4px;
+                padding: 4px;
+
+                max-width: 50px;
+
+                flex-basis: 100px;
+            }
+        
+        </style>
+
+        
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <br>
         <br>
         <br>
@@ -476,5 +541,12 @@
 
         
         <script src="./fleks.js"></script>
+
+        <script defer>
+        
+            resizing_element_with_arrows(document.querySelector('div.kont_fleksing'));
+    
+        </script>
+
     </body>
 </html>

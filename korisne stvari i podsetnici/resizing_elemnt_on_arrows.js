@@ -22,40 +22,54 @@ const resizing_element_with_arrows = function(elem){
     
         const incr_or_decr = 8;
     
-        const scrollbarSizeX = document.querySelector('div.kont_fl').offsetWidth -
-                               document.querySelector('div.kont_fl').clientWidth -
-                               document.querySelector('div.kont_fl').clientLeft*2;
-        const scrollbarSizeY = document.querySelector('div.kont_fl').offsetHeight -
-                               document.querySelector('div.kont_fl').clientHeight -
-                               document.querySelector('div.kont_fl').clientTop*2;
+        const scrollbarSizeX = elem.offsetWidth -
+                               elem.clientWidth -
+                               elem.clientLeft*2;
+        const scrollbarSizeY = elem.offsetHeight -
+                               elem.clientHeight -
+                               elem.clientTop*2;
         let size;
     
         if(code === "ArrowUp"){
             size = elem.clientHeight;
-            elem.style.height = `${Math.abs(size) + incr_or_decr + scrollbarSizeY}px`;
+            elem.style.height = `${Math.abs(size + incr_or_decr + scrollbarSizeY)}px`;
             return;
         }
         if(code === "ArrowDown"){
+            let a = 0;
             size = elem.clientHeight;
-            elem.style.height = `${Math.abs(size) - incr_or_decr + scrollbarSizeY}px`;
+
+            if(2*(incr_or_decr + Math.abs(scrollbarSizeY)) > size){
+                a = Math.abs(size) + incr_or_decr + Math.abs(scrollbarSizeY);
+            }else{
+                a = size - incr_or_decr + Math.abs(scrollbarSizeY);
+            }
+
+            elem.style.height = `${Math.abs(a)}px`;
             return;
         }
         if(code === "ArrowLeft"){
+            let a = 0;
             size = elem.clientWidth;
-            elem.style.width = `${Math.abs(size) - incr_or_decr + scrollbarSizeX}px`;
+
+            if(2*(incr_or_decr + Math.abs(scrollbarSizeX)) > size){
+                a = Math.abs(size) + incr_or_decr + Math.abs(scrollbarSizeX);
+            }else{
+                a = size - incr_or_decr + scrollbarSizeX;
+            }
+
+            elem.style.width = `${Math.abs(a)}px`;
             return;
         }
         if(code === "ArrowRight"){
             size = elem.clientWidth;
-            elem.style.width = `${Math.abs(size) + incr_or_decr + scrollbarSizeX}px`;
+            elem.style.width = `${Math.abs(size + incr_or_decr + Math.abs(scrollbarSizeX))}px`;
             return;
         }
         
     };
-    
-    // IGNORE THE NAME OF THIS HANDLER, THEY
 
-    const flekKontDown = function(ev){
+    const mouseKontDownHandler = function(ev){
         isMousedDown = true;
         document.body.addEventListener('keydown', onKeysResize, false);
     };
@@ -64,8 +78,9 @@ const resizing_element_with_arrows = function(elem){
         if(!isMousedDown) return;
         document.body.removeEventListener('keydown', onKeysResize);
         isMousedDown = false;
+        console.log('removed');
     };
     
-    elem.addEventListener('mousedown', flekKontDown, false);
+    elem.addEventListener('mousedown', mouseKontDownHandler, false);
     document.body.addEventListener('mouseup', onBodyUp, false);
 };
