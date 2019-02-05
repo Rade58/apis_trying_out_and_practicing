@@ -345,9 +345,9 @@
                 unicode-bidi: bidi-override;
             }
 
-            p[contenteditable][dir^=r]::-webkit-resizer {
+            /* p[contenteditable][dir^=r]::-webkit-resizer {
 
-            }
+            } */
     
         </style>
         
@@ -382,6 +382,34 @@
         <style>
             
         </style>
+
+
+        <p class="neki_tekst" contenteditable="true">
+            Paragraf je ovo koji govori o ajovaski i balh drugim
+        </p>
+
+        <style>
+        
+            p[contenteditable].neki_tekst {
+                font-size: 1.8rem;
+                border: tomato solid 2px;
+                width: 480px;
+                height: 480px;
+
+                /* writing-mode: vertical-rl; */
+                writing-mode: vertical-lr;
+
+                unicode-bidi: bidi-override;
+                -moz-unicode-bidi: bidi-override;
+
+                direction: rtl;
+
+                text-orientation: upright;
+ 
+            }
+
+        </style>
+
 
         
         <script src="./fleks.js"></script>

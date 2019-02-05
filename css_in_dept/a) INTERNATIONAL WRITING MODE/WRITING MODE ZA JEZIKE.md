@@ -85,7 +85,7 @@ SADA MOGU PRIKAZATI JEDAN PRIMER, KOJI BI SE TICAO UNOSA HEBREJSKOG TEKSTA U ELE
 
     <style>
 
-        p[contenteditable]:dir() {
+        p[contenteditable]:dir(rtl) { /*OVDE SAM KORISTIO JEDAN OD LINGUISTIC PSEUDO ELEMNATA*/
             width: 380px;
             height: 210px;
             border: tomato solid 4px;
@@ -101,6 +101,139 @@ SADA MOGU PRIKAZATI JEDAN PRIMER, KOJI BI SE TICAO UNOSA HEBREJSKOG TEKSTA U ELE
 
 ```
 
+SADA EDITABLE TEKST PARAGRAFA JESTE UZ DESNU STRANU I IZGLEDA OVAKO:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *"tsket IKSJERBEH iken ej ovO"*
+
+I ZAISTA PROMENJEN JE HORIZONTALNI DIRECTION PARAGRAFA, ALI I SMER UNOSA, ODNOSNO PROSTITANJA TEKSTA
+
 ****
 
-**NAUCI I   text-orientation **
+## writing-mode PROPERTI
+
+DOK SAM RADIO GORNJI PRIMER, ALI I INACE PROPERTI **writing-mode** JE PO DEFOULTU IMAO VREDNOST
+
+- **horizontal-tb**  (PREDPOSTAVLJAM DA EKSTENZIJA ZNACI "the both")
+
+BOLJE CE BITI DA PRIKAZEM I SLEDECE VREDNOSTI ZA POMENUTI PROPERTI
+
+- **vertical-lr**
+
+- **vertical-rl**
+
+NEMA NOGO KOMPLIKOVANJA
+
+TEKST SE ZA SETT-OVANE, PREDHODNE DVE VREDNOSTI PROSTIRE VERTIKALNO, ODNOSNO PISE SE ODOZGO PREMA DOLE, STO ZNACI DA JE TEKST SAMO ZAROTIRAN ZA MINUS 90 STEPENI
+
+OBRATI SADA PAZNJU KOD VIZUELIZACIJE:
+
+ZA **vertical-lr**, TEKST POCINJE UNOS SA LEVE NA DESNU STRANU (NE MISLIM NA LEVU I DESNU STRANU TEKSTA, VEC CONTAINER-A (DAKLE 'NORMALNU' LEVU I DESNU STRANU) (AKO JE TEKST POSTAO VERTIKALAN, TO NE ZNACI DA SE ELEMENT ZAROTIRAO))
+
+MOGU TO OBJASNITI I OVAKO, I TO BAS U SLUCAJU EDITABLE TEKSTA (ODNOSNO ELEMENTA U KOJEM JE DOZVOLJEN UNOS):
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEKST SE PISE ODOZGO PREMA GORE, A KAD MU PONESTANE MESTA, WRAPPUJE SE KA DESNOJ STRANI, I NOVA KOLONA SE STVARA PISAJUCI TEKST
+
+ZA **vertical-rl** KOLONE KRECU OD DESNE, PA PREM LEVOJ STRANI
+
+ONO STO JE BITNO ZA OBE VREDNOSTI JESTE SLEDECE:
+
+**SAMA SLOVA SU, ISTO ZARITIRANA** (MORAM OKRENUTI GLAVU DOLE DESNO ZA 90 STEPENI DA BIH CITAO)
+
+```HTML
+
+ <p class="neki_tekst" contenteditable="true">
+    Paragraf je ovo koji govori o ajovaski i balh drugim
+</p>
+
+<style>
+
+    p[contenteditable].neki_tekst {
+        font-size: 1.8rem;
+        border: tomato solid 2px;
+        width: 480px;
+        height: 480px;
+
+        /* //////////////////////// */
+
+        writing-mode: vertical-rl;
+        writing-mode: vertical-lr;
+
+        /* //////////////////////// */
+
+        /* A DA NAPRIMER ZELIM DA TEKST BUDE PROSTRT ODOZDO PREMA GORE  */
+        /* I DA NA PRIMER ZELIM DA PRVO SLOVO POCINJE OD DONJE STRANE, (ODNOSNO DA SE KOLONE STVARAJU 
+        WRITTING-OM OD DOLE PREMA GORE) */
+
+        /* TREBAM OKRENUTI GLAVU DOLE DESNO I ZAMISLITITI DA MI JE TO HORIZONTALA*/
+
+        /* KAD TO DOBRO ZAMISLIM, ZNAM DA MORAM UPOTREBITI SLEDECA DVA PROPERTIJA SA SLEDECIM VREDNOSTIMA */
+
+        direction: rtl;
+        unicode-bidi: bidi-override;
+
+    }
+
+</style>
+
+I SADA IMAM TEKST KOJI POCINJE OD DONJE STRANE I KOLONE SE STVARAJU, UNOSOM SLOVO PO SLOVO ODOZDO PREMA GORE
+
+JOS DA SU SLOVA USPARAVNA, PA DA MOGU NESTO I DA PROCITAM
+
+```
+
+ZA POMENUTU POTREBU MOGU ISKORITITI PROPERTI
+
+## text-orientation
+
+I ON IMA MNOGE VREDNOSTI, KOJE NECU SPOMINJATI U CILJU STEDE VREMENA
+
+JA CU NAIME, POMENUTOM PROPERTIJU DODELITI: **upright** VREDNOST, KAKO BI SLOVA BILA USPRAVNA
+
+```HTML
+
+ <p class="neki_tekst" contenteditable="true">
+    Paragraf je ovo koji govori o ajovaski i balh drugim
+</p>
+
+<style>
+
+    p[contenteditable].neki_tekst {
+        font-size: 1.8rem;
+        border: tomato solid 2px;
+        width: 480px;
+        height: 480px;
+
+        writing-mode: vertical-rl;
+        writing-mode: vertical-lr;
+
+        /* A DA NAPRIMER ZELIM DA TEKST BUDE PROSTRT ODOZDO PREMA GORE  */
+        /* I DA NA PRIMER ZELIM DA PRVO SLOVO POCINJE OD DONJE STRANE, (ODNOSNO DA SE KOLONE STVARAJU 
+        WRITTING-OM OD DOLE PREMA GORE) */
+
+        /* TREBAM OKRENUTI GLAVU DOLE DESNO I ZAMISLITITI DA MI JE TO HORIZONTALA*/
+
+        /* KAD TO DOBRO ZAMISLIM, ZNAM DA MORAM UPOTREBITI SLEDECA DVA PROPERTIJA SA SLEDECIM VREDNOSTIMA */
+
+        direction: rtl;
+        unicode-bidi: bidi-override;
+
+        /* ///////////////////////////////// */
+
+        text-orientation: upright;      /* SADA CE SLOVA BITI USPRAVNA */
+
+        /* ///////////////////////////////// */
+
+
+    }
+
+</style>
+
+```
+
+>>>i
+>>>i
+>>>i
+>>>i
+
+ONO STA SAM PRIMETIO, JESTE DA U SLUCAJU VERTIKALNOSTI, I U SLUCAJU FIREFOX BROWSER-A, IMAM PROBLEMA SA PROPERTIJEM **unicode-bidi: bidi-override** (MORAM DODATNO ISPITATI, ZASTO JE TAKO, ALI U CILJU USTEDE VREMENA, MORAM SE POZABAVITI NECIM DRUGIM ZA SADA)
+
