@@ -500,14 +500,18 @@
 
                 align-content: center;              
             
-                align-items: baseline;          /* SADA SE POIGRAVAM SA VREDNOSTIMA align-items PROPERTIJA */
+                align-items: center;          /* SADA SE POIGRAVAM SA VREDNOSTIMA align-items PROPERTIJA */
 
             }
 
-            div.kont_fleksing div:nth-of-type(2n) { /* SVAKI PARNI FLEX ITEM CE IMATI PADDING */
-                padding: 48px;                      /* STO RADIM SAMO, AKO BUDE ALIGN-OBVAO FLERX ITEME */
-            }                                       /* U SKLADU SA BASELINE-OM (DA BI TAKAV ALIGNMENT) */
-                                                    /* IZGLEDAO DRUGACIJE OD flex-start ALIGNMENT-A */
+            div.kont_fleksing div:nth-of-type(4n) { /* SVAKI CETVRTI FLEX ITEM CE BITI ALIGNED UZ FLEX END (CROSS END) */
+                align-self: flex-end;
+                order: 0;
+            }
+
+            /* KADA BUDEM PRATIO 4. ELEMENT SELEKTOVAN PREDHODNI MSELEKTOROM, UZ POVECANJE I SMANJENJE DIMENZIJA */
+            /* FLEX CONTAINER-A, MOGU JASNO VIDETI KAKO CE SE PONASATI, OVAJ ELEMENT */
+            /* NAJBOLJE JE, MNOGO PO VISINI PRODUZITI FLEX CONTAINER */ /* DOBRO JE DA SAM KREIRAO FUNKCIJU (JS), KOJOM ON ARROW KEYSE, RESIZUJEM FLEX CONTAINER (UZ DRZANJE MOUSEDOWNA NA CONTAINERU) (KKREIRAO RANIJE, DODAO U PREDHODNIM md FAJLOVIMA, ISTO NA PRIMERU) */
 
             div.kont_fleksing div {
                 border: olive solid 2px;

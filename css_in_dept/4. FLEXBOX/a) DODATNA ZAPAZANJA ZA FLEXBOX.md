@@ -6,6 +6,6 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I
 
-- **visibility: colapse;**
+- **visibility: collapse;**
 
 IMAJU POTPUNO ISTI EFEKAT NA FLEX ITEM, TAKO STO SE ON VISE NE VIDI, A NJEGOVO MESTO OSTAJE NEUPRAZNJENO (PRAZAN PROSTOR UMESTO NJEGA)
