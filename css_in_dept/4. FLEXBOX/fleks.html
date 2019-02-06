@@ -469,15 +469,15 @@
         <br>
         <br>
         <br>
+
         <div class="kont_fleksing">
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-            <div>8</div>
+            <div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br></div>    <!-- RAZLICITA KOLICINA SADRZINE -->
+            <div>9<br>10<br>11<br>12<br>13<br>14</div>              <!-- U SVAKOM FLEX ITEM-U -->
+            <div>15<br>16<br>17<br>18<br>19</div>
+            <div>20<br>21<br>22<br>23</div>
+            <div>24<br>25<br>26</div>
+            <div>27<br>28</div>
+            <div>29</div>
         </div>
 
         <style>
@@ -489,22 +489,37 @@
                 overflow: auto;
 
                 display: flex;
-                flex-direction: column-reverse;
-                flex-wrap: wrap-reverse;
+
+                /* flex-direction: row;
+                flex-wrap: wrap; */
+                /* SHORTHAND ZA, GORE COMMENTED OUT */
+                flex-flow: row wrap;
+                
+                /*ALIGNMENT PO MAIN OSI*/
+                justify-content: space-evenly;
+
+                align-content: center;              
+            
+                align-items: baseline;          /* SADA SE POIGRAVAM SA VREDNOSTIMA align-items PROPERTIJA */
+
             }
+
+            div.kont_fleksing div:nth-of-type(2n) { /* SVAKI PARNI FLEX ITEM CE IMATI PADDING */
+                padding: 48px;                      /* STO RADIM SAMO, AKO BUDE ALIGN-OBVAO FLERX ITEME */
+            }                                       /* U SKLADU SA BASELINE-OM (DA BI TAKAV ALIGNMENT) */
+                                                    /* IZGLEDAO DRUGACIJE OD flex-start ALIGNMENT-A */
 
             div.kont_fleksing div {
                 border: olive solid 2px;
                 margin: 4px;
                 padding: 4px;
 
-                width: 58px;
-                /* height: 60px; */
+                /* width: 10%;
+                height: 10%; */
 
-
-                flex-basis: 20%;
-                flex-grow: 1;
-                flex-shrink: 0;
+                flex-basis: 5%;
+                flex-grow: 0;
+                flex-shrink: 0; /* KADA SHRINKING I GROWING NISU DOZVOLJEN, LAKSE MI JE DA POSMATRAM ALIGNMENT I WRAPPING */
 
             }
         
