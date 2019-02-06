@@ -488,12 +488,9 @@
                 padding: 0;
                 overflow: auto;
 
-                width: 800px;
-                /* height: 400px; */
-
                 display: flex;
-                /* flex-direction: row-reverse;
-                flex-wrap: wrap-reverse; */
+                flex-direction: row;
+                flex-wrap: wrap;
             }
 
             div.kont_fleksing div {
@@ -501,9 +498,14 @@
                 margin: 4px;
                 padding: 4px;
 
-                max-width: 50px;
+                /* width: 58px; */
+                height: 60px;
+
 
                 flex-basis: 100px;
+                flex-grow: 0;
+                flex-shrink: 0;
+
             }
         
         </style>

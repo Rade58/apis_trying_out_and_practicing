@@ -101,7 +101,7 @@ const resizing_element_with_arrows = function(elem){
     
         if(!isArrow) return;
     
-        const incr_or_decr = 8;
+        const incr_or_decr = 18;
     
         const scrollbarSizeX = elem.offsetWidth -
                                elem.clientWidth -
