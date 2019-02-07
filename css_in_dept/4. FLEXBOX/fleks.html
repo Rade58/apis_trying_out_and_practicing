@@ -622,25 +622,63 @@
             }
 
             div.flksK div:nth-child(1) {
-                flex-basis: 5%; 
-                flex-grow: 4;
+                /* flex-basis: 5%; 
+                flex-grow: 4; */
             }
             div.flksK div:nth-child(2) {
-                flex-basis: 10%;
-                flex-grow: 2;
+                /* flex-basis: 10%;
+                flex-grow: 2; */
             }
             div.flksK div:nth-child(3) {
-                flex-basis: 20%;
-                flex-grow: 3;
+                /* flex-basis: 20%;
+                flex-grow: 3; */
             }
             div.flksK div:nth-child(4) {
-                flex-basis: 25%;
-                flex-grow: 1;
+                /* flex-basis: 25%;
+                flex-grow: 1; */
             }
 
         </style>
         
         <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="f" style="display: flex;">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+        </div>
+
+        <style>
+            
+            div.f[style$="x;"] {
+                border: tomato solid 4px;
+                font-size: 2rem;
+            }
+            
+            div.f[style$="x;"] div {
+                border: olive solid 4px;
+                flex-basis: 10%;
+
+                align-self: flex-start;
+            }
+            
+            div.f[style$="x;"] div:nth-child(2) {
+                min-width: 200px;
+                height: 380px;
+
+                flex-basis: 50px;
+            }
+
+
+
+        </style>
+        
         <br>
         <br>
         <br>
