@@ -542,6 +542,53 @@
         <br>
         <hr>
         <br>
+
+        <div class="f_kont_blah" style="width: 1000px; border: olive solid 0px;">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+        </div>
+
+        <style>
+
+            div.f_kont_blah {
+                display: flex;
+            }
+
+            div.f_kont_blah div {
+                border: tomato solid 0px;
+                text-align: center;
+                outline: #e02d2d solid 1px;
+
+                flex-shrink: 1;
+            }
+
+            div.f_kont_blah div:nth-child(3){
+                flex-basis: 5%;
+                flex-grow: 2;
+            }
+
+            div.f_kont_blah div:nth-child(1){
+                flex-basis: 10%;
+                flex-grow: 1;
+            }
+            div.f_kont_blah div:nth-child(2){
+                flex-basis: 20%;
+                flex-grow: 1;
+            }
+            div.f_kont_blah div:nth-child(4){
+                flex-basis: 30%;
+                flex-grow: 1;
+            }
+
+        </style>
+
+        
+
+        <br>
+        <br>
+        <textarea style="width: 400px; height: 210px; font-size: 2rem;"></textarea>
         <br>
         <br>
         <br>
@@ -549,8 +596,50 @@
         <br>
         <br>
         <br>
-        <br>
-        <br>
+        
+        <div class="flksK">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+        </div>
+
+        <style>
+            
+            div.flksK {
+                border: tomato solid 2px;
+                width: 860px;
+                font-size: 2rem;
+
+                display: flex;
+            }
+
+            div.flksK div {
+                border: olive solid 2px;
+                text-align: center;
+
+                box-sizing: border-box;
+            }
+
+            div.flksK div:nth-child(1) {
+                flex-basis: 5%; 
+                flex-grow: 4;
+            }
+            div.flksK div:nth-child(2) {
+                flex-basis: 10%;
+                flex-grow: 2;
+            }
+            div.flksK div:nth-child(3) {
+                flex-basis: 20%;
+                flex-grow: 3;
+            }
+            div.flksK div:nth-child(4) {
+                flex-basis: 25%;
+                flex-grow: 1;
+            }
+
+        </style>
+        
         <br>
         <br>
         <br>
