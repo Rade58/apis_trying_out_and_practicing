@@ -675,10 +675,62 @@
                 flex-basis: 50px;
             }
 
-
-
         </style>
         
+        <br>
+        <br>
+        <br>
+        <div class="fl" style="display: flex;">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+        </div>
+
+        <style>
+        
+            div.fl[style$="x;"] {
+                border: tomato solid 4px;
+                font-size: 2rem;
+            }
+            
+            div.fl[style$="x;"] div {
+                border: olive solid 4px;
+                text-align: center;
+                font-weight: bold;
+            }
+            
+            div.fl[style$="x;"] div:nth-last-of-type(2) {
+                flex: 1 0 20%;
+            }
+        
+        </style>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <style>
+            div.f_kont_blah.f_kont_blah.f_kont_blah {
+                flex-flow: column;
+                width: 100% !important;
+            }
+            
+            div.f_kont_blah.f_kont_blah > div {
+                flex-shrink: 1;
+                flex-grow: 0;
+                width: 100%;
+            }
+
+        </style>
+        <br>
         <br>
         <br>
         <br>
@@ -693,7 +745,7 @@
         <script defer>
         
             resizing_element_with_arrows(document.querySelector('div.kont_fleksing'));
-    
+            resizing_element_with_arrows(document.querySelector('div.fl[style$="x;"]'));
         </script>
 
     </body>
