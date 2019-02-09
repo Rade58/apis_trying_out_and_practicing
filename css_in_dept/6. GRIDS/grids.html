@@ -92,10 +92,178 @@
 
             div.fl_kont > div:nth-last-of-type(1) {
                 display: none;
+                /* visibility: hidden; */
             }
         
         </style>
 
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="gr_kont">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <style>
+            
+            div.gr_kont {
+                
+                display: grid;
+
+                grid-template-columns: repeat(3, 1fr); /* U SUSTINI SAM DEFINISAO DA SE */
+                                                       /* LAYOUT SASTOJI OD 3 KOLONE I DA SVAKI ELEMENT */
+                                                       /* UZME 1 FRACTION OD PROSTORA (O OVOME CU DETALNO GOVORITI) */
+            }
+
+            div.gr_kont > div {
+                border: olive solid 2px;
+                background-color: lemonchiffon;
+                font-size: 2em;
+                margin: 10px;
+                text-align:center;
+                padding: 1.2rem;
+            }
+
+            /* A SADA CU DA UKLONIM POSLEDNJI ELEMENT, I ONAJ ELEMENT, KOJI JE PRE PREDPOSLEDNJEG ELEMENTA */
+            div.gr_kont > div:-webkit-any(:nth-last-of-type(1), :nth-last-of-type(3)) {
+                display: none; 
+            }
+
+            div.gr_kont > div:-moz-any(:nth-last-of-type(1), :nth-last-of-type(3)) {
+                display: none; 
+            }
+
+            /* ONAJ ELEMENT, KOJI JE BIU SUSED OD UKLONJENIH ELEMENATA (ODNOSNO KOJI SE NALAZIO IZMEDJU NJIH),
+            NECE (KAO STO JE RANIJE BIO
+            SLUCAJ SA FLEXBOX-OM), PORASTI I POPUNITI CEO PROSTOR, VEC CE IMATI SIRINU, KOJU IMA
+            PRVA KOLONA, JER CE SE NACI U PRVOJ KOLONI (STO ZNACI DA SE WRAPP-OVAO, ODNOSNO ISKORISTIO
+            JE OSLOBODJENI PROSTOR ISPRED SEBE), ALI NIJE PORASTAO, VEC JE SIROK ONOLIKO, KOLIKO
+            I ONA KOLONA ELEMENATA, U KOJO SE NALAZI  */
+
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="gr_kont_some">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <style>
+            
+            div.gr_kont_some {
+                
+                display: grid;
+
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            div.gr_kont_some > div {
+                border: olive solid 2px;
+                background-color: lemonchiffon;
+                font-size: 2em;
+                margin: 10px;
+                text-align:center;
+                padding: 1.2rem;
+            }
+
+            div.gr_kont_some > div:-webkit-any(:nth-last-of-type(1), :nth-last-of-type(3)) {
+                display: none; 
+            }
+
+            div.gr_kont_some > div:-moz-any(:nth-last-of-type(1), :nth-last-of-type(3)) {
+                display: none; 
+            }
+
+            /* KAO STO SAM I REKAO, DEFINISACU DA SE JEDAN OD ELEMENATA (KONKRETNO NEKA TO BUDE CTVRTI GRID
+            ITEM) SPANUJE, U DVE KOLONE */
+
+            div.gr_kont_some > div:nth-of-type(4) {
+                background-color: darkolivegreen;
+
+                grid-column: auto / span 2;     /* OVO JESTE SHORTHAND SA SPECIFICNIM NACINOM DEFINISANJA VREDNOSTI*/
+                                                /* U GLAVNOM STA MOGU DA UCIM JESTE DA SE ELEMENT SPAN-UJE DVE KOLONE
+                                                (U NEKIM OD SLEDECIH md FAJLOVA DETALJNO CU SE POZABAVITI, POMENUTIM 
+                                                PROPERTIJEM, I NARAVNO ONIM PROPERTIJIMA, CIJI JE ON SHORTHAND) */
+            }
+
+        </style>
+        
+
+        <style>
+        
+            div.some_gr_kont {
+
+                display: grid;
+
+                grid-template-columns: repeat(12, 1fr); /* 12 KOLONA, SIROKIH PO 1 FRAGMENT */
+            }
+
+            div.some_gr_kont > div {
+                border: olive solid 1px;
+                background-color: lemonchiffon;
+                font-size: 1.1em;
+                margin: 0.4em;
+                text-align:center;
+                padding: 0.6rem;
+            }
+
+            /* DEFINISEM DA SE 28-I GRID ITEM PROSTIRE PREKO 6 REDOVA I TRI KOLONE */
+
+            div.some_gr_kont > div:nth-of-type(28) {
+                background-color: darkolivegreen;
+
+                grid-column: 2 / 8 ;    /* OD KOLONE DO KOLONE (UKLJUCUJUCI I NAVEDENE)*/
+
+                grid-row: 3 / 6             /* OD REDA DO REDA (UKLJUCUJUCI I NAVEDENE)*/
+            }
+        
+        </style>
+
+        <script>
+        
+            const gridCont = document.createElement('div');
+            gridCont.classList.add('some_gr_kont');
+
+            let tekst = 0;
+
+            for(let i =0; i <= 58; i++){
+                let gridItem = document.createElement('div');
+                gridItem.textContent = `${tekst++}`;
+                gridCont.append(gridItem);
+            }
+
+            document.body.append(gridCont);
+        
+        </script>
 
     </body>
 </html>
