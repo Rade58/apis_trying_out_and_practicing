@@ -97,7 +97,7 @@
         
         </style>
 
-        <hr>
+        
         <br>
         <br>
         <br>
@@ -156,7 +156,7 @@
 
         </style>
 
-        <hr>
+        
         <br>
         <br>
         <br>
@@ -216,6 +216,13 @@
             }
 
         </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         
 
         <style>
@@ -225,13 +232,14 @@
                 display: grid;
 
                 grid-template-columns: repeat(12, 1fr); /* 12 KOLONA, SIROKIH PO 1 FRAGMENT */
+
+                grid-gap: 0.8em; /* MOGU DEFINISATI, KOLIKI JE GAP IZMEDJU CELIJA GRIDA */
             }
 
             div.some_gr_kont > div {
                 border: olive solid 1px;
                 background-color: lemonchiffon;
                 font-size: 1.1em;
-                margin: 0.4em;
                 text-align:center;
                 padding: 0.6rem;
             }
@@ -255,15 +263,24 @@
 
             let tekst = 0;
 
-            for(let i =0; i <= 58; i++){
+            for(let i =0; i < 58; i++){
                 let gridItem = document.createElement('div');
-                gridItem.textContent = `${tekst++}`;
+                gridItem.textContent = `${++tekst}`;
                 gridCont.append(gridItem);
             }
 
             document.body.append(gridCont);
         
         </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+
 
     </body>
 </html>
