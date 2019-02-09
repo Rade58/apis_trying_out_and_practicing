@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <title>GRIDS</title>
+    </head>
+    <body>
+
+        <div class="flex_kont">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+        </div>
+
+        <style>
+            
+            div.flex_kont {
+                border: tomato solid 10px;
+
+                display: flex;
+                flex-flow: row wrap;
+            }
+
+            div.flex_kont > div {
+                border: olive solid 2px;
+                flex: 1 1 calc(360px/2);
+                font-size: 2em;
+
+                display: flex;
+                flex-flow: column;
+
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+            }
+
+            @media only screen and (min-resolution: 192dpi){
+                div.flex_kont > div {
+                    height: 100vh;
+                }
+            }
+        
+        </style>
+
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="fl_kont">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <style>
+            
+            div.fl_kont {
+                display: flex;
+                flex-flow: row wrap; /**/
+            }
+
+            div.fl_kont > div {
+                border: olive solid 2px;
+                background-color: lemonchiffon;
+                font-size: 2em;
+                margin: 10px;
+                text-align:center;
+                padding: 1.2rem;
+
+                flex: 1 1 250px;  /**/ 
+            }
+
+            div.fl_kont > div:nth-last-of-type(1) {
+                display: none;
+            }
+        
+        </style>
+
+
+    </body>
+</html>

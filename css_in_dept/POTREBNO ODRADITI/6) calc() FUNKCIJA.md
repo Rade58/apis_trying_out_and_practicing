@@ -1,0 +1,5 @@
+# calc()
+
+POZBAVI SE [CSS calc() FUNKCIJOM](https://developer.mozilla.org/en-US/docs/Web/CSS/calc)
+
+MOZES VRSITI MATEMATICKE OPERACIJE SA PROCENTNIM I PIKSEL VREDNOSTIMA
