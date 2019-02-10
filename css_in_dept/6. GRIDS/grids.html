@@ -362,6 +362,8 @@
                 border: 1px solid currentColor;
                 font-size: 2em;
                 text-align: center;
+
+                display: block;
             }
 
             div.grd > span::before { /*NEKA NJIHOV TEKST BUDE GENERATED CONTENT (NEBITN OZA OVAJ PRIMER, ALI NEKA BUDE) */
@@ -370,7 +372,7 @@
             }
 
             div.grd > span:last-of-type {
-                width: 200px;
+                max-width: 200px;
             }
 
         </style>
@@ -398,20 +400,19 @@
         </ol>
 
         <style>
-
-            @counter-style {
-                
-            }
         
             ol.gr {
-                list-style-type: space-counter;
-                /* list-style-position: inside; */
+                display: grid;
+
+                /* DEFINISACU DA SE MOJ GRID SASTOJI OD TRI KOLONE, A DA SVAKA KOLONA BUDE SIROKA PO JEDAN FRAGMENT */
+                grid-template-columns: 12em 22em;   /*OVAKO*/
+                /* NAKON STO SAM DEFINISAO GORE POMENUTO, BULLET-I, ODNOSNO REDNI BROJEVI LIST ITEMA RUZNO IZGLEDAJU */
+                list-style-type: none;
+                /* OVO SLEDECE DEFINISEM */
             }
 
             ol.gr > li:first-child {
-                counter-reset: someCounter; /* NEBITNO ZA TEMU OVOG md FAJLA, ZASTO 
-                                                SAM COUNTER DEFINISAO OVDE (SAMO POKAZUJEM DA MOZE I OVDE, NE
-                                                MORA SAMO NA PARENT-U) */
+                counter-reset: someCounter;
             }
 
             ol.gr > li {
@@ -420,7 +421,6 @@
                 font-size: 2em;
                 line-height: 100px;
                 text-align: center;
-                
             }
 
             ol.gr > li::before {
