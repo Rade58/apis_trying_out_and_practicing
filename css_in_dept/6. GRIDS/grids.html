@@ -277,45 +277,7 @@
         
         </script>
 
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
-        <div class="gri">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
         
-        <style>
-            
-            div.gri {
-                counter-reset: itemText;
-            }
-
-            div.gri > span::before {
-                counter-increment: itemText;
-                content: counter(itemText);
-        
-                background-color: pink;
-                border: 1px solid currentColor;
-                font-size: 1.2em;
-                padding: 1.2em;
-            }
-        
-        </style>
 
         <br>
         <br>
@@ -336,13 +298,15 @@
             <span>9</span>
             <span>10</span>
             <span>11</span>
-            <span>12</span>
+            <span>128</span>
         </div>
         
         <style>
             
             div.some {
                 counter-reset: itemText;
+
+                display: inline-grid;
             }
 
             div.some > span {
@@ -357,7 +321,111 @@
 
                 /* line-height: 3.8em; */
 
-                display: inline-block;
+                /* display: inline-block; */
+            }
+        
+        </style>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="grd">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <style>
+            
+            div.grd {
+                counter-reset: itemText;
+                /* display: grid; */
+                /* display: inline-grid; */
+            }
+
+            div.grd > span {
+                background-color: pink;
+                border: 1px solid currentColor;
+                font-size: 2em;
+                text-align: center;
+            }
+
+            div.grd > span::before { /*NEKA NJIHOV TEKST BUDE GENERATED CONTENT (NEBITN OZA OVAJ PRIMER, ALI NEKA BUDE) */
+                counter-increment: itemText;
+                content: counter(itemText);
+            }
+
+            div.grd > span:last-of-type {
+                width: 200px;
+            }
+
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <ol class="gr">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
+
+        <style>
+
+            @counter-style {
+                
+            }
+        
+            ol.gr {
+                list-style-type: space-counter;
+                /* list-style-position: inside; */
+            }
+
+            ol.gr > li:first-child {
+                counter-reset: someCounter; /* NEBITNO ZA TEMU OVOG md FAJLA, ZASTO 
+                                                SAM COUNTER DEFINISAO OVDE (SAMO POKAZUJEM DA MOZE I OVDE, NE
+                                                MORA SAMO NA PARENT-U) */
+            }
+
+            ol.gr > li {
+                background-color: #32393d6b;
+                border: currentColor solid 1px;
+                font-size: 2em;
+                line-height: 100px;
+                text-align: center;
+                
+            }
+
+            ol.gr > li::before {
+                counter-increment: someCounter;
+                content: counter(someCounter);
             }
         
         </style>
