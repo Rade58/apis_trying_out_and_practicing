@@ -407,7 +407,7 @@
                 display: grid;
 
                 /* DEFINISACU DA SE MOJ GRID SASTOJI OD TRI KOLONE, A DA SVAKA KOLONA BUDE SIROKA PO JEDAN FRAGMENT */
-                grid-template-columns: 24em 38% 28fr 180px;   /*OVAKO*/
+               /* grid-template-columns: 24em 18% 28fr 180px; */   /*OVAKO*/
                 /* NAKON STO SAM DEFINISAO GORE POMENUTO, BULLET-I, ODNOSNO REDNI BROJEVI LIST ITEMA RUZNO IZGLEDAJU */
                 list-style-type: none;
                 /* OVO SLEDECE DEFINISEM */
@@ -543,6 +543,75 @@
         
         </style>
 
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="birdIsAWord">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <style>
+
+            div.birdIsAWord {
+                counter-reset: birdCount;
+
+                display: grid;
+
+                grid-template-columns: 86% 2fr 1fr;
+
+                /* KADA UPOTTREBIM INSPECTOR U DEV TOOLS-IMA, MOGU SAZNATI DA 
+
+                    - PRVA KOLONA ZAISTA ZAUZIMA 86% OD SIRINE GRID-A
+
+                            I ONO STO JE JOS VAZNIJE
+
+            ****        - DRUGA KOLONA IMA SAIRINU, KOJA JE DUPLO VECA OD SIRINE TRECE KOLONE        ****
+
+                    DAKLE U POGLEDU SIRINA DRUGA KOLONA, JE DUPLO VECA OD TRECE STO ZNACI
+
+                    DA SE FRAGMENTNE VREDNOSTI ODNOSE NA ODNOS VELICINA, SAMIH KOLONA/REDOVA 
+
+                    A NE NA ODNOS VELICINA PROSTORA, KOJE KOLONE/REDOVI DOBIJAJU
+
+                */
+            }
+
+            div.birdIsAWord > div {
+                border: currentColor solid 1px;
+                padding: 0;
+                background-color: rgba(241, 203, 241, 0.924);
+                text-align: center;
+                font-size: 1.4em;
+            }
+        
+            div.birdIsAWord > div::after {
+                counter-increment: birdCount;
+                content: counter(birdCount) " \1F426";
+            }
+            
+            div.birdIsAWord > div:nth-of-type(2n)::before {
+                content: "\1F985\1F985\1F985\1F985" " ";
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
