@@ -460,11 +460,16 @@
             
             div.some_grid {
                 border: currentColor solid 1px;
-                font-size: 1.4rem;
+                font-size: 1.1rem;
                 
                 counter-reset: countBirds;
 
-                /* display: grid; */
+                display: grid;
+
+                grid-template-columns:  minmax(5em, 18%)
+                                        min-content 
+                                        repeat(3, 14%)
+                                        max-content;
             }
 
             div.some_grid > div > span:nth-of-type(1)::before {
@@ -479,15 +484,17 @@
 
             div.some_grid > div > span:nth-of-type(2):nth-last-of-type(2)::before {
                 counter-increment: countBirds;
-                content: "%20" counter(countBirds) "%20";
+                content: "\00a0" counter(countBirds) "\00a0";
+                /* margin-left: 1em; */
+                /* margin-right: 1em; */
             }
 
             div.some_grid > div {
                 border: currentColor solid 1px;
                 font-size: 1.2em;
                 text-align: center;
-                color: currentColor;
-                padding: 1.4em;
+                color: rgb(28, 29, 5);
+                padding: 0.1em;
             }
         
         </style>
