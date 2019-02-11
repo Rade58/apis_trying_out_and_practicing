@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="theme-color" content="#e24c60;">
         <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
         <title>GRIDS</title>
     </head>
     <body>
@@ -433,8 +435,62 @@
         <br>
         <br>
         <br>
+        <div class="some_grid">
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+            <div><span></span><span></span><span></span></div>
+        </div>
         <br>
         <br>
+        <style>
+            
+            div.some_grid {
+                border: currentColor solid 1px;
+                font-size: 1.4rem;
+                
+                counter-reset: countBirds;
+
+                /* display: grid; */
+            }
+
+            div.some_grid > div > span:nth-of-type(1)::before {
+                font-family: "Material Icons";
+                content: "contacts";
+            }
+            
+            div.some_grid > div > span:nth-of-type(3)::before {
+                font-family: "Material Icons";
+                content: "speaker_phone";
+            }
+
+            div.some_grid > div > span:nth-of-type(2):nth-last-of-type(2)::before {
+                counter-increment: countBirds;
+                content: "%20" counter(countBirds) "%20";
+            }
+
+            div.some_grid > div {
+                border: currentColor solid 1px;
+                font-size: 1.2em;
+                text-align: center;
+                color: currentColor;
+                padding: 1.4em;
+            }
+        
+        </style>
         <br>
 
     </body>
