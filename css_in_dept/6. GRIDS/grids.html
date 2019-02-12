@@ -695,5 +695,67 @@
         
         </script>
 
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="gri">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <style>
+        
+            div.gri {
+                counter-reset: someCount;
+        
+                display: grid;
+                grid-gap: 14px;
+        
+                grid-template-columns: 100px 24em repeat(2, 1fr);
+                
+                /* NAMERNO NISAM DEFINISAO NI JERDNU FRACTION VREDNOST U SLEDECOJ TRACK-LIST VREDNOSTI */
+                grid-template-rows: 1fr 14em repeat(2, 100px) 180px 2fr; 
+                /* POSMATRACU OVU VREDNOST I OBJASNJAVACU */
+        
+            }
+        
+            div.gri div::before {
+                counter-increment: someCount;
+                content: counter(someCount);
+            }
+        
+            div.gri div {
+                border: currentColor solid 1px;
+                background-color: #BADA55;
+                text-align: center;
+                padding: 8px;
+            }
+        
+        </style>
+
     </body>
 </html>
