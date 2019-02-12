@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+        <title>GRIDS</title>
+    </head>
+    <body>
+
+        <div class="birdy">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <style>
+
+            html, body {
+                margin: 0;
+                padding: 0;
+
+                scroll-behavior: smooth;
+            }
+
+            div.birdy {
+
+                counter-reset: birdCount;
+                display: grid;
+
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+
+            div.birdy > div {
+                border: currentColor solid 1px;
+                padding: 0;
+                background-color: rgba(241, 203, 241, 0.924);
+                text-align: center;
+                font-size: 1.4em;
+            }
+        
+            div.birdy > div::after {
+                counter-increment: birdCount;
+                content: counter(birdCount) " \1F426";
+            }
+            
+            div.birdy > div:nth-of-type(2n)::before {
+                content: "\1F985\1F985\1F985\1F985" " ";
+            }
+        
+        </style>
+
+        <script>
+            
+            const gridEl = document.querySelector('div.birdy');
+
+            const gridElChildren = gridEl.children;
+
+            for(let i = 0; i<gridElChildren.length; i++){
+                gridElChildren.item(i).style.height = `${document.documentElement.clientHeight}px`;;
+                gridElChildren.item(i).addEventListener('mousedown', ev => {
+
+                /* console.log(ev.target.offsetTop);
+                console.log(window.pageYOffset); */
+
+                document.documentElement.scrollTop = ev.target.offsetTop;
+
+                }, false);;
+            }
+        
+        </script>
+
+    </body>
+</html>

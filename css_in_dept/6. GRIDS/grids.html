@@ -606,12 +606,94 @@
         
         </style>
 
+
         <hr>
         <br>
         <br>
         <br>
         <br>
         <br>
+
+
+        <div class="birdy">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <style>
+
+            html, body {
+                /* margin: 0;
+                padding: 0;
+
+                scroll-behavior: smooth; */
+            }
+
+            div.birdy {
+
+                counter-reset: birdCount;
+                display: grid;
+
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+
+            div.birdy > div {
+                border: currentColor solid 1px;
+                padding: 0;
+                background-color: rgba(241, 203, 241, 0.924);
+                text-align: center;
+                font-size: 1.4em;
+            }
+        
+            div.birdy > div::after {
+                counter-increment: birdCount;
+                content: counter(birdCount) " \1F426";
+            }
+            
+            div.birdy > div:nth-of-type(2n)::before {
+                content: "\1F985\1F985\1F985\1F985" " ";
+            }
+        
+        </style>
+
+        <script>
+            
+            const gridEl = document.querySelector('div.birdy');
+
+            const gridElChildren = gridEl.children;
+
+            for(let i = 0; i<gridElChildren.length; i++){
+                gridElChildren.item(i).style.height = `${document.documentElement.clientHeight}px`;;
+                gridElChildren.item(i).addEventListener('mousedown', ev => {
+
+                /* console.log(ev.target.offsetTop);
+                console.log(window.pageYOffset); */
+
+                document.documentElement.scrollTop = ev.target.offsetTop;
+
+                }, false);;
+            }
+
+            /* gridEl.firstElementChild.style.height = `${document.documentElement.clientHeight}px`;
+            gridEl.firstElementChild.nextElementSibling.style.height = `${document.documentElement.clientHeight}px`;
+
+            gridEl.firstElementChild.addEventListener('mousedown', ev => {
+                console.log(ev.target.offsetTop);
+                console.log(window.pageYOffset);
+
+                document.documentElement.scrollTop = ev.target.offsetTop;
+
+
+            }, false); */
+        
+        </script>
 
     </body>
 </html>
