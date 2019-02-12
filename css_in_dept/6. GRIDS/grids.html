@@ -757,5 +757,63 @@
         
         </style>
 
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="some_gr_kont2">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <style>
+        
+            div.some_gr_kont2 {
+                counter-reset: someCount;
+                
+                display: inline-grid;
+
+                grid-template-columns: 500px;;
+
+            }
+        
+            div.some_gr_kont2 div::before {
+                counter-increment: someCount;
+                content: counter(someCount);
+            }
+        
+            div.some_gr_kont2 div {
+                border: currentColor solid 1px;
+                background-color: #BADA55;
+                text-align: center;
+                padding: 8px;
+                font-size: 1.2em; 
+            }
+        
+        </style>
+
+
     </body>
 </html>
