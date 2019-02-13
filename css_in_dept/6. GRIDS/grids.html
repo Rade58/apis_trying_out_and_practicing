@@ -237,6 +237,8 @@
 
                 display: grid;
 
+                display: none;
+
                 grid-template-columns: repeat(12, 1fr); /* 12 KOLONA, SIROKIH PO 1 FRAGMENT */
 
                 grid-gap: 0.8em; /* MOGU DEFINISATI, KOLIKI JE GAP IZMEDJU CELIJA GRIDA */
@@ -465,6 +467,8 @@
                 counter-reset: countBirds;
 
                 display: grid;
+
+                display: none;
 
                 grid-template-columns:  minmax(5em, 18%)
                                         min-content 
@@ -733,6 +737,9 @@
                 counter-reset: someCount;
         
                 display: grid;
+
+                display: none;
+
                 grid-gap: 14px;
         
                 grid-template-columns: 100px 24em repeat(2, 1fr);
@@ -794,6 +801,8 @@
                 counter-reset: someCount;
                 
                 display: inline-grid;
+
+                display: none;
 
                 grid-template-columns: 500px;
 
@@ -899,6 +908,8 @@
                 
                 display: grid;
 
+                display: none;
+
                 grid-template-columns: max-content;
                 
 
@@ -953,6 +964,7 @@
                 counter-reset: countingStars;
         
                 display: grid;
+                display: none;
         
                 grid-template-columns: min-content max-content;  /* DAKLE GRID CE SE SASTOJATI OD DVE KOLONE */
             }
@@ -1018,6 +1030,7 @@
                 counter-reset: countingStars;
         
                 display: grid;
+                display: none;
         
                 grid-template-columns: minmax(max-content, 60% ) 300px;  /* DAKLE GRID CE SE SASTOJATI OD DVE KOLONE */
             }
@@ -1085,7 +1098,7 @@
 
                 display: grid;
 
-                grid-template-columns: minmax(min-content, 2%) 1fr repeat(2, minmax(10em, 200px));
+                grid-template-columns: minmax(min-content, max-content) 1fr repeat(2, minmax(20%, 200px));
             }
 
             ul.neki_grid_blah li {
@@ -1094,11 +1107,10 @@
                 font-size: 1.4em;
                 background-color: #bfacd4;
                 counter-increment: countingStars;
-                -ms-hyphens: auto;
             }
 
             ul.neki_grid_blah li:not(:nth-of-type(6)):not(:nth-last-of-type(6))::before {
-                content: "Neka zvezda: " counter(countingStars) " \1F929" ;
+                content: counter(countingStars);
             }
 
             ul.neki_grid_blah li:nth-of-type(6)::before {  
@@ -1115,31 +1127,25 @@
         </style>
 
 
-<p class="bacon_lorem">
-        SUPERCALIFRAGELISTICEXPIALIDOCIOUS Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo conse<wbr>quat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <wbr> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidi&shy;dunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupi&shy;datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <p class="bacon_lorem">
+            SUPERCALIFRAGELISTICEXPIALIDOCIOUS Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo conse<wbr>quat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <wbr> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidi&shy;dunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupi&shy;datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
 
-<style>
+        <style>
+
+            p.bacon_lorem {
 
 
+                hyphens: auto; /* RADI POTPUNO U FIIREFOX-U */
 
-p.bacon_lorem {
+                -webkit-hyphens: auto;  /* U OPERI I CHROME-U, NE RADI */
 
-    /* HYPHENATIO NSE OVDE KORISTI ZA EKRANE MOBILNIH UREDJA */
-    /* JER O TOME IMA SMISLA PAZITI, JER U SUPROTNOM, NA MALIM EKRANIMA BIH IMAO TEKST CIJI
-    REDOVI IMAJU MNOGO WHITESPACE-A, I TO BI IZGLEDALO JAKO RUZNO */ /* IMAO BIH RECI OD TRI SLOVA SAME
-                                                                     U JEDNOM REDU (U JEDNOM LINE-U) */
+                -ms-hyphens: auto;      /* U INTERNET EXPLORER-U, ZISTA RADI, A PREDPOSTAVLJAM DA RADI I U EDGE
+                                                                                                BROWSER-U */
 
-    hyphens: auto; /* RADI POTPUNO U FIIREFOX-U */
+            }
 
-    -webkit-hyphens: auto;  /* U OPERI I CHROME-U, NE RADI */
-
-    -ms-hyphens: auto;      /* U INTERNET EXPLORER-U, ZISTA RADI, A PREDPOSTAVLJAM DA RADI I U EDGE
-                                                                                     BROWSER-U */
-
-}
-
-</style>
+        </style>
 
     </body>
 </html>
