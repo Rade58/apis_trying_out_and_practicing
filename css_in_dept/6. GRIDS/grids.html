@@ -795,7 +795,7 @@
                 
                 display: inline-grid;
 
-                grid-template-columns: 500px;;
+                grid-template-columns: 500px;
 
             }
         
@@ -813,6 +813,115 @@
             }
         
         </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="some_gr_kont3">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <style>
+        
+            div.some_gr_kont3 {
+                counter-reset: someCount;
+                
+                display: inline-grid;
+
+                grid-template-columns: max-content;
+                grid-template-rows: max-content;
+            }
+        
+            div.some_gr_kont3 div::before {
+                counter-increment: someCount;
+                content: counter(someCount);
+            }
+        
+            div.some_gr_kont3 div {
+                border: currentColor solid 1px;
+                background-color: #BADA55;
+                text-align: center;
+                padding: 8px;
+                font-size: 1.2em;
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="some_gr_kont4">
+            <div></div>
+            <div></div>
+            <div></div>
+            <section style="hyphens: manual;">Mnogo nekog teksta, supercali&shy;fragelistic kojeg ima podosta culbastija</section>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <style>
+
+            div.some_gr_kont4 section {
+                border: tan solid 4px;
+                min-width: 200px;
+            }
+        
+            div.some_gr_kont4.some_gr_kont4.some_gr_kont4 {
+                counter-reset: someCount;
+                
+                display: grid;
+
+                grid-template-columns: max-content;
+                
+
+            }
+        
+            div.some_gr_kont4 div::before {
+                counter-increment: someCount;
+                content: counter(someCount);
+            }
+        
+            div.some_gr_kont4 div {
+                border: currentColor solid 1px;
+                background-color: #bfacd4;
+                text-align: center;
+                padding: 8px;
+                font-size: 1.2em;
+            }
+
+            
+        
+        </style>
+
+
 
 
     </body>
