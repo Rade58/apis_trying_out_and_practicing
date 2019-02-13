@@ -915,6 +915,7 @@
                 text-align: center;
                 padding: 8px;
                 font-size: 1.2em;
+
             }
 
             
@@ -922,7 +923,223 @@
         </style>
 
 
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
 
+        <ul class="neki_grid">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        
+        <style>
+        
+            ul.neki_grid {
+                list-style-type: none;
+                counter-reset: countingStars;
+        
+                display: grid;
+        
+                grid-template-columns: min-content max-content;  /* DAKLE GRID CE SE SASTOJATI OD DVE KOLONE */
+            }
+        
+            ul.neki_grid li {
+                border: currentColor solid 1px;
+                padding: .4em 0 .4em 0;
+                font-size: 1.4em;
+                background-color: #bfacd4;
+                text-align: center;
+                counter-increment: countingStars;
+            }
+        
+            ul.neki_grid li:not(:nth-of-type(6)):not(:nth-last-of-type(6))::before {
+                content: "Neka zvezda: " counter(countingStars) " \1F929" ;
+            }
+            
+
+            /* OVAJ GRID ITEM, ZA KOJI DEFINISEM GENERATED CONTENT, NACICE SE U DRUGOJ KOLONI GRID-A */
+            ul.neki_grid li:nth-of-type(6)::before {  
+                color: crimson;
+                content: "Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.";
+                /* U SESTI GRID ITEM STAVIO SAM TEKST KOJI JE DUGACAK */
+            }
+            
+            /* OVAJ GRID ITEM ,ZA KOJI DEFINISEM GENERATED CONTENT, NACICE SE U PRVOJ KOLONI GRID-A */
+            ul.neki_grid li:nth-last-of-type(6)::before {
+                color: mediumorchid;
+                background-color: cornsilk;
+                content: "This text is supercalifragelistic a little.";
+                /* U DEVETI GRID ITEM STAVLJAM TEKST, KOJI IMA NAJDUZU REC */
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <ul class="neki_grid2">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        
+        <style>
+        
+            ul.neki_grid2 {
+                list-style-type: none;
+                counter-reset: countingStars;
+        
+                display: grid;
+        
+                grid-template-columns: minmax(max-content, 60% ) 300px;  /* DAKLE GRID CE SE SASTOJATI OD DVE KOLONE */
+            }
+        
+            ul.neki_grid2 li {
+                border: currentColor solid 1px;
+                padding: .4em 0 .4em 0;
+                font-size: 1.4em;
+                background-color: #bfacd4;
+                text-align: center;
+                counter-increment: countingStars;
+                hyphens: auto;
+            }
+        
+            ul.neki_grid2 li:not(:nth-of-type(6)):not(:nth-last-of-type(6))::before {
+                content: "Neka zvezda: " counter(countingStars) " \1F929" ;
+            }
+            
+
+            /* OVAJ GRID ITEM, ZA KOJI DEFINISEM GENERATED CONTENT, NACICE SE U DRUGOJ KOLONI GRID-A */
+            ul.neki_grid2 li:nth-of-type(6)::before {  
+                color: crimson;
+                content: "Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.";
+                /* U SESTI GRID ITEM STAVIO SAM TEKST KOJI JE DUGACAK */
+            }
+            
+            /* OVAJ GRID ITEM ,ZA KOJI DEFINISEM GENERATED CONTENT, NACICE SE U PRVOJ KOLONI GRID-A */
+            ul.neki_grid2 li:nth-last-of-type(6)::before {
+                color: mediumorchid;
+                background-color: cornsilk;
+                content: "This text is supercalifragelistic a little.";
+                /* U DEVETI GRID ITEM STAVLJAM TEKST, KOJI IMA NAJDUZU REC */
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <ul class="neki_grid_blah">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+
+        <style>
+
+            ul.neki_grid_blah {
+                list-style-type: none;
+                counter-reset: countingStars;
+
+                display: grid;
+
+                grid-template-columns: minmax(min-content, 2%) 1fr repeat(2, minmax(10em, 200px));
+            }
+
+            ul.neki_grid_blah li {
+                border: currentColor solid 1px;
+                padding: .4em 0 .4em 0;
+                font-size: 1.4em;
+                background-color: #bfacd4;
+                counter-increment: countingStars;
+                -ms-hyphens: auto;
+            }
+
+            ul.neki_grid_blah li:not(:nth-of-type(6)):not(:nth-last-of-type(6))::before {
+                content: "Neka zvezda: " counter(countingStars) " \1F929" ;
+            }
+
+            ul.neki_grid_blah li:nth-of-type(6)::before {  
+                color: crimson;
+                content: "Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.";
+            }
+
+            ul.neki_grid_blah li:nth-last-of-type(6)::before {
+                color: mediumorchid;
+                background-color: cornsilk;
+                content: "This text is supercalifragelistic a little.";
+            }
+
+        </style>
+
+
+<p class="bacon_lorem">
+        SUPERCALIFRAGELISTICEXPIALIDOCIOUS Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo conse<wbr>quat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <wbr> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidi&shy;dunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupi&shy;datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+
+<style>
+
+
+
+p.bacon_lorem {
+
+    /* HYPHENATIO NSE OVDE KORISTI ZA EKRANE MOBILNIH UREDJA */
+    /* JER O TOME IMA SMISLA PAZITI, JER U SUPROTNOM, NA MALIM EKRANIMA BIH IMAO TEKST CIJI
+    REDOVI IMAJU MNOGO WHITESPACE-A, I TO BI IZGLEDALO JAKO RUZNO */ /* IMAO BIH RECI OD TRI SLOVA SAME
+                                                                     U JEDNOM REDU (U JEDNOM LINE-U) */
+
+    hyphens: auto; /* RADI POTPUNO U FIIREFOX-U */
+
+    -webkit-hyphens: auto;  /* U OPERI I CHROME-U, NE RADI */
+
+    -ms-hyphens: auto;      /* U INTERNET EXPLORER-U, ZISTA RADI, A PREDPOSTAVLJAM DA RADI I U EDGE
+                                                                                     BROWSER-U */
+
+}
+
+</style>
 
     </body>
 </html>
