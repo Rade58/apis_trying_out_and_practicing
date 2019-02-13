@@ -1097,6 +1097,7 @@
                 counter-reset: countingStars;
 
                 display: grid;
+                display: none;
 
                 grid-template-columns: minmax(min-content, max-content) 1fr repeat(2, minmax(20%, 200px));
             }
@@ -1146,6 +1147,179 @@
             }
 
         </style>
+
+        <div class="neki_blah_grid">
+            <div>1</div>
+            <div>Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div class="nice">Neki tekst i ostatak teksta </div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <br>
+
+        <div class="neki_blah_inline_grid">
+            <div>1</div>
+            <div>Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div class="nice">Neki tekst i ostatak teksta </div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <style>
+            
+            div.neki_blah_grid > div , div.neki_blah_inline_grid > div {
+                color: #17191a;
+                background-color: blanchedalmond;
+                border: currentColor solid 2px;
+                padding: 0;
+            }
+
+            div.neki_blah_grid {
+                display: grid;
+                grid-template-columns: 100px auto;
+                grid-template-rows: auto repeat(2, 100px) auto;
+            }
+            
+            div.neki_blah_inline_grid {
+                display: inline-grid;
+                grid-template-columns: 100px auto;
+                grid-template-rows: auto repeat(2, 100px) auto;
+            }
+
+            div.nice {
+                writing-mode: vertical-lr;
+                
+                /* min-height: 308px; */
+            }
+        
+        </style>
+
+        <br>
+        <br>
+
+        <div class="someGridBlah">
+            <div>1</div>
+            <div>Lorem ipsum dolor sit amet, dicunt petentium definiebas eam ut, id numquam.</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div class="nice">Neki tekst i ostatak teksta </div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+        </div>
+
+        <style>
+            
+            div.someGridBlah div {
+                color: #17191a;
+                background-color: blanchedalmond;
+                border: currentColor solid 2px;
+                padding: 0;
+            }
+
+            div.someGridBlah {
+                display: grid;
+                grid-template-columns: 100px auto;
+            }
+            
+            
+
+            div.nice {
+                writing-mode: vertical-lr;
+                
+                /* min-height: 308px; */
+            }
+        
+        </style>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        
+        <!-- OVAJ ELEMENT CE BITI GRID -->
+        <div class="neki_kont"></div>
+
+        <style>
+
+            div.neki_kont {
+                counter-reset: nekiCounter;
+
+                display: grid;
+
+                grid-gap: 5px;
+
+                /* IMENOVACU I NEKE LINIJE GRIDA KAKO BI LAKSE DEFINISAO PROSTIRANJE IZABRANIH GRID ITEM-A */
+                grid-template-columns: [pocetnaLinija] repeat(6, 1fr) [srednjaLinija] repeat(6, 2fr) [krajnjaLinija];
+            }
+
+            div.neki_kont > div {
+                background-color: #BADA55;
+                font-size: 1.2em;
+                padding: 4px;
+                text-align: center;
+            }
+
+            div.neki_kont > div::before {
+                counter-increment: nekiCounter;
+                content: counter(nekiCounter);
+            }
+
+
+            /* NEKA ITEMI CIJE CU PROSTIRANJE DEFINISATI, IMAJ URAZLICIT BACKGROUND COLOR */
+            div.neki_kont > div[class^=neki] {
+                background-color: #bfacd4;
+            }
+
+            div.nekiAjtem1 {
+                grid-column: pocetnaLinija / 6;    /* OVAJ ITEM SE PROSTIRE OD POCRTNE VERTIKALNE LINIJE GRIDA DO SESTE */
+                grid-row: 5 / 8;        /* I OD PETE HORIZONTALNE LINIJE DO OSME HORIZONTALNE LINIJE */
+            }
+
+            div.nekiAjtem2 {
+                grid-column: srednjaLinija / 12; /* OVAJ ITEM SE PROSTIRE OD CENTRALNE VERTIKALNE LINIJE GRIDA DO DVANAESTE */
+                grid-row: 3 / 6;    /* I OD TRECE HORIZONTALNE LINIJE DO SESTE HORIZONTALNE LINIJE */
+            }
+
+        </style>
+
+        <script defer>
+
+            // DA NE BIH MORAO DA PISEM PREKO 70 HTML TAGOVA, NESTOVACU SVE GRID ITEME, UZ POMOC JAVASCRIPT-A
+
+            for(let i=0; i<78; i++){
+                let gridItem = document.createElement('div');
+                document.querySelector('div.neki_kont').append(gridItem);
+                if(i === 11){
+                    gridItem.classList.add('nekiAjtem1');
+                }
+                if(i === 52){
+                    gridItem.classList.add('nekiAjtem2');
+                }
+            }
+        </script>
 
     </body>
 </html>
