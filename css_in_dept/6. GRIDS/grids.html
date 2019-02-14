@@ -1337,5 +1337,196 @@
             }
         </script>
 
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <!-- OVO CE BITI GRID -->
+        <div class="gridbaldi"></div>
+
+        <style>
+
+            div.gridbaldi {
+                counter-reset: blahCounter;
+
+                display: grid;
+                grid-gap: 4px;
+
+                /* IAKO TO NIJE KONKRETNO TEMA OVAOG PRIMER-A */
+                /* SAMO NA POMINJEM DA SE U grid-template SHORTHAND-U, PRVO DEFINISU VREDNOSTI ZA REDOVE */
+                    /* PA NAKON SLASH-A (/) */
+                /* VREDNOSTI ZA KOLONE */
+
+                grid-template: [pocetnaHor] repeat(4, 1fr) [nekaLinH] repeat(4, 4em) [krajHor] /
+                               
+                               [pocetnaVer] repeat(4, 1fr) [blahVer1] repeat(4, 1fr) [blahVer2] repeat(4, 1fr) [krajVer];
+                                
+            }
+
+            div.gridbaldi > div {
+                background-color: #BADA55;
+                border: 2px solid currentColor;
+                font-size: 1.4em;
+                padding: 6px;
+                text-align: center;
+            }
+
+            div.gridbaldi > div::before {
+                counter-increment: blahCounter;
+                content: counter(blahCounter);
+            }
+            
+            div.gridbaldi > div:nth-of-type(6) {
+                background-color: lightcoral
+            }
+
+            div.gridbaldi > div:nth-of-type(14) {
+                background-color: lightcyan;
+            }
+
+            div.gridbaldi > div:nth-of-type(22) {
+                background-color: violet;
+            }
+
+            div.gridbaldi > div:nth-of-type(30) {
+                background-color: aqua;
+
+                grid-row-end: -2;
+            }
+            
+        </style>
+
+        <script defer>
+
+            // NEST-UJEM 138 GRID ITEM-A
+
+            for(let i=0; i<144; i++){
+                let gridItem = document.createElement('div');
+                document.querySelector('div.gridbaldi').append(gridItem);
+            }
+        </script>
+
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <style>
+
+            ul.nekiGridachi {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+        
+                display: grid;
+                grid-gap: 12px;
+                
+                grid-template-columns: [pocetnaVlinija] 1fr 200px 3fr [krajnjaVlinija];
+                /* SASVIM JE JASNO DA OVAJ GRID IMA 3 KOLONE
+                DEFINISANIH DIMENZIJA, I PO PRIRODI STVARI IMACE: 
+                
+                    6       REDOVA     ,      JER JE        3 X 6 ===  18
+
+                    A UPRAVO IMA 18 GRID ITEM-A
+
+                */
+
+                /* MOGU DEFINI I VELICINU NEKIH GRID REDOVA */
+
+                grid-template-rows: repeat(2, 58px) [krajnjaHorLinija];
+
+
+                /* IZ PREDHODNE VREDNOSTI SE VIDI DA SAM DEFINISAO VELICINE SAM ODVA REDA */
+
+                /* TAKVI REDOVI, KOJI NISU DEFINISANI       grid-template-rows   PROPERTIJEM   */
+
+                /* ODNOSNO, TAKVI REDOVI, KOJI NISU OBUHVACENI TRACK-LIST VREDNOSCU, JESU: */
+
+                                
+                                /* IMPLICITNI REDOVI        */
+
+
+                /* I TI REDOVI PO DEFOULT-U, IMAJU VELICINU max-content , ILI auto*/
+                /* A O TOME SAM VEC GOVORIO */
+            }
+        
+            ul.nekiGridachi li {
+                background-color: #BADA55;
+                border: 2px solid currentColor;
+                font-size: 1.4em;
+                text-align: center;
+            }
+
+            /* MEDJUTIM, MOGU I JA DA STVORIM IMPLICITNE KOLONE ILI REDOVE */
+
+            /*  MOGU IH STVORITI, KADA DEFINISEM DA SE GRID ITEM PROSTIRE, PREKO ONIH REDOVA KOJI NISU 
+            DEFINISANI TRACK-LIST VREDNOSCU  */
+
+            /* NA PRIMER, MOGU DEFINISATI DA SE GRID ITEM, PROSTIRE 2 KOLONE
+            ,OD POSLEDNJE KOLONE, KOJA SE POKLAPA SA DESNOM IVICOM GRID-A */
+
+            /* TE DVE KOLONE PRKO KOJE CE SE PROSTIRATI IZABRANI GRID ITEM, BICE */
+
+                                /* IMPLICITNE KOLONE */
+
+            /* JER NISU DEFINISANI U TRACK-LIST VREDNOSTI */
+
+            ul.nekiGridachi li:nth-of-type(8) {
+                background-color: violet;
+
+                grid-column: krajnjaVlinija / span 2;
+
+                grid-row: span 1 / krajnjaHorLinija;
+
+            }
+            
+            ul.nekiGridachi li:nth-of-type(4) {
+                background-color: lightskyblue;
+
+                grid-column: -2 / 2;
+
+                grid-row: 2 / -4;
+            }
+
+            /* AKO SADA OSMOTRIM MOJ PRIMER, ODNOSNO STRANICU, ODNOSNO MOJ GRID NA STRANICI */
+            /* (A MOGU DA POSMATRAM GRID U DEV TOOLS-U) */
+
+                    /* MOGU UOCITI DA IMAM DVA IMPLICITNA REDA I DVE IMPLICITNE KOLONE */
+
+        </style>
+        
+        <ul class="nekiGridachi">
+            <li>item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li>item 4</li>
+            <li>item 5</li>
+            <li>item 6</li>
+            <li>item 7</li>
+            <li>item 8</li>
+            <li>item 9</li>
+            <li>item 10</li>
+            <li>item 11</li>
+            <li>item 12</li>
+            <li>item 13</li>
+            <li>item 14</li>
+            <li>item 15</li>
+            <li>item 16</li>
+            <li>item 17</li>
+            <li>item 18</li>
+        </ul>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
     </body>
 </html>
