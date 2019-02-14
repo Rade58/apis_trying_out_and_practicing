@@ -1258,7 +1258,7 @@
         <br>
         <br>
         <br>
-        
+
         <!-- OVAJ ELEMENT CE BITI GRID -->
         <div class="neki_kont"></div>
 
@@ -1294,13 +1294,26 @@
             }
 
             div.nekiAjtem1 {
-                grid-column: pocetnaLinija / 6;    /* OVAJ ITEM SE PROSTIRE OD POCRTNE VERTIKALNE LINIJE GRIDA DO SESTE */
-                grid-row: 5 / 8;        /* I OD PETE HORIZONTALNE LINIJE DO OSME HORIZONTALNE LINIJE */
+
+                /* UMESTO OVOGA */
+                /* grid-column: 1 / 6;
+                grid-row: 5 / 8; */
+
+                /* MOGAO SAM NAPISATI I SLEDECE */
+
+                grid-column: span 5 / 6;     /* pocevsi od seste vertikalne linije, prostiri se preko pet kolona udesno*/
+
+                grid-row: span 3 / 8         /* pocevsi od osme horizontalne linije, prostiri se preko tri kolone nagore */
+
             }
 
             div.nekiAjtem2 {
-                grid-column: srednjaLinija / 12; /* OVAJ ITEM SE PROSTIRE OD CENTRALNE VERTIKALNE LINIJE GRIDA DO DVANAESTE */
-                grid-row: 3 / 6;    /* I OD TRECE HORIZONTALNE LINIJE DO SESTE HORIZONTALNE LINIJE */
+                /*grid-column: srednjaLinija / 12;*/ /* OVAJ ITEM SE PROSTIRE OD CENTRALNE VERTIKALNE LINIJE GRIDA DO DVANAESTE */
+                /*grid-row: 3 / 6;*/    /* I OD TRECE HORIZONTALNE LINIJE DO SESTE HORIZONTALNE LINIJE */
+                /* grid-area: 3 / srednjaLinija / 6 / 12;   */
+
+                grid-column: srednjaLinija / span 5;
+                grid-row: 3 / span 3;
             }
 
         </style>
