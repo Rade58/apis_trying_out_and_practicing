@@ -1530,5 +1530,55 @@
         <br>
         <br>
 
+        <style>
+            div.myGrid {
+              counter-reset: myCounter;
+              display: grid;
+              grid-gap: 2px;
+              grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+            }
+            div.myGrid div {
+              border: currentColor solid 2px;
+              text-align: center;
+              background-color: #98b6ddd8;
+            }
+            div.myGrid div::before {
+              counter-increment: myCounter;
+              content: counter(myCounter);
+            }
+            div.myGrid > div:first-child {
+                background-color: tomato;
+                      /*ALL THESE SETTINGS ARE DOING SAME EXACT PLACEMENT OF THE GRID ITEM*/
+                      
+              grid-row: 3 / 5;      /* SAME AS     5 / 3     */
+              grid-column: 2 / 4; 	/* SAME AS      4 / 2     */
+      
+              grid-row: -1 / -3; 		/* SAME AS      -3 / -1   */
+              grid-column: -2 / -4; /* SAME AS      -4 / -2   */
+      
+              grid-row: 3 / -1; 		/* SAME AS      -1 / 3   */
+              grid-column: -2 / 2; 	/* SAME AS      2 / -2   */
+      
+              grid-row: -3 / 5; 		/* SAME AS      5 / -3   */
+              grid-column: -4 / 4; 	/* SAME AS      4 / -4   */
+            }
+          </style>
+      
+          <div class="myGrid"></div>
+      
+          <script>
+            const myGrid = document.querySelector(".myGrid");
+            for (let i = 1; i <= 16; i++) {
+              let item = document.createElement("div");
+              myGrid.appendChild(item);
+            }
+          </script>
+
+        <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+
     </body>
 </html>
