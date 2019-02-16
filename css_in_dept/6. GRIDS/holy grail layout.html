@@ -13,53 +13,57 @@
         
         <style>
 
+            body > * {
+                background-color:gray;
+                color: azure;
+            }
+
             body {
+                margin: 0;
                 display: grid;
                 grid-gap: 18px;
 
                 grid-template-columns: 8em repeat(2, 1fr);
                 grid-template-rows: 6em 2em repeat(2, auto) 2em;
 
-                grid-template-areas: "he he he"
-                                     "na na na"
-                                     "as ar1 ar1"
-                                     "as ar2 ar3"
-                                     "fu fu fu";
-            }
+                grid-template-areas: ".  h  h"
+                                     "a  n  n"
+                                     "a  . a1"
+                                     "a a2 a3"
+                                     "f  f  .";
 
-            body > * {
-                background-color:gray;
-                color: azure;
+                /* PO OVOJ TEMPLEJT VREDNOSTI, PRVA CELIJA GRIDA BI TREBALA DA BUDE PRAZNA*/
+                /* DEFINISAO SAM, I DA ASIDE, SADA BUDE I U DERUGOM REDU  */
+                /* U CENTRALNOJ CELIJI TRECEG REDA NECE BITI PROSTIRANJA */
+                /* I U POSLEDNJOJ CELIJI POSLEDNJEG REDA NECE BITI PROSTIRANJA */
             }
-
-            /* DAKLE DEFINISEM grid-area SA ODGOVARAJUCOM VREDNOSCU ZA SVAKI OD GRID ITEM-A */
 
             header {
-                grid-area: he;
+                grid-area: h;
             }
 
             nav {
-                grid-area: na;
+                grid-area: n;
             }
 
             aside {
-                grid-area: as;
+                grid-area: a;
             }
 
             article:nth-of-type(1) {
-                grid-area: ar1;
+                grid-area: a1;
             }
 
             article:nth-of-type(2) {
-                grid-area: ar2;
+                grid-area: a2;
             }
 
             article:nth-of-type(3) {
-                grid-area: ar3;
+                grid-area: a3;
             }
 
             footer {
-                grid-area: fu;
+                grid-area: f;
             }
                     
         </style>
