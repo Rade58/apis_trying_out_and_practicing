@@ -56,3 +56,9 @@ A PRONASAO SAM, I [SKORO ISTOVETAN ENTITY CONVERSION CALCULATOR](https://www.evo
 [md github gides](https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf)
 
 [md](https://www.markdownguide.org/cheat-sheet/)
+
+## CHAR CODES ZA QUOTATION MARKS
+
+KADA DEFINISEM VREDNSOT ZA **quotes** PROPERTI, MOGU DA POSLUZE
+
+[NALAZE SE DOLE, BLIZE KRAJU STRANICE](https://www.w3schools.com/cssref/pr_gen_quotes.asp)

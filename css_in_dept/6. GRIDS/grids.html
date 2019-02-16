@@ -129,6 +129,7 @@
             div.gr_kont {
                 
                 display: grid;
+                display: none;
 
                 grid-template-columns: repeat(3, 1fr); /* U SUSTINI SAM DEFINISAO DA SE */
                                                        /* LAYOUT SASTOJI OD 3 KOLONE I DA SVAKI ELEMENT */
@@ -188,6 +189,7 @@
             div.gr_kont_some {
                 
                 display: grid;
+                display: none;
 
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -530,6 +532,8 @@
                 display: grid;
 
                 grid-template-columns: 50% repeat(4, 1fr) 100px;
+
+                display: none;
             }
 
             div.some_birds > div {
@@ -571,6 +575,8 @@
                 counter-reset: birdCount;
 
                 display: grid;
+
+                display: none;
 
                 grid-template-columns: 86% 2fr 1fr;
 
@@ -1128,7 +1134,7 @@
         </style>
 
 
-        <p class="bacon_lorem">
+        <p class="bacon_lorem" style="display: none;">
             SUPERCALIFRAGELISTICEXPIALIDOCIOUS Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo conse<wbr>quat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <wbr> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidi&shy;dunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupi&shy;datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
 
@@ -1273,6 +1279,8 @@
 
                 /* IMENOVACU I NEKE LINIJE GRIDA KAKO BI LAKSE DEFINISAO PROSTIRANJE IZABRANIH GRID ITEM-A */
                 grid-template-columns: [pocetnaLinija] repeat(6, 1fr) [srednjaLinija] repeat(6, 2fr) [krajnjaLinija];
+                
+                display: none;
             }
 
             div.neki_kont > div {
@@ -1363,7 +1371,8 @@
                 grid-template: [pocetnaHor] repeat(4, 1fr) [nekaLinH] repeat(4, 4em) [krajHor] /
                                
                                [pocetnaVer] repeat(4, 1fr) [blahVer1] repeat(4, 1fr) [blahVer2] repeat(4, 1fr) [krajVer];
-                                
+
+                display: none;     
             }
 
             div.gridbaldi > div {
@@ -1393,8 +1402,6 @@
 
             div.gridbaldi > div:nth-of-type(30) {
                 background-color: aqua;
-
-                grid-row-end: -2;
             }
             
         </style>
@@ -1454,6 +1461,8 @@
 
                 /* I TI REDOVI PO DEFOULT-U, IMAJU VELICINU max-content , ILI auto*/
                 /* A O TOME SAM VEC GOVORIO */
+
+                display: none;
             }
         
             ul.nekiGridachi li {
