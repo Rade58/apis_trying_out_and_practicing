@@ -21,7 +21,13 @@
 
                 display: grid;
                 grid-gap: 1em;
-                grid-template: 3em 1fr 1.5em / 1fr 4fr 1fr;
+                /* grid-template: 3em 1fr 1.5em / 1fr 4fr 1fr; */
+
+                grid-template-columns: 8em repeat(2, 1fr);
+                grid-template-rows: 6em 2em repeat(2, auto) 2em;
+
+                width: 760px;
+                margin: 0 auto;
             }
 
             body > * {
@@ -29,7 +35,7 @@
                 color: azure;
             }
 
-            header {
+            /* header {
                 grid-area: 1 / 1 / 2 / -1;
             }
 
@@ -47,15 +53,60 @@
 
             footer {
                 grid-area: 3 / 1 / 4 / -1;
+            } */
+
+            header, nav, footer {
+                grid-column: 1 / -1;
             }
-        
+
+            aside {
+                grid-row: 3 / 5;
+            }
+
+            article:nth-of-type(1) {
+                /* grid-row: 3 / 4; */
+                grid-column: 2 / -1;
+            }
+                    
         </style>
         
-        <header>header</header>
+        <!-- <header>header</header>
         <article>article</article>
         <nav>nav</nav>
         <aside>aside</aside>
+        <footer>footer</footer> -->
+
+        <header>header</header>
+        <nav>nav</nav>
+        <aside>aside</aside>
+        <article>article 1</article>
+        <article>article 2</article>
+        <article>article 3</article>
         <footer>footer</footer>
+
+        <script defer>
+            const articleText = new Map();
+
+            articleText.set(
+                1 ,
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            );
+
+            articleText.set(
+                2 ,
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            );
+
+            articleText.set(
+                3 ,
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+            );
+
+            for(let i = 0; i < 3; i++){
+                document.querySelectorAll('article')[i].textContent = articleText.get(i + 1);
+            }
+        
+        </script>
 
     </body>
 </html>
