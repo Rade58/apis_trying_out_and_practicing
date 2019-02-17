@@ -196,5 +196,116 @@
       
       </style>
 
+      <hr>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <div class="neki_moj_grid">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+      </div>
+      
+      <style>
+      
+        div.neki_moj_grid {
+          border: olive solid 4px;
+          display: grid;
+          grid-gap: 18px;
+  
+          /* DAKLE, PRVI ARGUMENT JE auto-fit , A DRUGI  24em */
+          grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+
+          /* I TO JE SVE STO SAM TREBAO DA DEFINISEM, DA BIH IMAO WRAPPING */
+
+          
+          /* VELICINU, REDA NECU DEFINISATI, JER ZELIM AUTOMATSKU VELICINU REDA*/
+
+          /* U CILJU DEMONSTRACIJE */
+          /* ONO STA SAM, MOGAO DEFINISATI, JESU VELICINE IMPLICITNIH KOLONA*/
+          /* JER, NOVI REDOVI CE BITI FORMITRANI, PRI WRAPPING-U*/ /* OVO CE NARAVNO DEFINISATI I VELICINU PRVOG  
+                                                                    REDA JER NISAM KORISTIO grid-template-rows
+                                                                    ZA DEFINICIJU REDA*/
+
+          grid-auto-rows: 78px;
+          
+        }
+    
+        div.neki_moj_grid > div {
+          border: 2px solid currentColor;
+          padding: 8px;
+          text-align: center;
+          background-color: rgb(198, 195, 238);
+        }
+      
+      </style>
+
+      <hr>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <div class="neki_moj_grid_2">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+      </div>
+      
+      <style>
+      
+        div.neki_moj_grid_2 {
+          border: olive solid 4px;
+          display: grid;
+          grid-gap: 18px;
+  
+          /* DAKLE, PRVI ARGUMENT JE auto-fit , A DRUGI  24em */
+          grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+
+          /* I TO JE SVE STO SAM TREBAO DA DEFINISEM, DA BIH IMAO WRAPPING */
+
+          
+          /* VELICINU, REDA NECU DEFINISATI, JER ZELIM AUTOMATSKU VELICINU REDA*/
+
+          /* U CILJU DEMONSTRACIJE */
+          /* ONO STA SAM, MOGAO DEFINISATI, JESU VELICINE IMPLICITNIH KOLONA*/
+          /* JER, NOVI REDOVI CE BITI FORMITRANI, PRI WRAPPING-U*/ /* OVO CE NARAVNO DEFINISATI I VELICINU PRVOG  
+                                                                    REDA JER NISAM KORISTIO grid-template-rows
+                                                                    ZA DEFINICIJU REDA*/
+
+          grid-auto-rows: 78px;
+          
+        }
+    
+        div.neki_moj_grid_2 > div {
+          border: 2px solid currentColor;
+          padding: 8px;
+          text-align: center;
+          background-color: rgb(198, 195, 238);
+          font-size: 18px;
+        }
+      
+      </style>
+
+      <hr>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
     </body>
 </html>
