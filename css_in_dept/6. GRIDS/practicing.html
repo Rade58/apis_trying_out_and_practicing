@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+        <title>PRACTICING</title>
+    </head>
+    <body>
+      <div class="grid">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+      </div>
+
+      <style>
+        div.grid {
+          display: grid;
+          /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
+          grid-template-rows: 100px 100px;
+          grid-gap: 14px;
+        }
+
+        div.grid > div {
+          font-size: 1.4em;
+          padding: 18px;
+          background-color: darkkhaki;
+          border: currentColor solid 4px;
+        }
+      
+      </style>
+      <hr>
+      <br>
+      
+      <div class="grid2">
+        <div>Neki tekst1</div>
+        <div>Neki Tekst2</div>
+        <div>3</div>
+        <div>4</div>
+      </div>
+
+      <style>
+        
+        div.grid2 {
+          display: grid;
+          grid-template-columns: auto auto;
+          grid-template-rows: 100px 100px;
+          grid-gap: 14px;
+        }
+
+        div.grid2 > div {
+          font-size: 1.4em;
+          padding: 18px;
+          background-color: darkkhaki;
+          border: currentColor solid 4px;
+        }
+      
+      </style>
+
+      <br>
+      <br>
+
+      <div class="inlajn_grid">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+      </div>
+
+      <style>
+
+        div.inlajn_grid {
+          border: 1px solid currentColor;
+          display: inline-grid;
+          grid-template-columns: auto auto;
+          grid-template-rows: 100px 100px;
+          grid-gap: 14px;
+        }
+
+        div.inlajn_grid > div {
+          font-size: 1.4em;
+          padding: 18px;
+          background-color: darkkhaki;
+          border: currentColor solid 4px;
+        }
+      
+      </style>
+
+    </body>
+</html>
