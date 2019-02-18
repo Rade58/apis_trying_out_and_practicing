@@ -1,29 +1,22 @@
-const onLoadFunk = ev => {
-    const image = ev.target;
-    const width = image.naturalWidth;
-    const height = image.naturalHeight;
-
-    // console.log(ev.target);
+const checkNaturalSizeAndAddClass = imageInstance => {
+    const width = imageInstance.naturalWidth;
+    const height = imageInstance.naturalHeight;
 
     if(height > width){
-        image.parentElement.classList.add('portrait');
         console.log(1);
-        return;
+        return 'portrait';
     }
 
-    if(width < 300){
-        image.parentElement.classList.add('landscape');
+    if(width < 2000){
         console.log(2);
-        return;
+        return 'landscape';
     }
-
-    image.parentElement.classList.add('large');
     console.log(3);
 
-    return;
+    return 'large';
 }
 
-const createImages = (substringName, imageCount, onLoadHandler, gridContainerIdOrClass) => {
+const createImages = (substringName, imageCount, naturalSizeCheckerAndClassAdder ,gridContainerIdOrClass) => {
     const gridContainer = document.querySelector(gridContainerIdOrClass);
 
     for(let i = 0; i < imageCount; i++){
@@ -31,11 +24,11 @@ const createImages = (substringName, imageCount, onLoadHandler, gridContainerIdO
         let src = `../images/images_for_grid/${substringName}_${i}.jpg`;
         let image = new Image();
         image.src = src;
+        gridItem.classList.add(naturalSizeCheckerAndClassAdder(image));
         image.alt = "galery image";
-        image.addEventListener('load', onLoadHandler);
-        gridItem.appendChild(image)
+        gridItem.appendChild(image);
         gridContainer.appendChild(gridItem);
     }
 };
 
-createImages('slika', 100, onLoadFunk, '.grid_galery');
+createImages('slika', 100, checkNaturalSizeAndAddClass, '.grid_galery');

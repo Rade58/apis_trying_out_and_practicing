@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+        <title>AWESOME IMAGE GRID</title>
+    </head>
+    <body>
+
+        <!-- PRIMER, KOJI SAM URADIO KADA SAM SE BAVIO grid-auto-flow PROPERTIJEM  -->
+        <!-- TAMO JE OVAJ PRIMER, BOLJE URADJEN, (KONKRETNO TAMO NISAM UPOTREBLJAVAO
+            onload HANDLER, NA SVAKOJ Image INSTANCI) -->
+            <!-- I TAMO SAM ODLUCIO DA NE KORISTIM Image INSTANCU UOPSTE -->
+            <!-- VEC SA IMAGE INSTANCE SAMO CITAM NATURALNE DIMENZIJE SLIKE
+            I NA OSNOVU TOGA ODGOVARAJUCEM div-U, DAJEM  -->
+
+        
+        <div class="grid_galery"></div>
+        <style>
+            div.grid_galery {
+                display: grid;
+                
+                grid-template-columns: repeat(auto-fit, minmax(98px, 148px)); /* MOZDA TREBA JOS SMANJITI, MINIMUM */
+
+                grid-gap: 0.8em;
+
+                grid-auto-rows: 138px;
+
+                /* IMPLEMENTIRA IMAGE PLACMENT ALGORITAM */
+                grid-auto-flow: row;
+            }
+
+            div.grid_galery img {
+                width: 100%;
+                height: 100%;
+                border: #27503dc9 solid 1px;
+            }
+
+            div.grid_galery > div.portrait {
+                grid-row: span 2;
+                grid-column: span 1;
+            }
+
+            div.grid_galery > div.landscape {
+                grid-row: span 1;
+                grid-column: span 2;
+            }
+
+            div.grid_galery > div.large {
+                grid-column: span 2;
+                grid-row: span 2;                
+            }
+        </style>
+        <script>
+            const onLoadFunk = ev => {
+                const image = ev.target;
+                const width = image.naturalWidth;
+                const height = image.naturalHeight;
+
+                // console.log(ev.target);
+
+                if(height > width){
+                    image.parentElement.classList.add('portrait');
+                    console.log(1);
+                }
+
+                if(width < 2000){
+                    image.parentElement.classList.add('landscape');
+                    console.log(2);
+                    return;
+                }
+
+                image.parentElement.classList.add('large');
+                console.log(3);
+
+                return;
+            }
+
+            const createImages = (substringName, imageCount, onLoadHandler, gridContainerIdOrClass) => {
+                const gridContainer = document.querySelector(gridContainerIdOrClass);
+
+                for(let i = 0; i < imageCount; i++){
+                    let gridItem = document.createElement('div');
+                    let src = `../css_in_dept/images/images_for_grid/${substringName}_${i}.jpg`;
+                    let image = new Image();
+                    image.src = src;
+                    image.alt = "galery image";
+                    image.addEventListener('load', onLoadHandler);
+                    image.addEventListener('mousedown', function(){
+                        window.open(src, '_blank');
+                    });
+                    gridItem.appendChild(image);
+                    gridContainer.appendChild(gridItem);
+                }
+            };
+
+            createImages('slika', 100, onLoadFunk, '.grid_galery');
+        </script>
+    </body>
+</html>

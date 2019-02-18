@@ -1,16 +1,23 @@
 div.grid_galery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    
+    grid-template-columns: repeat(auto-fit, 100px); /* MOZDA TREBA JOS SMANJITI, MINIMUM */
 
     grid-gap: 0.8em;
 
-    grid-auto-flow: dense;
+    grid-auto-rows: 100px;
+
+    /* IMPLEMENTIRA IMAGE PLACMENT ALGORITAM */
+    
 }
 
 div.grid_galery img {
-    width: 100%;
-    height: 100%;
+    width: 110%;
     border: #27503dc9 solid 1px;
+}
+
+div.grid_galery > div {
+    overflow: hidden;
 }
 
 div.grid_galery > div.portrait {
@@ -20,10 +27,10 @@ div.grid_galery > div.portrait {
 
 div.grid_galery > div.landscape {
     grid-row: span 1;
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 div.grid_galery > div.large {
     grid-column: span 2;
-    grid-row: span 2;
+    grid-row: span 2;                
 }
