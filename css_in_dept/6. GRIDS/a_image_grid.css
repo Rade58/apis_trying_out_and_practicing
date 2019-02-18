@@ -1,0 +1,29 @@
+div.grid_galery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+    grid-gap: 0.8em;
+
+    grid-auto-flow: dense;
+}
+
+div.grid_galery img {
+    width: 100%;
+    height: 100%;
+    border: #27503dc9 solid 1px;
+}
+
+div.grid_galery > div.portrait {
+    grid-row: span 2;
+    grid-column: span 1;
+}
+
+div.grid_galery > div.landscape {
+    grid-row: span 1;
+    grid-column: span 1;
+}
+
+div.grid_galery > div.large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
