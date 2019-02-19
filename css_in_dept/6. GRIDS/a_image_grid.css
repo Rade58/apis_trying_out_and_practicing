@@ -9,7 +9,7 @@ div.grid_galery {
 
     /******************** IMPLEMENTIRA IMAGE PLACMENT ALGORITAM***************** */
     /* NAJBOLJE JE ZADATI dense VREDNOST, STO DEFINISE DA SU GRID ITEME, STO JE BOLJE MOGUCE GUSCE RASPOREDJENI */
-    grid-auto-flow: dense;
+    grid-auto-flow: row dense;
 }
 
 /* POSTO SU SLIKE RAZNIH DIMENZIJA, MORAO SAM IZVRSITI NEKE KOREKCIJE, NJIHOVIH DIMENZIJA I MALO
