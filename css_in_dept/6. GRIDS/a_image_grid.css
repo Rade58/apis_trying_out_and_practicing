@@ -1,24 +1,42 @@
 div.grid_galery {
     display: grid;
     
-    grid-template-columns: repeat(auto-fit, 100px); /* MOZDA TREBA JOS SMANJITI, MINIMUM */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
 
     grid-gap: 0.8em;
 
     grid-auto-rows: 100px;
 
-    /* IMPLEMENTIRA IMAGE PLACMENT ALGORITAM */
-    
+    /******************** IMPLEMENTIRA IMAGE PLACMENT ALGORITAM***************** */
+    /* NAJBOLJE JE ZADATI dense VREDNOST, STO DEFINISE DA SU GRID ITEME, STO JE BOLJE MOGUCE GUSCE RASPOREDJENI */
+    grid-auto-flow: dense;
 }
 
-div.grid_galery img {
-    width: 110%;
-    border: #27503dc9 solid 1px;
-}
+/* POSTO SU SLIKE RAZNIH DIMENZIJA, MORAO SAM IZVRSITI NEKE KOREKCIJE, NJIHOVIH DIMENZIJA I MALO
+RELATIVNO POZICIONIRANJE, U ODNOSU NA RELATED DIV PARENT, SVAKE SLIKE */
 
+div.grid_galery div img {
+    position: relative;
+}
 div.grid_galery > div {
     overflow: hidden;
+    border: #27503dc9 solid 1px;
+    text-align: center;
 }
+div.grid_galery div:not(.portrait):not(.large) img {
+    left: -5%;
+}
+div.grid_galery div.landscape img {
+    width: 118%;
+}
+div.grid_galery div.portrait img {
+    height: 105%;
+} 
+div.grid_galery div.large img {
+    height: 118%;
+}
+
+/* OVDE DEFINISEM, PROSTIRANJE DIV ELEMNATA (GRID ITEMA), U KOJI SU, SLIKE USTVARI NESTED */
 
 div.grid_galery > div.portrait {
     grid-row: span 2;
@@ -31,6 +49,35 @@ div.grid_galery > div.landscape {
 }
 
 div.grid_galery > div.large {
-    grid-column: span 2;
+    grid-column: span 3;
     grid-row: span 2;                
+}
+
+/* GALERIJA NA MOBILNOM UREDJAJU IZGLEDA UZASNO, AKO NEMAM STRIKNO, SAMO DVA REDA, ISTIH VELICINA */
+
+@media screen and (min-resolution: 144dpi), (max-width: 398px) {
+    div.grid_galery {
+        
+        grid-template-columns: 1fr 1fr;
+
+        grid-auto-rows: 22vh;
+         
+    }
+
+    /* I DEFINISAO SAM NESTO DRUGACIJE PROSTIRANJE GRID ITEM-A, KADA PRIKAZUJEM
+    SLIKE NA MOBILNOM UREDJAJU */
+    div.grid_galery > div.portrait {
+        grid-row: span 2;
+        grid-column: span 1;
+    }
+    
+    div.grid_galery > div.landscape {
+        grid-row: span 1;
+        grid-column: span 2;
+    }
+    
+    div.grid_galery > div.large {
+        grid-column: span 2;
+        grid-row: span 2;                
+    }
 }
