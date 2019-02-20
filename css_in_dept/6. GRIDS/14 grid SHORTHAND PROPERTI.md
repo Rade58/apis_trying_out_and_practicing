@@ -1,6 +1,6 @@
 # grid PROPERTI
 
-OVAJ PROPERTI JE SHORTHAND ZA
+[OVAJ PROPERTI](https://developer.mozilla.org/en-US/docs/Web/CSS/grid) JE SHORTHAND ZA
 
 - grid-template-rows
 
