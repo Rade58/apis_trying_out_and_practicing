@@ -421,7 +421,71 @@
           border: 1px currentColor solid;
         }
       </style>
-      
+
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <div class="emptySpaces">
+        <div id="a"></div>
+        <div id="b"></div>
+        <div id="c"></div>
+        <div id="d"></div>
+        <div id="e"></div>
+        <div id="f"></div>
+        <div id="g"></div>
+        <div id="h"></div>
+        <div id="i"></div>
+      </div>
+
+      <style>
+        div.emptySpaces {
+            display: grid;
+
+            grid-template-columns: repeat(4, 100px);
+
+            grid-auto-rows: 100px;
+            grid-auto-columns: 100px;
+        }
+
+        div.emptySpaces div {
+            background-color: gray;
+            border: currentColor solid 1px;
+        }
+
+        div.emptySpaces div#a {
+          grid-column: 1;
+        }
+        div.emptySpaces div#b {
+          grid-column: 3;
+        }
+        div.emptySpaces div#c {
+          grid-column: 5;
+        }
+        div.emptySpaces div#d {
+          grid-column: 2
+        }
+        div.emptySpaces div#e {
+          grid-column: 4
+        }
+        div.emptySpaces div#f {
+          grid-column: 6
+        }
+        div.emptySpaces div#g {
+          grid-column: 1
+        }
+        div.emptySpaces div#h {
+          grid-column: 3
+        }
+        div.emptySpaces div#i {
+          grid-column: 5
+        }
+
+      </style>
+            
       <br>
       <br>
       <br>
