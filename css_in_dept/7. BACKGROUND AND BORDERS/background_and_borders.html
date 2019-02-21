@@ -13,6 +13,13 @@
         
         <div class="neki_el"></div>
 
+        <div id="neki_el" style="background-image: url('../images/practice_img/im2.jpg'); width: 200px; height: 380px;">
+        </div>
+
+        <div class="josJedanEl"></div>
+        
+        <div class="JosNekiEl" style="width: 20vw; height: 20vw"></div>
+
         <style>
           
           /* div.neki_el {
@@ -40,6 +47,28 @@
             background-image: -webkit-image-set(url(../images/practice_img/im1.jpg) 1dppx, url(../images/practice_img/im2.jpg) 1dppx);
 
           }
+
+          /* div.josJedanEl {
+
+            background-color: olive;
+
+            width: 380px;
+            height: 268px;
+
+            background-image: element(#neki_el);
+            background-image: -moz-element(#neki_el);
+          } */
+
+          div.josNekiEl {
+            background-color: olive;
+            width: 380px;
+            height: 268px;
+
+            background-image: image('../images/practice_img/im2.jpg#xywh=34, 28, 340, 246');
+            background-image: -moz-image('../images/practice_img/im2.jpg#xywh=pixel:34,28,340,246');
+
+          }
+
         </style>
 
     </body>
