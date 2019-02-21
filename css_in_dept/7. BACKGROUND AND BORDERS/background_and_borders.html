@@ -13,12 +13,11 @@
         
         <div class="neki_el"></div>
 
-        <div id="neki_el" style="background-image: url('../images/practice_img/im2.jpg'); width: 200px; height: 380px;">
-        </div>
+        <div id="neki_el" dir="rtl"></div>
 
         <div class="josJedanEl"></div>
         
-        <div class="JosNekiEl" style="width: 20vw; height: 20vw"></div>
+        <div class="josNekiEl"></div>
 
         <style>
           
@@ -45,7 +44,7 @@
             /* background-image: -webkit-cross-fade(url(../images/practice_img/im1.jpg), url(../images/practice_img/im2.jpg), 50%); */
 
             background-image: -webkit-image-set(url(../images/practice_img/im1.jpg) 1dppx, url(../images/practice_img/im2.jpg) 1dppx);
-
+            
           }
 
           /* div.josJedanEl {
@@ -60,16 +59,29 @@
           } */
 
           div.josNekiEl {
+            position: absolute;
             background-color: olive;
-            width: 380px;
-            height: 268px;
+            width: 980px;
+            height: 468px;
 
-            background-image: image('../images/practice_img/im2.jpg#xywh=34, 28, 340, 246');
-            background-image: -moz-image('../images/practice_img/im2.jpg#xywh=pixel:34,28,340,246');
+            /* background-image: image('../images/practice_img/im2.jpg#xywh=34, 28, 340, 246'); */
+            background-image: -moz-image-rect(url(../images/practice_img/im1.jpg), 15,12,340,280);
+          }
 
+          div#neki_el {
+            background-image: url(../images/practice_img/im2.jpg);
+            width: 200px;
+            height: 380px;
+            background-repeat: no-repeat;
+          }
+
+          :dir(rtl) {
+            transform: rotateY(180deg);
           }
 
         </style>
+
+        <script defer type="text/javascript" src="./background_and_borders.js"></script>
 
     </body>
 </html>
