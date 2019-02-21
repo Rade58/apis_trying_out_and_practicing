@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <link rel="shortcut icon" type="image/png" href="../images/css-3-logo.png">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+        <title>BACKGROUND AND BORDERS</title>
+    </head>
+    <body>
+        
+        <div class="neki_el"></div>
+
+        <style>
+          
+          /* div.neki_el {
+            width: 200px;
+            height: 180px;
+            background-image: url(../images/practice_img/im2.jpg), url(../images/practice_img/im1.jpg);
+            background-repeat: no-repeat; 
+          }*/
+
+          div.neki_el {
+            width: 600px;
+            height: 480px;
+
+            background-repeat: no-repeat;
+
+            background-color: #BADA55;
+            
+            /* NIKAKO NE RADI U FIERFOX-U*/
+            /* background-image: cross-fade(url(../images/practice_img/im2.jpg), url(../images/practice_img/im1.jpg), 45%); */
+            
+            
+            /* U CHROME-U RADI I U OPERI RADI */
+            /* background-image: -webkit-cross-fade(url(../images/practice_img/im1.jpg), url(../images/practice_img/im2.jpg), 50%); */
+
+            background-image: -webkit-image-set(url(../images/practice_img/im1.jpg) 1dppx, url(../images/practice_img/im2.jpg) 1dppx);
+
+          }
+        </style>
+
+    </body>
+</html>
