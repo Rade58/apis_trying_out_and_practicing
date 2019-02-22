@@ -409,6 +409,110 @@
         <br>
         <br>
         <br>
+        
+        <div class="astronaut one">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <span>width percents: </span><input type="range" min="0" max="100" value="0">
+        <span></span><br>
+        height percents: <input type="range" min="0" max="100" value="0">
+        <span></span>
+
+
+        <style>
+
+          div.astronaut {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: olive solid 1px;
+            width: 600px;
+            height: 380px;
+            counter-reset: percents otherPercents;
+
+            background-image: url(../images/practice_img/astronaut.jpg);
+            background-repeat: no-repeat;
+          }
+
+          div.astronaut div {
+            border: purple solid 1px;
+          }
+
+          div.astronaut div:nth-of-type(4n)::after {
+            counter-increment: percents 25;
+            content: counter(percents) " %";
+            position: relative;
+            bottom: -100%;
+          }
+          
+          div.astronaut div:nth-of-type(4n) {
+            direction: rtl;
+          }
+
+          div.astronaut div:nth-of-type(n + 13):not(:last-of-type) {
+            text-align: right;
+          }
+
+          div.astronaut div:nth-of-type(n + 13):not(:last-of-type)::before  {
+            counter-increment: otherPercents 25;
+            content: counter(otherPercents) " %";
+            position: relative;
+            top: 100%;
+          }
+
+          div.astronaut.one {
+            background-position: 50% 25%;
+          }
+
+
+        </style>
+
+        <script>
+          
+          const grid = document.querySelector('div.astronaut');
+          const inputs = document.querySelectorAll('div.astronaut ~ input');
+          const state = {
+            widthPercents: 0,
+            heightPercents: 0
+          };
+
+          inputs.forEach((input) => {
+            input.addEventListener('input', (ev) => {
+              const value = ev.target.value;
+              let height;
+              input.nextElementSibling.innerHTML = value;
+              if(input.nextElementSibling.nextElementSibling.nodeName === "BR"){
+                state.widthPercents = value;
+                height = false;
+              }else{
+                state.heightPercents = value;
+                height = true;
+              }
+
+              grid.style.backgroundPosition = `${height?state.widthPercents:value}% ${height?value:state.heightPercents}%`;
+
+            }, false)
+          });          
+        
+        </script>
+
         <br>
         <br>
         <br>
