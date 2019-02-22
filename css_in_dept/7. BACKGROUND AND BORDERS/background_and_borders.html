@@ -729,6 +729,63 @@
         <br>
         <br>
         <br>
+        
+        <div class="neki_div_za_playing">Neki tekst</div>
+        <br>
+        <span>clip:</span><br>
+        <b>border-box</b>
+        <input name="clip" type="radio" value="border-box"><br>
+        <b>padding-box</b>
+        <input name="clip" type="radio" value="padding-box"><br>
+        <b>content-box</b>
+        <input name="clip" type="radio" value="content-box">
+        <br>
+        <span>origin:</span><br>
+        <b>border-box</b>
+        <input name="origin" type="radio" value="border-box"><br>
+        <b>padding-box</b>
+        <input name="origin" type="radio" value="padding-box"><br>
+        <b>content-box</b>
+        <input name="origin" type="radio" value="content-box">
+        
+
+        <style>
+        
+          div.neki_div_za_playing {
+              font-size: 2rem;
+              color: floralwhite;
+              text-shadow: 4px 4px 4px rgb(17, 22, 20);
+              margin: 8px;
+              width: 18%;
+              height: 380px;
+              padding: 40px;
+              border: dashed tomato 34px;
+              background-color: #BADA55;
+              background-repeat: no-repeat;
+              background-image: url(../images/practice_img/bear.jpg);
+          }
+        
+        </style>
+
+        <script>
+          
+          const el_background = document.querySelector('div.neki_div_za_playing');
+          const radios = document.querySelectorAll('div.neki_div_za_playing ~ [name=clip], div.neki_div_za_playing ~ [name=origin]');
+
+          radios.forEach((radio) => {
+            radio.addEventListener('input', (ev) => {
+              const target = ev.target;
+              if(target.name === "clip"){
+                el_background.style.backgroundClip = target.value;
+              }else{
+                el_background.style.backgroundOrigin = target.value;
+              }
+
+            })
+          });
+
+        </script>
+        
         <br>
         <br>
         <br>
