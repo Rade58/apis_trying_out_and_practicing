@@ -734,7 +734,7 @@
         <br>
         <span>clip:</span><br>
         <b>border-box</b>
-        <input name="clip" type="radio" value="border-box"><br>
+        <input name="clip" type="radio" value="border-box" checked> (DEFAULT)<br>
         <b>padding-box</b>
         <input name="clip" type="radio" value="padding-box"><br>
         <b>content-box</b>
@@ -744,7 +744,7 @@
         <b>border-box</b>
         <input name="origin" type="radio" value="border-box"><br>
         <b>padding-box</b>
-        <input name="origin" type="radio" value="padding-box"><br>
+        <input name="origin" type="radio" value="padding-box" checked> (DEFAULT)<br>
         <b>content-box</b>
         <input name="origin" type="radio" value="content-box">
         
@@ -790,6 +790,79 @@
         <br>
         <br>
         <br>
+
+        <div class="nekiElement"></div>
+        <br>
+        <span>background-size:</span><br>
+        <b>auto</b>
+        <input name="b_size" type="radio" value="auto" checked><br>
+        <b>contain</b>
+        <input name="b_size" type="radio" value="contain"><br>
+        <b>cover</b>
+        <input name="b_size" type="radio" value="cover"><br>
+        <b>SET LENGTH VALUES:</b><input type="radio" name="confirm" value="yes"><span>yes </span><b>//</b><input type="radio" name="confirm" value="no" checked><spasn>no</spasn><br>
+        <span>width: </span><input class="numInputs" name="width" type="number"><em>px</em><b>///////////</b>  
+        <span>height: </span><input class="numInputs" name="height" type="number"><em>px</em> <b>(SET BOTH VALUES)</b>
+        
+        
+
+        <style>
+        
+          div.nekiElement {
+              margin: 8px;
+              width: 50vw;
+              height: 50vw;
+              padding: 40px;
+              border: dashed tomato 34px;
+              background-color: #BADA55;
+              /* background-repeat: no-repeat; */
+              background-image: url(../images/practice_img/phone.jpg);
+          }
+
+          input.numInputs {
+            visibility: hidden;
+          }
+
+          input[name=confirm][value=yes]:checked ~ input.numInputs {
+            visibility: visible;
+          }
+        
+        </style>
+
+        <script>
+          
+          const someEl = document.querySelector('div.nekiElement');
+          const radioInputs = document.querySelectorAll('div.nekiElement ~ input[name=b_size]');
+          const nuberInputs = document.querySelectorAll('div.nekiElement ~ input.numInputs');
+          const sizeState = {
+            width: 50,
+            height: 50
+          };
+
+          radioInputs.forEach((radio) => {
+            radio.addEventListener('input', (ev) => {
+              const target = ev.target;
+              if(target.name === "b_size"){
+                someEl.style.backgroundSize = target.value;
+              }
+            });
+          });
+          nuberInputs.forEach((numIn) => {
+            numIn.addEventListener('input', (ev) => {
+
+              if(ev.target.name === 'width'){
+                sizeState.width = ev.target.value;
+              }else{
+                sizeState.height = ev.target.value;
+              }
+
+              someEl.style.backgroundSize = `${sizeState.width}px ${sizeState.height}px`
+            });
+          });
+
+        </script>
+
+
         <br>
         <br>
         <br>
