@@ -956,14 +956,129 @@
         
             div.blah_bord div:nth-of-type(10) {
                 border-style: outset;
+
             }
         
         </style>
         <br>
         <br>
         <br>
-        
+        <br>
+        <br>
 
+        <div class="all_kinds">
+            <div class="circle">circle</div>
+            <div class="oval">oval</div>
+            <div class="different">different</div>
+            <div class="elliptical">elliptical</div>
+            <div class="uglier">uglier</div>
+            <div class="uglier_individual">uglier</div>
+        </div>
+        
+        <style>
+        
+            div.all_kinds div {
+                text-align: center;
+                margin: 20px;
+
+                border-color: #48797e;
+                border-style: inset;
+                border-width: 10px;
+            }
+        
+            .circle {
+                width: 50px;
+                height: 50px;
+        
+                border-radius: 50%;
+            }
+        
+            .oval {
+                width: 120px;
+                height: 50px;
+        
+                border-radius: 50%;
+            }
+        
+            .different {
+                width: 120px;
+                height: 120px;
+        
+                border-radius: 28px  48px;
+            }
+
+            .elliptical {
+
+                box-sizing: border-box; /*POMOCI CE MI KAKO BI DVE NASPRAMNE STRANE DIVA IZGLEDA SKROZ ZAOBLJENO*/
+
+                width: 180px;           /* JER ZELIM D DEFINISEM DA GORNJA STRANA ELEMENTA BUDE POTPUNO OBLA */
+                                        /* A TO CU URADITI, KADA GORNJO BORDER RADIUS DEFINISEM DA BUDE POLA OD 
+                                        SIRINE */      
+                height: 180px;
+
+                border-radius: 90px / 45px;            /* GORNJA I DONJA STRANA SU ZAOBLJENE */
+                                                      /* DESNA I LEVA IMAJU JEDAN STRAIGNT DEO ZATO STO */
+                                                      /* IPAK ZELIM DA SVAKI CORNER BUDE 
+                                                          
+                                                              ELIPTICAN, A 
+                                                              
+                                                              NE KRUZAN */
+            }
+
+              /* KARAKTERISTICAN ELIPTICNI OBLIK SVAKOG CORNERA */
+            .uglier {
+                width: 220px;
+                height: 200px;
+
+                border-radius: 68px 26px 19px 34px / 18px 76px 89px 64px;
+            }
+
+            .uglier_individual {
+                width: 220px;
+                height: 220px;
+
+                border-top-left-radius: 14px 38px;
+            }
+
+        </style>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="frames"></div>
+        <div class="frames_blah"></div>
+
+        <style>
+
+            div.frames {
+                width: 280px;
+                height: 280px;
+                border-style: solid;
+                border-width: 20px;
+
+                border-radius:  50% 5% / 50% 5%;
+                border-bottom-color: transparent;
+                border-top-color: transparent;
+            }
+            
+            div.frames_blah {
+                width: 280px;
+                height: 280px;
+
+                border-style: outset;
+                border-width: 20px;
+
+                border-radius:  50% / 50% 5%;
+            }
+
+        </style>
+        
+        <br>
+        <br>
+        <br>
+        <br>
 
         <script defer type="text/javascript" src="./background_and_borders.js"></script>
 
