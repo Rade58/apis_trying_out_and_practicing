@@ -1103,12 +1103,21 @@
             border-width: 100px;
             border-color: aquamarine;
 
-            border-image-source: url(../images/practice_img/b_img.png);
-            border-image-slice: 12% 24% 24% 8%;
-            border-image-width: 15px 19px 42px 8px;
-            border-image-outset: 38px;
-
+            border-image-source: url(../images/practice_img/mono_frame.svg);
             
+            /* NAJBOLJE JE POCETI SA SLICE-OM  */
+            border-image-slice: 250 220 410;       /* PRVA VREDNOST VAZI ZA top, DRUGA ZA rigt i left A TRECA ZA bottom  */
+            /* SLICE-OM BUKVALNO BIRA KOJI DEO SLIKE CE SE ISECI DA BIB IO PRIKAZAN U BORDER-U (NARAVNO U SLUCAJU SVAKE
+            STRANE) */
+
+            /* SIRINU OPET DEFINISEM TAKO STO CU SLUCAJU OVOG PRIMERA DEFINISATI DVE RAZLICITE VREDNOSTI ZA top
+            i bottom, A ISTE VREDNOSTI ZA left I right */
+            border-image-width: 98px 65px 49px;
+
+            /* SLEDECIM PROPERTIJEM MOZE SE DEFINISATI, NAJVISE DVE VREDNOSTI */
+            border-image-repeat: round repeat; /* PRVA VREDNOST SE ODNOSI NA GORNJU I DONJU STRANU, A DRUGA NA LEVI I DESNU */
+
+            border-image-outset: 12px; /*ZADAO SAM MALI OUTSET, ODNOSNO BORDER IMAGE JE SA SVIH STRANA, MALO POMEREN PREMA SPOLJA*/
           }
           
         </style>
