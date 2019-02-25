@@ -45,3 +45,9 @@
 1. border-image-repeat
 
 1. border-image (SHORTHAND)
+
+## SPECIFIKACIJE
+
+[w3](https://drafts.csswg.org/css-backgrounds/)
+
+[image() NOTACIJA](https://www.w3.org/TR/css3-images/#image-notation)
