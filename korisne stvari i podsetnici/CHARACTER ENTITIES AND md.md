@@ -66,4 +66,3 @@ KADA DEFINISEM VREDNSOT ZA **quotes** PROPERTI, MOGU DA POSLUZE
 ## px to em AND em TO px CONVERTER
 
 [KONVERTOR](https://www.w3schools.com/tags/ref_pxtoemconversion.asp)
-
