@@ -360,18 +360,79 @@
                 /* background-color: rgba(173, 211, 102, 0.445); */
 
                 background-image: repeating-linear-gradient(to bottom right, 
-                                                olive 0,
+                                                tomato 0,
                                                 tomato 20px, purple 20px,
-                                                rgb(241, 231, 212) 40px, aqua 40px,
-                                                rgb(182, 44, 44) 60px, rgb(194, 40, 148) 60px,
-                                                rgb(155, 141, 115) 80px, rgb(124, 138, 138) 80px,
-                                                rgb(144, 20, 86) 100px, rgb(33, 136, 136) 100px,
-                                                rgb(218, 22, 84) 120px);
+                                                purple 40px, aqua 40px,
+                                                aqua 60px, crimson 60px,
+                                                crimson 80px, azure 80px,
+                                                azure 100px, olive 100px,
+                                                olive 120px);
 
             }
 
         </style>
 
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="stripedEl"></div>
+
+        <style>
+
+            div.stripedEl {
+                box-sizing: border-box;
+                width: 60vw;
+                height: 80vw;
+                border: currentColor 10px solid;
+                padding: 50px;
+
+                background-repeat: repeat;
+                background-size: 100px 100px;
+                background-origin: content-box;
+
+                background-image: linear-gradient(45deg,
+                    tomato 25%, olive 25% 50%, tomato 50% 75%, olive 75%
+                );
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="stripedEl2"></div>
+
+        <style>
+
+            div.stripedEl2 {
+                box-sizing: border-box;
+                width: 60vw;
+                height: 80vw;
+                border: currentColor 10px solid;
+                padding: 50px;
+
+                background-repeat: no-repeat;
+
+                /* KAO STO VIDIM, ZNATNO MANJE CODA, NEGO KADA SAM, SLICAN PRIMER DEFINISAO UZ POMOC linear-gradient() 
+                FUNKCIJE */
+                background-image: repeating-linear-gradient(30deg, tomato 0px 28px, olive 28px 56px)
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <br>
         <br>
         <br>
