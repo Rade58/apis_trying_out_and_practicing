@@ -450,13 +450,37 @@
                 background-repeat: no-repeat;
                 background-origin: content-box;
 
-                background-image: radial-gradient(circle at 50em 50px, tomato 50%, olive 50%);
+                background-image: radial-gradient(circle at top 50px right -150px, tomato 30%, olive 30% 50%);
             }
         
         </style>
 
         <br>
         <br>
+        <div class="something"></div>
+
+        <style>
+
+            div.something {
+                box-sizing: border-box;
+                width: 60vw;
+                height: 70vh;
+                padding: 50px;
+                border: currentColor solid 2px;
+
+                background-repeat: no-repeat;
+                background-origin: content-box;
+
+                /* DAKLE OVOG PUTA, UPOTREBLJAVAM PROCENTE */
+
+                background-image: radial-gradient(circle at 20% 18%,
+                                                        tomato 30%, olive 30% 50%);
+
+                /* DAKLE SADA SAM DEFINISAO DA JE CENTAR GRADIENT NA DVADESETOM PROCENTU SIRNE IMAGE-A, I NA OSAMNAESTOM PROCENTU VISINE IMAGE-A (NARAVNO, 'KOORDINATNI POCETAK' JE UVEK, GORNJI LEVI UGAO SLIKE) */
+            }
+
+        </style>
+
         <br>
         <br>
 
