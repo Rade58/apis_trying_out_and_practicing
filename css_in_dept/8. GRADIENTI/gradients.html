@@ -582,7 +582,7 @@
                 ONAJ NA 0% (CENTAR IMAGE-A) I ONAJ  100% */
                 /* ALI 100% NIKAKO NIJE STRANICA IMAGE-A */
 
-                background-image: radial-gradient(tomato 50%, 50%, olive);
+                background-image: radial-gradient(tomato 50%, 50%, olive 99%, currentColor 99%);
             }
 
         </style>
@@ -603,7 +603,26 @@
                 /* DAKLE, OVO CE PO DEFAULT-U BITI ELIPSA, KOJA IMA SAMO DVA COLOR STOPA
                 ONAJ NA 0% (CENTAR IMAGE-A) I ONAJ */
 
-                background-image: radial-gradient(100px, tomato 50%, 50%, olive);
+                background-image: radial-gradient(farthest-side at left 50px top 100px , tomato 50%, 50%, olive 85%, tomato);
+            }
+
+        </style>
+
+        <br>
+        <br>
+
+        <div class="el_6"></div>
+
+        <style>
+
+            div.el_6 {
+                width: 600px;
+                height: 480px;
+                padding: 0px;
+
+                background-repeat: no-repeat;
+
+                background-image: radial-gradient(farthest-corner at 0 0, tomato 50%, 50%, olive 90% 99%, currentColor 99%);
             }
 
         </style>
@@ -612,6 +631,30 @@
         <br>
         <br>
         <br>
+
+        <div class="el_7"></div>
+
+        <style>
+
+            div.el_7 {
+                width: 600px;
+                height: 480px;
+                padding: 0px;
+
+                background-repeat: no-repeat;
+
+                /* DAKLE, OVO */
+                background-image: radial-gradient(tomato 50%, 50%, olive 99%, currentColor 99%);
+
+                /* SAM MOGA ODEFINISATI I OVAKO */
+                background-image: radial-gradient(farhest-corner, tomato 50%, 50%, olive 99%, currentColor 99%);
+
+                /* JER, KAO STO SAM REKAO fathest-corner JE DEFAULT VREDNOST */
+
+                /* ODNOSNO 100% COLOR STOP SE NALAZI U FARTHEST CORNER-U, ODNOSNO U NAJUDALJENIJEM COSKU IMAGE-A */
+            }
+
+        </style>
 
     </body>
 </html>
