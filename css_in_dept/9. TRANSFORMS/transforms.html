@@ -17,7 +17,10 @@
             }
         </style>
 
-        <div class="letters rsvp"></div>
+        <div style="display: inline-block; margin-left: 50%; position: relative; text-align: center">
+            <div class="letters rsvp"></div>
+            <div class="placeholder rsvp"></div>
+        </div>
 
         <style>
 
@@ -30,12 +33,39 @@
                 color: firebrick;
                 background-color: rgba(222, 184, 135, 0.692);
                 box-shadow: 6px 6px cadetblue;
-                margin-left: 600px;
+                
+            }
+
+            /*DAKLE, IMACU I
+             MALO RAZLICIT ELEMENT, KOJI IMA DRUGACIJI BACKGROUND COLOR, KOJI BI SE 
+             NALAZIO ISPOD (UNDERNEATH) ONOG ELEMENTA ZA KOJEG DEFINISEM TRANSFORMACIJU 
+             (KAO STO SAM REKAO, USLOVNO RECENO, ZELIM PLACEHOLDERA, KOJI CE POKAZIVATI, GDE JE BIO 
+             MOJ TRANSFORMISANI ELEMENT U POCETNOJ POZICIJI) */
+
+            /* I UPRAVO TAJ PLACEHOLDER ELEMENT 'PODVLACIM', ISPOD ONOG ELEMENTA, KOJEG CU KASNIJE TRANSFORMISATI */
+
+            div.rsvp.placeholder {
+                position: absolute;
+                top: 0;
+                z-index: -1;
+                
+            }
+            
+            div.rsvp.placeholder::before {
+                background-color: rgb(212, 174, 238);
+
+                
             }
 
             div.letters {
-                transform: translate(-200px, 290px) rotate(48deg) scale(.7, .9) skew(35deg);
+                z-index: 2;
             }
+
+
+            div.letters {
+                transform: translate(-200px, 290px) rotate(48deg) scale(.7, .9) skew(35deg);
+            } 
+
 
         </style>
 
