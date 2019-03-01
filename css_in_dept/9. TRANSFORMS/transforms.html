@@ -17,10 +17,10 @@
             }
         </style>
 
-        <div style="display: inline-block; margin-left: 50%; position: relative; text-align: center">
+        <!-- <div style="display: inline-block; margin-left: 50%; position: relative; text-align: center">
             <div class="letters rsvp"></div>
             <div class="placeholder rsvp"></div>
-        </div>
+        </div> -->
 
         <style>
 
@@ -32,8 +32,7 @@
                 font-family: Lato, Tahoma, Geneva, sans-serif;;
                 color: firebrick;
                 background-color: rgba(222, 184, 135, 0.692);
-                box-shadow: 6px 6px cadetblue;
-                
+                box-shadow: 6px 6px cadetblue; 
             }
 
             /*DAKLE, IMACU I
@@ -53,14 +52,11 @@
             
             div.rsvp.placeholder::before {
                 background-color: rgb(212, 174, 238);
-
-                
             }
 
             div.letters {
                 z-index: 2;
             }
-
 
             div.letters {
                 transform: translate(-200px, 290px) rotate(48deg) scale(.7, .9) skew(35deg);
@@ -68,6 +64,68 @@
 
 
         </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div style="display: inline-block; margin-left: 50%; position: relative; text-align: center">
+            <div class="lettersi rsvpEl"></div>
+            <div class="plholder rsvpEl"></div>
+        </div>
+        
+        <style>
+        
+            div.rsvpEl::before {
+                content: "RSVP";
+                display: inline-block;
+                padding: 8px;
+                font-size: 7.2em;
+                font-family: Lato, Tahoma, Geneva, sans-serif;;
+                color: firebrick;
+                background-color: rgba(231, 201, 158, 0.685);
+                box-shadow: 6px 6px cadetblue;
+        
+            }
+        
+            div.rsvpEl.plholder {
+                position: absolute;
+                top: 0;
+                z-index: -1;
+        
+            }
+        
+            div.rsvpEl.plholder::before {
+                background-color: rgb(212, 174, 238);
+            }
+        
+            div.lettersi {
+                z-index: 2;
+            }
+
+            div.lettersi {
+                /* transform: translate(-50px); */   /* ELEEMNT JE TRANSLIRAN PO X OSI ULEVO ZA 50px */
+
+                /*transform: translate(100px, 200px);*/ /* ELEMENT JE PO X OSI TRANSLIRAN UDESNO 100PX, A PO Y OSI JE TRANSLIRAN NADOLE                                                                                                            ZA 200px */
+                /* transform: translateX(-80px);*/  /* ELEMENT JE TRANSLIRAN PO X OSI ULEVO ZA 80px */
+
+                /* transform: translateY(280px);*/  /* ELEMENT JE TRANSLIRAN PO Y OSI NADOLE ZA 280PX */
+
+                /* transform: rotateX(91deg); */
+
+                /* transform: scaleY(0.8);  */
+
+                transform: skew(30deg, 8deg);
+
+            }
+        
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
 
 
     </body>
