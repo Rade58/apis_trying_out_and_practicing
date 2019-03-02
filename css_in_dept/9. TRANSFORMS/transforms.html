@@ -245,6 +245,79 @@
         <br>
         <br>
         <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="parental">
+            <div>Child element</div>
+        </div>
+
+        <style>
+            div.parental {
+                width: 680px;
+                height: 420px;
+                margin: auto;
+                border: tomato dashed 10px;
+                background-repeat: no-repeat;
+                background-image: radial-gradient(circle farthest-corner at 0% 0%, rgba(255, 235, 205, 0.753) 20%, rgba(128, 128, 0, 0.534) 50%);
+
+                /* TRANSFORMACIJA PARENT-A */
+
+                transform: rotateX(45deg) rotateY(38deg);
+
+                transform-style: flat; /* CHILD ELEMENT NE IZGLEDA 3D TRANSFORMISANO, U ODNOSU NA PARENT */
+                                        /*ODNOSNO I DALJE JE 'ZALEPLJEN KAO NALEPNICA ZA PARENT'  */
+
+                transform-style: preserve-3d;  /* SADA KADA POSMATRAM STRANICU, I CHILD ELEMENT IZGLEDA 3D TRANSFORMISANO */
+
+            }
+
+            div.parental div {
+                font-size: 2em;
+                background-color: crimson;
+                color: whitesmoke;
+                margin: 25% auto;
+                width: max-content;
+                border: orange solid 4px;
+
+                /* TRANSFORMACIJA CHILD-A */
+
+                transform: rotateX(-45deg) rotateY(-45deg) translateY(198px);
+
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
