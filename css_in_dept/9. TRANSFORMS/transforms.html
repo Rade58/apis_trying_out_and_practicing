@@ -112,12 +112,17 @@
                 z-index: 2;
             }
 
-            div.lettersi {
+            /* div.lettersi {
                 transform: rotateY(42deg) translate3d(100px, -50px, 10px);
             }
 
             div.parent {
                 perspective: 80px;
+            } */
+
+            div.lettersi {
+                transform: rotateZ(90deg);
+                transform-origin: 10px 10px;
             }
             
         </style>
@@ -169,10 +174,11 @@
                 perspective: 180px;
                 /*////////////////////////*/
                 /* OVO SU SVE VALIDNE VREDNOSTI ZA perspective-origin */
-                perspective-origin: top left;
+                /* perspective-origin: top left;
                 perspective-origin: 60% 10%;
-                perspective-origin: 100px -400px;
+                perspective-origin: 100px -400px; */
 
+                perspective-origin: left bottom;
             }
         
             /* /////////////////////////// */
@@ -191,6 +197,54 @@
         <br>
         <br>
 
+        <div class="matriarch">
+            <div>Tekst</div>
+            <div></div>
+        </div>
+
+        <style>
+
+            div.matriarch {
+                width: 600px;
+                border: currentColor solid 1px;
+                margin: 10px auto;
+                text-align: center;
+                padding: 20px;
+                position: relative;
+            }
+
+            div.matriarch > div {
+                width: 380px;
+                height: 168px;
+                margin: auto;
+            }
+
+            div.matriarch > div:first-child {
+                background-image: linear-gradient(to bottom right, tomato 38%, blanchedalmond);
+                position: absolute;
+                top: 30px;
+                left: calc(50% - 190px);
+            }
+
+            div.matriarch > div:last-child {
+                border: dashed olive 10px;
+            }
+
+            /* DEFINING TRANSFORM, AND TRANSFORM ORIGIN */
+
+            div.matriarch > div:first-child {
+                transform: rotateZ(45deg);
+                transform-origin: 28px 160px;
+                transform-origin: -30% -20%;
+                transform-origin: left top;
+            }
+            
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
