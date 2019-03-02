@@ -70,7 +70,7 @@
         <br>
         <br>
 
-        <div style="display: inline-block; margin-left: 50%; position: relative; text-align: center">
+        <div class="parent">
             <div class="lettersi rsvpEl"></div>
             <div class="plholder rsvpEl"></div>
         </div>
@@ -88,10 +88,18 @@
                 box-shadow: 6px 6px cadetblue;
         
             }
+
+            div.parent {
+                position: relative;
+                margin: auto;
+                width: 420px;
+                border: currentColor 4px solid;
+                padding: 12em;
+            }
         
             div.rsvpEl.plholder {
                 position: absolute;
-                top: 0;
+                top: 12em;
                 z-index: -1;
         
             }
@@ -105,21 +113,75 @@
             }
 
             div.lettersi {
-                /* transform: translate(-50px); */   /* ELEEMNT JE TRANSLIRAN PO X OSI ULEVO ZA 50px */
+                transform: rotateY(42deg) translate3d(100px, -50px, 10px);
+            }
 
-                /*transform: translate(100px, 200px);*/ /* ELEMENT JE PO X OSI TRANSLIRAN UDESNO 100PX, A PO Y OSI JE TRANSLIRAN NADOLE                                                                                                            ZA 200px */
-                /* transform: translateX(-80px);*/  /* ELEMENT JE TRANSLIRAN PO X OSI ULEVO ZA 80px */
+            div.parent {
+                perspective: 80px;
+            }
+            
+        </style>
 
-                /* transform: translateY(280px);*/  /* ELEMENT JE TRANSLIRAN PO Y OSI NADOLE ZA 280PX */
+        <br>
+        <br>
+        <br>
+        <br>
 
-                /* transform: rotateX(91deg); */
+        
+            <div class="kont p1">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </div>
+            <div class="kont p2">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </div>
+        
+        
+        <style>
+        
+            div.kont {
+                border: currentColor solid 4px;
+                width: 680px;
+                margin: auto;
+                text-align: center;
+                padding: 128px;
+                font-size: 4em;
+            }
+        
+            div.kont > div {
+                display: inline-block;
+                text-align: center;
+                background-image: linear-gradient(to top right, tomato 50%, blanchedalmond);
+                border: dashed 1px olive;
+                padding: 100px;
+                font-size: 0.3em;
+            }
+        
+            /*/////////////////////////////*/
+            div.kont.p1 > div {
+                transform: rotateX(8deg);
+            }
+        
+            div.kont.p1 {
+                perspective: 180px;
+                /*////////////////////////*/
+                /* OVO SU SVE VALIDNE VREDNOSTI ZA perspective-origin */
+                perspective-origin: top left;
+                perspective-origin: 60% 10%;
+                perspective-origin: 100px -400px;
 
-                /* transform: scaleY(0.8);  */
+            }
+        
+            /* /////////////////////////// */
+            div.kont.p2 > div {
+                transform: perspective(180px) rotateX(8deg);
+            }
 
-                /* transform: skew(30deg, 8deg); */
-
-                transform: translateY(280px) rotateZ(45deg) scale(0.8, 2) skew(-8deg);
-
+            div.kont.p2 {
+                perspective-origin: 50px 10px;
             }
         
         </style>
