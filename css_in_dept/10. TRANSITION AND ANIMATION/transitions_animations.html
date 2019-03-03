@@ -37,6 +37,132 @@
         <br>
         <br>
         <br>
+        <div class="blah">
+        <div class="kont_b">
+
+            <div class="boxy loxy">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        </div>
+
+        <style>
+
+            body {
+                /* perspective: 180px; */
+                /* perspective-origin: top left; */
+            }
+
+            div.kont_b {
+                border: rgb(134, 192, 226) inset 4px;
+                display: inline-block;
+                padding: 8%;
+                background-image: linear-gradient(rgba(245, 209, 209, 0.876) 20%, rgb(167, 218, 218));
+                background-repeat: no-repeat;
+                vertical-align: middle;
+
+                /* border-top-left-radius: 20% 50%;
+                border-top-right-radius: 20% 50%;
+                border-bottom-left-radius: 20% 50%;
+                border-bottom-right-radius: 20% 50%; */
+            }
+            
+            div.boxy {
+                border: currentColor solid 0px;
+                width: max-content;
+                margin: auto;
+                font-size: 0px;
+                position: relative;
+                transform: rotateY(8deg) rotateZ(45deg) translateZ(50px);
+                transform-style: preserve-3d;
+            }
+
+            div.boxy div {
+                /* box-sizing: border-box; */
+                border: tomato solid 0px;
+                width: 80px;
+                height: 80px;
+                display: inline-block;
+                /* transform: scale(2); */
+                background-image: radial-gradient(farthest-corner at top left, rgba(224, 36, 67, 0.602) 10%, rgb(103, 219, 190) 80%, rgb(144, 95, 177)),
+                            linear-gradient(to top left, rgb(48, 167, 157) 10%, rgb(0, 128, 64) 60%, rgb(175, 101, 101));
+            }
+
+            div.boxy div:not(:last-child) {
+                position: absolute;
+            }
+
+            div.boxy div:nth-of-type(1){
+                transform: translateZ(-40px);
+            }
+            div.boxy div:nth-of-type(2){
+                transform-origin: left;
+                transform: translateZ(40px) rotateY(90deg);
+    
+            }
+            div.boxy div:nth-of-type(3){
+                transform-origin: right;
+                transform: translateZ(40px) rotateY(-90deg);
+            }
+            div.boxy div:nth-of-type(4){
+                transform-origin: bottom;
+                transform: translateZ(40px) rotateX(90deg);
+            }
+            div.boxy div:nth-of-type(5){
+                transform: translateZ(40px);
+            }
+
+            div.boxy div:nth-last-of-type(1) {
+                transform-origin: top;
+                transform: translateZ(40px) rotateX(-90deg);
+            }
+            
+            div.loxy {
+                transition-property: transform;
+                transition-duration: 3000ms;
+                transition-delay: 500ms;
+            }
+
+            body:hover div:nth-of-type(2n).kont_b div.loxy {
+                /* transform-origin */
+                transform: rotateX(310deg) rotateY(348deg) rotateZ(315deg);
+            }
+
+            body:hover div:nth-of-type(2n + 1).kont_b div.loxy {
+                /* transform-origin */
+                transform: rotateX(180deg) scale(5);
+            }
+
+            div:nth-of-type(2n + 1).kont_b {
+                overflow: hidden;
+                /* background-origin: content-box; */
+            }
+
+            div.blah {
+                text-align: center;
+            }
+
+        </style>
+
+        <script>
+            
+            const kont = document.querySelector('div.kont_b');
+
+            const fragment = document.createDocumentFragment();
+
+            for(let i = 0; i < 58; i++) {
+                fragment.appendChild(kont.cloneNode(true));
+            }
+
+            document.querySelector('div.blah').prepend(fragment);
+        
+        </script>
+
         <br>
         <br>
         <br>
