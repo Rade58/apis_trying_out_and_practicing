@@ -194,6 +194,63 @@
         <br>
         <br>
         <br>
+
+        <div class="neki_kont">
+            <input type="number" step="2" min="0" max="14">
+        </div>
+        
+        <style>
+        
+            div.neki_kont input:valid {
+                background-color: green;
+            }
+        
+            div.neki_kont input:invalid {
+                background-color: red;
+
+                /* U transition SHORTHAND-U, DEFINISACU SAMO VREDNSOTI ZA transition-duration          I 
+                                                                          transition-timing-function            */
+
+                transition: 3s linear;  /* DA SAM transition DEFINISAO NAKON transition-property, ONDA BI OVERRIDE-OVALO
+                                        transition-property */ /* TO SAMO KAZEM JER TREBA DA VODIM RACUNA O OVOME, KADA
+                                                                KORISTIM SHORTHAND NA OVAKO NESMOTREN NACIN */
+
+                transition-property: background-color; 
+                                        /* OVDE SAM OVO MOGAO IZOSTAVITI, JER BI TADA PO DEFAULTU BILO all, ILI SAM
+                                         transition-property MOGAO DEFINISATI U SKLOPU SHORTHAND-A, ALI ZELIM DA SE
+                                         MALO IGRAM SA UPOTREBOM
+
+                                         DA, OVDE SAMO TRANZITUJE background-color */
+                
+            }
+        
+        </style>
+
+        <script>
+            
+            const inputEl = document.querySelector('div.neki_kont');
+
+            const inputHandler = function(ev){
+                const input = ev.target;
+                const resolvedStyles = window.getComputedStyle(input);
+
+                const {duration, timingFunction, property} = {
+                    duration: resolvedStyles.getPropertyValue('transition-duration'),
+                    timingFunction: resolvedStyles.getPropertyValue('transition-timing-function'),
+                    property: resolvedStyles.getPropertyValue('transition-property')
+                }
+
+                console.log("***********************************");
+                console.log(`ELEMENT HAS ____${input.validity.valid}____VALIDITY`);
+                console.log('HIS TRANSITION STYLES ARE:');
+                console.log(duration, timingFunction, property);
+                console.log("***********************************");
+            };
+
+            inputEl.addEventListener('input', inputHandler);
+
+        </script>
+
         <br>
         <br>
         <br>
