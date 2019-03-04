@@ -255,6 +255,85 @@
         <br>
         <br>
         <br>
+        <br>
+
+        <nav>
+            <ul>
+                <li>About
+                    <ul>
+                        <li>Me</li>
+                        <li>You</li>
+                        <li>Them</li>
+                        <li>Nobody</li>
+                    </ul>
+                </li>
+                <li>Posts
+                    <ul>
+                        <li>Door Post</li>
+                        <li>Wall hanging</li>
+                        <li>Stair Banister</li>
+                        <li>Washington</li>
+                    </ul>
+                </li>
+                <li>Topics
+                    <ul>
+                        <li>Door Post</li>
+                        <li>Wall hanging</li>
+                        <li>Stair Banister</li>
+                        <li>Washington</li>
+                    </ul>
+                </li>
+                <li>Events
+                    <ul>
+                        <li>Door Post</li>
+                        <li>Wall hanging</li>
+                        <li>Stair Banister</li>
+                        <li>Washington</li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <style>
+        
+            nav {
+                border: aqua solid 1px;
+                font-size: 2em;
+            }
+
+            nav > ul > li {
+                display: inline-block;
+                position: relative;
+                margin: 0;
+                border: tomato solid 1px;
+                width: 20%;
+            }
+
+            nav  ul  ul {
+                display: block; padding: 0px; position: absolute;
+                transition: 0.2s 500ms ease-in transform;
+                transform: scale(0, 0);
+                transform-origin: top center;
+            
+            }
+
+            nav > ul > li:hover ul {
+                transform: scale(1, 1);
+            }
+            
+            nav ul > li li {
+                display: block;
+                border: crimson solid 1px;
+                width: 100%;
+                
+            }
+        
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
