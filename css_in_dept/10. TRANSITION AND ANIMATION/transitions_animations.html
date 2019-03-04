@@ -200,29 +200,30 @@
         </div>
         
         <style>
+
+            /* div.neki_kont input:focus {
+                transition: background-color 3s linear;
+                background-color: yellow;
+            } */
+            
         
-            div.neki_kont input:valid {
+
+            /* div.neki_kont input:valid {
                 background-color: green;
-            }
-        
+                transition: 2s linear;
+            } */
+
             div.neki_kont input:invalid {
                 background-color: red;
-
-                /* U transition SHORTHAND-U, DEFINISACU SAMO VREDNSOTI ZA transition-duration          I 
-                                                                          transition-timing-function            */
-
-                transition: 3s linear;  /* DA SAM transition DEFINISAO NAKON transition-property, ONDA BI OVERRIDE-OVALO
-                                        transition-property */ /* TO SAMO KAZEM JER TREBA DA VODIM RACUNA O OVOME, KADA
-                                                                KORISTIM SHORTHAND NA OVAKO NESMOTREN NACIN */
-
-                transition-property: background-color; 
-                                        /* OVDE SAM OVO MOGAO IZOSTAVITI, JER BI TADA PO DEFAULTU BILO all, ILI SAM
-                                         transition-property MOGAO DEFINISATI U SKLOPU SHORTHAND-A, ALI ZELIM DA SE
-                                         MALO IGRAM SA UPOTREBOM
-
-                                         DA, OVDE SAMO TRANZITUJE background-color */
-                
+                transition: 4s steps(4, end)
             }
+
+            div.neki_kont input:focus {
+                transition: 2s linear;
+                background-color: yellow;
+            }
+
+            
         
         </style>
 
