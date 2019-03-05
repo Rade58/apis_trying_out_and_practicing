@@ -498,6 +498,62 @@
         <br>
         <br>
         <br>
+        <div class="boksi"></div>
+
+        <style>
+
+            div.boksi {
+                width: 42vw;
+                height: 24vw;
+
+                border: currentColor 2px solid;
+                background-color: tomato;
+
+                animation-name: test;
+                animation-duration: 10s;
+                animation-iteration-count: 4;
+                animation-direction: alternate;
+            }
+
+            /* OVO JE MOGLO */
+            @keyframes test {
+
+                34% {
+                    background-color: olive;
+                    border-width: 10px;
+                }
+
+                56% {
+                    background-color: blanchedalmond;
+                    border-width: 28px;
+                }
+
+            }
+
+            /* DA SE NAPISE I OVAKO */
+            @keyframes test {
+
+                34% {
+                    background-color: olive;
+                    border-width: 10px;
+                }
+
+                56% {
+                    background-color: blanchedalmond;
+                    border-width: 28px;
+                }
+
+                /* JER JE SLEDECE PODRAZUMEVANO, ODNOSNO PREDSTAVLJA ONE VREDNOSTI, KOJE ELEMENT IMA PRE PRIMENE ANIAMCIJE  
+                ILI MOGU RECI DA SU TO ONE VREDNOSTI KOJE ELEMENT IMA PRE POCETKA, I NAKON KRAJA ANIMACIJE*/
+
+                0%, 100% {
+                    background-color: tomato;
+                    border-width: 2px;
+                }
+
+            }
+
+        </style>
         <br>
         <br>
         <br>
@@ -505,6 +561,59 @@
         <br>
         <br>
         <br>
+
+        <div class="artija">
+            <div class="lapis"></div>
+        </div>
+
+        <style>
+            
+            div.artija {
+                position: relative;
+            }
+
+            div.lapis::before {
+                
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';
+            }
+
+            div.lapis {
+                display: inline-block;
+                position: absolute;
+                transform-origin: 50% 250%;
+
+                /* NECU DA KORISTIM JOS SHORTHAND, DOK NE NAUCIM LONGHAND-OVE*/
+                animation-name: lapising;
+                animation-duration: 4s;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+            }
+
+            @keyframes lapising {
+                
+                0% {
+                    left: 0;
+                }
+
+                10% {
+                    left: 45%;
+                }
+
+                90% {
+                    left: 55%;
+                }
+
+                100% {
+                    left: 80%;
+                }
+
+            }
+
+        </style>
+
+
         <br>
         <br>
         <br>
