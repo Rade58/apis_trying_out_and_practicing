@@ -556,6 +556,7 @@
             }
 
         </style>
+
         <br>
         <br>
         <br>
@@ -612,7 +613,6 @@
         
             */
         
-        
             @keyframes lapising {
         
                 0% {
@@ -635,7 +635,33 @@
         
         </style>
         
+        <br>
+        <br>
+        <br>
+        <br>
 
+        <div class="el" style="border: 10px solid olive;"></div>
+
+        <style>
+
+            div.el {
+                border-color: orange !important;
+            }
+
+            /* OVERRIDING HACK */
+
+            div.el {
+                animation-name: hakovanjeSpecificitija;
+                animation-fill-mode: forwards;
+            }
+
+            @keyframes hakovanjeSpecificitija {
+                to {
+                    border-color: crimson;
+                }
+            }
+
+        </style>
 
         <br>
         <br>
@@ -644,6 +670,31 @@
         <br>
         <br>
         <br>
+        <ul>
+            <li id="foo" class="ajtem">id="foo" class="ajtem"</li>
+            <li id="bar" class="ajtem">id="bar" class="ajtem"</li>
+            <li id="baz">id="baz"</li>
+        </ul>
+
+        <style>
+            li {
+                color: tomato !important;
+            }
+
+            li {
+                animation: bojaTeksta forwards;
+            }
+
+            @keyframes bojaTeksta {
+
+                100% {                 /* NA SAMOM KRAJU ANIMACIJE, BOJA TEKSTA TREBA DA SE PROMENI I DA BUDE */
+                    color: #BADA55;
+                }
+
+            }
+        
+        </style>
+        
         <br>
         <br>
         <br>
@@ -651,10 +702,46 @@
         <br>
         <br>
         <br>
-        <br>
-        <br>
-        <br>
-        <br>
+
+        <div class="ele"></div>
+
+        <style>
+
+            div.ele {
+                width: 60vw;
+                height: 50vh;
+
+                border: currentColor solid 2px;
+
+                background-color: #BADA55;
+
+                animation-name: badass;
+                animation-duration: 6s;
+                animation-iteration-count: infinite;
+                animation-direction: alternate;
+            }
+
+            @keyframes badass {
+
+                10% {
+                    background-color: tomato;
+                }
+
+                46% {
+                    background-color: crimson !important;  /* BICE IGNORISANO */
+                }
+
+                82% {
+                    background-color: purple !important; /* BICE IGNORISANO */
+                }
+
+                100% {
+                    background-color: olive;
+                }
+
+            }
+
+        </style>
         <br>
         <br>
         <br>
