@@ -333,6 +333,213 @@
         <br>
         <br>
         <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="coloringEl"></div>
+
+        <style>
+
+            div.coloringEl {
+                width: 42vw;
+                height: 24vw;
+                border: currentColor 2px solid;
+                background-color: rgb(110, 180, 104);
+
+                animation-name: 📓;            /* SPECIJALNI KARAKTER, KAO IME ANIMACIJE */
+                animation-duration: 2000ms;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+            }
+
+            @keyframes 📓 {            /* SPECIJALNI KARAKTER */
+                from, 30% {
+                    background-color: rgb(33, 92, 22);
+                }
+
+                to {
+                    background-color: rgba(28, 165, 96, 0.712);
+                }
+            }
+
+            /* I ANIMACIJA ZAISTA RADI */
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="paper">
+            <div class="pencil"></div>
+        </div>
+
+        <style>
+            
+            div.paper {
+                position: relative;
+            }
+
+            div.pencil::before {
+                
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';
+            }
+
+            div.pencil {
+                display: inline-block;
+                position: absolute;
+                transform-origin: 50% 250%;
+
+                /* NECU DA KORISTIM JOS SHORTHAND, DOK NE NAUCIM LONGHAND-OVE*/
+                animation-name: writing;
+                animation-duration: 6s;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+
+                /* OVAJ PROPERTI KORIATIM KADA HOCU DA PAUZIRAM ILI DEFINISEM DA JE ANIAMCIJA U RUNNING STANJU */
+                animation-play-state: running;
+            }
+
+            @keyframes writing {
+                
+                from, 5% {               /* ZA 0% I ZA FREJM OD 5% */
+                    left: 0%;
+                    transform: rotate(0deg);
+                }
+
+                20% {
+                    left: 20%;   
+                }
+
+                38% {
+
+                    left: 38%;
+                    transform: rotate(0deg);
+
+                }
+
+                60% {
+
+                    left: 50%;
+                    transform: rotate(360deg);
+
+                }
+
+                80% {
+                    left: 70%;
+                }
+
+                to {                            /* FREJM 100% */
+                    left: 80%;
+                    transform: rotate(360deg);
+                }
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
