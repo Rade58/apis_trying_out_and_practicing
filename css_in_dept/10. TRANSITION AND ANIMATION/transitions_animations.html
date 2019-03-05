@@ -719,6 +719,8 @@
                 animation-duration: 6s;
                 animation-iteration-count: infinite;
                 animation-direction: alternate;
+
+                animation-play-state: paused;
             }
 
             @keyframes badass {
@@ -746,6 +748,132 @@
         <br>
         <br>
         <br>
+
+        <div class="pergament">
+            <div></div>
+        </div>
+        
+        <style>
+        
+            div.pergament {
+                position: relative;
+                height: 60vh;
+            }
+        
+            div.pergament div::before {
+        
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';
+            }
+        
+            div.pergament div {
+                display: inline-block;
+                position: absolute;
+                transform-origin: 50% 250%;
+        
+                animation-name: writering;
+                animation-duration: 4s;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+                animation-play-state: paused;
+            }
+        
+            div.pergament:hover div {
+                animation-play-state: running;
+            }
+        
+            
+            @keyframes writering {
+
+                0% {
+                    left: 0;
+                    top: 0;
+                }
+
+                20% {
+                    left: 20%;
+                    top: 100%
+                }
+
+                42% {
+                    left: 42%;
+                    top: 0%;
+                }
+
+                60% {
+                    left: 60%;
+                    top: 100%
+                }
+
+                80% {
+                    left: 80%;
+                    top: 0%
+                }
+
+                100% {
+                    left: 100%;
+                    top: 100%;
+                }
+        
+            }
+
+           /*  @keyframes writering {
+
+                0% {
+                    left: 0;
+                    top: 0;
+                }
+
+                20%, 60% {
+                    top: 100%;
+                }
+
+                42%, 80% {
+                    top: 0%;
+                }
+
+                100% {
+                    left: 100%;
+                    top: 100%;
+                }
+
+            } */
+
+            /* @keyframes writering {
+
+                0% {
+                    left: 0;
+                    top: 0;
+                }
+
+                20% {
+
+                    top: 100%;
+                }
+
+                42% {
+                    
+                    top: 0%;
+                }
+
+                60% {
+                    top: 100%;
+                }
+
+                80% {
+                    top: 0%;
+                }
+
+                100% {
+                    left: 100%;
+                    top: 100%;
+                }
+
+            } */
+
+        
+        </style>
         <br>
         <br>
         <br>
