@@ -878,10 +878,123 @@
         <br>
         <br>
         <br>
+
+        <div class="blah" style="height: 100px;"></div>
+        <div class="pencil_blah"></div>
+        
+        <style>
+
+            div.pencil_blah::before {
+
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';     /* CHARCODE ZA OLOVKU (IKONICA OLOVKE) */
+            }
+
+            div.pencil_blah {
+                display: inline-block;
+
+                animation-name: penciling;
+                animation-duration: 4s;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+                animation-play-state: paused;
+                animation-timing-function: linear;
+            }
+
+            div.blah:hover + div.pencil_blah {
+                animation-play-state: running;
+            }
+
+            @keyframes penciling {
+
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+
+                20% {
+                    /* transform: translateX(200px); */
+                    transform: translate3d(200px, 200px, 0);
+                }
+
+                42% {
+                    /* transform: translateX(400px); */
+                    transform: translate3d(400px, 0px, 0);
+                }
+
+                60% {
+                    /* transform: translateX(600px); */
+                    transform: translate3d(600px, 200px, 0);
+                }
+
+                80% {
+                    /* transform: translateX(800px); */
+                    transform: translate3d(800px, 0, 0);
+                }
+
+                100% {
+                    /* transform: translateX(900px); */
+                    transform: translate3d(900px, 0, 0);
+                }
+
+            }
+
+        </style>
+
         <br>
         <br>
         <br>
         <br>
+
+        <div class="line_and_sharpy"></div>
+
+        <style>
+
+            div.line_and_sharpy {
+                position: relative;
+                white-space: nowrap;
+                margin-left: 10%;
+                padding: 0;
+                line-height: 0.8;
+                border: olive solid 1px;
+            }
+
+            div.line_and_sharpy::after {
+                display: inline-block;
+                content: '✎';
+                font-size: 8em;
+                color: #BADA55;
+                margin-left: -116px;
+            }
+
+            div.line_and_sharpy::before {
+                display: inline-block;
+                box-sizing: border-box;
+                border: 5px dashed tomato;
+                width: 0px;
+                content: "";
+                vertical-align: bottom;
+
+                animation-name: drawing;
+                animation-duration: 8s;
+            }
+
+            /* ////////////////////////////////////// */
+
+            @keyframes drawing {
+
+                from {
+                    width: 0%;
+                }
+
+                to {
+                    width: 68%;
+                }
+
+            }
+
+        </style>
+
         <br>
         <br>
         <br>
