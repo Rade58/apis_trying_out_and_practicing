@@ -965,6 +965,14 @@
                 font-size: 8em;
                 color: #BADA55;
                 margin-left: -116px;
+
+                animation-name: circeling;
+                animation-duration: 4s;
+                animation-direction: alternate;
+
+                transform-origin: 50% 150%;
+
+                /* animation-iteration-count: infinite; */
             }
 
             div.line_and_sharpy::before {
@@ -976,7 +984,17 @@
                 vertical-align: bottom;
 
                 animation-name: drawing;
-                animation-duration: 8s;
+                animation-duration: 4s;
+
+                /*//////////////////////////////////*/
+
+                animation-direction: alternate;
+                /* animation-iteration-count: infinite; */
+
+                /* animation-play-state: running; */
+
+                /* animation-iteration-count: infinite; */
+
             }
 
             /* ////////////////////////////////////// */
@@ -984,13 +1002,92 @@
             @keyframes drawing {
 
                 from {
-                    width: 0%;
+                    width: 0px;
+                }
+
+                50% {
+                    border-color: blanchedalmond;
                 }
 
                 to {
                     width: 68%;
+                    border-color: crimson;
                 }
 
+            }
+
+            @keyframes circeling {
+
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                20% {
+                    transform: rotate(360deg);
+                }
+
+                50% {
+                    transform: rotate(180deg);
+                }
+
+                80% {
+                    transform: rotate(80deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="some_colors"></div>
+
+        <style>
+        
+            div.some_colors {
+                width: 28vw;
+                height: 22vw;
+                border: currentColor 2px solid;
+
+                background-color: beige;
+
+                animation-name: fruits, vegetables, bannanas;
+                animation-duration: 8s;
+
+            }
+
+            @keyframes fruits {
+                from {
+                    background-color: tomato;
+                }
+
+                to {
+                    background-color: violet;
+                }
+            }
+
+            @keyframes bannanas {
+                50% {
+                    background-color: crimson;  /* ZA OVO NE PRAVIM PITANJE */
+                }
+            }
+
+            @keyframes vegetables {
+                from {
+                    background-color: aqua;     /* OVO CE OVEWRITE-OVATI tomato */
+                }
+
+                to {
+                    background-color: olive;    /* OVO CE OVERWRITE-OVATI violet */
+                }
             }
 
         </style>
