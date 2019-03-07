@@ -429,6 +429,7 @@
         <style>
             
             div.paper {
+                display: none;
                 position: relative;
             }
 
@@ -503,6 +504,7 @@
         <style>
 
             div.boksi {
+                display: none;
                 width: 42vw;
                 height: 24vw;
 
@@ -572,6 +574,7 @@
         <style>
         
             div.artija {
+                display: none;
                 position: relative;
                 height: 60vh;
             }
@@ -645,6 +648,7 @@
         <style>
 
             div.el {
+                display: none;
                 border-color: orange !important;
             }
 
@@ -678,6 +682,7 @@
 
         <style>
             li {
+                display: none;
                 color: tomato !important;
             }
 
@@ -756,6 +761,7 @@
         <style>
         
             div.pergament {
+                display: none;
                 position: relative;
                 height: 60vh;
             }
@@ -893,6 +899,7 @@
 
             div.pencil_blah {
                 display: inline-block;
+                display: none;
 
                 animation-name: penciling;
                 animation-duration: 4s;
@@ -951,6 +958,7 @@
         <style>
 
             div.line_and_sharpy {
+                display: none;
                 position: relative;
                 white-space: nowrap;
                 margin-left: 10%;
@@ -1053,6 +1061,7 @@
         <style>
         
             div.some_colors {
+                display: none;
                 width: 28vw;
                 height: 22vw;
                 border: currentColor 2px solid;
@@ -1097,6 +1106,56 @@
         <br>
         <br>
         <br>
+
+        <div class="bounding_box">
+            <div class="klip"></div>
+        </div>
+
+        <style>
+        
+            div.bounding_box {
+                width: 50vw;
+                margin: auto;
+                border: currentColor 2px solid;
+                padding: 10px;
+            }
+
+            div.bounding_box div.klip {
+                box-sizing: border-box;
+                border: tomato 4px solid;
+                width: 10%;
+                height: 20px;
+
+                animation-name: translatingAnim;
+                animation-duration: 2s;
+                animation-fill-mode: forwards;
+
+                animation-timing-function: cubic-bezier(.5, 1.76,.91,1.61);
+                animation-timing-function: cubic-bezier(.5, -.8, .91, -.62);
+            }
+
+            @keyframes translatingAnim {
+
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(900%);
+                }
+
+            }
+        
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        
+
 
     </body>
 </html>
