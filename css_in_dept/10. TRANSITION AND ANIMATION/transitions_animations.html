@@ -1152,6 +1152,77 @@
         <br>
         <br>
         <br>
+
+        <div class="bounding_boks">
+            <div class="klip"></div>
+            <div class="klip"></div>
+        </div>
+
+        <style>
+        
+            div.bounding_boks {
+                width: 50vw;
+                margin: auto;
+                border: currentColor 2px solid;
+                padding: 10px;
+            }
+
+            div.bounding_boks div.klip {
+                box-sizing: border-box;
+                border: tomato 4px solid;
+                width: 10%;
+                height: 20px;
+
+                animation-name: translatingAnim;
+                animation-duration: 10s;
+                animation-fill-mode: forwards;
+
+            }
+
+            div.bounding_boks div:nth-of-type(1).klip {
+                animation-timing-function: steps(3, start);         /* ANIMACIJA POCINJE OD DRUGOG KORAKA */
+            }
+
+            div.bounding_boks div:nth-last-of-type(1).klip {
+                animation-timing-function: steps(3, end);          /* ANIMACIJA POCINJE OD PRVOG */
+            }
+
+
+            @keyframes translatingAnim {
+
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(900%);
+                }
+
+            }
+        
+        </style>
+
+        <script>
+        
+            const klipovi = document.querySelectorAll('div.bounding_boks div.klip');
+
+            klipovi.forEach(klip => {klip.addEventListener('animationstart', (ev) => {console.log(ev.timeStamp)})})
+
+            // BICE STAMPANO ISTE VREDNSOTI ZA OBA ANIMATION START-A
+
+            klipovi.forEach(klip => {klip.addEventListener('animationend', (ev) => {console.log(ev.timeStamp)})})
+
+            // I BICE STAMPANE ISTE VREDNSOTI ZA OBA ANIMATION END-A
+        </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <br>
+        <br>
+        <br>
         <br>
 
         
