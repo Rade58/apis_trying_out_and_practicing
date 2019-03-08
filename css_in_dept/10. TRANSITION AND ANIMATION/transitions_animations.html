@@ -1640,6 +1640,38 @@
         <br>
         <br>
         <br>
+
+        <div class="sparrow"></div>
+
+        <style>
+            div.sparrow {
+                display: inline-block;
+                font-size: 4em;
+                color: tomato;
+
+                /* OVO BI FUNKCIONISALO */
+                animation: 'running' ease-in alternate 4s 500ms 2;
+
+            }
+
+            div.sparrow::after {
+                content: '\1F426';
+            }
+
+            @keyframes running {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(1380%);
+                }
+            }
+
+        </style>
+
+        <br>
+        <br>
         <br>
 
     </body>
