@@ -1253,7 +1253,7 @@
                 display: inline-block;
                 border: tomato solid 0px;
                 animation-name: positioning;
-                animation-duration: 10s;
+                animation-duration: 20s;
                 animation-timing-function: ease-in;
 
                 animation-iteration-count: infinite;
@@ -1344,18 +1344,298 @@
 
         </style>
 
+        <div class="an_col"></div>
+
+        <style>
+            div.an_col {
+                width: 200px;
+                height: 100px;
+                border: currentColor solid 1px;
+
+                animation-name: coloringTomato, coloringOrange, coloringOlive;
+                animation-delay: 10s;
+                animation-direction: normal;
+                animation-duration: 0s;
+                animation-fill-mode: forwards;
+                animation-iteration-count: 0;
+                animation-play-state: running;
+                animation-timing-function: ease;
+            }
+
+            @keyframes coloringTomato {
+                from, 28% {
+                    background-color: blanchedalmond;
+                }
+                to {
+                    background-color: tomato;
+                }
+            }
+            
+            @keyframes coloringOrange {
+                from, 28% {
+                    background-color: blanchedalmond;
+                }
+                to {
+                    background-color: orange;
+                }
+            }
+            
+            @keyframes coloringOlive {
+                from, 28% {
+                    background-color: blanchedalmond;
+                }
+                to {
+                    background-color: olive;
+                }
+            }
+            
+        </style>
+
         <br>
         <br>
         <br>
         <br>
+
+        <style>
+            div.nesto {
+                width: 300px;
+                height: 180px;
+                border: currentColor solid 1px;
+
+                /* background-color: blanchedalmond; */
+
+                animation-name: colAnim, colAnim2;
+
+                animation-delay: 2s;
+                animation-direction: normal;
+                animation-duration: 0s;
+                animation-fill-mode: forwards;
+                animation-iteration-count: 0;
+                animation-play-state: running;
+                animation-timing-function: ease;
+            }
+
+            @keyframes colAnim {
+                0% {
+                    background-color: violet;
+                }
+
+                20% {
+                    background-color: orange;
+                }
+
+                48% {
+                    background-color: crimson;
+                }
+
+                64% {
+                    background-color: rebeccapurple;
+                }
+
+                80% {
+                    background-color: olive;
+                }
+
+                100% {
+                    background-color: tomato;
+                }
+            }
+
+            @keyframes colAnim2 {
+                0% {
+                    background-color: violet;
+                }
+
+                48% {
+                    background-color: purple;
+                }
+
+                100% {
+                    background-color: tomato;
+                }
+            }
+        </style>
+
+        <div class="nesto"></div>
+
+        
+
+
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <style>
+    
+        @keyframes col1 {
+        from, 30%{
+            background-color: #f00;
+        }
+        to {
+            background-color: #f33;
+        }
+        }
+        
+        @keyframes col2 {
+        from, 30%{
+            background-color: #030;
+        }
+        to {
+            background-color: #393;
+        }
+        }
+        
+        @keyframes col3 {
+        from, 30%{
+            background-color: #0000ff;
+        }
+        to {
+            background-color: #33f;
+        }
+        }
+    </style>
+
+    <pre>
+        <style style="display: block" id="editme" contenteditable="">
+        
+            div#blue {
+                animation-name: col1, col2, col3;
+                animation-fill-mode: forwards;
+                animation-iteration-count: 0;
+                animation-delay: 2s;
+            }
+        
+        </style>
+    </pre>
+
+    <div id="blue"><p>Does the animation even happen?</p></div>
+    
+
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////// -->
+        
         <br>
         <br>
         <br>
         <br>
+
+        <div class="penz"></div>
+
+        <style>
+
+            div.penz::before {
+
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';
+            }
+
+            div.penz {
+                border: tomato solid 1px;
+                display: inline-block;
+                transform-origin: center;
+
+                animation-name: penzing;
+                animation-duration: 8s;       /* NEMA NIKAKAKVOG EFEKTA */
+                animation-timing-function: linear;
+                
+                /*////////////////////////////////////*/
+                animation-fill-mode: forwards; /* DA NIJE OVOGA, NI JEDAN KEYFRAME SE NE BI PRIMENIO */
+                animation-iteration-count: 0;
+
+                animation-delay: 2s;
+            }
+
+            @keyframes penzing {
+
+                0% {
+                    transform: translateX(648%) rotateZ(60deg);   /* JEDINO JE PRIMENJEN 0% KEYFRAME */
+                }
+
+                50% {
+                    background-color: violet;
+                }
+
+                100% {
+                    transform: rotate(360deg) translate(900px);
+                }
+
+            }
+
+        </style>
+
         <br>
         <br>
         <br>
         <br>
+
+        <div class="bird"></div>
+
+        <style>
+            div.bird {
+                display: inline-block;
+                font-size: 4em;
+                color: tomato;
+
+                animation-name: birdy;
+                animation-delay: -2s;  /* DAKLE ZADAO SAM NEGATIVAN DELAY */
+                animation-duration: 5s;
+
+                /* ZBOG TIH VREDNSOTI, PREDPOSTAVLJAM DA CE ANIMACIJA TRAJATI SAMO 3 SEKUNDE */
+                /* ODNOSNO 3000 MILI SEKUNDI */
+            }
+
+            div.bird::after {
+                content: '\1F426';
+            }
+
+            @keyframes birdy {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(1380%);
+                }
+            }
+
+        </style>
+
+        <script>
+
+            const bird = document.querySelector('div.bird');
+            let startingStamp;
+
+            bird.addEventListener('animationstart', (ev) => {
+                startingStamp = ev.timeStamp;
+            });
+
+            bird.addEventListener('animationend', (ev) => {
+                console.log('difference: ', ev.timeStamp - startingStamp);   // VREDNOST JE UVEK NEGDE OKO
+            });                                                              // 3000 MILI SEKUNDI
+                                                                             // NIKAD NIJE TACNO 3000
+                                                                             // PREDPOSTAVLJAM DA JE TAKVA OSOBINA
+                                                                             // ANIMACIJA
+                                                                             // JA SAM DVA PUTA RELOAD-OVAO STRANICU I
+                                                                             // U PRVOM 'POKUSAJU' SAM IMAO VREDNOST
+                                                                            //              3008
+                                                                             // A U DRUGOM 'POKUSAJU'
+                                                                            //              2984
+
+            // A ANIMACIJA, KAKO SAM I GORE NAPOMENUO, ZAISTA NIJE STARTOVALA OD POCETKA
+            // VEC NEGDE IZMEDJU, ODNOSNO ELEMENT JE KRENUO SA, ONOG MESTA GDE BI SE U NORMALNIM USLOVIMA,
+            // ODNOSNO BEZ NEGATIVNOG DELAY-A,
+            // NASAO NA DRUGOJ SEKUNDI OD TRAJANJA 
+        </script>
+
         <br>
         <br>
         <br>
