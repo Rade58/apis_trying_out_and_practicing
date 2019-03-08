@@ -1220,13 +1220,147 @@
         <br>
         <br>
 
-        <br>
-        <br>
-        <br>
-        <br>
+        <div class="konti">
+            <div class="someDiv"><div class="sprite"></div></div>
+        </div>
 
+        <style>
+
+            div.someDiv div.sprite {
+                border: currentColor solid 0px;
+                /* width: calc(100%/19); */
+                height: 65px;
+                padding: 20px;
+                box-sizing: border-box;
+
+                background-color: transparent;
+                background-image: url(../xim_prac/piggy_sprite.png);
+                background-repeat: no-repeat;
+                /* background */
+                
+
+                animation-name: motion;
+                animation-duration: 1s;
+                animation-iteration-count: infinite;
+
+                animation-timing-function: steps(7, end);
+
+                animation-play-state: paused;
+            }
+
+            div.someDiv {
+                width: 90px;
+                display: inline-block;
+                border: tomato solid 0px;
+                animation-name: positioning;
+                animation-duration: 10s;
+                animation-timing-function: ease-in;
+
+                animation-iteration-count: infinite;
+
+                animation-play-state: paused;
+            }
+
+            div.konti:hover div {
+                animation-play-state: running;
+            }
+
+            @keyframes motion {
+                0% {
+                    background-position-x: 0%;
+                }
+
+                100% {
+                    background-position-x: 100%;
+                }
+            }
+
+            @keyframes positioning {
+                0% {
+                    transform: translateX(0%);
+                }
+
+                100% {
+                    transform: translateX(1600%);
+                }
+            }
         
+        </style>
 
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="penkalo"></div>
+        
+        <style>
+
+            div.penkalo::before {
+
+                font-size: 5em;
+                color: darkseagreen;
+                content: '\2710';
+            }
+
+            div.penkalo {
+                display: inline-block;
+
+                animation-name: penkaling, something;
+                animation-duration: 2s;
+                animation-timing-function: linear;
+
+                animation-iteration-count: 0;
+                animation-fill-mode: forwards;
+            }
+
+            @keyframes penkaling {
+
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+
+                20% {
+                    transform: translate3d(200px, 200px, 0);
+                }
+
+                42% {
+                    transform: translate3d(400px, 0px, 0);
+                }
+
+                60% {
+                    transform: translate3d(600px, 200px, 0);
+                }
+
+                80% {
+                    transform: translate3d(800px, 0, 0);
+                }
+
+                100% {
+                    transform: translate3d(900px, 0, 0);
+                }
+
+            }
+
+        </style>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
