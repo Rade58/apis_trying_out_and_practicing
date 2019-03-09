@@ -37,7 +37,7 @@ div.sparrow {
 
 AKO NA PRIMER ODLUCIM DA PRAVIM ANIMACIJU COVEKA KOJI TRCI, MOZE SE DESITI DA @keyframes NAZOVEM:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; running
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *running*
 
 E PA running JESTE TAKODJE I KEYTERM, ODNOSN OVREDNOST **animation-play-state** PROPERTIJA
 
