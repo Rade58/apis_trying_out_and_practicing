@@ -2151,6 +2151,75 @@
         <br>
         <br>
         <br>
+        
+        <div class="pigglet"></div>
+
+        <style>
+
+            div.pigglet {
+                display: inline-block;
+                margin: 50%;
+                transform-origin: 50% 30vw;
+
+
+                /* DEFINISAO SAM 5 ITERACIJA */
+                animation: piggMove 2s linear 5;
+            }
+
+            div.pigglet::before {
+                content: '🐷';
+                font-size: 6em;
+                color: tomato;
+            }
+
+            div.pigglet:hover {
+                animation-play-state: paused;
+            }
+
+            @keyframes piggMove {
+                from {
+                    transform: rotate(0deg);
+                }
+
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+        </style>
+
+        <script>
+        
+            // SLUSACU, SVA TRI EVENTA, ZA OVAJ PRIMER, DA VIDIM, KONKRETNO, KOLIKO CE BITI
+            // TRIGGER-OVANJA 'animationiteration' EVENT-OVA
+
+            const pigglet = document.querySelector('div.pigglet');
+
+            let startovi = 0, endovi = 0, iteri = 0;
+
+            const animHandler = (ev) => {
+                if(ev.type === "animationstart"){
+                    startovi++;
+                }
+                if(ev.type === "animationiteration"){
+                    iteri++;
+                }
+                if(ev.type === "animationend"){
+                    endovi++;
+                    console.log("animationstart-OVI: " + startovi);
+                    console.log("animationiteration-NI: " + iteri);
+                    console.log("animationend-OVI: " + endovi);
+                }
+            }
+
+            pigglet.onanimationstart = pigglet.onanimationend = pigglet.onanimationiteration = animHandler;
+        
+        </script>
+        
+        <br>
+        <br>
+        <br>
+        <br>
 
     </body>
 </html>
