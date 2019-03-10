@@ -1712,7 +1712,8 @@
         <style>
 
             div._ {
-                width: 100%; height: 100%; position: fixed; top: 0; left: 0;}
+                width: 100%; height: 100%; position: fixed; top: 0; left: 0;
+                display:none;}
 
             div.whole_card {
                 background-color: rgba(255, 235, 205, 0);
@@ -2063,6 +2064,88 @@
                 }
             });
         </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="fence">
+            <div class="piggy"></div>
+            <div class="marker"></div>
+        </div>
+
+        <style>
+
+            div.fence {
+                position: relative;
+                width: calc(100% -18px);
+                padding: 4em;
+                border: olive solid 2px;
+            }
+
+            div.fence::after {
+                content:'ON 100% FRAME, ELEMENT SHOULD BE TRANSLATED 980px';
+                border-left: tomato solid 4px;
+                padding-bottom: 50px; 
+                position: absolute;
+                left: 980px;
+                top: -20px;
+            }
+
+            div.marker {
+                position: absolute;
+                height: 100%;
+                border: tomato solid 2px;
+                top: 0;
+                left: 380px;
+            }
+
+            div.marker::after {
+                content: 'ON 0% FRAME, ELEMENT SHOULD BE TRANSLETED FOR 380px';
+                position: absolute;
+                width: max-content;
+                top: -20px;
+            }
+
+            div.piggy::before {
+                content: '\1F437';
+                font-size: 4em;
+            }
+
+            div.piggy {
+                position: absolute;
+                left: 0;
+                top: 25%;
+                display: inline-block;
+                border: dashed 4px crimson;
+                
+                animation-name: movingPig;
+                animation-delay: 4s;
+                animation-duration: 5s;
+                animation-timing-function: linear;
+
+                /* IGRAJ SE SA SLEDECIM VREDNOSTIMA, POMENUTOG PROPERTIJA */
+                /* /////////////////////////////////////////// */
+                animation-fill-mode: backwards; /*DURING DELAY, ELEMENT WILL HAVE APPLIED STILES FROM 0% FRAME*/
+                
+                animation-fill-mode: forwards; /* AFTER END OF THE ANIMATION, ELEMENT WILL HAVE APPLIED STYLES FROM 
+                                                100% FRAME */
+
+                animation-fill-mode: both; /* ELEMENT WILL HAVE BOTH MENTIONED ABOVE */
+            }
+
+            @keyframes movingPig {
+                0% {
+                    transform: translateX(380px);
+                }
+
+                100% {
+                    transform: translateX(980px);
+                }
+            }
+
+        </style>
 
         <br>
         <br>
