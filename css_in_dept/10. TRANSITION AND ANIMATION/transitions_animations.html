@@ -1650,7 +1650,7 @@
                 color: tomato;
 
                 /* OVO BI FUNKCIONISALO */
-                animation: 'running' ease-in alternate 4s 500ms 2;
+                /* animation: 'running' ease-in alternate 4s 500ms 2; */
                 
 
             }
@@ -1676,12 +1676,35 @@
         <br>
         <br>
         
-        <div class="whole_card diamonds backtap">
-            <div class="card_back card"></div>
-            <div class="card_front card">
+        <div class="shpil">
+            <div class="whole_card diamonds backtap1">
+                <div class="card_back card"></div>
+                <div class="card_front card">
+                    <div></div>
+                </div>
                 <div></div>
             </div>
-            <div></div>
+            <div class="whole_card spades">
+                <div class="card_back card"></div>
+                <div class="card_front card">
+                    <div></div>
+                </div>
+                <div></div>
+            </div>
+            <div class="whole_card hearts">
+                <div class="card_back card"></div>
+                <div class="card_front card">
+                    <div></div>
+                </div>
+                <div></div>
+            </div>
+            <div class="whole_card clubs">
+                <div class="card_back card"></div>
+                <div class="card_front card">
+                    <div></div>
+                </div>
+                <div></div>
+            </div>
         </div>
 
         <style>
@@ -1740,7 +1763,6 @@
                 background-color: rgba(179, 185, 159, 0.164);
             }
 
-
             div.card_front {
                 background-color: whitesmoke;
                 box-sizing: border-box;
@@ -1748,9 +1770,7 @@
                 font-size: 2.8em;
                 text-align: center;
                 transform: rotateY(180deg) translateZ(2px);
-                
                 position: absolute;
-                
             }
 
             div.card_front::before{
@@ -1772,7 +1792,7 @@
                 font-size: 5rem;
                 margin-top: 50%;
             }
-         /*///////////////////////////////////////////////////////////*/
+
             div.whole_card.diamonds div.card_front div::before {
                 content: '♦';
             }
@@ -1803,31 +1823,133 @@
                 color: black;
             }
 
-          /*////////////////////////////////////////////////*/
+          /*/////////////*/
+          /* MORE CARDS */
 
-            div.whole_card.backtap {
-                animation-name: turning;
-                animation-duration: 1s;
-                animation-delay: 408ms;
-                animation-fill-mode: forwards;
-                animation-timing-function: ease;
+            div.shpil {
+                position: relative;
+                display: block;
+                border: tomato solid 1px;
+                /* width: min-content; */
+                width: 189px;
+                
+                margin: auto;
             }
 
-            div:nth-of-type(1).whole_card {}
 
-            @keyframes turning {
+            div.shpil div:not(:nth-last-of-type(1)).whole_card {
+                position: absolute;
+            }
+            
+            div.shpil div:nth-of-type(2).whole_card {
+                transform: rotateZ(8deg);
+            }
+
+            div.shpil div:nth-of-type(3).whole_card {
+                transform: rotateZ(16deg);
+            }
+
+            div.shpil div:nth-of-type(4).whole_card {
+                transform: rotateZ(24deg);
+            }
+
+          /*////////////////////////////////////////////////*/
+          /* ANIMATION */
+            div.whole_card.diamonds {
+                animation-duration: 1s;
+                /* animation-delay: 408ms; */
+                animation-timing-function: ease;
+                animation-fill-mode: forwards;
+            }
+
+            .go {
+                animation-name: turningDiamonds;
+            }
+
+            .goBack {
+                animation-name: turningBackDiamonds;
+            }
+
+            @keyframes turningDiamonds {
+                from {
+                    transform: rotateY(0deg);
+                }
+
+                50% {
+                    transform: translateX(-120%) rotate(0deg);
+                }
+
+                to {
+                    transform: translateX(-130%) rotateY(180deg);
+                }
+            }
+
+            @keyframes turningHearts {
                 from {
                     transform: rotateY(0deg);
                 }
 
                 to {
-                    transform: rotateY(180deg);
+                    transform: translateX(100%) rotateY(180deg);
                 }
             }
 
-            
-        
+            @keyframes turningClubs {
+                from {
+                    transform: rotateY(0deg);
+                }
+
+                to {
+                    transform: translateY(-100%) rotateY(180deg);
+                }
+            }
+
+            @keyframes turningSpades {
+                from {
+                    transform: rotateY(0deg);
+                }
+
+                to {
+                    transform: translateY(100%) rotateY(180deg);
+                }
+            }
+
+          /* /////////////////////////////////////////////////// */
+          /* back */
+            @keyframes turningBackDiamonds {
+                from {
+                    transform: translateX(-130%) rotateY(180deg);
+                }
+
+                50% {
+                    transform: rotate(0deg) translateX(-120%);
+                }
+
+                to {
+                    transform: rotateY(0deg);
+                }
+            }
+
         </style>
+
+        <script>
+            const diamond = document.querySelector('div.whole_card.diamonds');
+
+            diamond.addEventListener('mousedown', ev => {
+                const hasClass = ev.currentTarget.classList.contains('go');
+
+                if(hasClass) {
+                    ev.currentTarget.classList.add('goBack');
+                    ev.currentTarget.classList.remove('go');
+                    return;
+                }else{
+                    ev.currentTarget.classList.add('go');
+                    ev.currentTarget.classList.remove('goBack');
+                }
+
+            });
+        
+        </script>
 
         <br>
         <br>
