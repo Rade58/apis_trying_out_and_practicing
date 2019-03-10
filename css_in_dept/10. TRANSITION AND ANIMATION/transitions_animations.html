@@ -1676,38 +1676,43 @@
         <br>
         <br>
         
-        <div class="shpil">
-            <div class="whole_card diamonds backtap1">
-                <div class="card_back card"></div>
-                <div class="card_front card">
+        <div class="_">
+            <div class="shpil">
+                <div class="whole_card diamond">
+                    <div class="card_back card"></div>
+                    <div class="card_front card">
+                        <div></div>
+                    </div>
                     <div></div>
                 </div>
-                <div></div>
-            </div>
-            <div class="whole_card spades">
-                <div class="card_back card"></div>
-                <div class="card_front card">
+                <div class="whole_card spade">
+                    <div class="card_back card"></div>
+                    <div class="card_front card">
+                        <div></div>
+                    </div>
                     <div></div>
                 </div>
-                <div></div>
-            </div>
-            <div class="whole_card hearts">
-                <div class="card_back card"></div>
-                <div class="card_front card">
+                <div class="whole_card heart">
+                    <div class="card_back card"></div>
+                    <div class="card_front card">
+                        <div></div>
+                    </div>
                     <div></div>
                 </div>
-                <div></div>
-            </div>
-            <div class="whole_card clubs">
-                <div class="card_back card"></div>
-                <div class="card_front card">
+                <div class="whole_card club">
+                    <div class="card_back card"></div>
+                    <div class="card_front card">
+                        <div></div>
+                    </div>
                     <div></div>
                 </div>
-                <div></div>
             </div>
         </div>
 
         <style>
+
+            div._ {
+                width: 100%; height: 100%; position: fixed; top: 0; left: 0;}
 
             div.whole_card {
                 background-color: rgba(255, 235, 205, 0);
@@ -1750,9 +1755,10 @@
                 background-clip: content-box;
                 transform: translateZ(-1px);
                 top: 0;
+                z-index: -1;
             }
 
-            div.card_back::after {
+            /* div.card_back::after {
                 position: absolute;
                 content: "";
                 border-radius: inherit;
@@ -1761,7 +1767,7 @@
                 left: 0;
                 top: 0;
                 background-color: rgba(179, 185, 159, 0.164);
-            }
+            } */
 
             div.card_front {
                 background-color: whitesmoke;
@@ -1771,6 +1777,7 @@
                 text-align: center;
                 transform: rotateY(180deg) translateZ(2px);
                 position: absolute;
+                z-index: -1;
             }
 
             div.card_front::before{
@@ -1785,6 +1792,7 @@
                 position: absolute;
                 bottom: 5%;
                 right: 10%;
+                transform: rotateZ(180deg);
             }
 
             div.card_front div {
@@ -1793,130 +1801,177 @@
                 margin-top: 50%;
             }
 
-            div.whole_card.diamonds div.card_front div::before {
+            div.whole_card.diamond div.card_front div::before {
                 content: '♦';
             }
 
-            div.whole_card.diamonds div.card_front {
+            div.whole_card.diamond div.card_front {
                 color: red;
             }
             
-            div.whole_card.spades div.card_front div::before {
+            div.whole_card.spade div.card_front div::before {
                 content: '♠';
             }
 
-            div.whole_card.spades div.card_front {
+            div.whole_card.spade div.card_front {
                 color: black;
             }
-            div.whole_card.hearts div.card_front div::before {
+            div.whole_card.heart div.card_front div::before {
                 content: '♥';
             }
 
-            div.whole_card.hearts div.card_front {
+            div.whole_card.heart div.card_front {
                 color: red;
             }
-            div.whole_card.clubs div.card_front div::before {
+            div.whole_card.club div.card_front div::before {
                 content: '♣';
             }
 
-            div.whole_card.clubs div.card_front {
+            div.whole_card.club div.card_front {
                 color: black;
             }
 
           /*/////////////*/
-          /* MORE CARDS */
+          /* MULTIPLE CARDS */
 
             div.shpil {
                 position: relative;
                 display: block;
-                border: tomato solid 1px;
+                border: tomato solid 0px;
                 /* width: min-content; */
                 width: 189px;
                 
                 margin: auto;
+
+                margin-top: 34%;
             }
 
 
-            div.shpil div:not(:nth-last-of-type(1)).whole_card {
+            div.shpil div.whole_card {
                 position: absolute;
             }
+
+            div.shpil div.diamond.whole_card {
+                transform: rotateZ(0deg) translateZ(10px);
+            }
             
-            div.shpil div:nth-of-type(2).whole_card {
-                transform: rotateZ(8deg);
+            div.shpil div.spade.whole_card {
+                transform: rotateZ(8deg) translateZ(20px);
+                /* z-index: 3; */
             }
 
-            div.shpil div:nth-of-type(3).whole_card {
-                transform: rotateZ(16deg);
+            div.shpil div.heart.whole_card {
+                transform: rotateZ(16deg) translateZ(30px);
+                /* z-index: 2; */
             }
 
-            div.shpil div:nth-of-type(4).whole_card {
-                transform: rotateZ(24deg);
+            div.shpil div.club.whole_card {
+                transform: rotateZ(24deg) translateZ(41px);
+                /* z-index: 1; */
             }
 
           /*////////////////////////////////////////////////*/
           /* ANIMATION */
-            div.whole_card.diamonds {
+            div.whole_card {
                 animation-duration: 1s;
                 /* animation-delay: 408ms; */
                 animation-timing-function: ease;
                 animation-fill-mode: forwards;
             }
 
-            .go {
-                animation-name: turningDiamonds;
+            .go_diamond {
+                animation-name: turning_diamond;
             }
 
-            .goBack {
-                animation-name: turningBackDiamonds;
+            .goBack_diamond {
+                animation-name: turningBack_diamond;
             }
 
-            @keyframes turningDiamonds {
+            .go_spade {
+                animation-name: turning_spade;
+            }
+
+            .goBack_spade {
+                animation-name: turningBack_spade;
+            }
+
+            .go_heart {
+                animation-name: turning_heart;
+            }
+
+            .goBack_heart {
+                animation-name: turningBack_heart;
+            }
+
+            .go_club {
+                animation-name: turning_club;
+            }
+
+            .goBack_club {
+                animation-name: turningBack_club;
+            }
+         /*//////////////////////////////////////////////////*/
+            @keyframes turning_diamond {
                 from {
                     transform: rotateY(0deg);
                 }
 
                 50% {
-                    transform: translateX(-120%) rotate(0deg);
+                    transform: translateX(-120%) rotateY(45deg);
                 }
 
                 to {
-                    transform: translateX(-130%) rotateY(180deg);
+                    transform: translateX(-130%) rotateY(180deg) translateZ(10px);
                 }
             }
 
-            @keyframes turningHearts {
+            @keyframes turning_spade {
+                from {
+                    transform: rotateX(0deg);
+                }
+
+                50% {
+                    transform: translateY(60%) rotateX(45deg);
+                }
+
+                to {
+                    transform: translateY(100%) rotateX(180deg) translateZ(20px);
+                }
+            }
+
+
+            @keyframes turning_heart {
                 from {
                     transform: rotateY(0deg);
                 }
 
+                50% {
+                    transform: translateX(80%) rotateY(45deg);
+                }
+
                 to {
-                    transform: translateX(100%) rotateY(180deg);
+                    transform: translateX(120%) rotateY(180deg) translateZ(30px);
                 }
             }
 
-            @keyframes turningClubs {
+            @keyframes turning_club {
                 from {
-                    transform: rotateY(0deg);
+                    transform: rotateX(0deg);
+                }
+
+                50% {
+                    transform: translateY(-60%) rotateX(45deg);
                 }
 
                 to {
-                    transform: translateY(-100%) rotateY(180deg);
+                    transform: translateY(-100%) rotateX(180deg) translateZ(42px);
                 }
             }
 
-            @keyframes turningSpades {
-                from {
-                    transform: rotateY(0deg);
-                }
-
-                to {
-                    transform: translateY(100%) rotateY(180deg);
-                }
-            }
-
+            
           /* /////////////////////////////////////////////////// */
           /* back */
-            @keyframes turningBackDiamonds {
+            @keyframes turningBack_diamond {
                 from {
                     transform: translateX(-130%) rotateY(180deg);
                 }
@@ -1926,29 +1981,87 @@
                 }
 
                 to {
-                    transform: rotateY(0deg);
+                    transform: rotateY(0deg) translateZ(10px);
                 }
             }
+
+            @keyframes turningBack_spade {
+                from {
+                    transform: translateY(100%) rotateX(24deg);
+                }
+
+                50% {
+                    transform: translateY(60%) rotateX(45deg);
+                }
+
+                to {
+                    transform: rotateX(0deg) rotateZ(32deg) translateZ(20px);
+                }
+            }
+
+            @keyframes turningBack_heart {
+                from {
+                    transform: translateX(120%) rotateY(180deg);
+                }
+
+                50% {
+                    transform: translateX(80%) rotateY(45deg);
+                }
+
+                to {
+                    transform: rotateY(0deg) rotateZ(8deg) translateZ(30px);
+                }
+            }
+
+            @keyframes turningBack_club {
+                from {
+                    transform: translateY(-100%) rotateX(180deg);
+                }
+
+                50% {
+                    transform: translateY(-60%) rotateX(45deg);
+                }
+
+                to {
+                    transform: rotateX(0deg) rotateZ(16deg) translateZ(41px);
+                }
+            }
+
+            
 
         </style>
 
         <script>
-            const diamond = document.querySelector('div.whole_card.diamonds');
+            const cards = document.querySelectorAll('div.whole_card');
 
-            diamond.addEventListener('mousedown', ev => {
-                const hasClass = ev.currentTarget.classList.contains('go');
+            cards.forEach((card) => {
 
-                if(hasClass) {
-                    ev.currentTarget.classList.add('goBack');
-                    ev.currentTarget.classList.remove('go');
-                    return;
-                }else{
-                    ev.currentTarget.classList.add('go');
-                    ev.currentTarget.classList.remove('goBack');
+                let classes = ['diamond', 'club', 'spade', 'heart'];
+
+                for(let cl of classes){
+
+                    if(!card.classList.contains(cl)){
+                        continue;
+                    }else{
+                        
+                        card.addEventListener('mousedown', ev => {
+                            const hasClass = ev.currentTarget.classList.contains(`go_${cl}`);
+
+                            if(hasClass) {
+                                ev.currentTarget.classList.add(`goBack_${cl}`);
+                                ev.currentTarget.classList.remove(`go_${cl}`);
+                                return;
+                            }else{
+                                ev.currentTarget.classList.add(`go_${cl}`);
+                                ev.currentTarget.classList.remove(`goBack_${cl}`);
+                            }
+
+                        });
+
+                    }
+
                 }
-
             });
-        
         </script>
 
         <br>
