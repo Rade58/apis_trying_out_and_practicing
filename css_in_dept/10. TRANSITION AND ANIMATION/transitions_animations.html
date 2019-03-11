@@ -2158,6 +2158,9 @@
 
             div.pigglet {
                 display: inline-block;
+
+                display: none;
+
                 margin: 50%;
                 transform-origin: 50% 30vw;
 
@@ -2216,6 +2219,386 @@
         
         </script>
         
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="mangulicas">
+            <div></div>
+            <div></div>
+        </div>
+
+        <style>
+
+            div.mangulicas {
+                border: olive solid 1px;
+                padding: 10px 0;
+                position: relative;
+            }
+
+            div.mangulicas div {
+                display: inline-block;
+                padding: 0;
+                margin: 0;
+                font-size: 2.8rem;
+                white-space: nowrap;
+            }
+
+            div.mangulicas div:nth-of-type(2) {
+                position: absolute;
+                left: 600px;
+                top: 3.4rem;
+            }
+
+            div.mangulicas div:nth-of-type(1)::before{
+                content: '🐷1';
+            }
+
+            div.mangulicas div:nth-last-of-type(1)::before{
+                content: '🐷2';
+            }
+
+            /* ANIMATIONS */
+
+            div.mangulicas div {
+                animation-name: slidePig;
+                animation-duration: 3.1s;
+                animation-timing-function: ease-in;
+                animation-delay: 100ms;
+                animation-direction: alternate;
+                animation-iteration-count: 2;
+                animation-fill-mode: forwards;
+            }
+
+            div.mangulicas div:nth-of-type(1) {
+                animation-play-state: running;
+            }
+            
+            div.mangulicas div:nth-last-of-type(1) {
+                animation-play-state: paused;
+            }
+
+            @keyframes slidePig {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(600%);
+                }
+
+                
+            }
+
+        </style>
+
+        <script>
+            const pig1 = document.querySelector('div.mangulicas div:nth-of-type(1)');
+            const pig2 = document.querySelector('div.mangulicas div:nth-last-of-type(1)');
+
+            // ANIMACIJA DRUGOG ELEMENT CE BITI POKRENUTA, KADA SE ANIMACIJA PRVOG ELEMENTA ZAVRSI
+
+            pig1.addEventListener('animationend', function(ev){
+                pig2.style.animationPlayState = 'running';
+            }, false);
+
+        </script>
+        
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="bird_mc_muffin"></div>
+
+        <style>
+            div.bird_mc_muffin {
+                display: inline-block;
+                font-size: 4em;
+                color: tomato;
+
+                animation: moveBird ease-in alternate 4s 500ms 4;
+            }
+
+            div.bird_mc_muffin::after {
+                content: '\1F426';
+            }
+
+            @keyframes moveBird {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(1380%);
+                }
+            }
+
+        </style>
+
+        <script>
+            const birdYMac = document.querySelector('div.bird_mc_muffin');
+
+            let iterationCount = 0;
+
+            birdYMac.addEventListener('animationiteration', ev => {
+                iterationCount++;
+
+                if(iterationCount === 2){
+                    ev.currentTarget.style.animationPlayState = 'paused';
+                }
+
+
+                /* window.setTimeout((ev) => {
+                    if(iterationCount === 2){
+                    ev.currentTarget.style.animationPlayState = 'paused';
+                }
+                }, 0); */
+
+            }, false);
+
+        </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="pigalo anim1"></div>
+
+        <style>
+            div.pigalo {
+                display: inline-block;
+                border: 8px dashed tomato;
+                font-size: 4rem;
+                margin-left: 200px;
+                transform-origin: 50% 200px;
+            }
+
+            div.pigalo::before {
+                content: '🐷';
+            }
+
+            /* DAKLE IMAM DVE KLASE, KOJIMA SE KAO STO VIDIM APLICIRAJU DVE RAZLICITE ANIMACIJE */
+            /* PRVA OD NJIH JE VEC APLICIRANA NA ELEMENTU I ODPOCECE NAKON NRELOADA (ODNOSNO DELAY-A) */
+            .anim1 {
+                animation: animacija1 2s 380ms linear alternate 3;
+            }
+
+            .anim2 {
+                animation: animacija2 5s ease-out reverse;
+            }
+
+            @keyframes animacija1 {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(480%);
+                }
+            }
+            @keyframes animacija2 {
+                from {
+                    transform: rotate(0deg);
+                }
+
+                to {
+                    transform: rotate(180deg);
+                }
+            }
+
+        </style>
+
+        <script>
+
+            const pigalo = document.querySelector('div.pigalo');
+
+            pigalo.addEventListener('animationend', function(ev){
+
+                // KAO STO VIDIM, U ISTOM CALLBACK-U, UKLANJAM KLASU TRENUTNE ANIMACIJE,
+                // I DODAJEM KLASU NOVE ANIMACIJE
+
+                ev.currentTarget.classList.remove('anim1');
+                ev.currentTarget.classList.add('anim2');
+            }, false);
+
+        </script>
+
+        <!-- I KADA POGLEDAM NA STRANICI, ZAISTA NA KRAJU PRVE ANIMACIJE, OTPOCECE NOVA -->
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="pigmalion an"></div>
+
+        <style>
+            div.pigmalion {
+                display: inline-block;
+                border: 8px dashed tomato;
+                font-size: 4rem;
+                margin-left: 200px;
+                transform-origin: 50% 200px;
+            }
+
+            div.pigmalion::before {
+                content: '🐷';
+            }
+
+            .an {
+                animation: tranMove 2s 380ms linear alternate 3;
+            }
+
+            @keyframes tranMove {
+                from {
+                    transform: translateX(0%);
+                }
+
+                to {
+                    transform: translateX(480%);
+                }
+            }
+
+        </style>
+
+        <script>
+            const pigmalion = document.querySelector('div.pigmalion');
+
+            pigmalion.addEventListener('animationend', function(ev){
+                ev.currentTarget.classList.remove('an');
+                
+                // DAKLE SLEDECE NE BI FUNKCIONISALO
+                // ODNOSNO ANIMACIJA SE     NE BI 'REAPLICIRALA' NA ELEMENTU
+                
+              /*    ev.currentTarget.classList.add('an');    */
+
+
+                
+            //   OVDE DEFINISEM CALLBACK KOJI CE BITI QUEUED I IZVRSEN NAKON TIMEOUT-A
+            //   ESTELLE, KAZE DA SAM MOGAO DEFINISATI I TIMEOUT KOJI JE MANJI OD 100ms
+            //   ALI JA SAM CAK STAVIO I NULU, I SVE JE I TADA FUNKCIONISALO
+            //   DAKLE NEOPHODAN JE SAMO QUEUING U MACRO STACK
+
+                window.setTimeout(function(pig){
+
+                    pig.classList.add('an');
+
+                }, 0, ev.currentTarget);
+
+            }, false);
+        </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <br>
         <br>
         <br>
