@@ -70,3 +70,7 @@ KADA DEFINISEM VREDNSOT ZA **quotes** PROPERTI, MOGU DA POSLUZE
 ## NEKI CSS TOOLS-I
 
 [TOOLS](https://www.cssmatic.com/box-shadow)
+
+## FILTER TOOLSI
+
+[FILTER](http://html5-demos.appspot.com/static/css/filters/index.html)
