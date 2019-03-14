@@ -77,3 +77,8 @@ KADA DEFINISEM VREDNSOT ZA **quotes** PROPERTI, MOGU DA POSLUZE
 ## CUBIC BEZIER
 
 [bezier-curve](http://cubic-bezier.com/#.17,.67,.83,.67)
+
+
+## CSS SHAPES
+
+[clip-path-maker](https://bennettfeely.com/clippy/) (MOZES I DA BIRAS OPCIJU CUSTOM POLYGON, PA DA DEFINISES KOLIKO HOCES KOORDINATA)
