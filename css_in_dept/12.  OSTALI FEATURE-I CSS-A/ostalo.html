@@ -1220,15 +1220,25 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
         <br>
         <br>
 
+        <!-- ZA PRVI ELEMNT CU KORISTITI overflow-wrap -->
+
         <div class="some_long_text">
             supercalifragelisticexpyalidocious othorynolaringologija, svrsishodnije
         </div>
-        
-        <!-- U SLEDECEM ELEMENTU, JEDNA REC CE IMATI <wbr> A DRUGA CE IMATI &shy;-->
 
+        <!-- U SLEDECEM ELEMENTU, JEDNA REC CE IMATI <wbr> A DRUGA CE IMATI &shy;-->
+        
         <div class="long_john">
             supercalifragelisti<wbr>cexpyalidocious othorynolarin&shy;gologija, svrsishodnovanje
         </div>
+
+        <!--  ZA OVAJ ELEMENT CU KORISTITI hyphens  -->
+        <!-- NE ZABORAVI DA KADA KORISTIM hyphens ATRIBUT KOJI MORA BITI NA ELEMENTU JESTE lang -->
+
+        <div class="longly" lang="en-us">
+            supercalifragelisticexpyalidocious othorynolaringologija, svrsishodnovanje
+        </div>
+
 
         <style>
         
@@ -1245,17 +1255,20 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
             div.long_john {
                 border: olive solid 1px;
                 width: 8vw;
-
-              /* NE ZNAM DA LI TAKO TREBA DA BUDE, UGLAVNOM OVO NIJE DALO NIKAKVOG EFEKTA, JER SU <wbr> I &shy; ODLUCILI  */
+            }
+            
+            div.longly {
+                border: crimson solid 1px;
+                width: 8vw;
+            
+              /* //////////////////////////////// */
                 hyphens: auto;
                 -moz-hyphens: auto;
                 -webkit-hyphens: auto;
                 -ms-hyphens: auto;
-                
-              /* ZA OVAJ PROPERTI, POSTOJI I VREDNOST manual */
 
-                /* A VALJDA JE hyphens IZMISLJEN DA NE BIH MORAO POSEZATIO ZA HTML-OM */
-                /* ZATO MI TO I NIJE JASNO */
+                /* POSTOJI I manual VREDNOST ZA OVAJ PROPERTI */
+                
             }
 
         </style>
