@@ -950,6 +950,12 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
             /* DAKLE PRI SCROLLINGU, KADA SE BROWSEROW WINDOW PODUDARI SA STRANICIM ELEMENA, DALJIM SCROLLINGOM CE
             KRENUTI POZICIONIRANJE, SVE DOK ELEMENT NE DOSEGNE STRANICU SVOG PARENTA
             I TADA POZICIONIRANJE PRESTAJE */
+        
+            .blh {
+                word-wrap: none;
+                overflow-wrap: break-word
+            }
+        
         </style>
         <br>
         <br>
@@ -962,6 +968,9 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
         <br>
         <br>
         <br>
+
+        
+
         <br>
         <br>
         <br>
@@ -1112,6 +1121,43 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
         <br>
         <br>
         <br>
+
+    <!-- b TAGOVI PREDSTAVLJAJU KRAJEVE REDOVA 
+    TO SAM URADIO DA BI SE SVE LAKSE VIDELO TOKOM DEFINISANJA OVOG PRIMERA-->
+
+        <div class="some_text_el">
+            <span>Due to Tool's</span> incorporation of visual arts and very long and complex releases, the band is generally(<b>1</b>)
+            described as a style-transcending act and part of progressive rock, psychedelic rock, and art rock.(<b>2</b>)
+            The relationship between the band and today's music industry is ambivalent, at times marked by censorship,(<b>3</b>)
+            and the band's insistence on privacy.
+            (<b>4</b>)
+            <span>Due to Tool's</span> incorporation of visual arts and very long and complex releases, the band is generally(<b>5</b>)
+            described as a style-transcending act and part of progressive rock, psychedelic rock, and art rock.(<b>6</b>)
+            The relationship between the band and today's music industry is ambivalent, at times marked by censorship,(<b>7</b>)
+            and the band's insistence on privacy.(<b>8</b>)
+        </div>
+
+        <style>
+            
+            div.some_text_el b {
+                color: tomato;
+            }
+            
+            div.some_text_el {
+                border: currentColor solid 1px;
+                padding: 10px;
+                width: 28vw;
+                height: 18vw;
+
+          /*/////////////////////////////////////////*/
+                white-space: pre-line;
+                white-space: pre-wrap;
+                white-space: pre;
+                white-space: nowrap;
+                white-space: normal;
+            }
+
+        </style>
         <br>
         <br>
         <br>
