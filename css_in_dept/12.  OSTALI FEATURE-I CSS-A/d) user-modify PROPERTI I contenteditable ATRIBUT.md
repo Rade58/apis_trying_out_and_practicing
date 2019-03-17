@@ -1,3 +1,35 @@
 # user-modify PROPERTI (CSS) I contenteditable ATRIBUT (HTML)
 
-O contenteditable ATRIBUTU SAM OVDE VEC GOVORIO, [OVDE](../2.1%20%28contenteditable%29ATRIBUT%28KAKO%20UCINITI%20style%28ELEMENT%29%20EDITABLEIM%29%28KAKO%20UCINITI%20head%20VIDLJIVIM%29.md), I [OVDE](../contenteditable/cedit.html)
+O contenteditable ATRIBUTU SAM VEC GOVORIO, [OVDE](../2.1%20%28contenteditable%29ATRIBUT%28KAKO%20UCINITI%20style%28ELEMENT%29%20EDITABLEIM%29%28KAKO%20UCINITI%20head%20VIDLJIVIM%29.md), I [OVDE](../contenteditable/cedit.html)
+
+## user-modify
+
+A ZA PROPERTI [user-modify KAZU DA JE DEPRECATED I NESTANDARDAN](https://developer.mozilla.org/en-US/docs/Web/CSS/user-modify), ALI JE JOS NEKI BROWSER-I MOGU SUPPORT-OVATI
+
+U FIREFOXU NE FUKNCIONISE, CAK I SA -moz- VENDOR PREFIX-OM
+
+U OPERI I CHROME-U FUNCIONISE, ALI SAMO SA -webkit- VENDOR PREFIX-OM
+
+MOGUCE VREDNOSTI:
+
+- read-only (DEFAULT, unos nij moguc)
+
+- write-only
+
+- read-write
+
+-read-write-plaintext-only
+
+****
+
+>>> ESTELLE JE KORISTILA **-webkit-user-modify: read-write-plaintext-only;**, ZAJEDNO SA **contenteditable** U SVOJIM SLAJDOVIMA
+
+TO JE URADILA DA BI SPRECILA DA SE PRILIKOM PASTINGA, NEKOG TEKSTA NE PRIKAZUJU NEKI CUDNI KARAKTERI, DAKLE DA SE SAMO PAST-UJE PLAIN TEXT
+
+ODNOSNO DA NEBI PAST-OVALA, I BOLD FONT WEIGHT ILI JOS NESTO U EDITABLE ELEMENT
+
+I ONA OVO KORISTI VEOMA DOSTA
+
+[EVO GA I ESTELLIN SLAJD](https://estelle.github.io/cssmastery/other/#slide33)
+
+****
