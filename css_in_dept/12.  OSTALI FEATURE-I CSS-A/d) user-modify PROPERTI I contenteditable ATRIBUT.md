@@ -12,13 +12,13 @@ U OPERI I CHROME-U FUNCIONISE, ALI SAMO SA -webkit- VENDOR PREFIX-OM
 
 MOGUCE VREDNOSTI:
 
-- read-only (DEFAULT, unos nij moguc)
+- read-only (DEFAULT, unos nije moguc)
 
 - write-only
 
 - read-write
 
--read-write-plaintext-only
+- read-write-plaintext-only
 
 ****
 
