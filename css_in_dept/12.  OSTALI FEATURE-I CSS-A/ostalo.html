@@ -1295,6 +1295,70 @@ shape-outside: polygon(49.47% 4.78%, 78.23% 61px, 99.46% 59.45%, 104.78% 79.00%,
         <br>
         <br>
 
+        <div class="cont_fruit">
+            <div class="tomato"></div>
+            <div class="olive"></div>
+        </div>
+
+        <style>
+
+            div.cont_fruit {
+                border: currentColor solid 2px;
+                width: 60vw;
+                height: 38vw;
+
+                position: relative;
+            }
+
+            div.cont_fruit div {
+                height: 100%;
+                width: 100%;
+            }
+
+            div.cont_fruit div.tomato {
+                background-color: tomato;
+            }
+
+            div.cont_fruit div.olive {
+                background-color: olive;
+                
+                /* olive CE PREKRIVATI tomato PO OVAKVIM POSTAVKAMA POZICIONIRANJA */
+                position: absolute;
+                top: 0;
+                left: 0;
+
+                /* ALI MU DISABLE-UJEM POINTER EVENT-OVE */
+                pointer-events: none;
+            }
+
+        </style>
+
+        <script>
+            const fruits = document.querySelector('div.cont_fruit');
+            const tomato = fruits.querySelector('div.tomato');
+            const olive = fruits.querySelector('div.olive');
+
+            // mousedown EVENT SE NECE TRIGGER-OVATI NA olive ELEMENTU, ZATO STO SU ZA TAJ ELEMENT
+            // POINTER EVENT-OVI DISABLED
+            // STO ZNACI DA SE ZAKACENI HANDLER NECE EXECUTE-OVATI
+            olive.addEventListener('mousedown', (ev) => {
+                console.log('OLIVE is a fruit!');
+            }, false);
+
+
+            // mousedown CE SE TRIGGER-OVATI NA NA tomato ELEMENTU, KOJI SE NALAZI ISPOD
+            // I IZVRSICE SE ZAKACENI HANDLER
+            tomato.addEventListener('mousedown', (ev) => {
+                console.log('TOMATO is a fruit!');
+            }, false);
+        
+        </script>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
 
 
 
