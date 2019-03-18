@@ -50,7 +50,7 @@ EVO GA JEDAN PRIMER U KOJEM KORISTIM MULTIPLE BOX SHADOWS
         ;
     }
 
-    /* A PROVEZBAO SAM I text-shadow N GENERATED CONTNET-U */
+    /* A PROVEZBAO SAM I text-shadow NA GENERATED CONTNET-U */
     div.neki_shadowed_el::before {
         content: '\1F42E';
         font-size: 4rem;

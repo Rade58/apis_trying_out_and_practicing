@@ -61,3 +61,26 @@ MOGU NA PRIMER, KORISTITI TEXT SHADOW ZA GENERATED CONTENT
 A MOGU KORISTITI I TEXT SHADOW NA CHARCODE IKONAMA
 
 A MOGU GA KORISTITI I NA CHARCODE IKONAMA U GENERISANOJ SADRZINI
+
+## -webkit-text-stroke (NESTANDARDNO)
+
+OVAJ PROPERTI, MOZE BITI ZMAENA ZA KORISCENJE text-shadow PROPERTIJA
+
+ALI NE VIDIM ZA STA CE MI KORISTITI
+
+MOGU JE NA PRIMER ZADATI ZA TRANSPARENTNI TEKST, PA CU IMATI VIDLJIVU GRANICU NA TEKSTU
+
+```HTML
+<div class="neki_tekst">Ovo je neki transparentni tekst</div>
+
+<style>
+    div.neki_tekst {
+        color: transparent;
+        font-size: 2.8em;
+
+        -webkit-text-stroke: tomato 2px;
+    }
+</style>
+```
+
+BEZ OBZIRA STO IMA -webkit- PREFIKS, TAKODJE FUNKCIONISE I U FIREFOX-U
