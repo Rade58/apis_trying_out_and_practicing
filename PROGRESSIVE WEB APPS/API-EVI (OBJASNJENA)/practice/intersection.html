@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#e24c60;">
+        <title>CSS 3 in dept and CSS2</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+    <body>
+
+        <div class="parent">
+            <div></div>
+            <div>
+                
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+                
+            </div>
+            <div></div>
+        </div>
+
+        <style>
+            div.parent {
+                border: currentColor solid 1px;
+                width: 38vw;
+                height: 68vh;
+                overflow-y: scroll;
+            }
+
+            div.parent div {
+                box-sizing: border-box;
+                border: 2px tomato solid;
+                width: 100%;
+                height: 30%;
+                margin: 5% 0;
+            }
+
+            div.parent:nth-last-of-type(2){
+                background-color: tomato;
+                outline: olive dashed 58px;
+            }
+
+        </style>
+
+        <script defer>
+            const options = {
+                root: document.querySelector('div.parent'),
+                rootMargin: '58px',
+                threshold: 0.9
+            };
+
+            const inObs = new IntersectionObserver(function(entries, observer){
+                if(entries[0].intersectionRatio > 0){
+                    console.log(entries);
+                    console.log(observer);
+                }else{
+                    console.log('none');
+                    // console.log(entries);
+                }
+            }, options);
+
+            const item = document.querySelector('div.parent div:nth-last-of-type(2)')
+
+            inObs.observe(item);
+            inObs.unobserve(item)
+        
+        </script>
+        
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="ancestor">
+            <div></div>
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div></div>
+        </div>
+
+        <style>
+        
+            div.ancestor {
+                border: tomato solid 4px;
+                width: 54vw;
+                height: 74vh;
+                margin: auto;
+                padding: 0;
+                overflow-y: scroll;
+                counter-reset: someCounter;
+            }
+
+            div.ancestor > div {
+                border: currentColor 1px solid;
+                height: 42%;
+                margin: 10px 34%;
+            }
+
+            div.ancestor > div:nth-of-type(2) {
+                background-color: olive;
+                border-color: aqua;
+            }
+
+            div.ancestor > div:nth-last-of-type(2) {
+                background-color: crimson;
+                border-color: blanchedalmond;
+            }
+
+            div.ancestor div div {
+                height: 25%;
+                border: currentColor 1px dashed;
+                box-sizing: border-box;
+                position: relative;
+            }
+
+            div.ancestor > div:not(:nth-of-type(2)):not(:nth-last-of-type(2)) {
+                counter-reset: someCounter;
+            }
+            
+            div.ancestor div div::after {
+                content: counter(someCounter) "%";
+                counter-increment: someCounter 25;
+                position: absolute;
+                top: 100%;
+                left: -18%;
+            }
+        
+        </style>
+
+        <script>
+            const obsOptions = {
+                root: document.querySelector('div.ancestor'),
+                rootMargin: '0px',
+                threshold: [0.25, 0.50, 0.75, 1]
+            }
+
+            const intersectionObserverInstance = new IntersectionObserver(function(entries, observerOb){
+                if(entries[0].intersectionRatio > 0){
+
+                }else{
+
+                }
+            }, obsOptions);
+
+            intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-of-type(2)')) 
+            intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-last-of-type(2)')) 
+        
+        </script>
+
+
+    </body>
+</html>
