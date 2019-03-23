@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="theme-color" content="#e24c60;">
-        <title>CSS 3 in dept and CSS2</title>
+        <title>IntersectionObserver</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
     <body>
@@ -68,10 +68,10 @@
 
             const inObs = new IntersectionObserver(function(entries, observer){
                 if(entries[0].intersectionRatio > 0){
-                    console.log(entries);
-                    console.log(observer);
+                    // console.log(entries);
+                    // console.log(observer);
                 }else{
-                    console.log('none');
+                    // console.log('none');
                     // console.log(entries);
                 }
             }, options);
@@ -213,22 +213,25 @@
 
             const intersectionObserverInstance = new IntersectionObserver(function(entries, observerOb){
                 if(entries[0].intersectionRatio > 0){
-                    console.log(entries);
+                    // console.log(entries);
                 }else{
 
                 }
             }, obsOptions);
 
-            console.log(intersectionObserverInstance);
+            // console.log(intersectionObserverInstance);
 
             intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-of-type(2)')) 
             intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-last-of-type(2)')) 
         
         </script>
 
-        <div>I'm observing intersection of left parent and one of his children
-
-        I'm observing intersection of right parent and one of his children</div>
+        <div class="info">Downthere, I'm observing intersection of left parent and one of his children
+        <br>
+        Also I'm observing intersection of right parent and one of his children
+        <br>
+        Move scrollbar of both elements, for some time while looking waht is happening
+        </div>
         <!-- OVAJ ELEMENT, CE SLUZITI SAMO DA PREKLOPI SLEDECI (TAKO CU GA POZICIONIATI)
         KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
         <div class="relPozSusedPreko">
@@ -282,6 +285,14 @@
         </div>
 
         <style>
+
+            body, html {
+                scroll-behavior: smooth;
+            }
+
+            div.info {
+                font-size: 2.8em;
+            }
 
             div.showValues {
                 height: 60px;
@@ -398,10 +409,129 @@
             div.mother div div::after {
                 counter-increment: someCounter 25;
             }
+
+            div.father div.almonding {
+                background-color: blanchedalmond;
+
+            }
+            
+            div.mother div.almonding {
+                background-color: blanchedalmond;
+
+            }
+
         </style>
 
-        <script async>
-          console.log("some");
+        <script defer>
+            setTimeout(function(){ scrollTo(0, document.documentElement.scrollHeight)}, 2000);
+
+            const state = {
+                almondedElementOlive: null,
+                almondedElementCrimson: null
+            };
+
+            const spanOliveRat = document.querySelector('div.showValues div:first-child span');
+            const spanCrimsonRat = document.querySelector('div.showValues div:last-child span');
+            const olive = document.querySelector('div.father > div:nth-of-type(2)');
+            const crimson = document.querySelector('div.mother > div:nth-last-of-type(2)');
+
+            const optionsOlive = {
+                root: document.querySelector('div.father'),
+                rootMargin: '-10%',
+                threshold: [0.25, 0.50, 0.75, 1]
+            }
+            
+            const optionsCrimson = {
+                root: document.querySelector('div.mother'),
+                rootMargin: '-10%',
+                threshold: [0.25, 0.50, 0.75, 1]
+            }
+
+            const oliveInObs = new IntersectionObserver(function(entries, observer){
+
+                // console.log(entries[0]);
+
+                spanOliveRat.textContent = entries[0].intersectionRatio.toFixed(2);
+
+
+                if(entries[0].intersectionRatio > 0 && entries[0].intersectionRatio < 0.25){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(4)');
+                    if(state.almondedElementOlive){
+                        state.almondedElementOlive.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementOlive = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.25 && entries[0].intersectionRatio < 0.50){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(3)');
+                    if(state.almondedElementOlive){
+                        state.almondedElementOlive.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementOlive = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.50 && entries[0].intersectionRatio < 0.75){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(2)');
+                    if(state.almondedElementOlive){
+                        state.almondedElementOlive.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementOlive = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.75 && entries[0].intersectionRatio < 1){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(1)');
+                    if(state.almondedElementOlive){
+                        state.almondedElementOlive.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementOlive = deepElement;
+                }
+            }, optionsOlive);
+
+            const crimsonInObs = new IntersectionObserver(function(entries, observer){
+
+                // console.log(entries[0]);
+
+                spanCrimsonRat.textContent = entries[0].intersectionRatio.toFixed(2);
+
+
+                if(entries[0].intersectionRatio > 0 && entries[0].intersectionRatio < 0.25){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(1)');
+                    if(state.almondedElementCrimson){
+                        state.almondedElementCrimson.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementCrimson = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.25 && entries[0].intersectionRatio < 0.50){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(2)');
+                    if(state.almondedElementCrimson){
+                        state.almondedElementCrimson.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementCrimson = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.50 && entries[0].intersectionRatio < 0.75){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(3)');
+                    if(state.almondedElementCrimson){
+                        state.almondedElementCrimson.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementCrimson = deepElement;
+                }
+                if(entries[0].intersectionRatio > 0.75 && entries[0].intersectionRatio < 1){
+                    const deepElement = entries[0].target.querySelector('div:nth-of-type(4)');
+                    if(state.almondedElementCrimson){
+                        state.almondedElementCrimson.classList.remove('almonding');
+                    }
+                    deepElement.classList.add('almonding');
+                    state.almondedElementCrimson = deepElement;
+                }
+            }, optionsCrimson);
+
+            oliveInObs.observe(olive);
+            crimsonInObs.observe(crimson);
+
         </script>
 
     </body>
