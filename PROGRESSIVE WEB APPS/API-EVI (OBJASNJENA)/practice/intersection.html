@@ -102,6 +102,18 @@
         <br>
         <br>
 
+        <div class="susedAbso">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <div class="ancestor">
             <div></div>
             <div>
@@ -129,6 +141,21 @@
         </div>
 
         <style>
+
+            div.susedAbso {
+                width: 54vw;
+                height: 74vh;
+                position: relative;
+                top: calc(74vh + 4px);
+                left: 20%;
+                z-index: -1;
+            }
+
+            div.susedAbso div {
+                height: 10%;
+                border: dotted 2px rgb(185, 88, 129);
+                box-sizing: border-box;
+            }
         
             div.ancestor {
                 border: tomato solid 4px;
@@ -180,23 +207,202 @@
         <script>
             const obsOptions = {
                 root: document.querySelector('div.ancestor'),
-                rootMargin: '0px',
+                rootMargin: '-10%',
                 threshold: [0.25, 0.50, 0.75, 1]
             }
 
             const intersectionObserverInstance = new IntersectionObserver(function(entries, observerOb){
                 if(entries[0].intersectionRatio > 0){
-
+                    console.log(entries);
                 }else{
 
                 }
             }, obsOptions);
+
+            console.log(intersectionObserverInstance);
 
             intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-of-type(2)')) 
             intersectionObserverInstance.observe(document.querySelector('div.ancestor > div:nth-last-of-type(2)')) 
         
         </script>
 
+        <div>I'm observing intersection of left parent and one of his children
+
+        I'm observing intersection of right parent and one of his children</div>
+        <!-- OVAJ ELEMENT, CE SLUZITI SAMO DA PREKLOPI SLEDECI (TAKO CU GA POZICIONIATI)
+        KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
+        <div class="relPozSusedPreko">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="showValues">
+            <div>intersectionRatio for olive: <span></span></div>
+            <div>intersectionRatio for crimson: <span></span></div>
+        </div>
+        <!--POSMATRACU INTERSECTION IZMEDJU FATHER-A, DRUGOG CHILDA-->
+        <div class="father">
+            <div></div>
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+         <!--POSMATRACU INTERSECTION IZMEDJU MOTHER-A, I DRUGOG OD POZADI CHILDA-->
+        <div class="mother">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div></div>
+        </div>
+
+        <style>
+
+            div.showValues {
+                height: 60px;
+                box-sizing: border-box;
+                border: outset rosybrown 10px;
+                width: 88vw;
+            }
+
+            div.showValues div {
+                display: inline-block;
+                width: calc(50% - 18px);
+                padding-left: 14%;
+                box-sizing: border-box;
+                font-size: 1.6em;
+            }
+            
+            div.showValues div span {
+                color: purple;
+            }
+
+            div.relPozSusedPreko {
+                width: 88vw;
+                height: 74vh;
+                position: relative;
+                top: calc(74vh + 4px + 60px);
+                z-index: -1;
+            }
+
+            div.relPozSusedPreko div {
+                height: 10%;
+                border: dotted 2px transparent;
+                box-sizing: border-box;
+            }
+
+            div.relPozSusedPreko div:first-child {
+                border-bottom-color: rgb(170, 27, 51);
+                border-bottom-style: dashed;
+            }
+            
+            div.relPozSusedPreko div:nth-child(2) {
+                border-top-style: none;
+            }
+            div.relPozSusedPreko div:last-child {
+                border-top-color: rgb(170, 27, 51);
+                border-top-style: dashed;
+            }
+            
+            div.relPozSusedPreko div:nth-last-child(2) {
+                border-bottom-style: none;
+            }
+            
+            div.relPozSusedPreko div:nth-child(2)::before,  div.relPozSusedPreko div:nth-last-child(2)::before {
+                display: block;
+                content: "-10% is rootMargin";
+                width: min-content;
+                margin-left: 52%;
+            }
+
+            div.relPozSusedPreko div:nth-last-child(2)::before {
+                margin-top: 80px;
+            }
+
+
+            div.father, div.mother {
+                border: tomato solid 4px;
+                width: 44vw;
+                height: 74vh;
+                margin: auto;
+                padding: 0;
+                overflow-y: scroll;
+                counter-reset: someCounter;
+                display: inline-block;
+            }
+
+            div.father > div, div.mother > div {
+                border: orange 4px solid;
+                height: 38%;
+                margin: 10px 24%;
+            }
+
+            div.father > div:nth-of-type(2) {
+                background-color: olive;
+                border-color: aqua;
+                counter-reset: someCounter 100;
+            }
+
+            div.mother > div:nth-last-of-type(2) {
+                background-color: crimson;
+                border-color: blanchedalmond;
+                counter-reset: someCounter 0;
+            }
+
+            div.father div div,  div.mother div div {
+                height: 25%;
+                border: currentColor 1px dashed;
+                box-sizing: border-box;
+                position: relative;
+            }
+            
+            div.father div div::after, div.mother div div::after {
+                content: counter(someCounter) "%";
+                position: absolute;
+                top: 100%;
+                left: -18%;
+                color: rgb(11, 12, 9);
+                font-weight: 800;
+                font-size: 1.1em;
+            }
+
+            div.father div div::after {
+                counter-increment: someCounter -25;
+            }
+
+            div.mother div div::after {
+                counter-increment: someCounter 25;
+            }
+        </style>
+
+        <script async>
+          console.log("some");
+        </script>
 
     </body>
 </html>
