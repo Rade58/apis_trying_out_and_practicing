@@ -1,20 +1,20 @@
 # Intersection Observer API
 
-IMAS PARENTA KOJI IMA overflow-y, SA VREDNOSCU scroll
+IMAS PARENTA, ILI DALJEG ANCESTORA (TO NE MORA DA BUDE SAMO ANCESTOR) KOJI IMA overflow-y, SA VREDNOSCU scroll
 
-IMAS CHILD, KOJI SE SCROLL-UJE SA OSTALOM SADRZINOM, POMENUTOG PARENTA
+IMAS DESCENDANT, KOJI SE SCROLL-UJE SA OSTALOM SADRZINOM, POMENUTOG PARENTA, ILI DALJEG ANCESTORA
 
-DAKLE, U OVOM SLUCAJU, TI DEFINISES OBSERVER, KOJI POSMATRA, KAK OSE TO IVICE PARENTA I ODREDJENOG CHILD-A, **SUSRECU**, ODNOSNO **UKRSTAJU** TOKOM SCROLLINGA
+DAKLE, U OVOM SLUCAJU, TI DEFINISES OBSERVER, KOJI POSMATRA, KAKO SE TO IVICE ANCESTORA I ODREDJENOG DESCENDANTA, **SUSRECU**, ODNOSNO **UKRSTAJU** TOKOM SCROLLINGA
 
 ## POSMATRAJ STVARI NA OVAKAV NACIN
 
-KADA JE CHILD NEVIDLJIV (SCROLL-OVAN IZVAN (NEKI JE OD POSLEDNJIH CHILDREN-A))
+KADA JE DESCENDANT NEVIDLJIV (SCROLL-OVAN IZVAN (NEKI JE OD POSLEDNJIH DESCENDANTREN-A))
 
-**ODNOSNO, KADA JE CHILD 0% VIDLJIV**,
+**ODNOSNO, KADA JE DESCENDANT 0% VIDLJIV**,
 
-I KADA GA BUDES POVLACIJO NA VIDLJIVOST (U VIDLJIVI DEO PARENTA), UZMI U OBZIR DA CE SE PRVO NA PRIMER, VIDETI
+I KADA GA BUDES POVLACIJO NA VIDLJIVOST (U VIDLJIVI DEO ANCESTORA), UZMI U OBZIR DA CE SE PRVO NA PRIMER, VIDETI
 
-- 0 % CHILD-A
+- 0 % DESCENDANT-A
 
 - PA 1%
 
@@ -22,11 +22,11 @@ I KADA GA BUDES POVLACIJO NA VIDLJIVOST (U VIDLJIVI DEO PARENTA), UZMI U OBZIR D
 
 - PA DALJE PROCENAT VIDLJIVOSTI RASTE, DOK ELEMENT NE BUDE 100% VIDLJIV
 
-KADA JE CHILD VIDLJIV (NIJE SCROLLED IZVAN JER JE NA PRIMER NEKI OD PRVIH CHILDREN-A),
+KADA JE DESCENDANT VIDLJIV (NIJE SCROLLED IZVAN JER JE NA PRIMER NEKI OD PRVIH DESCENDANTREN-A),
 
-**ODNOSNO, KADA JE CHILD 100% VIDLJIV**
+**ODNOSNO, KADA JE DESCENDANT 100% VIDLJIV**
 
-I KADA GA BUDES POVLACIO U NEVIDLJIVOST (U NEVIDLJIVI DEO PARENTA), UZMI U OBZIR DA CE SE PRVO VIDETI
+I KADA GA BUDES POVLACIO U NEVIDLJIVOST (U NEVIDLJIVI DEO ANCESTORA), UZMI U OBZIR DA CE SE PRVO VIDETI
 
 - STO PROCENATA ELEMENTA
 
@@ -38,7 +38,7 @@ I KADA GA BUDES POVLACIO U NEVIDLJIVOST (U NEVIDLJIVI DEO PARENTA), UZMI U OBZIR
 
 OVO STO SAM REKAO JE VEOMA VAZNO ZA LOGIKU, OVOG OBSERVERA
 
-ODNOSNO ZA THRESHOLD-OVE CHILDA (A IDEJA JE DA SE ZA ZELJENE TRESHOLDOVE, DEFINISE POZIVANJE COLLBACK-OVA)
+ODNOSNO ZA THRESHOLD-OVE DESCENDANTA (A IDEJA JE DA SE ZA ZELJENE TRESHOLDOVE, DEFINISE POZIVANJE COLLBACK-OVA)
 
 **DAKLE, ZAPAMTI DA KADA POVLACIS U VIDLJIVOST, PROCENTE BROJIS OD 0 DO 100, AKAD POVLACIS U NEVIDLJIVOST PROCENTE BROJIS OD 100 DO 0%**
 
@@ -54,7 +54,7 @@ const nekiOptionsOb = {
 
 - root
 
-TO JE, USTVARI PARENT ELEMENT (KOJI IMA overflow-y SA VREDNOSCU scroll (U OVOM SLUCAJ POSMATRACU SAMO PO y JER SE, TO U NAJVECEM BROJU SLUCAJA I RADI, A TO NE ZNACI DA SE SVE MOZE DEFINISATI I PO x))
+TO JE, USTVARI ANCESTOR ELEMENT (KOJI IMA overflow-y SA VREDNOSCU scroll (U OVOM SLUCAJ POSMATRACU SAMO PO y JER SE, TO U NAJVECEM BROJU SLUCAJA I RADI, A TO NE ZNACI DA SE SVE MOZE DEFINISATI I PO x))
 
 - rootMargin
 
@@ -68,7 +68,7 @@ MOGUCE SU I NEGATIVNE VREDNOSTI, TADA TA MARGINA, 'ULAZI U ELEMENT'
 
 - treshold
 
-DEFINISE KARAKTERISTICNE LINIJE NA CHILD-U
+DEFINISE KARAKTERISTICNE LINIJE NA DESCENDANT-U
 
 MOZE BITI JEDNA VREDNOST OD NULA DO JEDAN
 
@@ -76,9 +76,9 @@ ILI MOZE BITI NIZ VREDNOSTI OD NULA DO JEDAN
 
 (NARAVNO VREDNOSTI MOGU BITI I DECIMALNE, A MOGU RECI DA 0 PREDSTAVLJA NULA POSTO ELEMENTA, A JEDAN PREDSTAVLJA 100% ELEMENTA, A NA PRIMER 0.68 JESTE 68% ELEMENTA)
 
-AKO JE JEDNA VREDNOST DEFINISANA, ONA DEFINISE LINIJU CHILD-A, U ODNOSU NA KOJU SE POSMATRA INTERSECTION
+AKO JE JEDNA VREDNOST DEFINISANA, ONA DEFINISE LINIJU DESCENDANT-A, U ODNOSU NA KOJU SE POSMATRA INTERSECTION
 
-A AKO JE DEFINISAN NIZ, ONDA JE DEFINISANO VISE KARAKTERISTICNIH LINIJA NA CHILD ELEMENTU, U ODNOSU NA KOJE SE POSMATRA INTERSECTION
+A AKO JE DEFINISAN NIZ, ONDA JE DEFINISANO VISE KARAKTERISTICNIH LINIJA NA DESCENDANT ELEMENTU, U ODNOSU NA KOJE SE POSMATRA INTERSECTION
 
 **(KOLIKO THRESHOLD-OVA, TOLIKO I POZIVANJA CALLBACK-A) + ONO POZIVANJE KOJI SE ODVIJA NAKON RELOAD-A STRANICE (onload)**
 
@@ -95,14 +95,14 @@ const nekiIntersObserver = new IntersectionObserver(function(observer, entries){
 
 ```
 
-## entries PARAMETAR (OBJEKAT) IMA INFORMACIJE, O CHILD ELEMENTIMA, CIJI SE INTERSECTION SA PARENT-OM POSMATRA, A observer IMA INFORMACIJE O PARENT-U
+## entries PARAMETAR (OBJEKAT) IMA INFORMACIJE, O DESCENDANT ELEMENTIMA, CIJI SE INTERSECTION SA ANCESTOR-OM POSMATRA, A observer IMA INFORMACIJE O ANCESTOR-U
 
 OBA OBJEKTA IMAJU BOUNDING RECT INFORMACIJE (ODNOSNO KOORDINATE), ALI I JOS VAZNIJE INFORMACIJE ZA INTERSECTION
 
-entries OBJEKAT (Array like), JE PRVENSTVENO OBJEKAT CHILD-A, ILI CHILDREN-A, CIJI SE INTERESCTION POSMATRA U ODNSU NA PARENT
+entries OBJEKAT (Array like), JE PRVENSTVENO OBJEKAT DESCENDANT-A, ILI DESCENDANTREN-A, CIJI SE INTERESCTION POSMATRA U ODNSU NA ANCESTOR
 
 ```JAVASCRIPT
-// POSMATRAM intersectionRatio ZA PRVI ODNOSNO NULTI CHILD
+// POSMATRAM intersectionRatio ZA PRVI ODNOSNO NULTI DESCENDANT
 const nekiIntersObserver = new IntersectionObserver(function(observerOb, entriesOb){
 
     console.log(entriesOb[0].intersectionRatio);
@@ -111,11 +111,11 @@ const nekiIntersObserver = new IntersectionObserver(function(observerOb, entries
 
 ```
 
-**AKO JE ELEMENT, POTPUNO SAKRIVEN (NEKI OD CHILD-OVANA ZACELJU (OBICNO SU ONI NAKON STO RELOADUJE STRANICA SAKRIVENI)), NJEGOV**
+**AKO JE ELEMENT, POTPUNO SAKRIVEN (NEKI OD DESCENDANT-OVANA ZACELJU (OBICNO SU ONI NAKON STO RELOADUJE STRANICA SAKRIVENI)), NJEGOV**
 
 intersectionRatio &nbsp;&nbsp;&nbsp;&nbsp;JE 0 (NULA)
 
-**AKO JE ELEMENT, POTPUNO VIDLJIV (NEKI OD CHILD-OVANA NA POCETKU (OBICNO SE ONI NAKON STO SE RELOAD-UJE STRANICA, NALAZE U VIDLJIVOM DELU PARENT-A)), NJEGOV**
+**AKO JE ELEMENT, POTPUNO VIDLJIV (NEKI OD DESCENDANT-OVANA NA POCETKU (OBICNO SE ONI NAKON STO SE RELOAD-UJE STRANICA, NALAZE U VIDLJIVOM DELU ANCESTOR-A)), NJEGOV**
 
 intersectionRatio &nbsp;&nbsp;&nbsp;&nbsp;JE 1 (NULA)
 
@@ -123,12 +123,31 @@ intersectionRatio &nbsp;&nbsp;&nbsp;&nbsp;JE 1 (NULA)
 
 intersectionRatio &nbsp;&nbsp;&nbsp;&nbsp;JE 0.3 (NULA)
 
+MEDJUTIM POSTOJI JOS VREDNOSTI
+
+```javascript
+const callback = function(entries, observer) { 
+  entries.forEach(entry => {
+    //   entry.boundingClientRect
+    //   entry.intersectionRatio
+    //   entry.intersectionRect
+    //   entry.isIntersecting
+    //   entry.rootBounds
+    //   entry.target
+    //   entry.time
+  });
+};
+
+// isIntersecting      JE BOOLEAN KOJI MOI GOVORI DA LI SU ANCESTOR I DESCENDANT INTERSECTED ILI NE
+
+```
+
 ## ALI JOS NISAM ZAPOCEO OBSERVING
 
-TO MOGU URADITI, SAMO PRIMENOM observe METODE NA IntersectionObserver INSTANCI, A KAO ARGUMENT DODAJEM CHILD ELEMENT REFERENCU
+TO MOGU URADITI, SAMO PRIMENOM observe METODE NA IntersectionObserver INSTANCI, A KAO ARGUMENT DODAJEM DESCENDANT ELEMENT REFERENCU
 
 ```JAVASCRIPT
-nekiIntersObserver.observe(document.querySelector('div.parent div:nth-of-type(1).child'));
+nekiIntersObserver.observe(document.querySelector('div.parent div:nth-of-type(1).DESCENDANT'));
 ```
 
 **I TEK CE SE SADA CALLBACK IZVRSAVATI PRI SVAKOM INTERSECTIONU**
@@ -136,19 +155,73 @@ nekiIntersObserver.observe(document.querySelector('div.parent div:nth-of-type(1)
 A AKO ZELIM DA PREKINEM OBSERVING, POZIVAM unobserve METODU, NA ISTI NACIN KAKO SAM POZVAO I observe
 
 ```JAVASCRIPT
-nekiIntersObserver.UNOBSERVE(document.querySelector('div.parent div:nth-of-type(1).child'));
+nekiIntersObserver.unobserve(document.querySelector('div.parent div:nth-of-type(1).DESCENDANT'));
 ```
 
-## DOBAR PRIMER, KOJI BI PRIKAZO OSOBINE IntersectionObserver-A
+## BROWSER-OV Window KAO root ELEMENT
+
+NA **POGRESAN** NACIN SAM POKUSAVAO DA DEFINISEM, DA MI root BROWSER-OV WINDOW, TAKOS STO SAM KAO root DEFINISAO document.documentElement
+
+```JAVASCRIPT
+const nekiOptionsOb = {
+    root: document.documentElement, // POGRESNO
+    rootMargin: "-10%",
+    threshold: [0.25, 0.50, 0.75]
+}
+```
+
+**KADA IZOSTAVIM root SETTING, TO ZNACI DA JE root ELEMENT USTVARI BROWSER-OV WINDOW**
+
+```JAVASCRIPT
+const nekiOptionsOb = { //OVO JE DAKLE PRAVILNO
+    rootMargin: "-10%",
+    threshold: [0.25, 0.50, 0.75]
+}
+```
+
+## DEFAULT OPTIONS
+
+AKO INSTATICIZIRAM IntersactionObserver BEZ options OBJEKTA
+
+```javascript
+const intersObs = new IntersectionObserver(function(entries, observer){
+    entries.forEach(entry => {
+        console.log(entries);
+    });
+});  //KAO STO VIDIM, NEMA KONSTRUKTOROVOG DRUGOG ARGUMENTA, ODNOSNO options OBJEKTA
+```
+
+TO ZNACI DA JE root ELEMENT, UPRAVO BROWSER-OV WINDOW
+
+TO ZNACI DA JE rootMargin, USTVARI NULA PIKSELA
+
+I TO ZNACI DA JE treshold, USTVARI JEDAN (1)
+
+## OBSERVING, I UNOBSERVING JE MOGUCE DEFINISATI I U SAMOM CALLBACK ARGUMENTU IntersactionObserver KONSTRUKTORA
+
+EVO GA OVAJ PRIMER, KOJI SAM RADIO U JAVASCRIPTU, MOJE PRVE PWA
+
+```javascript
+const intersObs = new IntersectionObserver(function(entries, observer){
+    entries.forEach(entry => {
+        if(entry.isIntersecting){  // AKO SU ROOT I DESCENDANT, VEC INTERSECTED
+            loadImage(entry.target.querySelector('img'));
+            observer.unobserve(entry.target); // VISE NEMA POTREBA DA VISE OBSERVUJEM INTERSECTIO NSA TAKVIM ELEMENTOM
+        }
+    });
+}, options);
+```
+
+## JEDAN PROSTI PRIMER, PRIKAZUJE OSOBINE IntersectionObserver-A
 
 STAVIO SAM GA NA [codepen](https://codepen.io/RadeIsRade/pen/PLVWNm) TAKODJE
 
 OVO JE CODE:
 
 ```HTML
-<div class="info">Downthere, I'm observing intersection of left parent and one of his children
+<div class="info">Downthere, I'm observing intersection of left parent and one of his DESCENDANTren
 <br>
-Also I'm observing intersection of right parent and one of his children
+Also I'm observing intersection of right parent and one of his DESCENDANTren
 <br>
 Move scrollbar of both elements, for some time while looking waht is happening
 </div>
@@ -170,7 +243,7 @@ KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
     <div>intersectionRatio for olive: <span></span></div>
     <div>intersectionRatio for crimson: <span></span></div>
 </div>
-<!--POSMATRACU INTERSECTION IZMEDJU FATHER-A, DRUGOG CHILDA-->
+<!--POSMATRACU INTERSECTION IZMEDJU FATHER-A, DRUGOG DESCENDANTA-->
 <div class="father">
     <div></div>
     <div>
@@ -186,7 +259,7 @@ KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
     <div></div>
     <div></div>
 </div>
-    <!--POSMATRACU INTERSECTION IZMEDJU MOTHER-A, I DRUGOG OD POZADI CHILDA-->
+    <!--POSMATRACU INTERSECTION IZMEDJU MOTHER-A, I DRUGOG OD POZADI DESCENDANTA-->
 <div class="mother">
     <div></div>
     <div></div>
@@ -247,31 +320,31 @@ KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
         box-sizing: border-box;
     }
 
-    div.relPozSusedPreko div:first-child {
+    div.relPozSusedPreko div:first-DESCENDANT {
         border-bottom-color: rgb(170, 27, 51);
         border-bottom-style: dashed;
     }
     
-    div.relPozSusedPreko div:nth-child(2) {
+    div.relPozSusedPreko div:nth-DESCENDANT(2) {
         border-top-style: none;
     }
-    div.relPozSusedPreko div:last-child {
+    div.relPozSusedPreko div:last-DESCENDANT {
         border-top-color: rgb(170, 27, 51);
         border-top-style: dashed;
     }
     
-    div.relPozSusedPreko div:nth-last-child(2) {
+    div.relPozSusedPreko div:nth-last-DESCENDANT(2) {
         border-bottom-style: none;
     }
     
-    div.relPozSusedPreko div:nth-child(2)::before,  div.relPozSusedPreko div:nth-last-child(2)::before {
+    div.relPozSusedPreko div:nth-DESCENDANT(2)::before,  div.relPozSusedPreko div:nth-last-DESCENDANT(2)::before {
         display: block;
         content: "-10% is rootMargin";
         width: min-content;
         margin-left: 52%;
     }
 
-    div.relPozSusedPreko div:nth-last-child(2)::before {
+    div.relPozSusedPreko div:nth-last-DESCENDANT(2)::before {
         margin-top: 80px;
     }
 
@@ -350,8 +423,8 @@ KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
         almondedElementCrimson: null
     };
 
-    const spanOliveRat = document.querySelector('div.showValues div:first-child span');
-    const spanCrimsonRat = document.querySelector('div.showValues div:last-child span');
+    const spanOliveRat = document.querySelector('div.showValues div:first-DESCENDANT span');
+    const spanCrimsonRat = document.querySelector('div.showValues div:last-DESCENDANT span');
     const olive = document.querySelector('div.father > div:nth-of-type(2)');
     const crimson = document.querySelector('div.mother > div:nth-last-of-type(2)');
 
@@ -454,3 +527,52 @@ KAKO BI PREDSTAVLJAO NEKAKAV GRID PREKO SLEDCA DVA ELEMENTA -->
 
 </script>
 ```
+
+****
+EVO GA I LAZY LOADING, KOJI SAM DEFINISAO UZ POMOC INTERSECTION OBSERVER-A, U MOJOJ PRVOJ PWA
+
+```javascript
+if('IntersectionObserver' in window){
+    const options = {
+        rootMargin: '0px',
+        threshold: 0.38
+    };
+
+    window.console.log('IntersectionObserver' in window);
+
+    const intersObs = new IntersectionObserver(function(entries, observer){
+        entries.forEach(entry => {
+            console.log(entry.target);
+
+            if(entry.isIntersecting){
+                loadImage(entry.target.querySelector('img'));
+                observer.unobserve(entry.target);
+            }
+        });
+    }, options);
+
+    document.querySelectorAll('section#content article').forEach(article => {
+        intersObs.observe(article);
+    });
+
+}else{
+
+    document.querySelectorAll('img[data-src]').forEach(image => {
+        loadImage(image);
+    });
+
+}
+
+
+// FOR INSERTING data-src VALUE IN scr
+function loadImage(imageEl){
+imageEl.src = imageEl.dataset.src;
+
+imageEl.onload = function() {
+    imageEl.removeAttribute('data-src');
+};
+
+}
+```
+
+****
