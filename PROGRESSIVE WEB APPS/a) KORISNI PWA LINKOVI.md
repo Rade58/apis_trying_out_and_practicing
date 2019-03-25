@@ -23,3 +23,7 @@
 ## 6. SUPPORT SERVICE WORKER-A
 
 [jakearchibald.github.io](https://jakearchibald.github.io/isserviceworkerready/)
+
+## MOCK API
+
+[MOCKAROO](https://www.mockaroo.com/)
