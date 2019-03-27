@@ -10,7 +10,7 @@ Chrome Dev Tools/Application/Clear Storage/
 
 I TAMO CE S STALNO MAORATI DA PRITISKAS **Clear Site Data**
 
-SA **live-server** TO NE MORAS DA RADIS
+SA **live-server** TO NE MORAS DA RADIS (PREDPOSTAVLJAM DA JE TO DEFINISANO U SKOLPU SCRIPT-A, KOJI UVODI live-server)
 
 ## APP MANIFEST GENERATOR
 
