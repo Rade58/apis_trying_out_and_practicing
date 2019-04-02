@@ -30,6 +30,12 @@ NA [MOZZILA DEV](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker
 
 > Geofencing is a service that triggers an action when a device enters a set location. Coupons, notifications, engagement features, security alerts — businesses are finding creative ways to make use of these virtual boundaries.
 
+## OBAVEZNO CITATI SERVICE WORKER COOKBOOK
+
+>>>> The Service Worker Cookbook is a collection of working, practical examples of using service workers in modern web sites.
+
+[SERVICE WORKER COOKBOOK](https://serviceworke.rs/)
+
 ## OFFLINE FIRST
 
 [OFFLINE FIRST](http://offlinefirst.org/) JE ODLICNA WEB STRANICA, KOJA SE BAVI OFFLINE EXPERIENCEM
@@ -207,7 +213,7 @@ self.addEventListener('install', function(ev){
 
 ### KORACI INSTALACIJE
 
-1. OTVARI CACHE
+1. OTVORI CACHE
 1. CACHE-IRAJ FAJLOVA
 1. CONFIRM-UJ, DA LI SU REQUIRED ASSETS, CACHED OR NOT
 
