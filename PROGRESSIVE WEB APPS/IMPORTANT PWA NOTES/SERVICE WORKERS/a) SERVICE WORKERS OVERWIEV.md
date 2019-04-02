@@ -224,12 +224,47 @@ let urlsToCache = [
 
 self.addEventListener('install', function(ev){
 
-    ev.waitUntill(
-        self.caches.open(CACHE_NAME)
+    ev.waitUntil(
+        selfEventListener.caches.open(CACHE_NAME)
         .then(function(cache){
             console.log('Cache is opened!');
             return cache.addAll(urlsToCache);
-        });
+        })
+    );
+});
+```
+
+1. DAKLE, GORE SAM POZVAO caches.open() SA ZELENIM IMENOM CACHE-A
+1. ONDA SAM POZVAO cache.addAll() I DODAO ARRAY, U KOJEM SU PATH-OVI FAJLOVA ZA CACHING
+1. ev.waitUntil METODI JE ARGUMENT, UPRAVO Promise, A KORISTI GA DA BI ZNALA, KOLIKO CE INSTALACIJA DA TRAJE, I DA LI CE BITI USPESNA ILI NE
+
+**AKO SU SVI FAJLOVI SUCCESSFULLY CACHED, ONDA CE SERVICE WORKER BITI INSTALIRAN**
+
+**AKO BILO KOJIH FAJLOVA (CIJI SU PATH-OVI ZDATI ARGUMENTI), USTVARI FAILS ONDA JE I INSTALL STEP FAILED**
+
+>>>>>This allows you to rely on having all the assets that you defined, but does mean you need to be careful with the list of files you decide to cache in the install step. Defining a long list of files will increase the chance that one file may fail to cache, leading to your service worker not getting installed.
+
+>>>>>This is just one example, you can perform other tasks in the install event or avoid setting an install event listener altogether.
+
+## CACHE I RETURNED REQUESTS
+
+POSTO INSTALIRA MSERVICE WORKER-A, ONO STO VEROVASTN OZELIM DA URADIM, JESTE DA RETURN-UJEM, JEDA NOD CACHED RESPONSE-OVA
+
+**NAKON STO JE SERVICE WORKER INSTALIRAN, I KORISNIK NAVIGATES TO A DIFFERENT PAGE ILI URADI PAGE REFRESH, SERVICE WORKER CE POCETI DA RECEIVE-UJE**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**fetch** EVENT-OVE
+
+```JAVASCRIPT
+self.addEventListener('fetch', function(ev){
+    ev.respondWith(
+        self.caches.match(ev.request)
+        .then(function(response){
+            if(response){
+                return response;
+            }
+
+            return self.fetch(ev.request)
+        })
     );
 });
 ```
