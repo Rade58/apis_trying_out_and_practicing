@@ -60,6 +60,8 @@ ODNOSNO KAKO U DEVELOPMENTU POSTOJE PRINICIPI: RESPONSIVE FIRST, ILI MOBILE FIRS
 
 ## ZIVOTNI CIKLUS SERVICE WORKER-A
 
+[CHEATSHEET](https://mdn.mozillademos.org/files/12638/sw101.png)
+
 1. **INSTALACIJA**
 
 LIFECYCLE, JE U POTPUNOSTI ODVOJEN OD MOJE WEB STRANICE
@@ -246,7 +248,7 @@ self.addEventListener('install', function(ev){
 
 **AKO SU SVI FAJLOVI SUCCESSFULLY CACHED, ONDA CE SERVICE WORKER BITI INSTALIRAN**
 
-**AKO BILO KOJIH FAJLOVA (CIJI SU PATH-OVI ZDATI ARGUMENTI), USTVARI FAILS ONDA JE I INSTALL STEP FAILED**
+**AKO BILO KOJIH FAJLOVA (CIJI SU PATH-OVI ZDATI ARGUMENTI), USTVARI FAILS, ONDA JE I INSTALL STEP FAILED**
 
 >>>>>This allows you to rely on having all the assets that you defined, but does mean you need to be careful with the list of files you decide to cache in the install step. Defining a long list of files will increase the chance that one file may fail to cache, leading to your service worker not getting installed.
 
@@ -265,12 +267,94 @@ self.addEventListener('fetch', function(ev){
     ev.respondWith(
         self.caches.match(ev.request)
         .then(function(response){
+            // CACHE HIT - RETURN RESPONSE
             if(response){
                 return response;
             }
 
-            return self.fetch(ev.request)
+            return self.fetch(ev.request);
         })
     );
 });
 ```
+
+DAKLE, GORE SAM ZAKACIO ON fetch EVENT HANDLER
+
+ZATIM NAD FetchEvent INSTANCOM PRIMENJUJEM **respondWith** METODU, KOJOJ JE OPET ARGUMENT Promise INSTANCA
+
+A TA PROMISE INSTANCA PROIZILAZI IZ CHAINING-A, PROMISE-A KOJE POCINJE SA **caches.match()** METODOM
+
+OVA METODA POSMATRA REQUEST (ev.request JE NJEN ARGUMENT), I PRONALAZI CACHED RESULTS, IZ BILO KOJIH CACHE-OVA, KOJE JE MOJ SERVICE WORKER KREIRAO
+
+AKO POSTOJI MATCHING RESPONSE, RETURNOVACU CACHE-IRANU VREDNOST, A AKO NEMAM MATCHING RESPONSE, ONDA CU RETURN-OVATI REZULTAT POZIVANJA **fetch** METODE
+
+CIME BI SE NAPRAVIO NOVI NETWORK REQUEST, I ONDA BI SE RETURN-OVALI PODACI, AKO SE BILO STA MOZE RETRIEVE-OVATI OD NETWORKA
+
+PREDHODNI PRIMER JE BIO SIMPLE EXAMPLE, I KORISTI BILO KOJE CACHED ASSETS-E, KOJE SAM CACHE-OVA, TOKOM INSTALL STEP-A
+
+## AKO ZELIM DA CACHE-UJE, NOV REQUEST-OVE KUMULATIVNO (OVO MI JE NEJASNO :small_red_triangle:), MOGAO BIH URADITI SLEDECE
+
+(**DAKLE OVAJ NASLOV ZAHTEVA NAKNADNO PROUCAVANJE, JER MI NIJE JASAN**) :small_red_triangle:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HANDLOVANJE RESPONSE-OVA, FETCH REQUEST-A
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  I ONDA, IH STAVLJAO U CACHE
+
+```JAVASCRIPT
+self.addEventListener('fetch', function(ev){
+    respondWith(
+        self.caches.match(ev.request)
+        .then(function(response){
+            if(response){
+                // CACHE HIT - RETURN RESPONSE
+                return response;
+            }
+
+            return self.fetch(ev.request)
+            .then(function(response){
+                if(!response || response.status !== 200 || response.type !== 'basic'){
+                    return response;
+                }
+
+                // VAZNO!
+                // TREBA SE KLONIRATI RESPONSE, ZATO STO RESPONSE JESTE STREAM
+                // I ZATO STO ZELIM DA BROWSER KONZUMIRA RESPONSE
+                // A TAKODJE ZELIM I DA CACHE KONZUMIRA RESPONSE
+                // ZATO RESPONSE TREBAM KLONIRATI, KAKO BI IMAO DVA STREAM-A
+
+                let responseToCache = response.clone();
+
+                self.caches.open(CACHE_NAME)
+                .then(function(cache){
+                    cache.put(ev.request, responseToCVache)
+                });
+
+                return response;
+
+            })
+        })
+    );
+});
+```
+
+ONO STO SAM GORE URADIO JESTE SLEDECE:
+
+1. CHAIN-OVAO SAM then (SA CALLBACK-OM KAO ARGUMENTOM) NA fetch REQUEST
+
+2. KADA DOBIJEM RESPONSE, OBAVLJAM SLEDECE PROVERE (CHECKS)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UVERAVAM SE (ENSURE) DA JE RESPONSE VALID
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PROVERAVAM DA LI JE STATUS RESPONSEA, 200
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UVERAVAM SE DAJE TIP RESPONSA **basic**
+
+OVO POSLEDNJE INDICIRA DA JE U PITANJU REQUEST SA MOG ORIGIN-A, A TO ZNACI DA NISU, TAKODJE CACHED REQUESTOVI ZA THIRD PARTY ASSETS
+
+3. AKO SU PROVERE USPESNE ONDA [KLONIRAM (KORISCENJEM clone METODE)](https://fetch.spec.whatwg.org/#dom-response-clone) RESPONSE
+
+RALOG OVOME JESTE TO, ZATO STO JE RESPONSE, USTVARI [STREAM](https://streams.spec.whatwg.org/)
+
+STO ZNACI DA BODY TOG RESPONSE-A, MOZE BITI UPOTREBLJEN SAMO JEDNOM
+
+A POSTO ZELIM DA RETURN-UJEM RESPONSE, KAK OBI GA BROWSER KORISTIO, A TAKODJE GA ZELIM PROSLEDITI CACHE-U, KAKO BI GA ON KORISTIO, POTREBNO JE DA KLONIRAM RESPONSE, KAKO BI JEDAN RESPONSE MOGA OPOSLATI BROWSERU, A DRUG ICACHE-U
+
+## UPDATE-OVANJE SERVICE WORKER-A
