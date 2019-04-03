@@ -1,0 +1,1 @@
+1 . The purpose of memory is not to represent the past, it is there to stop you from doing, same stupid things again
