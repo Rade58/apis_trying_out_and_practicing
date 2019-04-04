@@ -11,51 +11,54 @@ const synth_files_to_cache = [
 ];
 
 self.addEventListener('install', function(ev){
-    console.log('***************');
-    console.log('service.js BEGAN instalation...');
-    console.log('***************');
-
+    
     ev.waitUntil(
-    Promise.all([
-        self.caches.open(CACHE_NAME)
-        .then(function(cache){
-            console.log('**************************');
-            console.log('CACHE ', CACHE_NAME, ' SUCESSFULLLY OPENED!');
-            console.log(cache);
-            console.log('**************************');
-            cache.add('/images/doll_car.jpg');
-        })
-        .catch(function(err){
-            console.log('CACHE ', CACHE_NAME, ' FAILED TO OPEN!');
-        }),
+        Promise.all([
+            self.caches.open(CACHE_NAME)
+            .then(function(cache){
+                cache.add('/doll_car.jpg');
+            })
+            .catch(function(err){
+                console.log('CACHE ', CACHE_NAME, ' FAILED TO OPEN!');
+            }),
 
-        self.caches.open(SYNTH_IMAGES_CACHE)
-        .then(function(cache){
-            cache.addAll(synth_files_to_cache)
-        })
-        .catch(function(err){
-            console.log("No mucho synth images.")
-        })    
+            self.caches.open(SYNTH_IMAGES_CACHE)
+            .then(function(cache){
+                cache.addAll(synth_files_to_cache)
+            })
+            .catch(function(err){
+                console.log("No mucho synth images.")
+            })    
 
-    ])        
+        ])
     );
 });
 
 self.addEventListener('activate', function(ev){
-    console.log('***************');
-    console.log('service.js IS ACTIVATED, AND READY TO HANDLE FETCHES...');
-    console.log('***************');
+    console.log('*****************ACTIVATION**********************');
+    self.caches.open(CACHE_NAME)
+    .then(function(cache){
+        console.log(cache.keys());
+    })
+    console.log('*****************ACTIVATION**********************');
 });
 
 // AKO JE REC O PRVOM OTVARANJU STRANICE, fetch EVENT SE NECE TRIGGER-OVATI
-// VEC TEK NAKO NRELOAD-A
+// VEC TEK NAKON RELOAD-A
 
 self.addEventListener('fetch', function(ev){
-    console.log(ev.request);
-
+    
     self.caches.open(SYNTH_IMAGES_CACHE)
     .then(function(cache){
-        console.log("~~~~~~~", cache.keys(), "~~~~~~")
-    })
+        console.log('*****************FETCH**********************');
+        console.log(cache.keys());
+    });
+    
+    self.caches.open(CACHE_NAME)
+    .then(function(cache){
+        console.log(cache.keys());
+        console.log('********************************************');
+    });
 
+    
 });

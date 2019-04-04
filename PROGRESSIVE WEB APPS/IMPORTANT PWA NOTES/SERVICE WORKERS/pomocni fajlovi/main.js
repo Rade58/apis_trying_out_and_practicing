@@ -10,16 +10,9 @@ window.setTimeout(function(){
 
 window.navigator.serviceWorker.register('/service.js')
 .then(function(registration){
-    console.log('***************');
     console.log("Registration of service.js SUCESSFULL");
-    console.log(registration);
-    console.log('***************');
 })
 .catch(function(error){
-    console.log('***************');
-    console.log("Registration of service.js FAILED");
-    console.log(error);
-    console.log('***************');
 });
 
 for(let i = 1; i <= 6; i++){
@@ -29,3 +22,8 @@ for(let i = 1; i <= 6; i++){
     img.rel = `synth image ${i}`;
     document.body.append(img);
 }
+
+window.onfetch = function(ev){
+    console.log(ev, "OVO JE IZ WINDOW-A!!!!!!!!!");
+    // NECE SE NIKAD IZVRSITI JER fetc EVENT NE MOZE DOCI DO MAIN THREAD-A
+};
