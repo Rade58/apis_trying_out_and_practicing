@@ -190,17 +190,75 @@ Cache INSTANCA NEMA NI JEDAN PROPERTI, KOLIKO SAM VIDEO KADA SAM JE KORISTIO, AL
 
 ### 1. DRUGE METODE ZA DODAVANJE U CACHE (SHORTHAND METODE, POMENUTE put() METODE) :octopus:
 
-- nekiCache.**add()**
+- nekiCache.**add()** (SHORTHAND put METODE)
 
 ARGUMENT MU JE *SAMO JEDAN URL* FAJLA, KOJEG ZELIM DA CACHE-IRAM
 
-- nekiCache.**addAll()**
+```javascript
 
-ARGUMENT MU JE Array, CIJI SU CLANOVI URL-OVI (DAKLE METODA DODAJE VISE FAJLOVA U CACHE)
+let url = '/images/image1.jpg';
+let CACHE_NAME = "image-cache-v1";
 
-**OBE METODE, IMAJU *Promise* KAO POVRATNU UVREDNOST**
+//********************************************
+fetch(url)
+.then(function(response){
+    self.caches.open(CAHE_NAME)
+    .then(function(cache){
+        cache.put(url, response);
+    });
+});
+//********************************************
 
-*TAJ Promise MOZE BITI RESOLVED SA **RELATED cache-OM** KOJI CE BITI PASSED CALLBACK-U then CALL-A*
+//  DAKLE, SVE OVO GORE, SE MOZE ZAMENITI SLEDECIM
+
+self.caches.open(CAHE_NAME)
+.then(function(cache){
+    cache.add(url);
+});
+
+// DAKLE, ON OSTO JE SAKRIVENO UNDER THE HOOD OF cache.add JESTE fetch() POZIVANJE
+```
+
+- nekiCache.**addAll()** (ISTO SHORTHAND put METODE)
+
+ARGUMENT MU JE *Array, CIJI SU CLANOVI URL-OVI* (DAKLE METODA DODAJE VISE FAJLOVA U CACHE)
+
+```JAVASCRIPT
+
+let urls = [
+    '/images/image1.jpg',
+    '/images/image2.jpg',
+    '/images/image3.jpg',
+    '/images/image4.jpg',
+    '/images/image5.jpg',
+    '/images/image6.jpg'
+];
+let CACHE_NAME = "image-cache-v1";
+
+//********************************************
+for(let url in urls){
+    fetch(url)
+    .then(function(response){
+        caches.open(CACHE_NAME)
+        .then(function(cache){
+            cache.put(url, response);
+        })
+    })
+}
+//********************************************
+//  DAKLE, SVE OVO GORE, SE MOZE ZAMENITI SLEDECIM
+
+caches.open(CAHE_NAME)
+.then(function(cache){
+    cache.addAll(urls);
+    // ALI MOZE S SAMO DEFISNISATI I IME FOLDERA 
+    cache.addAll('/images/'); // TAKO DA MI CA KI NE TREBA NI NIZ url-OVA
+})
+
+// DAKLE, ON OSTO JE SAKRIVENO UNDER THE HOOD OF cache.add JESTE fetch() POZIVANJE, ALI I for LOOP
+```
+
+**OBE METODE, IMAJU *Promise* KAO POVRATNU UVREDNOST, A Promise JE RESOLVED SA void**
 
 ### 2. MATCHING METODE :octopus:
 
