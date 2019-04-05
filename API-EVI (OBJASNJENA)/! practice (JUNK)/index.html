@@ -6,6 +6,8 @@
         <meta name="theme-color" content="#e24c60;">
         <title>IntersectionObserver</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <link rel="stylesheet" type="text/css" href="/styles.css">
     </head>
     <body>
 
@@ -534,6 +536,34 @@
 
         </script>
 
+        <h1>Naslov neki</h1>
+        
+        <script>
+            
+            let CACHE_NAME = 'page-cache-v1';
+
+            let url = '/styles.css';
+
+            window.fetch(url)
+            .then(function(response){
+
+                window.caches.open(CACHE_NAME)
+                .then(function(cache){
+                    cache.put(url, response)
+                    .then(function(){
+
+                        setTimeout(function(){
+                            console.log(cache.keys());
+                        }, 3800);
+
+                    })
+                })
+
+            }).catch(function(err){
+                console.log(err);
+            })
+
+        </script>
 
         
 
