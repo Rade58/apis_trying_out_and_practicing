@@ -458,7 +458,7 @@ DAKLE ZELIM DVA CACHE-A, SA SLEDECIM IMENIMA:
 self.addEventListener('activate', function(ev){
     let cacheWhitelist = ['page-cache-v1', 'blog-posts-cache-v1'];
 
-    ev.waitUntil(
+    ev.waitUntil( // INICIJALIZUJEM
         self.caches.keys()
         .then(function(cacheNames){
             return Promise.all(
