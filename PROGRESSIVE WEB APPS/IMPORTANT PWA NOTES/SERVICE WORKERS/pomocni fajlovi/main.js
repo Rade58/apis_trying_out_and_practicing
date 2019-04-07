@@ -10,7 +10,7 @@ window.setTimeout(function(){
 
 window.navigator.serviceWorker.register('/service.js')
 .then(function(registration){
-    console.log("Registration of service.js SUCESSFULL");
+    console.log("Registration of service.js SUCESSFULL", registration);
 })
 .catch(function(error){
 });
@@ -23,7 +23,19 @@ for(let i = 1; i <= 6; i++){
     document.body.append(img);
 }
 
-window.onfetch = function(ev){
-    console.log(ev, "OVO JE IZ WINDOW-A!!!!!!!!!");
-    // NECE SE NIKAD IZVRSITI JER fetc EVENT NE MOZE DOCI DO MAIN THREAD-A
-};
+document.querySelectorAll(`img[src^="/images/synth_pictures"]`).forEach(function(img){
+    img.style.visibility = "hidden";
+});
+
+
+const ankor = document.createElement('a');
+
+//----------------
+const urlA = new URL('/images/doll_car.jpg', 'http://localhost:7200/images/doll_car.jpg');
+//----------------
+
+ankor.href = urlA;
+ankor.textContent = "slika";
+document.body.append(ankor);
+
+console.log(urlA);

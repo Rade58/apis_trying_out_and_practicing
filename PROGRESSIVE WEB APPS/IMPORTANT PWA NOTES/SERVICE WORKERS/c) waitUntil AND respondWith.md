@@ -75,4 +75,6 @@ DAKLE, KADA DEFINISEM CACHING ILI DELETING ASSET-OVA IZ CACHEA, ODNOSNO KADA DEF
 
 > The [respondWith()](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) method of FetchEvent prevents the browser's default fetch handling, and allows you to provide a promise for a Response yourself.
 
+POVRATNA VREDNOST, METODE JE NARAVNO Promise OBJEKAT, KOJI TREBA DA BUDE RESOLVED SA Response INSTANCOM
+
 NAJBOLJE JE PROCITATI SVE O OVOJ METODI SA LINKA, KOJ ISAM OBEZBEDIO, A JA ZA SADA ZNAM NJEN BASIC USE
