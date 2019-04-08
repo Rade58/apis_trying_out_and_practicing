@@ -298,6 +298,9 @@ UKRATKO:
 * **UPDATE CE BITI TRIGGERED, KADA SE BILO STA OD SLEDECEG NAVEDENOG DOGODI**
 
 * Bullet list
-              * Nested bullet
-                  * Sub-nested bullet etc
-          * Bullet list item 2
+    
+    * Nested bullet
+                  
+        * Sub-nested bullet etc
+          
+            * Bullet list item 2
