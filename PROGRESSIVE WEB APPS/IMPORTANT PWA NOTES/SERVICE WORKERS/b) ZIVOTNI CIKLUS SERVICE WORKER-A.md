@@ -407,13 +407,16 @@ self.addEventListener('activate', function(ev){
                 })
             )
         })
+        .then(function(){
+            console.log('v2 activated and ready to handle fetches...')
+        })
     )
 });
 
 self.addEventListener('fetch', function(ev){
     const url = new URL(ev.request.url);
 
-     // SERVIRANJE SLIKE ZIRAFE KADA SE REQUEST-UJE SLIKA monitor.jpg
+    // SERVIRANJE SLIKE ZIRAFE KADA SE REQUEST-UJE SLIKA monitor.jpg
 
     if(url.origin === location.origin && url.pathname === '/images/monitor.jpg'){
         ev.respondWith(
@@ -441,23 +444,36 @@ ZASTO? PA OBJASNICU TO U SLEDECIM PODNASLOVIMA
 
 TREBAS IMATI NA UMU DA, KADA DEFINISES NOVI CACHE 'page-cahe-v2', TO ZNACI DA SI PODESIO NOVI CACHE, BEZ DA SI OVERWRITE-OVAO STVARI U ONOM TRENUTNOM CACHE-U ('page-cache-v1'), A KOJEG STARI SERVICE WORKER I DALJE KORISTI
 
-OVAKAVI PATTERNOVI, KREIRAJU VERSION-SPECIFIC CACHE-OVE, SRODNE (AKIN) ONIM ASSET-OVIMA KOJE BI NATIVE APP BOUNDLE-OVALA, SA SVOJOM EXECUTABLE
+OVAKAVI PATTERN-OVI, KREIRAJU VERSION-SPECIFIC CACHE-OVE, SRODNE (AKIN) ONIM ASSET-OVIMA KOJE BI NATIVE APP BOUNDLE-OVALA, SA SVOJOM EXECUTABLE (NE ZNAM STA JE TO JER MI NIJE POZNAT NATIVE CODE)
 
-TAKODJE TI MOZES IMATI I CACHE-E, KOJI NISU VERSION-SPECIFIC, KAO STO JE NA PRIMER CACHE, KOJI BI NOSIO IME *'avatars'*
+TAKODJE TI MOZES IMATI I CACHE-E, KOJI NISU VERSION-SPECIFIC, KAO STO JE NA PRIMER CACHE, KOJI BI NOSIO IME *'avatars'* (PREDPOSTAVLJAM DA BI ON BIO JEDAN OD CASHE-OVA, CIJA BIH STRING IMENA DEFINISAO KAO CLANOVE NIZA, KOJI JE U GORNJEM PRIMERU SKLADISTILA VARIJABLA cacheWhitelist)
 
 ### WAITING :seedling:
 
-NAKON STO JE SUCCSESSFULLY INSTALLED, UPDATE-OVANI SERVICE WORKER, ODLAZE AKTIVACIJU, SVE DOK TRENUTNI SERVICE PRESTANE DA KONTROLISE CLIENTS-E
+NAKON STO JE SUCCSESSFULLY INSTALLED, UPDATE-OVANI SERVICE WORKER, USTVARI ODLAZE AKTIVACIJU, SVE DOK TRENUTNI SERVICE WORKER PRESTANE DA KONTROLISE CLIENTS-E
 
 OVO STANJE SE NAZIVA **WAITING**
 
 I UPRAVO POMENUTIM STANJEM, BROWSER OSIGURAVA DA POSTOJI SAMO JEDNA VERZIJA, KOJA SE, TRENUTNO RUNN-UJE
 
-**DAKLE, TI I DALJE VIDIS SLIKU AUTOMOBILA, JER V2 WORKER SE NIJE JOS AKTIVIRAO**
+**DAKLE, TI I DALJE VIDIS SLIKU AUTOMOBILA, JER SE *V2* WORKER, NIJE JOS AKTIVIRAO**
 
-A MOZES VIDETI, DA JE NOVI SERVICE WORKER U STANJU WAITING-A, TAK OSTO CES OTVORITI **Application" tab of DevTools**-A
+A MOZES VIDETI, DA JE NOVI SERVICE WORKER U STANJU WAITING-A, TAKO STO CES OTVORITI **Application" tab of Chrome DevTools**-A
 
-**CAK IAKO IMAS OTVOREN, SAMO JEDAN TAB, REFRESHING STRANICE, NIJE DOVOLJAN DA SE NOVOJ VERZIJI OMOGUCI TO TAKE OVER**
+**CAK IAKO IMAS OTVOREN, SAMO JEDAN TAB, REFRESHING STRANICE, NIJE DOVOLJAN DA SE NOVOJ VERZIJI OMOGUCI TO TAKE OVER, DA ONA BUDE IN CONTROL**
 
+>>> This is due to how browser navigations work
 
+>>> When you navigate, the current page doesn't go away until the response headers have been received, and even then the current page may stay if the response has a [Content-Disposition](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition) header.
 
+>>> Because of this overlap, the current service worker is always controlling a client during a refresh.
+
+>>> To get the update, close or navigate away from all tabs using the current service worker. Then, when you navigate to the demo again, you should see the GIRAFFE.
+
+>>> This pattern is similar to how Chrome updates. Updates to Chrome download in the background, but don't apply until Chrome restarts. In the mean time, you can continue to use the current version without disruption. However, this is a pain during development, but DevTools has ways to make it easier, which I'll cover later in this article.
+
+**DAKLE I DA OTVORIM NOVI TAB ZA MOJU APLIKACIJI, NE BIH SE MOJ NOVI SE NOVI SERVICE WORKER AKTIVIRAO**
+
+**DAKLE, POTREBNO JE ZATVORITI TAB MOJE APLIKACIJE, I ONDA GA OPET OTVORITI, I TEK CE SE TADA SERVICE WORKER AKTIVIRATI, I MOCI CE DA RECEIVE-UJE fetch EVENTS**
+
+### ACTIVATE :seedling:
