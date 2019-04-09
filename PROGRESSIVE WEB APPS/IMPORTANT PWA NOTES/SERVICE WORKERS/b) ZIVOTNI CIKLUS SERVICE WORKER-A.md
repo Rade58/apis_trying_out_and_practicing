@@ -319,71 +319,40 @@ UKRATKO:
 
 ****
 
-ONO STO CU SADA URADITI, JESTE IZMENITI SCRIPT SERVICE WORKER-A, IZ PROSLOG PRIMERA, A ONO STA ZELIM DA DEFINISEM JESTE DA SCRIPT RESPONDUJE SA SLIKOM ZIRAFE, UMESTO SA SLIKOM AUTOMOBILA
+**PRIMER:**
+
+:cd: CODE SERVICE WORKERA, PRE UPDATE-OVANJA:
 
 ```javascript
-
-// DEFINISAO SAM, A TAJ NIZ TREBA DA IMA IMENA NOVIH CACHE-OVA
-// ZA SADA TO JE SAMO JEDNO IME, ODNONO TO JE DRUGA VERZIJA CACHE-A MOG PAGE-A
-const cacheWhitelist =['page-cahe-v2'];
-// URL NOVE SLIKE KOJA TREBA DA SE CACHE-UJE
-const giraffeUrl = '/images/giraffe.jpg';
+const CACHE_NAME = 'page-cache-v1';
+const carUrl = '/images/car.jpg';
 
 self.addEventListener('install', function(ev){
-
-    console.log('V2 is installing...');
-
-    // DAKLE ON INSTALL, JA CACHE-IRAM NOVU SLIKU, KOJA JE SLIKA ZIRAFE
     ev.waitUntil(
-        self.caches.open('page-cache-v2')
+        self.caches.open(CACHE_NAME)
         .then(function(cache){
-            self.fetch(giraffeUrl)
+            self.fetch(carUrl)
             .then(function(response){
-                cache.put(giraffeUrl, response);
+                cache.put(carUrl, response.clone());
             })
         })
-    );
-});
+    )
+})
 
 self.addEventListener('activate', function(ev){
-
-    // DEFINISEM BRISANJE SVIH CASHE-OVA, KOJI NISU 'page-cahe-v2', ODNOSNO IZUZEV ONIH CACHEA
-    // KOJI SU DEO WHITELIST-E CACHE-A
-    // NA TAJ NACIN CU SE OTARASITI CACHE-A 'page-cache-v1'
-
-    ev.waitUntil(
-        self.caches.keys()
-        .then(function(keys){
-
-            return Promise.all(
-
-                keys.map(function(currentCacheName){
-
-                    if(!cacheWhitelist.includes(currentCacheName)){
-                        return self.caches.delete(currentCacheName);
-                    }
-
-                })
-            );
-        })
-        .then(function(){
-            console.log('V2 is ready to handle fetches');
-        })
-    );
+    console.log('v1 instlation completed, acivating now...');
 });
 
 self.addEventListener('fetch', function(ev){
     const url = new URL(ev.request.url);
 
-    // SERVIRANJE SLIKE ZIRAFE KADA SE REQUEST-UJE SLIKA com_screen.jpg
-
-    if(url.origin === self.location.origin && url.pathname === '/images/com_screen.jpg'){
+    if(url.origin === location.origin && url.pathname === '/images/monitor.jpg'){
         ev.respondWith(
-            self.caches.open('page-cache-v2')
+            self.caches.open(CACHE_NAME)
             .then(function(cache){
-                return cache.match(giraffeUrl)
+                return cache.match(carUrl)
                 .then(function(response){
-                    return response;
+                    return response.clone();
                 })
             })
         )
@@ -391,9 +360,78 @@ self.addEventListener('fetch', function(ev){
 });
 ```
 
+:dvd: ONO STO CU SADA URADITI, JESTE IZMENITI SCRIPT SERVICE WORKER-A (GORNJI CODE, CE DAKLE ZAMENITI SLEDECIM), A ONO STA ZELIM DA DEFINISEM JESTE DA SCRIPT RESPONDUJE SA SLIKOM ZIRAFE, UMESTO SA SLIKOM AUTOMOBILA
+
+```javascript
+
+// DEFINISAO SAM niz, A TAJ NIZ TREBA DA IMA IMENA NOVIH CACHE-OVA
+// ZA SADA TO JE SAMO JEDNO IME, ODNONO TO JE DRUGA VERZIJA CACHE-A MOG PAGE-A (ALI JE IDEJA DA U BUDUCE 
+// IMAM NIZ, JER CE TAK OBITI CONVINIET ZA BUDUCE UPDATE-OVE)
+const cacheWhitelist = ['page-cache-v2'];
+// URL NOVE SLIKE KOJA TREBA DA SE CACHE-UJE (ZELI MNJOME DA ZAMENIM ONU KOJA SE SADA SERVUJE UMESTO SLIKE MONITORA)
+const giraffeUrl = '/images/animal.jpg';
+
+self.addEventListener('install', function(ev){
+    // DAKLE ON INSTALL, JA CACHE-IRAM NOVU SLIKU, KOJA JE SLIKA ZIRAFE
+    console.log('v2 instalation...');
+
+    ev.waitUntil(
+        self.caches.open('page-cache-v2')
+        .then(function(cache){
+            return self.fetch(giraffeUrl)
+            .then(function(response){
+                return cache.put(giraffeUrl, response.clone());
+            })
+        })
+    );
+
+});
+
+self.addEventListener('activate', function(ev){
+    console.log('v2 activating...');
+
+    // DEFINISEM BRISANJE SVIH CASHE-OVA, KOJI NISU 'page-cahe-v2', ODNOSNO IZUZEV ONIH CACHEA
+    // KOJI SU DEO WHITELIST-E CACHE-A
+    // NA TAJ NACIN CU SE OTARASITI CACHE-A 'page-cache-v1'
+
+    ev.waitUntil(
+
+        self.caches.keys()
+        .then(function(keys){
+            return Promise.all(
+
+                keys.map(function(cacheName){
+                    if(!cacheWhitelist.includes(cacheName)){
+                        return self.caches.delete(cacheName);
+                    }
+                })
+            )
+        })
+    )
+});
+
+self.addEventListener('fetch', function(ev){
+    const url = new URL(ev.request.url);
+
+     // SERVIRANJE SLIKE ZIRAFE KADA SE REQUEST-UJE SLIKA monitor.jpg
+
+    if(url.origin === location.origin && url.pathname === '/images/monitor.jpg'){
+        ev.respondWith(
+            self.caches.open('page-cache-v2')
+            .then(function(cache){
+                return cache.match(giraffeUrl)
+                .then(function(response){
+                    return response.clone();
+                })
+            })
+        );
+    }
+});
+```
+
 ****
 
-DAKLE, RANIJE, PRE NEGO STO SAM DEFINISAO UPDATING, PRIKAZIVALA SE SLIKA AUTOMOBILA, JER SAM DEFINISAO DA SE onfetch, ONA SERVE-UJE, UMESTO SLIKE RACUNARA
+DAKLE, RANIJE, PRE NEGO STO SAM DEFINISAO UPDATING, PRIKAZIVALA SE SLIKA AUTOMOBILA, JER SAM DEFINISAO DA SE onfetch, ONA SERVE-UJE, UMESTO SLIKE RACUNARA, ODNOSNO MONITORA
 
 **ALI SADA, I DALJE CE SE PRIKAZIVATI SLIKA AUTOMOBILA**
 
