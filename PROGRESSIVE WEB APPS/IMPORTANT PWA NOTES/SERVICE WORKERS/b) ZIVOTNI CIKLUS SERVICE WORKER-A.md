@@ -322,13 +322,18 @@ UKRATKO:
 ONO STO CU SADA URADITI, JESTE IZMENITI SCRIPT SERVICE WORKER-A, IZ PROSLOG PRIMERA, A ONO STA ZELIM DA DEFINISEM JESTE DA SCRIPT RESPONDUJE SA SLIKOM ZIRAFE, UMESTO SA SLIKOM AUTOMOBILA
 
 ```javascript
-const ocekujuciCachei =['page-cahe-v2'];
+
+// DEFINISAO SAM, A TAJ NIZ TREBA DA IMA IMENA NOVIH CACHE-OVA
+// ZA SADA TO JE SAMO JEDNO IME, ODNONO TO JE DRUGA VERZIJA CACHE-A MOG PAGE-A
+const cacheWhitelist =['page-cahe-v2'];
+// URL NOVE SLIKE KOJA TREBA DA SE CACHE-UJE
 const giraffeUrl = '/images/giraffe.jpg';
 
 self.addEventListener('install', function(ev){
 
     console.log('V2 is installing...');
 
+    // DAKLE ON INSTALL, JA CACHE-IRAM NOVU SLIKU, KOJA JE SLIKA ZIRAFE
     ev.waitUntil(
         self.caches.open('page-cache-v2')
         .then(function(cache){
@@ -341,6 +346,11 @@ self.addEventListener('install', function(ev){
 });
 
 self.addEventListener('activate', function(ev){
+
+    // DEFINISEM BRISANJE SVIH CASHE-OVA, KOJI NISU 'page-cahe-v2', ODNOSNO IZUZEV ONIH CACHEA
+    // KOJI SU DEO WHITELIST-E CACHE-A
+    // NA TAJ NACIN CU SE OTARASITI CACHE-A 'page-cache-v1'
+
     ev.waitUntil(
         self.caches.keys()
         .then(function(keys){
@@ -349,7 +359,7 @@ self.addEventListener('activate', function(ev){
 
                 keys.map(function(currentCacheName){
 
-                    if(!ocekujuciCachei.includes(currentCacheName)){
+                    if(!cacheWhitelist.includes(currentCacheName)){
                         return self.caches.delete(currentCacheName);
                     }
 
@@ -364,6 +374,8 @@ self.addEventListener('activate', function(ev){
 
 self.addEventListener('fetch', function(ev){
     const url = new URL(ev.request.url);
+
+    // SERVIRANJE SLIKE ZIRAFE KADA SE REQUEST-UJE SLIKA com_screen.jpg
 
     if(url.origin === self.location.origin && url.pathname === '/images/com_screen.jpg'){
         ev.respondWith(
@@ -380,3 +392,34 @@ self.addEventListener('fetch', function(ev){
 ```
 
 ****
+
+DAKLE, RANIJE, PRE NEGO STO SAM DEFINISAO UPDATING, PRIKAZIVALA SE SLIKA AUTOMOBILA, JER SAM DEFINISAO DA SE onfetch, ONA SERVE-UJE, UMESTO SLIKE RACUNARA
+
+**ALI SADA, I DALJE CE SE PRIKAZIVATI SLIKA AUTOMOBILA**
+
+ZASTO? PA OBJASNICU TO U SLEDECIM PODNASLOVIMA
+
+### INSTALL :seedling:
+
+TREBAS IMATI NA UMU DA, KADA DEFINISES NOVI CACHE 'page-cahe-v2', TO ZNACI DA SI PODESIO NOVI CACHE, BEZ DA SI OVERWRITE-OVAO STVARI U ONOM TRENUTNOM CACHE-U ('page-cache-v1'), A KOJEG STARI SERVICE WORKER I DALJE KORISTI
+
+OVAKAVI PATTERNOVI, KREIRAJU VERSION-SPECIFIC CACHE-OVE, SRODNE (AKIN) ONIM ASSET-OVIMA KOJE BI NATIVE APP BOUNDLE-OVALA, SA SVOJOM EXECUTABLE
+
+TAKODJE TI MOZES IMATI I CACHE-E, KOJI NISU VERSION-SPECIFIC, KAO STO JE NA PRIMER CACHE, KOJI BI NOSIO IME *'avatars'*
+
+### WAITING :seedling:
+
+NAKON STO JE SUCCSESSFULLY INSTALLED, UPDATE-OVANI SERVICE WORKER, ODLAZE AKTIVACIJU, SVE DOK TRENUTNI SERVICE PRESTANE DA KONTROLISE CLIENTS-E
+
+OVO STANJE SE NAZIVA **WAITING**
+
+I UPRAVO POMENUTIM STANJEM, BROWSER OSIGURAVA DA POSTOJI SAMO JEDNA VERZIJA, KOJA SE, TRENUTNO RUNN-UJE
+
+**DAKLE, TI I DALJE VIDIS SLIKU AUTOMOBILA, JER V2 WORKER SE NIJE JOS AKTIVIRAO**
+
+A MOZES VIDETI, DA JE NOVI SERVICE WORKER U STANJU WAITING-A, TAK OSTO CES OTVORITI **Application" tab of DevTools**-A
+
+**CAK IAKO IMAS OTVOREN, SAMO JEDAN TAB, REFRESHING STRANICE, NIJE DOVOLJAN DA SE NOVOJ VERZIJI OMOGUCI TO TAKE OVER**
+
+
+
