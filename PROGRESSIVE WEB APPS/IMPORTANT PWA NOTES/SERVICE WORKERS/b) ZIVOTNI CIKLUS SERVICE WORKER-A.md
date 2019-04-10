@@ -709,5 +709,94 @@ SADA KADA SE DESI UPDATING, DUGME CE SE POJAVITI, A KADA PRITISNEM DUGME, POSLAC
 
 **DAKLE U GORNJEM CITATU JE RECENO, ZASTO SE self.skipWaiting, UOPSTE NE TREBA KORISTITI**
 
-### MANUAL UPDATES
+### MANUAL UPDATES :seedling:
 
+KAO STO JE I RECENO RANIJE:
+
+**BROWSER CHECKS FOR UPDATES, AUTOMATSKI, NAKON NAVIGATIONING-A, I FUNCTIONAL EVENT-OVA**
+
+**ALI ONI MOGU BITI [TRIGGERED I MANUALLY](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update)**
+
+```javascript
+navigator.serviceWorker.register('/sw.js')
+.then(function(regi){
+    // sometime later...
+
+    regi.update();
+})
+```
+
+>>> If you expect the user to be using your site for a long time without reloading, you may want to call update() on an interval (such as hourly).
+
+### IZBEGAVAJ PROMENE URL-A, TVOG SERWICE WORKER SCRIPT-A
+
+[TREBA SE PROCITATI JACKE ARCHIBALD-OV POST O NAJBOLJIM PRAKSAMA](https://jakearchibald.com/2016/caching-best-practices/)
+
+NAIME, MOZDA RZMOTRAS TO, DA DAJES, SVAKOJ VERZIJI SVOG SERVICE WORKERA, NJEGOV UNIQUE URL
+
+**NEMOJ TO RADITI!!!**
+
+OVO JE NAJCESCE LOSA PRAKSA
+
+**POTREBNO JE UPDATE-OVATI SCRIPT NA NJEGOVOJ TRENUTNOJ LOKACIJI**
+
+TO JE IZ RAZLOGA KOJI SU U OVOM CITATU
+
+> It can land you with a problem like this:
+
+>> index.html registers sw-v1.js as a service worker.
+>> sw-v1.js caches and serves index.html so it works offline-first.
+>> You update index.html so it registers your new and shiny sw-v2.js.
+>> If you do the above, the user never gets sw-v2.js, because sw-v1.js is serving the old version of index.html from its cache. You've put yourself in a position where you need to update your service worker in order to update your service worker. Ew.
+
+## MAKING DEVELOPMENT EASY :electric_plug:
+
+>>> The service worker lifecycle is built with the user in mind, but during development it's a bit of a pain. Thankfully there are a few tools to help out:
+
+### UPDATE ON RELOAD
+
+U SERVICE WORKER SEKCIJI , KOJA SE NALAZI U APPLICATION SEKCIJI DEV TOOLS-A, POSTOJI MOGUCNOST DA SE CHECK-IRA **Update on reload**
+
+SVAKI NAVIGATION NA STRANICI CE URADITI I SLEDECE:
+
+- REFETCH-OVATI SERVICE WORKER
+
+- INSTALIRACE GA, KAO NOVU VERZIJU, CAK IAKO JE BYTE-IDENTICAL, STO ZNACI DA CE SE TRIGGER-OVATI install EVENT,  I TVOJ CACHE CE SE UPDATE-OVATI
+
+- PRESKOCICE WAITING FAZU KAKO BI SE NOVI SERVICE WORKER AKTIVIRAO
+
+- NAVIGATE-OVACE STRANICU
+
+OVO ZNACI DA CES DOBITI UPDATE-OVE NA SVAKI NAVIGATIONING (UKLJUCUJUCI I REFRESH), BEZ TOGA DA CES MORATI DA RELOAD-UJES DVA PUTA ILI ZATVORIS TAB
+
+### SKIP WAITING
+
+U APPLICATION SEKCIJI DEV TOOLSA (U DELU ZA SERVICE WORKER-E), TAKODJE POSTOJI MOGUCNOST DA SE PRITISE skipWaiting
+
+TAKO NOVI SERVICE WORKER, POSTATI IMMEDIATELLY PROMOTED U 'active'
+
+### Shift-RELOAD
+
+AKO URADIS FORCE-RELOAD STRANICE (shift + reload), BYPASS-OVACES SERVICE WORKER U POTPUNOSTI
+
+BICE *UNCONTROLLED*
+
+OVAJ FEATURE JE U SPECIFIKACIJAMA, TAKO DA RADI I U DRUGIM BROWSER-IMA, KOJI SUPPORT-UJU SERVICE WORKER-E
+
+## HANDLE-OVANJE UPDATE-OVA :shell:
+
+[PROCITAJ SA LINKA ZASTO JE SVAKI PROCES, KOJI SE TICE BROWSER-A, USTAVRI MOGUCE OBSERVOVATI](https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#handling_updates) (POSTOJI I PETICIJE KOJE DEV-OBVI PISU BROWSERIMA, KAKO NE BI POSTOJALI SAMO, USKI HIGH-LEVEL API-JEVI)
+
+U SUSTINI, TO SE TICE I SERVICE WORKER-A
+
+A ONO STO JE ZBOG TOGA IMPLEMETIRANO JESTE SLEDECE
+
+MOGUCE JE OBSERVE-OVATI RAZNE PROCESE, U POGLEDU TVOJIH SERVICE WORKER-A, KAO STO JE INSTALACIJA, I UPDATING, I TO SVE KROZ
+
+- [ServiceWorkerRegistration INSTANCU](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration)
+
+**TO JE ONO STO SAM KORISTIO U PROSLOM PRIMERU, KAKO BIH postMessage MOM SERVICE WORKERU, KADA SE UPRAVO NESTO DOGODILO SA SERVICE WORKEROM (U TOM SLUCAJU RADIO SAM NESTO KAO REZULTAT UPDATING-A)**
+
+ZATO JE NAJBOLJE PROCITATI, SVE O TOJ INSTANCI
+
+DAKLE,, SVE O NJENIM PROPERTIJIMA, METODAMA I EVENT-OVIMA
