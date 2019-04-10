@@ -526,8 +526,188 @@ ISKORISTICU PROSLI PRIMER DA TO DEFINISEM. A STA CU USTVARI URADITI
 
 - U MAIN SCRIPTU CU DEFINISATI, DA SE DUGME RENDERUJE, SAMO U SLUCAJU KADA SE POKRENE UPDATE-OVANJE; I ONO STO CU TADA KORISTITI U MAIN SCRIPTU, JESTE **updatefound** EVENT; TAJ EVENT CE SE PREDPOSTAVLJAM TRIGGEROVATI ZA **ServiceWorkerRegistration** INSTANCU; A TA INSTANCA JESTE INSTANCA, SA KOJOM JE RESOLVED Promise, KOJI JE POVRATNA VREDNOST navigator.serviceWorker.register('/sw.js') METODE
 
-- NA TOM DUGETU KACIM ON mousedown HANDLER, KOJI TREBA DA POSALJE PORUKU (postMessage) THREAD-U, SERVICE WORKERA
+- NA TOM DUGETU KACIM ON mousedown HANDLER, KOJI TREBA DA POSALJE PORUKU (postMessage) THREAD-U, SERVICE WORKERA (ALI NOVOG SERVICE WORKER-A)
 
-- A NA TU PORUKU, DEFINISACU DA SERVICE WORKER, ODGOVARA TIME DA EXECUTE-UJE self.skipWaiting
+- A NA TU PORUKU, DEFINISACU DA SERVICE WORKER, ODGOVARA TIME DA EXECUTE-UJE self.skipWaiting()
+
+**main.js** FILE:
+
+```javascript
+window.navigator.serviceWorker.register('/service-worker.js')
+.then(function(regi){   // IZ REGISTRACIJE PROIZILAZI Promise RESOLVED SA       ServiceWorkerRegistration       INSTANCOM
+
+    regi.onupdatefound = function(){
+
+        console.log('UPDATEFOUND !!!!');
+
+        // NOVOM WORKERU MOGU PRITUPITI TAKO STO PRISTUPIM installing PROPERTIJU (OBRATI PAZNJU DA OVO MOZE BITI I ONAJ PRVI WORKER
+        //                                                                      PRE UPDATE-A, IAKO JA ZELIM ONOG NOVOG UPDATED WORKER-A) 
+        const newWorker = regi.installing;
+
+        // JA DUGME ZELIM DA KREIRAM SAMO KADA POSTOJI NOVI SERVICE WORKER, KOJI UPDATE-UJE (I KOJI CEKA DA SE ZATVORI TAB, PA PONOVO OTVORI)
+        // DAKLE, SLEDECI USLOV CE BITI TACAN, KADA IMAM NOVOG SERVICE WORKERA, KOJI JE U FAZI INSTALIRANJA, I IMAM, TRENUTNOG KOJI JE
+        // IN CONTROLL
+        if(newWorker && window.navigator.serviceWorker.controller){
+
+            // TADA KREIRAM DUGME, KOJE CE POSLATI PORUKU SERVICE WORKER-U DA PREKINE SA CEKANJEM
+
+            const button = document.createElement('button');
+            button.textContent = "skip waiting";
+            document.body.prepend(button);
+
+            button.onmousedown = function(ev){
+                console.log(window.navigator.serviceWorker.controller);
+
+                // OBRATI PAZNJU DA TI NOVOM SERVICE WORKERU, ZELIS DA STAVIS DO ZNANJA DA PREKINE CEKANJE
+                // (OVO KAZEM, JER MOZES SLUCAJNO ZAPASTI U ZABLUDU, PA ONOM CURRENT SERVICE WORKER-U (CONTROLLER-U) POSLATI PORUKU
+                // A TO NE ZELI MDA URADIM
+
+                newWorker.postMessage('skip waiting');
+                ev.target.onmousedown = null;
+                ev.target.disabled = true;
+            }
+        }
+
+    }
+
+});
+
+///////////////////////////////////////////////////
+
+const image = new Image();
+
+image.style.width = '38vw';
+image.rel = "syntwave image";
+
+window.setTimeout(function(image){
+    document.body.prepend(image);
+    image.src = "/images/monitor.jpg";
+}, 3800, image);
+```
+
+**service-worker.js** FAJL (**PRE UPDATE-OVANJA**)
+
+```javascript
+const CACHE_NAME = 'page-cache-v1';
+const carUrl = '/images/car.jpg';
+
+self.addEventListener('install', function(ev){
+    ev.waitUntil(
+        self.caches.open(CACHE_NAME)
+        .then(function(cache){
+            self.fetch(carUrl)
+            .then(function(response){
+                cache.put(carUrl, response.clone());
+            })
+        })
+    )
+});
+
+self.addEventListener('activate', function(ev){
+    console.log('v1 instlation completed, acivating now...');
+});
+
+self.addEventListener('fetch', function(ev){
+    const url = new URL(ev.request.url);
+
+    if(url.origin === location.origin && url.pathname === '/images/monitor.jpg'){
+        ev.respondWith(
+            self.caches.open(CACHE_NAME)
+            .then(function(cache){
+                return cache.match(carUrl)
+                .then(function(response){
+                    return response.clone();
+                })
+            })
+        )
+    }
+});
+```
+
+**service-worker.js** FAJL, **NAKON UPDATE-OVANJA** (IL IDA GA NZOVEM NOVI MSERVICE WORKER-OM (TO JE ONAJ KOJI CEKA))
+
+```javascript
+
+// DEFINISAO SAM DA NOVI SERVICE WORKER, AKO PRIMI, ODGOVARAJUCU PORUKU IZ MAIN SCRIPT-A
+// POZOVE self.skipWaiting()
+
+self.addEventListener('message', function(ev){
+    console.log('MESSAGE', ev);
+    if(ev.data === 'skip waiting'){
+        self.skipWaiting();
+    }
+});
+
+///////////////////////////////////////////////////////////
+
+const cacheWhitelist = ['page-cache-v2'];
+const giraffeUrl = '/images/animal.jpg';
+
+self.addEventListener('install', function(ev){
+
+    console.log('v2 instalation...');
+
+    ev.waitUntil(
+        self.caches.open('page-cache-v2')
+        .then(function(cache){
+            return self.fetch(giraffeUrl)
+            .then(function(response){
+                return cache.put(giraffeUrl, response.clone());
+            })
+        })
+    );
+
+});
+
+self.addEventListener('activate', function(ev){
+    console.log('v2 activating...');
+
+    ev.waitUntil(
+
+        self.caches.keys()
+        .then(function(keys){
+            return Promise.all(
+
+                keys.map(function(cacheName){
+                    if(!cacheWhitelist.includes(cacheName)){
+                        return self.caches.delete(cacheName);
+                    }
+                })
+            )
+        })
+        .then(function(){
+            console.log('v2 activated and ready to handle fetches...')
+        })
+
+    )
+});
+
+self.addEventListener('fetch', function(ev){
+    const url = new URL(ev.request.url);
+
+    if(url.origin === location.origin && url.pathname === '/images/monitor.jpg'){
+        ev.respondWith(
+            self.caches.open('page-cache-v2')
+            .then(function(cache){
+                return cache.match(giraffeUrl)
+                .then(function(response){
+                    return response.clone();
+                })
+            })
+        );
+    }
+});
+```
+
+SADA KADA SE DESI UPDATING, DUGME CE SE POJAVITI, A KADA PRITISNEM DUGME, POSLACE SE PORUKA NOVOM SERVICE WORKERU, DA PRESTANE SA WAITING FAZOM, I DA SE POTPUNO INSTALIRA I AKTIVIRA
+
+**GOVORICU JA JOS O SVIM PROPERTIJIMA ServiceWorkerRegistration INSTANCE; TOKOM OVOG PRIMERA SAM IH SAMO MALO DOTAKAO**
 
 ****
+
+>>>> Caution: skipWaiting() means that your new service worker is likely controlling pages that were loaded with an older version. This means some of your page's fetches will have been handled by your old service worker, but your new service worker will be handling subsequent fetches. If this might break things, don't use skipWaiting().
+
+**DAKLE U GORNJEM CITATU JE RECENO, ZASTO SE self.skipWaiting, UOPSTE NE TREBA KORISTITI**
+
+### MANUAL UPDATES
+
