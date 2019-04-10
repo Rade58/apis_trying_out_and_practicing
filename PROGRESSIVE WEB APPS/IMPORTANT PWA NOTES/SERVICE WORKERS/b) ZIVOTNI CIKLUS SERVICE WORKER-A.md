@@ -472,8 +472,62 @@ A MOZES VIDETI, DA JE NOVI SERVICE WORKER U STANJU WAITING-A, TAKO STO CES OTVOR
 
 >>> This pattern is similar to how Chrome updates. Updates to Chrome download in the background, but don't apply until Chrome restarts. In the mean time, you can continue to use the current version without disruption. However, this is a pain during development, but DevTools has ways to make it easier, which I'll cover later in this article.
 
-**DAKLE I DA OTVORIM NOVI TAB ZA MOJU APLIKACIJI, NE BIH SE MOJ NOVI SE NOVI SERVICE WORKER AKTIVIRAO**
+**DAKLE I DA OTVORIM NOVI TAB ZA MOJU APLIKACIJI, NE BIH SE, MOJ NOVI SERVICE WORKER AKTIVIRAO**
 
 **DAKLE, POTREBNO JE ZATVORITI TAB MOJE APLIKACIJE, I ONDA GA OPET OTVORITI, I TEK CE SE TADA SERVICE WORKER AKTIVIRATI, I MOCI CE DA RECEIVE-UJE fetch EVENTS**
 
 ### ACTIVATE :seedling:
+
+OVO SE FIRE-UJE, ONDA, KADA JE OLD SERVICE WORKER, GONE, I KAD JE TVOJ NOVI SERVICE WORKER U MOGUCNOSTI DA KONTROLISE CLIENTS-E
+
+OVO JE IDEALNO VREME DA URADIS STVARI, KOJE NISI MOGAI, KADA JE STARI SERVICE WORKER BIO, STILL IN USE, KAO STO SU MIGRATE-OVANE DATABASES-SOVA, I CREAR-OVANJE CACHE-OVA
+
+U PRIMERU GORE, JA MAINTAIN-UJEM LISTU CACHE-OVA, ZA KOJE OCEKUJEM DA BUDU TAMO (VARIJABLA cacheWhitelist), A PO TRIGGER-U activate EVENT-A, JA SE OTARASLJAVAM, BILO KOJIH DRUGIH CACHE-OVA, A U GORNJEM PRIMERU JA SAM UKLONIO 'page-cache-v1'
+
+>>>> Caution: You may not be updating from the previous version. It may be a service worker many versions old.
+
+If you pass a promise to event.waitUntil() it'll buffer functional events (fetch, push, sync etc.) until the promise resolves. So when your fetch event fires, the activation is fully complete.
+
+>>>> Caution: The cache storage API is "origin storage" (like localStorage, and IndexedDB). If you run many sites on the same origin (for example, yourname.github.io/myapp), be careful that you don't delete caches for your other sites. To avoid this, give your cache names a prefix unique to the current site, eg myapp-static-v1, and don't touch caches unless they begin with myapp-.
+
+### SKIPPING WAITING PHASE (PRESKAKANJE WAITING FAZE) :seedling:
+
+WAITING FAZA OSIGURAVA DA SAMO RUN-UJES JEDNU VERZIJI SVOG SITE-A, ISTOVREMENO; ALI AKO TI NIJE POTREBAN, TAJ FEATURE, MOZES UCINITI DA TVOJ SERVICE WORKER POSTANE, ACTIVATED SOONER, TAKO STO CES POZVATI
+
+- **self.skipWaiting()**
+
+OVO OMOGUCAVA DA TVOJ NOVI SERVICE WORKER, KICK-UJE OUT, CURRENT ACTIVE WORKER-A, I AKTIVIRA SE STO JE SKORIJE MOGUCE NAKON ULASKA U WITING FAZU, ILI ODMAH (IMMEDIATELLY) AKO JE VEC U WAITING FAZI
+
+**OVO NECE PROUZROKOVATI DA TVOJ SERVICE WORKER SKIP-UJE INSTALACIJU, VEC SAMO WAITING**
+
+**NEMA ZAISTA VEZE, KADA SE TO TREBA POZVATI self.skipWaiting(), AL ITO MORA DA BUDE PRE WAITINGA IL IDURING WAITING (TOKO MWAITING-A)**
+
+**UOBICAJENO JE DA SE POZOVE U ON install HANDLER-U**
+
+```javascript
+self.addEventListener('install', function(ev){
+    self.skipWaiting();
+
+    ev.waitUntil(
+        // CACHING, ITD.
+    )
+})
+```
+
+****
+
+:alien:
+
+**ALI TI MOZES DA POZOVES *self.skipWaiting()*, KAO REZULTAT postMessage(), ODNOSNO SLANJA PORUKE, IZ NEKOG DRUGOG SCRIPTA, ODNOSNO IZ MAIN SCRIPTA**
+
+**I TO MOZE BITI REZULTAT KORISNIKOVE INTERAKCIJE**
+
+ISKORISTICU PROSLI PRIMER DA TO DEFINISEM. A STA CU USTVARI URADITI
+
+- U MAIN SCRIPTU CU DEFINISATI, DA SE DUGME RENDERUJE, SAMO U SLUCAJU KADA SE POKRENE UPDATE-OVANJE; I ONO STO CU TADA KORISTITI U MAIN SCRIPTU, JESTE **updatefound** EVENT; TAJ EVENT CE SE PREDPOSTAVLJAM TRIGGEROVATI ZA **ServiceWorkerRegistration** INSTANCU; A TA INSTANCA JESTE INSTANCA, SA KOJOM JE RESOLVED Promise, KOJI JE POVRATNA VREDNOST navigator.serviceWorker.register('/sw.js') METODE
+
+- NA TOM DUGETU KACIM ON mousedown HANDLER, KOJI TREBA DA POSALJE PORUKU (postMessage) THREAD-U, SERVICE WORKERA
+
+- A NA TU PORUKU, DEFINISACU DA SERVICE WORKER, ODGOVARA TIME DA EXECUTE-UJE self.skipWaiting
+
+****
