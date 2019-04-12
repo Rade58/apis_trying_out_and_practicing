@@ -102,7 +102,7 @@ if('ServiceWorker' in window.navigator){
                                             // - "redundant"          (SERVICE WORKER JE DISCARDED. NAIME ILI JE INSTLATION FAILED, ILI
                                             //                          JE REPLACED SA NOVIJOM VERZIJOM)
 
-                // TA STANJA MOGU PRATITI, TAKO STO SLUSAM              'statechange'       EVENT NA
+                // PROMENU STANJA MOGU PRATITI, TAKO STO SLUSAM              'statechange'       EVENT NA
                 // POMENUTOJ ServiceWorker INSTANCI
 
 
@@ -180,4 +180,12 @@ TO RADIM JER JE ONO STO JE TAMO, JESU OBJASNJENJA, ILI STRATEGIJE, PRI REGISTRAC
 [TESTIRANJE](https://developers.google.com/web/fundamentals/primers/service-workers/registration#testing_things_out)
 
 [ZAKLJUCAK](https://developers.google.com/web/fundamentals/primers/service-workers/registration#conclusion)
+
+## IZ POMENUTOG CLANKA SAZNAJEM DA JE
+
+- UVEK DOBRO KORISTITI window-OV onload HANDLER, KAKO BIH REGISTROVAO WORKER-A, POGOTOVU ZA UREDJAJE SA LOW BANDWITH-OM
+
+- SAZNAO SAM I ZA [REMOTE DEBUGGING](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/) UZ POMOC CHROME-A; CIME SE MORAM POZABAVITI, KADA BUDEM IZUCAVAO DEV TOOLSE
+
+U SUSTINI MOGUCE JE USB-OM POVEZATI ANDROID UREDJAJ SA MOJIM RACUNAREM I TAK ODEBUGG-OVATI APLIKACIJI NA MOBILE UREDJAJU
 
