@@ -17,7 +17,7 @@ OVO CE OBEZBEDITI BEST EXPERIENCE ZA KORISNIKA, NAROCITO ONE KOJI SU NA MOBILNIM
 DAKLE, PRE BILO KOG DEFINISANJA NEOPHODNA JE PROVERA DA LI BROWSER PODRZAVA SERVICE WORKER-E
 
 ```javascript
-if('ServiceWorker' in window.navigator){
+if('serviceWorker' in window.navigator){  // obrati paznju da je malo slovo s u stringu 'serviceWorker'
     //
 }
 ```
@@ -29,7 +29,7 @@ ZATO CU I JA UPRAVO POSMATRATI TAJ CODE, PA CU I KREIRATI SVOJU VERZIJU, KOJU CU
 ```javascript
 'use strict';
 
-if('ServiceWorker' in window.navigator){
+if('serviceWorker' in window.navigator){
 
     // ODLOZI REGISTRACIJU, SVE DOK SE INITIAL PAGE, MOJE APLIKACIJE, NE LOAD-UJE
     window.addEventListener('load', function(){
@@ -189,3 +189,19 @@ TO RADIM JER JE ONO STO JE TAMO, JESU OBJASNJENJA, ILI STRATEGIJE, PRI REGISTRAC
 
 U SUSTINI MOGUCE JE USB-OM POVEZATI ANDROID UREDJAJ SA MOJIM RACUNAREM I TAK ODEBUGG-OVATI APLIKACIJI NA MOBILE UREDJAJU
 
+## SCOPE
+
+MOGUCE JE DODATI REGISTRACIJI, I OPTIONS OBJEKAT, U KOJEM DEFINISEM OBIM (scope PROPERTI), FAJLOVA, CIJE FETCH-EVE, MOZE INTERCEPT-OVATI SERVICE WORKER, ODNOSNO ZA KOJE CE fetch EVENT-OVI BITI TRIGGERED U ServiceWorkerGlobalScope-U
+
+```javascript
+navigator.serviceworker.register('/sw.js', {scope: '/'})   // TO JE NAJCESCE SAMO JEDAN SLASH
+                                                           // A TO JE RELATIVE PATH KOJI JE DEFAULT, I KOJI 
+                                                           // GOVORI (PO MOJOJ SLOBODNOJ INTRPRETACIJI) DA 
+                                                           // SERVICE WORKER OBUHVATA SVE ONO STO JE 
+                                                           // U SUSEDSTVU NA DOMENU, I U NIZIM FAJLOVIMA
+
+// DA SAM ZELEO DA GA OGRANICIM NA ODREDJENI FOLDER, MOGA OSAM NAPISATI OVAKO (ALI TO SE NE RADI U PRAKSI)
+
+navigator.serviceworker.register('/sw.js', {scope: '/neki_folder/'})
+
+```
