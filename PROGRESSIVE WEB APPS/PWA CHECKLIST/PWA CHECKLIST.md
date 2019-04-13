@@ -1,0 +1,3 @@
+# KADA BUDES NAUCIO SVE O PWA-OVIMA, SVOJE PROGRESSIVE WEB APP-OVE GRADI U SKLADU SA SLEDECOM CHECKLIST-OM
+
+[PWA CHECKLIST](https://developers.google.com/web/progressive-web-apps/checklist)
