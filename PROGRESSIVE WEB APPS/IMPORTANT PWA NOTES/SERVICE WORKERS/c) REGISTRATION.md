@@ -205,3 +205,11 @@ navigator.serviceworker.register('/sw.js', {scope: '/'})   // TO JE NAJCESCE SAM
 navigator.serviceworker.register('/sw.js', {scope: '/neki_folder/'})
 
 ```
+
+## controllerchange EVENT
+
+OVO JE EVENT, KOJ ISE TRIGGER-UJE NA **ServiceWorkerContainer** INSTANCI
+
+TA INSTANCA JESTE INSTANCA, KOJOJ SE PRISTUPA, PREKO 
+
+- **window.navigator.serviceWorker**

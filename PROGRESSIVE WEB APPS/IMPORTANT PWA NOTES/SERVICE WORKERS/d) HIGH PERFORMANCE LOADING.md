@@ -87,3 +87,10 @@ self.addEventListener('fetch', event => {
 
 OVO NEMA VEZE SA SERVICE WORKER-IMA, ALI IAPAK TREBA DA PROCITAS
 
+## CHACHING STATIC HTML (ZABORAVIO DA PREDJEM)
+
+[PROCITAJ OVO](https://developers.google.com/web/fundamentals/primers/service-workers/high-performance-loading#caching_static_html)
+
+KORISCENE SU async FUNKCIJE U OVOM CODE-U
+
+A POSTOJE I NEKE NEJASNOCE, PRVENSTVENO OKO TERMINA: 'NORMALIZING URL' (MORAM OTKRITI STA TACNO ZNACI NORMALIZING URL-A)
