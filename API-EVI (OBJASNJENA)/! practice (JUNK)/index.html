@@ -567,56 +567,154 @@
             
 
 
-            // MIXINS
+            // OVAKVU INSTANCU ZELIM DA DODELIM KAO SOURCE ARGUMENT (NE PRVI ARGUMENT), Object.assign METODE
 
-            class ObjekatMixin {
+            class Stvari {
                 constructor(){
-                    this.pegla = "stajer";
-                    this.magla = "toblerone"
+                    // PROPERTIJI
+                    this.magla = "toblerone";
+                    this.pegla = "bananologija";
+                    this.edamer = "nije sir vec polimerna plastika";
+                    this.sunka = "toblerone drugi put";
+                    this.dembelija = "bila jednom jedna zemlja";
+                    this.za_procjedit = "suva drenovina";
+
+                    // OVO SU METODE, KOJE SU 'DIREKTNE METODE' Stvari INSTANCE
+                    // OVE METODE NISU METODE 
+                    this.cedjenje = function(){
+                        console.log(this.za_procjedit);
+                    }
+                    
+                    this.sunkanje = function(){
+                        console.log(this.sunka);
+                    }
                 }
 
-                pregledanje = () => {
-                    console.log(this.pegla);
-                }
-
+                // OVE METODE SU METODE Stvari-OVOG PROTOTIP OBJEKTA
+                // DAKLE METODE     Stvari.prototype 
+                // KOJE CE NASLEDITI SVAKA Stvari INSTANCA
                 piskaranje(){
                     console.log(this.magla);
                 }
 
                 miksovanje(){
-                    console.log(this.mikser);
+                    console.log(this.edamer);
                 }
 
-                tetrebovanje(){
-                    console.log(this.tetreb);
+                // ALI OVE DVE METODE SU USTVARI METODE
+                // ZATO STO PREDPOSTAVLJAM DA OVAKVO KORISCENJE ARROW FUNKCIJE, USTVARI RADI SLEDECE U
+                // PRIKAZANOM GORNJEM KONSTRUKTORU:     this.tetrebovanje = this.tetrebovanje.bind(this)
+                // NIJE VAZNO ZA OVO ALI ZASTO SAM KORISTIO bind, PA AKO METODA BUDE PROMENILA CONTEXT 
+                // (NARAVNO OVO ZA OVU LEKCIJU NIJE BITNO, ALI CISTO NAPOMINJEM, AKO ZABORAVIM)
+                // BITNO JE DA ZNAM DA SU SLEDECE METODE POSTALE DIREKTNE METODEDE INSTANCI
+                // ODNOSNO, JOS PRECIZNIJE, U INSTANCINOM PROTOTIPU CE I DALJE POSTOJATI OVE METODE, ALI SU
+                // OVE METODE ISTO AUTOMATSKI DEFINISU U INSTANCI, CIME OVERRIDE-UJU PROTOTIPOVE ISTOIMENE
+                // METODE
+                tetrebovanje = () => {
+                    console.log(this.dembelija);
+                }
+
+                pregledanje = () => {
+                    console.log(this.pegla);
                 }
             }
 
+            // OVO JE KLASA OBJEKTA, U CIJU INSTANCU CU, KASNIJE 'UGRADITI MIXIN'
+            // MOZDA SAM NEJASAN, KADA U KOLOKVIJALNO KAZEM 'UGRADITI'
+            // ONO STO CU USTVARI URADITI, JESTE DA CU METODE I PROPERTIJE SOURCE OBJEKTA, PREKOPIRATI U 
+                                                    //  PROTOTIP OBJEKAT Burmut INSTANCE
             class Burmut {
                 constructor(){
-
-                    this.mikser = "mikakikala";
-                    this.tetreb = "tetre tetre";
-
+                    this.edamer = "bar je bolji od gaude, koja je od pvc-a";
+                    this.pegla = "baci toblerone, dobices secer";
+                    this.sunka = "podrigivanje samo kulturno";
                 }
+
+                // NISU MI BITNE NIKAKVE METODE
+                // DA IMAM BILO KAKVE METODE, KOJE BIH DEFINISAO
+                // AKO SU ISTOIMENE SA ONIMA IZ PROTOTIPA, ILI ONIMA KOJE JE 'UVEO MIXIN'
+                // JASNO JE DA BI BILE OVERRIDEN TE METODE CIJEJE POREKLO PROTOTIP ILI MIXIN
+                // (PROIZILAZI IZ ODLIKE OBJEKATA I PROTOTYPING-A)
             }
 
-            const burmut = new Burmut();
+            // INSTATICIZIRANJE, NAKON CEGA CU I POZVATI I Object.assign METODU
+            const burmutInstanca = new Burmut(); // OBJEKAT, CIJI CE PROTOTIP BITI TARGET OBJEKAT
+                                                 // TARGET OBJEKAT JE PRVI ARGUMENT Object.assign METODE
+                                                 // TAJ PROTOTIP OBJEKAT, TREBA DA DOBIJE SVE METODE I PROPERTIJE
+                                                 // Stvari INSTANCE, KOJA CE BITI SOURCE OBJEKAT, A TO JE DRUGI ARGUMENT
 
-            let objekatMix = new ObjekatMixin();
+                                    // NARAVNO, MOZE BITI BILO KOJI BROJ SOURCE OBJEKATA, KOJI OSTAJU NA KRAJU NEPROMENJENI
+                                    // SAMO TARGET OBJEKAT MOZE BITI 
 
-            Object.assign(burmut.__proto__, objekatMix);
+                                // KAKO FUNKCIONISE ASSIGN
+
+                                // MOJIM KOLOKVIJALNIM JEZIKOM:
+                                            // DESAVA SE LANCANO KOPIRANJE, ODNOSNO OVERWRITE-OVANJE OD POSLEDNJEG ARGUMENT OBJEKTA 
+                                            // KA PRVOM
+
+                                            // A NA KRAJU SAMO PRVI ARGUMENT BIVA PROMENJEN, ODNOSNO SAMO NJEGOVI PROPERTIJI I
+                                            // METODE BIVAJU PROMENJENI
+
+            let stvariInstanca = new Stvari();
             
-            objekatMix.pegla = "bavar";
-            burmut.pegla = "mazino";
+            /////////////////////////////////////////////////////////
+            // FORMIRANJE MIXIN-A, POZIVANJEM Object.assign METODE
+            Object.assign(burmutInstanca.__proto__, stvariInstanca);
+            ////////////////////////////////////////////////////////
+            
+            // PRIMENA METODA NAD Burmut INSTANCI
 
+            // OVO JE METODA Stvari INSTANCE (DIREKTNA METODA)
+            burmutInstanca.sunkanje();                                          // --> "podrigivanje samo kulturno"
+            // OVO JE METODA SA BINDED this-OM (ISTO METODA Stvari INSTANCE)
+            burmutInstanca.pregledanje();                                       // --> "bananologija"
 
-           const granje =  {
-               spranje(){console.log('gusto granje')},
+            burmutInstanca.piskaranje();    // --> ERROR (Burmut INSTANCA NE NASLEDJUJE METODE OD MIXINOVOG PROTOTIPA)
+                                                        // (JA MIXIN-OV PROTOTIP NISAM PROSLEDIO)
+         ///////////////////////////////////////////////////////////////////////////////////////
+            //////// MOJA Object.assign METODA //////////////////
+            // SA JEDNOM RAZLIKOM STO SE OVA METODA PRIMENJUJE NA TARGET OBJEKTU, A TARGET NIJE NJEN ARGUMENT
+            Object.prototype.myAssign = function(...sources){
+                if(typeof this !== 'object'){
+                    throw new TypeError("Target ain't an object");
+                }else{
+                    for(let source of sources){
+                        if(typeof source !== 'object'){
+                            throw new TypeError("Found non object among source arguments");
+                        }else{
+                            for(let property in source){
+                                this[property] = source[property];
+                            }
+                        }
+                    }
+                }
+            };
+         ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-               grajoranje(){console.log('glogloglog')}
+            let target = {ahmed: 200, ricardo: 800}
+
+            let s1 = {ahmed: 'neka rec', ricardo: 'opet ricy', zemicka: 'iz pekare', pereca: 'iz zlatare'};
+
+            s1.__proto__.stampaj = function(){
+                console.log(this.ahmed);
+                console.log(this.ricardo);
+                console.log(this.zemicka);
+                console.log(this.pereca);
             }
-            
+
+
+           // target.__proto__.myAssign(s1);
+
+
+            let target2 = {ahmed_johnny: 200, ricardo_bronson: 800}
+
+            let s2 = {ahmed_johnny: 'neka rec', ricardo_bronson: 'opet ricy', zemicka: 'iz pekare', pereca: 'iz zlatare'};
+
+
+            Object.assign(target2.__proto__, s2);
+
+
+
 
         </script>
 
