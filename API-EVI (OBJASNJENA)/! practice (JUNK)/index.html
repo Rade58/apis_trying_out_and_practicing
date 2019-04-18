@@ -567,7 +567,7 @@
             
 
 
-            // OVAKVU INSTANCU ZELIM DA DODELIM KAO SOURCE ARGUMENT (NE PRVI ARGUMENT), Object.assign METODE
+            // OVAKVU INSTANCU ZELIM DA DODELIM KAO SOURCE ARGUMENT (NE PRVI ARGUMENT), Object.assign METODE (PRVI ARGUMENT SE NAZIVA TARGET-OM)
 
             class Stvari {
                 constructor(){
@@ -669,7 +669,7 @@
             // OVO JE METODA SA BINDED this-OM (ISTO METODA Stvari INSTANCE)
             burmutInstanca.pregledanje();                                       // --> "bananologija"
 
-            burmutInstanca.piskaranje();    // --> ERROR (Burmut INSTANCA NE NASLEDJUJE METODE OD MIXINOVOG PROTOTIPA)
+            //burmutInstanca.piskaranje();    // --> ERROR (Burmut INSTANCA NE NASLEDJUJE METODE OD MIXINOVOG PROTOTIPA)
                                                         // (JA MIXIN-OV PROTOTIP NISAM PROSLEDIO)
          ///////////////////////////////////////////////////////////////////////////////////////
             //////// MOJA Object.assign METODA //////////////////
@@ -690,6 +690,18 @@
                 }
             };
          ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+         // ISKORISTICU ISTE INSTANCE, KAKO BI FORMIRAO MIXIN, ALI OVOG PUTA SA MOJOM METODOM
+
+         const burmutInstanca2 = new Burmut();
+         const stvariInstanca2 = new Stvari();
+
+         // PRAVLJENJE MIXIN-A
+        burmutInstanca2.__proto__.myAssign(stvariInstanca2);
+        
+        burmutInstanca2.sunkanje();
+        burmutInstanca2.pregledanje();
+        //burmutInstanca2.piskaranje();
 
             let target = {ahmed: 200, ricardo: 800}
 
