@@ -544,7 +544,7 @@
 
             let url = '/styles.css';
 
-            window.fetch(url)
+            /* window.fetch(url)
             .then(function(response){
 
                 window.caches.open(CACHE_NAME)
@@ -561,7 +561,62 @@
 
             }).catch(function(err){
                 console.log(err);
-            })
+            }) */
+
+
+            
+
+
+            // MIXINS
+
+            class ObjekatMixin {
+                constructor(){
+                    this.pegla = "stajer";
+                    this.magla = "toblerone"
+                }
+
+                pregledanje = () => {
+                    console.log(this.pegla);
+                }
+
+                piskaranje(){
+                    console.log(this.magla);
+                }
+
+                miksovanje(){
+                    console.log(this.mikser);
+                }
+
+                tetrebovanje(){
+                    console.log(this.tetreb);
+                }
+            }
+
+            class Burmut {
+                constructor(){
+
+                    this.mikser = "mikakikala";
+                    this.tetreb = "tetre tetre";
+
+                }
+            }
+
+            const burmut = new Burmut();
+
+            let objekatMix = new ObjekatMixin();
+
+            Object.assign(burmut.__proto__, objekatMix);
+            
+            objekatMix.pegla = "bavar";
+            burmut.pegla = "mazino";
+
+
+           const granje =  {
+               spranje(){console.log('gusto granje')},
+
+               grajoranje(){console.log('glogloglog')}
+            }
+            
 
         </script>
 
