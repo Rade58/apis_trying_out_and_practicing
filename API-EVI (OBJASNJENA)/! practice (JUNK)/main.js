@@ -51,6 +51,8 @@ fetch(urlSlike)                // FETCH-UJEM SLIKU
     image.rel = 'old stuff';
 
     const url = URL.createObjectURL(blobInstanca);    // PRIMENJUJEM POMENUTU METODU          URL.createObjectUrl
+    
+    console.log(url);     //       blob:http://localhost:6820/12b689ed-daff-4c71-b057-077bb1897694
 
     image.src = url;                                  // UCITAVAM IMAGE
 
