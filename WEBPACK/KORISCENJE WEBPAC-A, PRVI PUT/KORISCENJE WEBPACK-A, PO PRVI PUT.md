@@ -1,0 +1,40 @@
+## KORISCENJE WEBPACK-A, PO PRVI PUT
+
+[REPO](https://github.com/TheLarkInn/webpack-workshop-2018)
+
+- FORKUJ OVAJ REPO
+
+- ODNDA IDI U SVOJ PROFIL I OTVORO OVAJ FORK
+
+- git clone urlForka
+
+> OVO SLEDECE NIJE NISTA URADILO
+
+- git fetch --all
+
+**MORAM SLEDECE**
+
+UDJEM U ONO STO SAM KLONIRAO SA REMOTE-A
+
+DA PROVERIM BRANCHES (KOJE SU I DALJE REMOTE)
+
+- git branch -a
+
+DA IZADJEM IZ PROCESA
+
+- ctrl + Z
+
+DA UDJEM U SPECIFICAN BRANCH, KOJ ICE TIME POSTATI LOKALNI
+
+- git checkout -b LocalName origin/remotebranchname
+
+**ALI MOZE I OVAKO**
+
+- git checkout imeRemoteBrancha (TADA CE REMOTE POSTATI LOKALAN)
+
+**AKO NE MOZES DA ZATVOTRIS LISTING SVIH BRANCH-EVA**
+
+KUCAJ
+
+- q (SLOVO Q)
+
