@@ -1,5 +1,7 @@
 # SOURCE MAPS
 
+**SOURCE MAPS **
+
 PRVO CU SE POZABAVITI TIME, STA SU TO USTVARI SOURCE MAPS
 
 A U TOME CE MI POMOCI SLEDECI [CLANAK](https://www.schneems.com/2017/11/14/wtf-is-a-source-map/) I NJEGOVI CITATI
@@ -163,3 +165,27 @@ SADA AKO POGLEDAM dist FOLDER, PORED OSTALIH FAJLOVA, TU SU GENERISANI (ILI EMIT
 - main.css.map.gz
 
 **UOSTALOM, AKO POGLEDAM MESSAGE U SAMO MTERMINALU, VIDECU STA JE SVE EMITTED**
+
+## AKO ZELIM LIVE DEMO, OVIH SOURCE MAP-A, MOGU IH DEFINISATI I ZA DEVELOPMENT MODE
+
+webpack.development.js FAJL
+
+```javascript
+module.exports = () => ({
+    // DEFINISEM DAKLE devtool OVDE
+    devtool: "source-map"
+    output: {
+        filename: '[hash].js'
+    },
+    module: {
+        rules: [
+            {test: /.css$/, use: ["style-loader", "css-loader"]}
+        ]
+    },
+
+})
+```
+
+POKRECEM DEVELOPMENT SCRIPT, ALI ZAJEDNO SA COMPRESSION PRESET-OM
+
+- npm run dev -- --env.presets compress
