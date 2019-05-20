@@ -8,11 +8,11 @@ KADA BIH NA PRIMER, **DIREKTNO U TERMINALU EXECUTE-OVAO** SLEDECE
 
 POMENUTI dev SCRIPT SE SASTOJI OD SLEDECEG
 
-- npm run webpack -- --env.mode production --hot
+- npm run webpack-dev-server -- --env.mode development --hot
 
 **DA LI JE OVAKVO KOMPLEKSNO KOMPOPZIRANJE SCRIPTOVA IZAZVALO ERROR, NE ZNAM, JER KADA POSMATRAM CELU KOMPOZICIJU, VIDIM SLEDECE**
 
--- npm run webpack -- --env.mode production --hot -- --env.presets compress
+-- npm run webpack-dev-server -- --env.mode development --hot -- --env.presets compress
 
 ODNOSNO PITAM SE DA LI SU SE OVI *FLAGOVI*, NEKAKO *POMESALI*
 
@@ -31,5 +31,7 @@ OVO JE FUNKCIONISALO DIREKTNOM EXECUTE-OVANJEM U TERMINALU
 KASNIJE SAM GA MOGAO EXECUTE-OVATI BEZ PROBLEMA
 
 - npm run dev:compress
+
+**ALI OPET NAPOMINJEM DA TREBAM KORISTITI yarn INSTEAD**
 
 ## ISTI PROBLEM SAM IMAO I KADA BIH RUNN-OVAO, VISE PRESET-OVA ZAJEDNO SA GLAVNOM KONFIGURACIJOM
