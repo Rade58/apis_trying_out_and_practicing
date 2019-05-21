@@ -66,9 +66,7 @@ module.exports = env => {
             presetName => require(`./presets/webpack.${presetName}`)(env)
         );
 
-        const object = webpackMerge({}, ...configsArray);
-
-        return object;
+        return webpackMerge({}, ...configsArray);
     }
 
     return {};
