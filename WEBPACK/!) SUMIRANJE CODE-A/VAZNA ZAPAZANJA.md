@@ -64,8 +64,28 @@ module.exports = ({mode, presets} = {mode: "production", presets: []}) => {
 }
 ```
 
-**EVO GA JOS BOLJI REGULAR EXPRESSION ZA test PROPERTI**
+**EVO GA JOS BOLJI REGULAR EXPRESSION ZA test PROPERTI U SLUCAJU SLIKA**
 
 - `/\.(png|jpe?g|gif)$/` **(U OVOM SLUCAJU IMAM I gif SUPPOR)**
 
-**A PRONASAO SAM NA STRANICI file LOADE-RA, DA IMA OPCIJA DA SE ZADA CUSTOM URL (A PO DEFAULT-U, ON CE BITI HASHED)**
+**A PRONASAO SAM NA STRANICI file LOADE-RA, DA IMA OPCIJA DA SE ZADA CUSTOM URL (A PO DEFAULT-U, ON CE BITI HASHED)** (PA CAK I U TOM SLUCAJU MOGU DEFINISATI U ZAVISNOSTI OD mode-A)
+
+## css-loade I style-loader
+
+TREBA ZNATI SLEDECE:
+
+ZA **[css-loader](https://github.com/webpack-contrib/css-loader)**
+
+>>> css-loader reads in a css file as a string
+
+**I ON INTERPRETIRA @import I url() KAO import/require()**
+
+KAZU DA JE BESKORISAN, U SUSTINI AKO GA NE CHAIN-UJEM SA DRUGIM LOADER-OM
+
+MISLIM DA JE TAJ LOADER SA KOJIM GA CHAIN-UJEM, UPRAVO style-loader
+
+**[style-loader](https://github.com/webpack-contrib/style-loader)**
+
+**ON DODAJE, LILI IJECT-UJE STILOVE U DOM, KREIRAJUCI `<style></style>` NESTED U `<head></head>` TAGU**
+
+MOZES SLOBODNO TO PROVERITI TAK OSTO INSPECT-UJES ELEMENTE U CHROME DEV TOOLS-U (Element TAB)
