@@ -1,16 +1,18 @@
 # VAZNA ZAPAZANJA (VECINOM O PLUGIN-OVIMA I LOADERIMA) 
 
+TREBA CITATI [webpack-contrib](https://github.com/webpack-contrib) STRANICU, ODNOSNO TREBA PROCITATI O SVAKOM OD LOADER-A I PLUGIN-OVA, JER ONI ZAISTA IMAJU MNOGO OPACIJA
+
 ## file-loader I url-loader (!!! VAZNO , UKEK IH INSTALIRAJ ZAJEDNI, JER url-loader KORITI file-loader UNDER THE HOOD)
 
 >>>> file-loader will copy files to the build folder (dist FOLDER PO DEFAULT-U) and insert links to them where they are included. url-loader will encode entire file bytes content as base64 and insert base64-encoded content where they are included. So there is no separate file.
 
-**file-loader** JE DAFAULT (PREDPOSTAVLJAM DA JE file-loader DEFAULT, POSTO SAM GA MOGAO KORISTITI, ALI MORAO SAM INSTALIRATI TAJ MODUL (USTVARI JA SAM GA INSTALIRAO A NE ZNAM DA LI JE TREBALO))
+**[file-loader](https://github.com/webpack-contrib/file-loader)** JE DAFAULT (PREDPOSTAVLJAM DA JE file-loader DEFAULT, POSTO SAM GA MOGAO KORISTITI, ALI MORAO SAM INSTALIRATI TAJ MODUL (USTVARI JA SAM GA INSTALIRAO A NE ZNAM DA LI JE TREBALO))
 
-DEFINISANJE LIMITA U POGLEDU url-loader -A:
+DEFINISANJE LIMITA U POGLEDU [url-loader](https://github.com/webpack-contrib/url-loader) -A:
 
 >> This technique may make page load faster because there are fewer http-requests to the server to download files.
 
-**DAKLE AKO SLIKA IMA MALU VELICINU, SASTO TO NE PRETVORITI U BASE64 I IMATI DIREKTNO U MOM JAVASCRIPTU, JER NA TAJ NACIN SMANJIO SAM BROJ REQUEST-OVA**
+**DAKLE AKO SLIKA IMA MALU VELICINU, ZASTO TO NE PRETVORITI U BASE64 I IMATI DIREKTNO U MOM JAVASCRIPTU, JER NA TAJ NACIN SMANJIO SAM BROJ REQUEST-OVA**
 
 **PROBLEM JE AKO JE SLIKA VELIKA (I TADA NA SCENU STUPA LIMIT (KOJI MOGU DEFINISATI)), I OVO JE JAKO VAZNO: KADA SE PREWKORACI LIMIT, KORISTICE SE file-loader KAO FALLBACK**
 
@@ -46,7 +48,7 @@ module.exports = ({mode, presets} = {mode: "production", presets: []}) => {
                     {
                         test: /\.jpe?g$/,   // OVDE BIH MOGAO UVRSTITI I png , OVAKO     /\.png|\.jpe?g$/
                         use: [
-                            {loader: "url-loader", options: {limit: 5000}}
+                            {loader: "url-loader", options: {limit: 5000}}   // LIMIT SE DEFINSE IN bytes
                         ]
                     }
                 ]
@@ -61,3 +63,9 @@ module.exports = ({mode, presets} = {mode: "production", presets: []}) => {
 
 }
 ```
+
+**EVO GA JOS BOLJI REGULAR EXPRESSION ZA test PROPERTI**
+
+- `/\.(png|jpe?g|gif)$/` **(U OVOM SLUCAJU IMAM I gif SUPPOR)**
+
+**A PRONASAO SAM NA STRANICI file LOADE-RA, DA IMA OPCIJA DA SE ZADA CUSTOM URL (A PO DEFAULT-U, ON CE BITI HASHED)**
