@@ -1,6 +1,6 @@
 # DYNAMIC import() (OVDE GA MOZDA NISAM NA DOVOLJNO DOBAR NACIN POBJASNIO IZ RAZLOGA STO SE WBPACK-OV DINAMICKI IMPORT, RAZLIKUJE OD ONOG IZ SPECIFIKACIJA)
 
-:collision::collision::collision::collision: [OVDE JE SVE BOLJE OBJASNJENO, TJ DETALJNIJE]() (MEDJUTIM PRIMER (VEZBICA), KOJI SAM RADIO U OVOM md FAJLU JE KOREKTAN NARAVNO)
+:collision::collision::collision::collision: [OVDE JE SVE BOLJE OBJASNJENO, TJ DETALJNIJE](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/0%29%20WEB%20PERFORMANCE%20(DRUGI%20DEO%20TUTORIJALA)/5.%20TIPOVI%20CODE%20SPLITTING-A.md#dinamicki-import-import-razlika-izmedju-import-u-specifikacijam-i-onog-import-iz-webpack-a-postoji) (MEDJUTIM PRIMER (VEZBICA), KOJI SAM RADIO U OVOM md FAJLU JE KOREKTAN NARAVNO)
 
 [caniuse](https://caniuse.com/#search=dynamic%20import) (KADA SAM PISAO OVO EDGE I FIREFOX NISU IMALI PODRSKU ZA OVO) (OVO JE ONAJ DINAMIC import IZ BROWSER LAND-A)
 
