@@ -1,10 +1,10 @@
-# ONE BIG MESS
+# ONE BIG MESS (MADE JUST FOR ME, SO SKIP IT)
 ## repo made only for practicing and learning purposes
 ## for learning how various APIs work 
 ## for learning syntax used inside .md files
 ## for practicing command line
 
-### JAVASCRIPT FAJL     web_components/index.js
+### JAVASCRIPT FAJL     web_components/index.js (!PREMESTENO)
 SADRŽAJ OVOG FAJLA (MISLIM NA COMMENTED OUT DEO, A I PRIMERE KOJI SU KRUCIJALNI), PORED WEB KOMPONENTI (PRAĆENIM, ISTO TAKO KOMENTARIMA I PRIMERIMA), SASTOJI SE U NAJVEĆOJ MERI
 OD OBJAŠNJENJA VEZANIH ZA:
                             Browser: Document, Events, Interfaces
