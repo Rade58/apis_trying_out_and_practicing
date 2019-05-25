@@ -21,9 +21,10 @@ const element_1 = document.createElement('div');
 const element_2 = document.createElement('div');
 const elementBlah = document.createElement('section');
 element_1.textContent = "Nek itekst 1";
-element_1.textContent = "Nek itekst 2";
+element_2.textContent = "Nek itekst 2";
 
-elementBlah.append(element_1, element_1);
+elementBlah.append(element_1);
+elementBlah.append(element_2);
 
 export default elementBlah;
 ```
@@ -72,7 +73,7 @@ import('./neki_element')
 })
 ```
 
-## PRIMETIO SAM, KADA DEFINISEM DINAMICKI IMPORT U MOM CODE-U, KOJI SE BUNDLEUJE UZ POMOC WEBPACKA-A, DA IMAM DODATNI BUNDLE (KADA DEVELOPERI GOVORE, IN TERMS OF WEBPACK, ONI KAZU CODE SPLITTING)
+## PRIMETIO SAM, KADA DEFINISEM DINAMICKI IMPORT U MOM CODE-U, KOJI SE BUNDLEUJE UZ POMOC WEBPACKA-A, DA IMAM DODATNI BUNDLE (KADA DEVELOPERI GOVORE, IN TERMS OF WEBPACK, ONI KAZU CODE SPLITTING) (ALI TEK NAKON STO JE DINAMICKI import EXECUTED, TO JE JSNO NARAVNO)
 
 ZASTO JE OVO **CODE SPLITTING**, BICE MI JASNIJE KASDA PROCITAM SLEDECE RECENICE
 
@@ -104,9 +105,10 @@ const element_1 = document.createElement('div');
 const element_2 = document.createElement('div');
 const elementBlah = document.createElement('section');
 element_1.textContent = "Nek itekst 1";
-element_1.textContent = "Nek itekst 2";
+element_2.textContent = "Nek itekst 2";
 
-elementBlah.append(element_1, element_1);
+elementBlah.append(element_1);
+elementBlah.append(element_2);
 
 // NECU VISE DA IMAM DEFAULT EXPORT VEC ZELIM DA IZVEZEM NEKOLIKO VREDNOSTI
 
@@ -134,4 +136,6 @@ neko_dugme.addEventListener('click', function(ev){
 
 ## VAZNO!!! AKO KORISTIM BABEL, MORAM DODATI JOS JEDAN PLUGIN KAKO BI BILA PODRZANA SINTAKSA DINAMICKOG import(); A U WEBPACK-U, JE SINTAKSA DINAMICKOG import(), PO DEFAULT-U SUPPORTED
 
-## TYPESCRIPT PODRZAVA SINTAKSU
+ALI PREDPOSTAVLJAM DA JE TO DINAMICKI IMPORT IZ SPECIFIKACIJA (NE ZNAM DA LI JE TAJ import SINHRON ILI NE)
+
+## TYPESCRIPT PODRZAVA SINTAKSU (SAMO MI NIJE JASNO JE LI TO import() IZ SPECIFIKACIJA ILI WEBPACKOV)
