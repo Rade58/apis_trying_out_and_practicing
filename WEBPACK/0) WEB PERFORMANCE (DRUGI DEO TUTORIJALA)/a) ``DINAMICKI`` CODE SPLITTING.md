@@ -75,13 +75,13 @@ STA JA WEBPACK-U USTVARI GOVORIM, KADA DEFINISEM "DINAMICKI CODE SPLITTING"
 
 - **ZATIM KREIRAJ INDIVIDUALNE BUNDLE-OVE ZA NJIH**
 
-1. lepo.js -> 0.chunk.js
+-- lepo.js -> 0.chunk.js
 
-2. stilicno.js -> 1.chunk.js
+-- stilicno.js -> 1.chunk.js
 
-3. trendy.js -> 2.chunk.js
+-- trendy.js -> 2.chunk.js
 
-4. hipi.js -> 3.chunk.js
+-- hipi.js -> 3.chunk.js
 
 DAKLE NIJE DINAMICNO, **I DALJE JE STATICNO**
 
