@@ -89,10 +89,8 @@ SVE STO SE RADI JESTE **KREIRANJE OVIH CHUNK-OVA AT BUILD TIME**
 
 **DAKLE OVO SE NE MOZE RADITI SAM OSA VARIJABLOM ALONE**
 
-## U TO SAM MOGAO DA SE UVERIM RANIJE, KADA SAM OVO POKUSAO NE ZNAJUCI DA JE REC O 'DINAMICKOM' CODE SPLITTING-U
+## U TO SAM MOGAO DA SE UVERIM RANIJE (STO NISAM JER NISAM ZANO), KADA SAM OVO POKUSAO NE ZNAJUCI DA JE REC O 'DINAMICKOM' CODE SPLITTING-U
 
-[POGLEDAJ PRIMER](), KOJI SI RADIO RANIJE
+[POGLEDAJ PRIMER](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/0%29%20WEB%20PERFORMANCE%20(DRUGI%20DEO%20TUTORIJALA)/6.%20DEMONSTRACIJA%20CODE%20SPLITTING-A%20(SIMPLE%20DEMO).md#moje-igranje-sa-dinamickim-import-kako-bi-ga-ucinio-reusable-je-dovelo-do-error-a-ali-i-veoma-neocekivanog-resenja-za-pomenuti-error-i-u-tom-slucaju-meni-nema-nista-smisala-osim-da-je-rec-o-tome-kako-webpack-radi-under-the-hood-ono-sto-me-je-spasilo-je-template-string-ali-mislim-da-je-ovo-izazvalo-dodatne-errore-jer-warning-je-uvek-prisutan), KOJI SI RADIO RANIJE
 
 USPEO SI DA GA POPRAVIS JER SI KORISTIO TEPLATE STRING (ALI OSTAO TI JE ERROR, JER NISI IMAO PATH ZA RESOLVING, VEC SAMO VARIJABLU)
-
-
