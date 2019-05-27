@@ -84,6 +84,9 @@ document.body.appendChild(hipsterButton);
 
 hipsterButton.onclick = ev => {
     // OVDE CU UPOTREBITI "DINAMICKI" IMPORT, KAKO BI PROMENIO BOJU DUGMETA NA OLIVE
+
+    // JA SAM USTVARI OVDE MOGAO STAVLJATI debugger IZJAVU
+
     bringButtonStyleDinamicly('olive')
     .then(module => buttonStyleFunc(ev.target, module.default))
 
