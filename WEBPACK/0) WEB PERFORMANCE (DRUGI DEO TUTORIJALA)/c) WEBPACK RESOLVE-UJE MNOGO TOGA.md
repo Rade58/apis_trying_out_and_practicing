@@ -21,19 +21,19 @@ POKAZACU TO NA PRIMERU IZ PREDHODNOG md FAJLA
 **tomato.js** FAJL:
 
 ```javascript
-export default "color: tomato";
+export default "color: tomato;";
 ```
 
 **olive.js** FAJL:
 
 ```javascript
-export default "color: olive";
+export default "color: olive;";
 ```
 
 **almond.js** FAJL:
 
 ```javascript
-export default "color: blanchedalmond";
+export default "color: blanchedalmond;";
 ```
 
 ****
@@ -72,7 +72,7 @@ hipsterButton.onclick = ev => {
 
 ```JSON
 {
-    "default": "color: cyan;"
+    "default": "color: cyan; width: 480px;"
 }
 ```
 
@@ -107,9 +107,11 @@ hipsterButton.onclick = ev => {
 
     // OVDE CE ARGUMENT, SADA BITI "doomer"
     bringButtonStyleDinamicly('doomer')                             //   2
-    .then(module => buttonStyleFunc(ev.target, module.default))
-
-}
+    .then(module => buttonStyleFunc(ev.target, module.default))  // JEDINO STO SAM OVDE MORAO PRISTUPITI
+                                                                // JOS JEDNOM DEFAULT, JER JE WEBPACK PARSE-OVAO JSON
+}                                                               // KAKO BI IMAO OBJEKAT KOJI SAM JA DEFINISAO {default: "..."}
+                                                                // A ON JE SADA VREDNOST, PROPERTIJA default OBJEKTA, SA KOJIM JE
+                                                                // RESOLVED DINAMICKI import()
 ```
 
 - GORE GDE SAM STAVIO 1 **WEBPACK, RESOLVEUJE FAJLOVE NA PATH-U**
@@ -120,9 +122,9 @@ hipsterButton.onclick = ev => {
 
 **SVI BUNDLEOVI SE UKLANJAJU OSIM GLAVNOG I ONOG KOJI JE BUNDLE doomer.JSON FAJLA**
 
-**PREDPOSTAVLJAM DA JE TO SASDA JAVASCRIPT BUNDLE, SA UGRADJENIM JSON-OM IZ MODULA**
+**PREDPOSTAVLJAM DA JE TO SASDA JAVASCRIPT BUNDLE, SA UGRADJENIM PARSED JSON-OM IZ MODULA** (PROVERIO SAM I JESTE)
 
-## A DA SAM ZELO DA WEBPACK, SAMO RESOLVE-UJE FAJLOVE, KOJI SU JSON FORMATA MOGAO SAM KORISTITI EKSTENZIJU
+## A DA SAM ZELO DA WEBPACK, SAMO RESOLVE-UJE FAJLOVE, KOJI SU JSON FORMATA MOGAO SAM KORISTITI EKSTENZIJU (ODNOSNO DA BUDEM STRIKTNIJI, U VEZI MOJIH FILTERA)
 
 REKAO SAM OVO I U PROSLOM FAJLU
 
@@ -143,10 +145,12 @@ document.body.appendChild(hipsterButton);
 
 hipsterButton.onclick = ev => {
 
-    // A POZIVANJEM SLEDECEG, SVI SE JSON BUNDLE-OVI BRISU, A OSTAJ USAMO
+    // A POZIVANJEM SLEDECEG, SVI SE JSON BUNDLE-OVI BRISU (AKO IH IMA VISE), A OSTAJU SAMO
     // BUNDLE FAJLA doomer.JSON I GLAVNI BUNDLE
     bringButtonStyleDinamicly('doomer')                             //   2
-    .then(module => buttonStyleFunc(ev.target, module.default))
+    .then(module => buttonStyleFunc(ev.target, module.default.default))
 
 }
 ```
+
+SVE OVO MOGU PROVERITI I U dist FOLDER-U, NAKON STO RUNN-UJEM PRODUCTION SCRIPT
