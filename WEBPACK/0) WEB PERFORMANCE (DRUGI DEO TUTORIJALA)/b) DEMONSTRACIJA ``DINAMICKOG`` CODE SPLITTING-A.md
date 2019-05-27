@@ -47,3 +47,55 @@ export default "color: blanchedalmond";
 ****
 ****
 
+**button-style.js** FAJL:
+
+```javascript
+export default (button, style) => {
+    button.style = style;
+}
+```
+
+**index.js** FAJL:
+
+**PRATI KOMENTARE U OVOM FAJLU, POSTARAO SAM SE DA KROZ NJIH BUDE SVE RAZUMLJIVO**
+
+```javascript
+import butonStyleFunc from './button-style'
+
+// EVO GA "DINAMICKI" CODE SPLITTING
+const bringButtonStyleDinamicly = fileName => import(`./button-styles/${fileName}`);
+
+// AKO SAMO OSTAVIM GORNJI DEO CODE-A, ODNOSNO SAMO "DYNAMIC CODE SPLITTING FUNKCIJU"
+// I AKO SAVE-UJEM (NARAVNO POKRENUT MI JE DEV SERVER), BICE BUNDLED VISE FAJLOVA, BICE BUNDLED
+// USTVARI:
+
+            //      OSNOVNI BUNDLE (KOJI JE JEDINI UCITAN U HTML)
+
+            //       3      DODATNA BUNDLE-A, KOJI SU BUNDLE-I, MODULA IZ          button-style       FOLDERA
+
+                            // ONI NARAVNO NISU UCITANI U HTML
+
+
+// ALI DALJE NASTAVLJAM DEFINISANJE
+
+const hipsterButton = document.createElement('button');
+hipsterButton.innerText = "hipster";
+document.body.appendChild(hipsterButton);
+
+hipsterButton.onclick = ev => {
+    // OVDE CU UPOTREBITI "DINAMICKI" IMPORT, KAKO BI PROMENIO BOJU DUGMETA NA OLIVE
+    bringButtonStyleDinamicly('olive')
+    .then(module => buttonStyleFunc(ev.target, module.default))
+
+    // POSTO SAM PASSED IN, "olive", NESTALI SU DODATNI BUNDLE-I
+    // SADA IMA SAMO DVA
+                            // GLAVNI
+                            // I ONAJ KOJI JE BUNDLE olive.js FAJLA
+}
+```
+
+**DAKLE JA SAM MORAO OBEZBEDITI WEBPACK-U INFORMACIJU, GDE CE USTVARI, RESOLVE-OVATI MODULE A TA INFORMACIJA JE:**
+
+- PATH "./button-styles"
+
+**JA SAM MOGAO VRSITI I CONCATENATION (*"./button-styles" + fileName*) ALI BILO JE, VISE CONVINIENT KORISTITI TEMPLATE STRING**
