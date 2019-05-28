@@ -1,0 +1,1 @@
+# webpackMode PROPERTI IZ MAGIC COMMENT-A
