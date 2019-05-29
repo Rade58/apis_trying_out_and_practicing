@@ -7,3 +7,5 @@
 JESTE ISTO STO I
 
 - yarn
+
+KAKO DA KORISTIS YARN, VIDI [OVDE](https://yarnpkg.com/en/docs/usage)

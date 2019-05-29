@@ -52,7 +52,7 @@ EVO GA EVO GA DIREKTORIJUM/DATOTEKA STRUKTURA KOD MOJE KONFIGURACIJE I ZAPAMTI D
     "prod:debug": "npm run debug -- --env.mode production",
     "prod:analyze": "npm run prod -- --env.presets analyze",
     "prod:compress": "npm run prod -- --env.presets compress",
-    "prod:compress:analyze": "npm run prod:compress -- --env.presets analyze",
+    "prod:compress:analyze": "npm run prod:compress -- --env.presets analyze", // OVO MI JE BIO JEDINI NACIN DA DEFINISEM VISE OD JEDNOG PRESET-A
     "dev:compress": "npm run dev -- --env.presets compress"
   },
   "keywords": [
@@ -63,8 +63,8 @@ EVO GA EVO GA DIREKTORIJUM/DATOTEKA STRUKTURA KOD MOJE KONFIGURACIJE I ZAPAMTI D
   "author": "Rade",
   "license": "ISC",
   "dependencies": {
-    "file-loader": "^3.0.1",
-    "gsap": "^2.1.3"
+    "file-loader": "^3.0.1",  // NE ZNAM KAK OSE file-loder OVDE NASO (ON TREBA DA BUDE DEV DEPENDANCY (MORA DA SAM GA GLOBALNO INSTALIRAO))
+    "gsap": "^2.1.3"           // gsap library cu nekada nauciti (onaje installed globalno)
   },
   "devDependencies": {
     "compression-webpack-plugin": "^2.0.0",
@@ -206,7 +206,7 @@ module.exports = (env = {presets: []}) => {  // NE ZNAM ZASTO JE DODAO OVAJ DEFA
 }
 ```
 
-## PRESETS
+## PRESETS (ZAVISE OD --env.presets FLAG-A)
 
 **webpack.analyze.js**
 
