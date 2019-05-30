@@ -241,3 +241,7 @@ module.exports = () => ({
 
 })
 ```
+
+## MULTIPLE ENTRY POINTS AND MULTIPLE OUTPUTS
+
+[pogledaj ovaj link](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/MULTIPLE%20ENTRIES%20AND%20OUTPUTS/MULTIPLE%20ENETRIES%20AND%20OUTPUTS.md)
