@@ -142,3 +142,5 @@ VERUJEM DA CU ZNATI NESTO VISE O SVEMU OVOME -->
 [CLANAK ZA WEBPACK CONFIG, FOR MULTIPLE OUTPUTS](https://www.ivarprudnikov.com/static-website-multiple-html-pages-using-webpack-plus-github-example/)
 
 [SOURCE CODE NA GITHUB-U](https://github.com/ivarprudnikov/webpack-static-html-pages)
+
+[MOZES DA PROCITAS I OVAJ CLANAK KOJI SE BAVI mode PROPERTIJEM I optimization PTOPERTIJEM](https://medium.com/webpack/webpack-4-mode-and-optimization-5423a6bc597a)
