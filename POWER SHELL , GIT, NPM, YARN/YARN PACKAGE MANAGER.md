@@ -9,3 +9,13 @@ JESTE ISTO STO I
 - yarn
 
 KAKO DA KORISTIS YARN, VIDI [OVDE](https://yarnpkg.com/en/docs/usage)
+
+## UPGRADING PAKETA
+
+AKO ZELIM DA SE UPGRADE-UJE NA ONU VERZIJU SPECIFICIRANU U package.json
+
+- yarn upgrade
+
+AKO ZELIM DA SE UPGRADE-UJU NA LATEST VERZIJU (CIME SE MENJAJU SPECIFICIRANE VERZIJE U package.json FAJLU)
+
+- yarn upgrade --latest
