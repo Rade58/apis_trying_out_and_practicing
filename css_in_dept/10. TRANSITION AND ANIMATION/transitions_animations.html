@@ -2604,5 +2604,44 @@
         <br>
         <br>
 
+
+        <script>
+        
+            const elemBlahLa = document.createElement('div');
+            elemBlahLa.classList.add('defi');
+            document.body.append(elemBlahLa);
+
+            const buttonLa = document.createElement('button');
+            buttonLa.style.width = '100%';
+            buttonLa.innerText = "animiraj";
+        
+            document.body.append(buttonLa);
+            buttonLa.addEventListener('click', function(ev){
+                elemBlahLa.classList.add('move')
+            })
+
+        </script>
+
+        <style>
+        
+            div.defi {
+                width: 20vw;
+                height: 20vw;
+                background-color: olive;
+                transform: translateY(-100%);
+
+                transition-property: transform;
+                transition-delay: 0.2s;
+                transition-duration: 2s;
+                transition-timing-function: ease-in;
+                
+            }
+
+            div.defi.move {
+                transform: translateY(150%);
+            }
+        </style>
+
+
     </body>
 </html>
