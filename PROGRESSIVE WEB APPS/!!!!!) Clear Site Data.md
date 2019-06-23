@@ -1,4 +1,4 @@
-USTVARI MISLIM DA JE OVO BOLJA OPCIJA 
+# USTVARI MISLIM DA JE OVO BOLJA OPCIJA
 
 Ctrl + Shift + P U KONZOLI
 
@@ -10,6 +10,16 @@ TU BIRAM, ILI SEARCH-UJEM
 
 <https://developers.google.com/web/updates/2019/04/devtools#clear>
 
+
+**OVO CE OBRISATI CPPKIES, STORAGE I JOS TOGA**
+
+## ALI MOZE DA SE IDE I DESNI KLIK NA KRUZIC ZA RELOAD I IZABERU SE NEKA OD OPCIJA
+
+- Normal Reload
+
+- Hard Reload
+
+- Empty Cache and Hard Reload
 
 ## Ctrl + Shift + F5 (MISLIM DA JE SAMO U PITANJU Ctrl + F5 (MISLIM DA SAM U PRAVU (NE KORISTITI Shift)))
 
