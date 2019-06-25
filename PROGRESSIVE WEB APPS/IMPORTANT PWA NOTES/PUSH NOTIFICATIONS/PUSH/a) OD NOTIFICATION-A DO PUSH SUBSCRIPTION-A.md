@@ -171,6 +171,9 @@ if('Notification' in window && 'serviceWorker' in navigator){   // DODAO SAM I S
                                                         // I KOJE SADA HOCU DA KORISTIM U OBIM CALLBACKA-A,
                                                         // SLEDECEg then-A
 
+                                                        // Promise JE TACNIJE RESOLVED SA
+                                                        // PushSubscriptio nINSTANCOM
+
         })
         .then(sub => {              // DAKLE SA OVOM VREDNOSCU (sub) JE RESOLVED PREDHODNI PROMISE
 
@@ -245,8 +248,7 @@ I ZATO JA PROVERAVAM DA LI JE TRENUTNI UREDJAJ SUBSCRIBED
 ```javascript
 const enableNotificationsButtons = document.querySelectorAll('button.enable-notifications');
 
-if('Notification' in window && 'serviceWorker' in navigator){   // DODAO SAM I SERVICE WORKER DEO U OVU 
-                                                                // USLOVNU IZJAVU
+if('Notification' in window && 'serviceWorker' in navigator){  
 
     const displayConfirmNotification = function(){
 
@@ -307,7 +309,7 @@ if('Notification' in window && 'serviceWorker' in navigator){   // DODAO SAM I S
             // I UPRAVO ZATO, ONO PRVO STO PROVERAVAM JESTE:
             // DA LI JE sub, USTVARI null
 
-            if(sub === nul){
+            if(sub === null){
                 // AKO JESTE null, ONDA KREIRAM NOVI SUBSCRIPTION
 
             }else{
