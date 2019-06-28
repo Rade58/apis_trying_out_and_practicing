@@ -223,7 +223,7 @@ self.addEventListener('push', ev => {
 
 ## NAKON STO UPDATE-UJEM SERVICE WORKER, MOGU SADA ISPITATI MOJ CODE
 
-> ps .KAO STO SAM GOVORIO RANIJE NEMOJ DA CLEAR-UJES SITE DATA JER CE TO UNREGISTER SERVICE WORKER [1]()
+> ps .KAO STO SAM GOVORIO RANIJE NEMOJ DA CLEAR-UJES SITE DATA JER CE TO UNREGISTER SERVICE WORKER [1](#da-se-podsetim-i-ovoga-ako-unregister-ujem-service-worker-a-subscription-ce-za-tog-client-a-biti-nevazeci-iako-sam-ga-ranije-subscribe-ovao-dakle-onaj-subscription-koji-je-stored-na-serveru-i-koji-ima-endpoint-vendor-server-a-url-nece-vise-biti-upotrebljen-jer-ce-novi-service)
 
 SUBMITTOVATI FORMULAR MOG APP, ODNOSNO POSLATI POST REQUEST, STO CE AN BACKENDU TAKODJE INICIJALIZOVATI I SLANJE PUSH REQUESTA, JER SAM JA TAK OTAM ODEFINISAO
 
