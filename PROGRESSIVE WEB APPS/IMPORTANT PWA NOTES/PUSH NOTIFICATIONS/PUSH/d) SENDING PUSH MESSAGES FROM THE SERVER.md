@@ -29,9 +29,9 @@ const serviceAccount = require("./instaclone-fb-key.json");
 const webpush = require('web-push');
 
 
-const privateVapidKey = "oC8DBLaEzbmom6BtrF6z7_pVY";  // OVI KLJUCEVI NISU PRAVI, JER NE ZELIM DA BILO KO KO CITA OVO
+const privateVapidKey = "oC8DBLaEzm6BtrF6z7_pVY";  // OVI KLJUCEVI NISU PRAVI, JER NE ZELIM DA BILO KO KO CITA OVO
                                                       // MOZE SLATI PUSH REQUESTS U SLUCAJU MOJE WEB APLIKACIJE
-const publicVapidKey = "BMfwPHs40w8CDWGnf2HSq-vAGVOZMLhIgcDWDRgFzvrBCChNxX_spJoSM";
+const publicVapidKey = "BMfwPHs40w8CDWGnf2HSqVOZMLhIgcDWDRgFzvrBCChNxX_spJoSM";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
