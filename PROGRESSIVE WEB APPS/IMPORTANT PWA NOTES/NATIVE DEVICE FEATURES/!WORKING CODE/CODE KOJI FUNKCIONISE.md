@@ -50,7 +50,7 @@ function dataURItoBlob(dataURI) {
 }
 ```
 
-2. PRIKAZUJEM CODE feed.js (SAMO ONAJ DEO CODE-, KOJI ME ZANIMA)
+2. PRIKAZUJEM CODE feed.js (SAMO ONAJ DEO CODE, KOJI ME ZANIMA)
 
 **feed.js** FAJL:
 
@@ -67,58 +67,71 @@ let picture;    // DOLE U CODEU SAM DEFINISAO
                 // FROM VIDEO ELEMENT, UZ KORISCENJE CANVAS ELEMENT-A
 
 
+// SLEDECA FUNKCIJA CE BITI POZVANA NA OTVARANJU MODAL-A, SA INPUT FIELD-OVIMA
+// SVRHA JOJ JE DA PRIKAZE KAMERIN STREAM, UCITAN U VIDEO ELEMENT-U, ILI DA PRIKAZE FILE PICKER, AKO
+// KAMERI NSTREAM NIJE MOGUC
 
 const initializeMedia = function(){
 
+    // ZELIM DA KORITIM MediaStream INSTANCU KAMERE, UREDJAJA
+
+                                                    // PRVO ISPITATI DA LI POSTOJE mediaDevices
+                                                    // U window.navigator-U
     if(!('mediaDevices' in window.navigator)){
 
-        window.navigator.mediaDevices = {};
+        window.navigator.mediaDevices = {};             // AKO NE POSTOJI, PRAVIM GA
 
     }
 
-    if(!('getUserMedia' in window.navigator.mediaDevices)){
-
+    if(!('getUserMedia' in window.navigator.mediaDevices)){                     // AKO FUNKCIJA NE POSTOJI, I NJU PRAVIM
+                                                                                // ODNOSNO KORISTIM POLYFILL
         window.navigator.mediaDevices.getUserMedia = function(constraints){
 
-            let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;   // ODNOSNO KORISTIM LEGACY FEATURE, KOJI IMA ISTU NAMENU
 
             if(!getUserMedia){
 
-                return Promise.reject(new Error('getUserMedia is not implemented'));
+                return Promise.reject(new Error('getUserMedia is not implemented'));         // AKO NISTA NIJE DODELJENO NECU MOCI KORISTITI
+                                                                                            // MediaStream KAMERE
 
             }
 
-            return new Promise((resolve, reject) => {
-
+            return new Promise((resolve, reject) => {             // AKO FUNKCIJA POSTOJI, POZIVAM JE
+                                                                // NADAM SE DA CE SVE BITI RESOLVED SA
+                                                                // MediaStream INSTANCOM
                 getUserMedia.call(
                     window.navigator,
                     constraints,
                     resolve,
                     reject
                 );
-
-            })
+                                                                // MediaStrema INSTANCA MI TREBA ZA CANVAS,
+            })                                                  // KAO UNOS, KAKO IZ CANVAS-A, PROCITAO
+                                                                // IMAGE, ODNOSNO BASE64 (DATA URI) IMAGE-A
 
         }
 
     }
 
 
-    window.navigator.mediaDevices.getUserMedia({video: true})
-
+    window.navigator.mediaDevices.getUserMedia({video: true})     // OVDE SAM UPRAVO POZVAO, POMENUTU FUNKCIJU
+                                                                  // I MOGUCE JE DA JE REDEFINISANA, AKO UREDJAJ
+                                                                  // NIJE PODRZAVAO mediaDevices ILI mediaDevices.getUserMedia
     .then(mediaStream => {
 
-        videoPlayer.srcObject = mediaStream;
-
-        videoPlayer.style.display = "block";
+        videoPlayer.srcObject = mediaStream;                // AKO SVE USPE IMAM MediaStream INSTANCU
+                                                            // I MOGU JE UCITATI U VIDO ELEMENT
+        videoPlayer.style.display = "block";            // AKO SVE USPE, DAKLE VIDEO MOZE BITI PRIKAZAN
     })
 
     .catch(err => {
-
+                        // AKO NIJE USPELO
         console.log('-o-o-o-o-o-o-o-o--o-o ERROR media devices -o-o-o-o-using picker insteado-o-o-o-o-o-: ', err)
 
-        imagePickerArea.style.display = "block";
-        captureButton.style.display = "none";
+        imagePickerArea.style.display = "block";     // PRIKAZUJEM FILE PICKER
+
+        captureButton.style.display = "none";       // A CANVAS I VIDEO ELEMENT MI VISE NISU POTREBNI
+        canvasElement.style.dysplay = "none";
 
     })
 
@@ -127,15 +140,27 @@ const initializeMedia = function(){
 
 // ********************************************************
 // ********************************************************
-//      OVDE CU DA ZAKACIM POMENUTI HANDLER
+//      OVDE PRIKAZUJEM HANDLER, KOJI JE ZAKACEN NA CAPTURE DUGME
+//      REKAO SAM GORE DA POSTOJI MOGUCNOST DA OVO DUGME I NE BUDE
+//      PRIKAZANO (TAK OSAM DEFINISAO), AKO NEMAM PRISTUP KAMERI
+
+//***************************************
+
+// CONTEXT CANVASA (TO CE BITI)
+
+let context;
+
+//*************************************
+
 
 captureButton.addEventListener('click', ev => {
 
-    // PRVO STA DEFINISEM JESTE PRIKAZIVANJE SAMOG canvas ELEMENTA, KOJI JE PO DEFAUKLT-U SAKRIVEN
+    // PRVO STA DEFINISEM JESTE PRIKAZIVANJE SAMOG canvas ELEMENTA, KOJI JE PO DEFAULT-U SAKRIVEN (TAKO SAM DEFINISAO NA POCETKU U CSS-U)
 
     canvasElement.style.display = "block";
 
-    // POSTO JE USER KLIKNUO OVO CAPTURE DUGME, TO BI TREBAL ODA SAKRIJE videoPlayer ,ODNOSNO video ELEMENT
+    // POSTO JE USER KLIKNUO OVO CAPTURE DUGME, TO BI TREBAL ODA SAKRIJE videoPlayer, ODNOSNO video ELEMENT
+    // NE MORA BITI DISPLAYED VISE (I DALJE MOGU IZ NJEGA UZETI SNAPSHOT UZ POMOC CANVAS-A)
 
     videoPlayer.style.display = "none";
 
@@ -148,25 +173,26 @@ captureButton.addEventListener('click', ev => {
 
     captureButton.style.display = "none";
 
-    // KONACNO CU SADA DEFINISATI, KAKO DA GETT-UJEM STREAM DO CANVAS-A
+    // KONACNO CU SADA DEFINISATI, KAKO DA DOVEDEM STREAM DO CANVAS-A
 
-    // MORAM KREIRATI CONTEXT ZA canvas, I TA JCONTEXT CU STORE-OVATI U VARIJABLOJ
+    // MORAM KREIRATI CONTEXT ZA canvas, I TAJ CONTEXT CU STORE-OVATI U VARIJABLOJ
 
-    let context = canvasElement.getContext('2d');
+    // let
+    context = canvasElement.getContext('2d');
 
     // TO JE METODA KOJOM INICIJALIZUJEM NACIN NA KOJI CU CRTATI NA POMENUTOM CANVAS-U
     // I ONO STA SAM DEFINISAO JESTE
                                         //  ZELI MDA CRTAM 2d IMAGE
-                        //  JER ZELIM IMAGE SCREENSHOT, ODNOSNO SNAPSHOT MOG STREAM-A
+                        //  JER ZELIM IMAGE SCREENSHOT, ODNOSNO SNAPSHOT MOG VIDEA
 
     // SADA MOGU KORISTITI, TAJ CONTEXT TO DRAW AN IMAGE
     // ZVUCI KOMPLIKOVANO, ALI IPAK NIJE
 
-    // ARGUMENTI CE BITI IMAGE ELEMENT, A TO JE MOJ videoPlayer, STO CE MI AUTOMATSKI DATI STREAM
+    // ARGUMENTI CE BITI IMAGE ELEMENT, A TO JE MOJ videoPlayer, STO CE CANVAS-U AUTOMATSKI DATI STREAM
     // A SLEDECI ARGUMENTI SU BOUNARIES, A TO SU DIMANZIJE CANVAS-A
 
     // POCINJEM U TOP LEFT CORNERU :         KORDINATE        0    I    0
-    // ZATI MDEFINISEM SIRINU, A TO MOZE BITI DEFAULT CANVAS WIDTH:        canvasElement.width
+    // ZATIM DEFINISEM SIRINU, A TO MOZE BITI DEFAULT CANVAS WIDTH:        canvasElement.width
 
     // A STO SE TICE VISINE, TREBA DA NAPRAVIK KALKULACIJU
     //  TREBA MI VISINA KOJA JE U SKLADU SA ASPECT RATIOM VIDEA
@@ -175,7 +201,7 @@ captureButton.addEventListener('click', ev => {
 
     //      videoPlayer.videoWidth /  videoPlayer.videoHeight
 
-    // A POSTO ZELI MDA ISTI ASPECT RATIO IMA SLIK,A ONDA DEFINISEM SLEDECU JEDNACINU
+    // A POSTO ZELIM DA ISTI ASPECT RATIO IMA SLIK-A, A ONDA DEFINISEM SLEDECU JEDNACINU
 
     //      videoPlayer.videoWidth /  videoPlayer.videoHeight   =   canvasElement.width / h
 
@@ -190,14 +216,16 @@ captureButton.addEventListener('click', ev => {
         canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight)
     );
 
+    // KADA SE OVO ZAVRSI, SNAPSHOT IS TAKEN I MOZE SE VIDETI U CANVAS ELEMENTU
+
     // SADA MOGU ZAUSTAVITI STREAM VIDEO-A
 
     // AKO TO NE URADIM, VIDECE SE KAMERA I DALJE; A NA MAC-U, CE TO BITI VIDLJEVO PO EED LIGHT-U KAMERE,
-    // KOJ ICE POINT-OVATI U KORISNIKA
+    // KOJI CE POINT-OVATI U KORISNIKA
 
     //  ALI MORAM ACCESS-OVATI      srcObject-U VIDE-A
 
-    //  MOGU POMISLITI DA MU TREBAM DODELITI null, AL ITO NIJE ONO STA CU URADITI
+    //  MOGU POMISLITI DA MU TREBAM DODELITI null, ALI TO NIJE ONO STA CU URADITI
 
     //  PRIMENICU METODU        getVideoTracks
 
@@ -205,7 +233,7 @@ captureButton.addEventListener('click', ev => {
 
     // I ONDA MORAM PRIMENITI forEach METODU
 
-    //  LOOPUJEM KROZ SVE RUNNING TRACKS
+    //  LOOPUJEM KROZ SVE RUNNING TRACKS (IAKO IMA SAMO JEDNA)
 
     //  NA KOJIM PRIMENJUJEM stop
 
@@ -213,8 +241,14 @@ captureButton.addEventListener('click', ev => {
         track.stop();
     })
 
-    picture = dataURItoBlob(canvasElement.toDataURL());
+    picture = dataURItoBlob(canvasElement.toDataURL());          // OVDE SAM ISKORITI ONU UTILITY METODU
+                                                                 //  KAKO BI NAPRAVIO Blob INSTANCU, KORISTECI DATA URI SLIKE
+                                                                 // DATA URI (BASE64) JE PROCITAN IZ CANVAS-A
 
+                                                                 // I TO JE ONO GLAVNO
+                                                                 // KADA IMAM OVAJ Blob, MOGU RAZMISLATI KAKO DA GA ZAJEDNO SA
+                                                                 // OSTALIM PODACIMA, IZ OSTALIF INPUT FIELD-EVA POSALJEM SERVERU
+                                                                 // UZ BACKGROUND SYNC ILI DIREKTNO (DIREKTNO JE FALLBACK)
     console.log(picture);
 
 })
@@ -222,32 +256,52 @@ captureButton.addEventListener('click', ev => {
 // ********************************************************
 // ********************************************************
 
+// OVO JE DAKLE CODE, KOJI JE TU BIO I RANIJE, A ODNOSI SE NA OTVARANJE I ZATVARANJE MODALA
+// SA INPUT FIELD-OVIMA
+
 const buttonOther = document.querySelector('.plusButtonOther');
 
 const openCreatingPostModal = ev => {
 
-    initializeMedia();
+    // canvas ne treba biti prikazan
+
+    canvasElement.style.display = 'none';  // O NCE BITI PRIKAZAN KADA SE PRITISNE CAPTURE DUGME
+
+    initializeMedia();   // TO JE ONA FUNKCIJA, KOJU CU POZVATI U HANDLER-U, KOJI OTVORI MODAL
+                        // A ONA CE ODLUCITI DA LI CE VIDEO (CAMERA STREAM) BITI DEO MODALA, ILI
+                        // CE DEO MODALA BITI FILE PICKER
 
     const elem = document.querySelector('div#create-post');
     elem.classList.remove('closeP');
     elem.classList.add('openP');
 };
 
-const closeCreatingPostModal = ev => {
+const closeCreatingPostModal = ev => {                          // OVO JE HANDLER, KOJI JE ZAKACEN ZA DUGME ZA ZATVARANJE MODAL-A
     const elem = document.querySelector('div#create-post');
 
     elem.classList.remove('openP');
     elem.classList.add('closeP');
 
-    videoPlayer.style.display = "none";
-    imagePickerArea.style.display = "none";
+    videoPlayer.style.display = "none";             // KAD SE ZATVARA MODAL, NEKA SI CANVAS I VIDEO ZATVORE
+    imagePickerArea.style.display = "none";         // A AKO JE IMAGE PICKER BIO TU UMESTO NJIH, NEKA SE ON ZATVORI
 
     canvasElement.style.display = "none";
 
 
-    videoPlayer.srcObject.getVideoTracks().forEach(track => {
+    /* videoPlayer.srcObject.getVideoTracks().forEach(track => {
         track.stop();
-    })
+    }) */
+
+    // TREBAO BIH SADA DA OCISTIM CANVAS, ODNOSNO DA UKLONIM SLIKU IZ NJEGA
+    // JER AKO KORISNIK, OPET OTVORI MODALNI MENU SA INPUTIMA, BICE CAPTURED SLIKA
+    // U CANVASU, A TO NIJE DOBRO
+
+    if(context) context.clearRect(0, 0, canvasElement.width, canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight));
+
+
+    // CAPTURE BUTTON, MOZE PONOVO BITI DISPLAYED
+
+    captureButton.style.display = 'block';
 
 }
 
