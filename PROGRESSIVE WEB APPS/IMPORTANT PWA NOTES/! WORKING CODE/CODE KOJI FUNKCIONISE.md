@@ -232,10 +232,8 @@ if('indexedDB' in window){    //   DB JE NAPISANO VELIKIM SLOVIMA   !!!!! ZAPAMT
 //***+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*************//
 
 // OVAJ DEO JE BIO PROBLEMATICAN RANIJE, ZATO JE OVDE SAMO SVE DEKLARISANO I DEFINISANO,
-// A NISTA NIJE POZVANO (USTVARI INICIJALIZACIJA MEDIA, ODNOSNO CITANJE OD KAMERE, PA PREKO CANVASA, SVE DO CAPTURED
-// VIDEA JESTE DEFINISA, PA DO DOBIJANJA SNAPSHOT-AM JESTE DEFINISANO, ALI ZA SADA NIJE POZVANO)
 
-// OVO SAMO OSTAVLJAM OVDE, A KASNIJE, U NEKO MDRUGOM FAJLU CU NASTAVITI DEBUGGING NATIVE FETURE-OVA
+// MEDJUTIM, OVO NIJE PROUZROKOVALO PROBLEME VEC SERVER SIDE CODE ILI POGRESNO KORISCENJE BLOB-A
 
 const videoPlayer = document.querySelector('video#player');
 const canvasElement = document.querySelector('canvas#canvas');
@@ -317,8 +315,8 @@ captureButton.addEventListener('click', ev => {
         0,
         0,
         canvasElement.width,
-        canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight)   // OVO JE NATACNO KORISCENJE ASPECT RATIO ODNOSA (PREDPOSTAVLJAM)
-                                                                                    // OVO BIH MORAO REDEFINISATI
+        canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight)
+
     );
 
 
@@ -346,6 +344,7 @@ const buttonOther = document.querySelector('.plusButtonOther');
 const openCreatingPostModal = ev => {
 
     // initializeMedia();      // DAKLE INICIJALIZACIJU, ODNOSNO PRIKAZ VIDEA ILI FILE PICKERA, JOS NECU DEFINISATI, DOK NE OTKLONIM GRESKE
+                               //  AL ISAM SAZNAO KASNIJE DA OVO NIJE PROUZROKOVALO GRESKU (PROBLEM JE BIO SA SERVER CODE-OM)
 
     const elem = document.querySelector('div#create-post');
     elem.classList.remove('closeP');
