@@ -813,6 +813,12 @@ form.addEventListener('submit', ev => {
 
             .then(() => {
 
+                // OVDE CU NAMERNO STAMPATI         picture
+                // JER ZEIM DA SE POIGRAVAM, ODNOSNO DA ISPITUJEM POMENUTI Blob
+                // U KONZOLI (MOGU DA GA NAINIM VREDNOSU temp VARIJABLE I TAK OSE POIGRAVAM)
+
+                console.log("OVO JE BLOB SLIKE; IGRAJ SE S NJIM BLAH:", picture);
+
                 return swr.sync.register('sync-new-post');
             })
 
@@ -915,6 +921,14 @@ self.addEventListener('sync', function(ev){
                             // DAKLE STAMPAM        FormData        INSTANCU
                     console.log("-*-*-*-*-*-*-*", postData, "-*-*-*-*-*-*-*-*-");
 
+                    // MEDJUTIM, MISLIM DA NECES MOCI DA ASSIGN-UJES OVAJ OBJEKAT
+                    // U temp VARIJABLI U CHROME KONZOLI, JER JE TO DATA IZ SERVICE WORKERA
+                    // A TO CE BITI WIPED KADA SE IZVRSI SERVICE WORKER CODE
+
+                    //              OVDE SAM BIO U PRAVU
+
+                    // ZATO CU STAMPATI GETTED      Blob        FROM FORM DATA
+                    console.log("-*-*-*-*-*-*-*", postData.get('file'), "-*-*-*-*-*-*-*-*-");
                     //-----------------------------------------------------------
 
 
@@ -957,3 +971,19 @@ self.addEventListener('sync', function(ev){
     }
 })
 ```
+
+## DAKLE, KAO STO SAM REKAO, JA CU SADA DEPLOY-OVATI SVE CHANGES, I NAPRAVICU ONDA JEDAN POSTING
+
+ZELIM DA VIDIM, OD CEGA SE SASTOJI FormData INSTANCA, KREIRANA U ON sync HNADLER-U
+
+ODNOSNO ZELIM DA GETT-UJEM Blob, KOJI SAM 'POHRANIO' U FormData (U GORNJEM CODE-U SAM I TO DEFINISAO, ODNOSNO DEFINISAO SAM DA SE STAMPA FormDataInstanca.get(), A ONO STO SAM UPOTREBIO KAO ARGUMENT JE KLJUC POD KOJIM SAM 'POHRANIO' Blob)
+
+**DAKLE, KADA SEM POKUSAO, DA GETT-UJEM BLOB IZ FormData INSTANCE, ONO STO JE PROIZISLO IZ TOGA, JESTE**
+
+- **File** INSTANCA
+
+SAZNAJ OVDE VISE O [File](https://developer.mozilla.org/en-US/docs/Web/API/File) INSTANCI
+
+## :star::star::star::star: DAKLE U SLUCAJU KADA SE Blob INSTANCA APPEND-UJE NA FormData INSTANCU, AKO POKUSAM DA OD FormData PROCITAM (get()) TU INSTANCU, ono sto ce proizici jeste File INSTANCA
+
+**File INSTANCA JE TAKODJE INSTANCA, KOJU DOBIJAS KADA PROCITAS value OD `<input type="file">`** (AKO SI KORISTIO multiple ATRIBUT, ONOS TO MOZES PROCITATI BICE [*FileList*](https://developer.mozilla.org/en-US/docs/Web/API/FileList) INSTANCA)
