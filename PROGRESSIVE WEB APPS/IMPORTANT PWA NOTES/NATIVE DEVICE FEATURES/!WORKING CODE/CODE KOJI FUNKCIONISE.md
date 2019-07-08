@@ -24,7 +24,7 @@ ZATO OVAJ PROCES DEFINISANJA OTPOCINJEM PONOVO UZ, JOS TEMELJNIJE TESTIRANJE, MO
 
 - CITANJE PODATAKA IZ indexedDB, STO OBAVLJAM ON sync; I INSTANTICIZIRANJE FormData, ZATIM APPENDOVANJE PODATAKA PROCITANIH IZ indexedDB-JA I NJIHOVO APPEND-OVANJE NA FormData INSTANCU, I ONDA PRAVLJENJE 'POST' REQUESTA, SA FormData INSTANCOM U BODY-JU Request-A
 
-**A EVO GA TRENUTNI CODE, KOJI FUNKCIONISE** (NEKA OVB IMAM PRIKAZANO KAO POLAZNU TACKU, UOSTALO MDOBRO JE DA IMAM PRIKAZAN CODE, KOJI JE FUNKCIONISAO U POTPUNOSTI)
+**A EVO GA TRENUTNI CODE, KOJI FUNKCIONISE** (NEKA OVO IMAM PRIKAZANO KAO POLAZNU TACKU, UOSTALOM DOBRO JE DA IMAM PRIKAZAN CODE, KOJI JE FUNKCIONISAO U POTPUNOSTI)
 
 >>> NE PRIKAZUJEM CODE FAJLOVA U POTPUNOSTI, VEC SAM ODEO CODE FAJLOVA, KOJI ME TRNUTNO ZANIMA, ODNOSNO PRIKAZUJEM CODE, GORE POMENUTIH STVARI
 
@@ -177,7 +177,9 @@ captureButton.addEventListener('click', ev => {
 
     // MORAM KREIRATI CONTEXT ZA canvas, I TAJ CONTEXT CU STORE-OVATI U VARIJABLOJ
 
-    // let
+    // RANIJE JE CONTEXT BIO OVDE I DEKLARISAN, ALI ZAKLJUCIO SAM DA CE MI TA VARIJABLA
+    // TREBATI DA SE CANVAS CLER-UJE OD SLIKE, PRILIKO MZATVARANJA MODAL-A
+
     context = canvasElement.getContext('2d');
 
     // TO JE METODA KOJOM INICIJALIZUJEM NACIN NA KOJI CU CRTATI NA POMENUTOM CANVAS-U
@@ -309,12 +311,25 @@ buttonOther.addEventListener('click', openCreatingPostModal);
 
 buttonClose.addEventListener('click', closeCreatingPostModal);
 
+//* JA SAM PREDHODNO DAO DOBRO OBJASNJENJ, STA SE DESAVA, KAO POSLEDICE SVEG POMENUTOG CODE-A
+// I DAO SAM OBJASNJENJA, KOJA SU SE TICALA NEKISH INSTANCI, KAKO BI IH BOLJE RAZUMEO
+
 /* /////////////////////////////////////////////////////////////////////////////////// */
 /* /////////////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////BACKGROUND SYNC//////////////////////////////////// */
 /* /////////////////////////////////////////////////////////////////////////////////// */
 
-function sendData(){
+// U SUSTINI, SLEDECI CODE CE BITI ONAJ CODE, KOJI CU MORATI REDEFINISATI
+// A SADA CU RECI STYA CU TO REDEFINISATI
+
+// SLEDECA FUNKCIJA, JE FALLBACK FUNKCIJA, KOJA SE POZIV, KADA BROWSER NE PODRZAVA window.SyncManager
+// ILI window.navigator.serviceWorker
+// ODNOSNO DOLE SAM DEFINISAO DA SE TADA POZIVA
+
+const sendData = function(){
+
+    // OVAJ OBJEKAT (NAKON NJEGOVOG STRINGIFYING-A) VISE NECE BITI TA VREDNOST, KOJA CE BITI U BODY-JU Request-A
+    // PODNESENOM CLOUD FUNCTION-U
 
     const dataObject = {
         id: new Date().toISOString(),
@@ -325,10 +340,12 @@ function sendData(){
 
     // DAKLE KADA SAM DEFINISAO body Request-A JA SAM MU ZADAO JSON STRING KAO VREDNOST
     // TO BI TREBALO DA ZAMENIM SA       FormData
+    // A TAJ FormData BI TREBALO DA IMA I APPENDED Blob INSTANCU, KOJU SADA REFERENCIRA GLOBALNA VARIJABLA picture
+    // TA BLOB INSTANCA REPREZENTUJE ONAJ MOJ, TAKEN SNAPSHOT
 
     fetch('https://us-central1-instapwaclone.cloudfunctions.net/storePostData', {
         method: "POST",
-        body: JSON.stringify(dataObject),
+        body: JSON.stringify(dataObject),  // OVO BI BILO ZAMENJENO SA          FormData
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -338,12 +355,12 @@ function sendData(){
         console.log("Send Data: ", resp);
         updateUI(dataObject)
     })
-}
+};
 
-// I OVA POMENUTA FALLABCK FUNKCIJA
+// I OVA, GORE PRIKAZANA FALLABCK FUNKCIJA
 // JE ISKORISCENA, ONDA KADA NE POSTOJI ServiceWorker ILI SyncManager
 
-// DAKLE, DEFINISAO SAMTAKO
+// DAKLE, DEFINISAO SAM TAKO
 // DA CE U onsubmit HANDLER-U, POMENUTA FUNKCIJA BITI POZVANA KADA POMENUTE STVARI NISU PODRZANE
 
 const titleInput = document.querySelector('input#title');
@@ -360,7 +377,8 @@ form.addEventListener('submit', ev => {
 
         return;
     }
-    closeCreatingPostModal();
+
+    closeCreatingPostModal();   // POST MODAL SE ZATVARA I KADA SE PRITISNE POST DUGME, ODNOSNO ON submit
 
 
     if('serviceWorker' in window.navigator && 'SyncManager' in window){    // AKO UOPSTE POSTOJI SyncManager I AKO BROWSER PODRZAVA ServiceWorker-E
@@ -371,38 +389,48 @@ form.addEventListener('submit', ev => {
 
             // DEFINISEM, KOJE CU DATA, POSLATI U indexedDB
 
+            // !!!!!!! OVO JE ONO STO SLEDECE ZELIM PROMENITI
+            
+            // !!!!!! PORED SLEDECIH PODATAKA, ONO STO BIH TREBAO POSLATI
+            // U INDEKSIRANU BAZU BROWSER-A, JESTE I ONAJ Blob
+            // KOJI SADA REFERENCIRA GLOBALNA       picture VARIJABLA
+
             let post = {
                 id: new Date().toISOString(),
                 title: titleInput.value,
                 location: locationInput.value
+                // OVDE BI SE DAKLE NASLA I Blob INSTANCA PROCITANA OD picture VARIJABLE
             }
 
             // SALJEM, ODNOSNO ZAPISUJEM, TAJ DATA U indexedDB
             writeData('sync-posts', post)
                                                 // NAKO NSTO JE DATA UPISANA U indexedDB, MOGU SE
             .then(() => {                       // POSVETITI REGISTRACIJOM SYNC TASK-A
-                                                // OVA REGISTRACIJA CE USTVARI 
+                                                // OVA REGISTRACIJA CE USTVARI DTI INFORMACIJU SERVICE WORKERU
+                                                // DA JE ZAKAZANO STO PRE TRIGGER-OVANJE sync EVENTA
 
                 // POSTO ZA OVO SyncManager.register() (TO JE DEFINISANO DOLE)
                 // POVRATNA VREDNOST, JESTE Promise INSTANCA
-                // MOGU JE RETURN-OVATI (TO NISAM RANIJE RADIO)
-                
+                // MOGU JE RETURN-OVATI (TO NISAM RANIJE RADIO) (A NIJE NI BITNO, MOZDA SAMO ZBOG OBJASNJENJA KOJI CE BITI PARAMETAR CALLBACK-A, SLEDECEG CHAINED then-A)
+
                 return swr.sync.register('sync-new-post');  // POVRATNA VREDNOST OVAGA JE SyncRegistration INSTANCA
 
-                // POMENUTO JE MOZDA NAJVAZNIJE ZATO STO:
+                // POMENUTO (MISLIM NA POZIVANJE registration()) JE MOZDA NAJVAZNIJE ZATO STO:
 
-                                                        //!!!!!!!!!!! UPRAVO JE POMENUTO TRIGGER-OVALO
-                                                        // !!!!!!!!!!        sync EVENT
+                                                        // !!!!!!!! UPRAVO JE POMENUTO TRIGGER-OVALO
+                                                        // !!!!!!!!        sync EVENT
                                                         // !!!!!!!! U RELATED      ServiceWorkerGlobalScope-U
 
                                                         // ODNOSNO KOREKTNIJE RECENO ZAKAZANO JE DA SE TAJ
                                                         // TRIGGERING DOGODI
+                                                        // TO JE NARAVNO TACNO ZA ONLINE
+                                                        // A AKO JE OFFLINE BIO U PITANJU
             })
 
             .then((syncRegistration) => {    // IAKO JE NECU KORISTITI SyncRegistration INSTANCA JE PROSLEDJENA OVOM CALLBACK-U
 
-                let snackbarContainer = document.querySelector('#confirmation-toast');    // OVO SAMO UKAZUJE KORISNIKU DA JE 
-                let data = {message: "Your post was saved for synching!"}                 // DATA PRVO POSLATA
+                let snackbarContainer = document.querySelector('#confirmation-toast');    // OVO SAMO UKAZUJE KORISNIKU DA JE
+                let data = {message: "Your post was saved for synching!"};                // DATA PRVO POSLATA
                                                                                           // U INDEXED DB
 
                                                         // I ZATO JE MOZDA BILO KOREKTNIJE DA JE OVAJ then BIO
@@ -414,7 +442,7 @@ form.addEventListener('submit', ev => {
             })
             .catch(err => {
                 console.log(
-                    err, "STORING POST IN IndexedDb WAS UNSUCCESSFUL!" // ILI REGISTRACIJA SYNC TASKA
+                    err, "STORING POST IN IndexedDb WAS UNSUCCESSFUL!" // ILI REGISTRACIJA SYNC TASKA ISTO
                 );
             })
 
@@ -422,9 +450,305 @@ form.addEventListener('submit', ev => {
 
     }else{      // OVO JE ELSE IZJAVA U CIJEM OBIMU EXECUTE-UJE FALLBACK, AKO NE POSTOJ I SERVICE WORKER ILI SyncMangaer
 
-        sendData();   // DAKLE OVDE SAM POZVAO POMENUTU FALLBACK FUNKCIJU
-                     // KOJA DIREKTNO SALJE 'POST' REQUEST SERVERU, SA DATOM NARAVNO
+        sendData();     // DAKLE OVDE SAM POZVAO POMENUTU FALLBACK FUNKCIJU
+                        // KOJA DIREKTNO SALJE 'POST' REQUEST SERVERU, SA FormDatA-OM NARAVNO
+                        // TU DAKLE NECE BITI BACKGROUND SYNC
+    }
 
+})
+```
+
+3. **BACKGROUND SYCHRONIZATION U SERVICE WORKER-U**
+
+sw.js FAJL:
+
+```javascript
+
+// RECI CU STA CU OVDE PROMENITI, ALI DACU I DODATNA OBJASNJENJA
+
+self.addEventListener('sync', function(ev){
+
+    console.log('--+---+-- SyncEvent --+---+--+---+-   ', ev);
+
+    if(ev.tag === 'sync-new-post'){  // NARAVNO, AKO JE TRIGGER-OVAN sync EVENT, RELATED SA POMENUTOM REGISTRACIJOM
+                                     // MOGU OVAJ STRING NAZVATI I REGISTRATION TAG-OM, TU JE DOSTUPAN, DA BIH ZNAO
+                                     // STA DA VADIM IZ indexedDB-JA
+
+        ev.waitUntil(                       // SERVICE WORKER DAKLE CEKA DOK SE SLEDECE NE IZVRSI
+
+            readAllData('sync-posts')      // CITAM ONE PODATKE, KOJI SU POTREBNI ZA SLANJE SERVER-U
+
+            .then(dataArray => {
+
+                for(let data of dataArray){
+
+                    fetch('https://us-central1-instapwaclone.cloudfunctions.net/storePostData', {
+                        method: "POST",
+                        body: JSON.stringify({             // !!!! DAKLE OVO JE ONO STO CU MENJATI
+                            id: data.id,                   // !!!! POSTO ZELIM DA PODATKE SALJEM KROZ FormData INSTANCA (DAKLE, ZELIM DA ONA BUDE U BODY-JU)
+                            title: data.title,             // !!!! JA NE ZELIM STRINGIFIED OBJEKAT, KOJI JE SADA OVDE
+                            location: data.location,       // !!!! A ONO STO JOS TREBA BITI APPENDED NA FormData INSTANCU, JESTE, ONAJ BLOB, KOJI SAM RANIJE SMESTIO U indexedDB
+
+                            image: 'https://firebasestorage.googleapis.com/v0/b/instapwaclone.appspot.com/o/burgers_food.jpeg?alt=media&token=001349ec-8c02-4c16-87df-9db24b252256'
+
+                            // OVO JE BIO DUMMY IMAGE I ZATO JE OVO HARD CODED URL, KAKO GA NAZIVAJU
+                        }),
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        }
+                    })
+                    .then(resp => {
+                        console.log("Send Data: ", resp);
+
+                        if(resp.ok){
+
+                            deleteItemFromData('sync-posts', data.id)     // KADA SU PODACI USPESNO POSLATI DO CLOUD FUNKCIJE,
+                                                                          // ONI VISE NISU POTREBNI U indexedDB-JU
+                        }
+
+
+                    })
+                    .catch(function(err){
+                        console.log('Error, while sending data', err)
+                    })
+
+                }
+            })
+        );
+    }
+})
+```
+
+## SADA MOGU POCETI SA DEFINISANJEM FormData INSTANCE, SVUDA U CODE GDE JE TO POTREBNO (BIO TO FALLBACK ILI SERVICE WORKER)
+
+feed.js FAJL:
+
+```javascript
+const videoPlayer = document.querySelector('video#player');
+const canvasElement = document.querySelector('canvas#canvas');
+const captureButton = document.querySelector('button#capture-btn');
+const imagePicker = document.querySelector('input#image-picker');
+const imagePickerArea = document.querySelector('div#pick-image');
+
+let picture;
+let context;
+
+const initializeMedia = function(){
+
+    if(!('mediaDevices' in window.navigator)){
+
+        window.navigator.mediaDevices = {};
+
+    }
+
+    if(!('getUserMedia' in window.navigator.mediaDevices)){
+
+        window.navigator.mediaDevices.getUserMedia = function(constraints){
+
+            let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+            if(!getUserMedia){
+
+                return Promise.reject(new Error('getUserMedia is not implemented'));
+
+            }
+
+            return new Promise((resolve, reject) => {
+
+                getUserMedia.call(
+                    window.navigator,
+                    constraints,
+                    resolve,
+                    reject
+                );
+
+            })
+
+        }
+
+    }
+
+
+    window.navigator.mediaDevices.getUserMedia({video: true})
+
+    .then(mediaStream => {
+
+        videoPlayer.srcObject = mediaStream;
+
+        videoPlayer.style.display = "block";
+    })
+
+    .catch(err => {
+
+        console.log('-o-o-o-o-o-o-o-o--o-o ERROR media devices -o-o-o-o-using picker insteado-o-o-o-o-o-: ', err)
+
+        imagePickerArea.style.display = "block";
+
+        captureButton.style.display = "none";
+        canvasElement.style.dysplay = "none";
+
+    })
+
+
+};
+
+captureButton.addEventListener('click', ev => {
+
+    canvasElement.style.display = "block";
+
+    videoPlayer.style.display = "none";
+
+    captureButton.style.display = "none";
+
+    context = canvasElement.getContext('2d');
+
+    context.drawImage(
+        videoPlayer,
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight)
+    );
+
+    videoPlayer.srcObject.getVideoTracks().forEach(track => {
+        track.stop();
+    })
+
+    picture = dataURItoBlob(canvasElement.toDataURL());
+
+    console.log(picture);
+
+})
+
+
+const buttonOther = document.querySelector('.plusButtonOther');
+
+const openCreatingPostModal = ev => {
+
+    canvasElement.style.display = 'none';
+
+    initializeMedia();
+
+    const elem = document.querySelector('div#create-post');
+    elem.classList.remove('closeP');
+    elem.classList.add('openP');
+};
+
+const closeCreatingPostModal = ev => {
+    const elem = document.querySelector('div#create-post');
+
+    elem.classList.remove('openP');
+    elem.classList.add('closeP');
+
+    videoPlayer.style.display = "none";
+    imagePickerArea.style.display = "none";
+
+    canvasElement.style.display = "none";
+
+    if(context) context.clearRect(0, 0, canvasElement.width, canvasElement.width / (videoPlayer.videoWidth /  videoPlayer.videoHeight));
+
+    captureButton.style.display = 'block';
+
+}
+
+buttonOther.addEventListener('click', openCreatingPostModal);
+
+buttonClose.addEventListener('click', closeCreatingPostModal);
+
+
+/* /////////////////////////////////////////////////////////////////////////////////// */
+/* /////////////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////BACKGROUND SYNC//////////////////////////////////// */
+/* /////////////////////////////////////////////////////////////////////////////////// */
+                // ODAVDE POCINJE MOJA IMPLEMENTACIJA FormData
+
+const sendData = function(){    // FALLBACK FUNKCIJA
+
+    /* const dataObject = {
+        id: new Date().toISOString(),
+        title: titleInput.value,
+        location: locationInput.value,
+        image: 'https://firebasestorage.googleapis.com/v0/b/instapwaclone.appspot.com/o/burgers_food.jpeg?alt=media&token=001349ec-8c02-4c16-87df-9db24b252256'
+    } */
+
+    // PREDHODNI OBJEKAT JE COMMENTED OUT, JER CU KORISTITI FormData
+
+    const postData = new FormData();
+
+
+
+    fetch('https://us-central1-instapwaclone.cloudfunctions.net/storePostData', {
+        method: "POST",
+        body: JSON.stringify(dataObject),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+    })
+    .then(resp => {
+        console.log("Send Data: ", resp);
+        updateUI(dataObject)
+    })
+};
+
+
+const titleInput = document.querySelector('input#title');
+const locationInput = document.querySelector('input#location');
+const form = document.querySelector('div#create-post form');
+
+form.addEventListener('submit', ev => {
+
+    ev.preventDefault();
+
+
+    if(titleInput.value.trim() === "" || locationInput.value.trim() === ""){
+        alert("Please enter valid data!");
+
+        return;
+    }
+
+    closeCreatingPostModal();
+
+
+    if('serviceWorker' in window.navigator && 'SyncManager' in window){
+
+        navigator.serviceWorker.ready
+        .then(swr => {
+
+
+            let post = {
+                id: new Date().toISOString(),
+                title: titleInput.value,
+                location: locationInput.value
+            }
+
+            writeData('sync-posts', post)
+
+            .then(() => {
+
+                return swr.sync.register('sync-new-post');
+            })
+
+            .then((syncRegistration) => {
+
+                let snackbarContainer = document.querySelector('#confirmation-toast');
+                let data = {message: "Your post was saved for synching!"};
+
+                snackbarContainer.MaterialSnackbar.showSnackbar(data)
+
+            })
+            .catch(err => {
+                console.log(
+                    err, "STORING POST IN IndexedDb WAS UNSUCCESSFUL!, OR REGISTRATION OF SYNC TASK"
+                );
+            })
+
+        })
+
+    }else{
+
+        sendData();
     }
 
 })
