@@ -522,9 +522,42 @@ self.addEventListener('sync', function(ev){
 
 ## SADA MOGU POCETI SA DEFINISANJEM FormData INSTANCE, SVUDA U CODE GDE JE TO POTREBNO (BIO TO FALLBACK ILI SERVICE WORKER)
 
-feed.js FAJL:
+**U CILJU DOBROG TESTIRANJA MOG APP, JA USTVARI NECU U SVIM SLUCAJEVIMA SALJE FormData, UMESTO STRINIFIED PODATKAKA, KOJI CE SE, JER JE TAK OTRENUTNO DEFINISANO, USTVARI SLATI NA SERVER**
+
+- IMAJ NA UMU DA TVOJ SERVER SIDE CODE (CLOUD FUNCTION) NIJE SPREMEN ZA RECEIVING I HANDLEING FormData ,KOJA BI BILA POSLANA
+
+- U FALLBACK-U (MISLIM NA senData FUNKCIJU, KOJU POZIVAM AKO NISU SUPPORTED ILI SERVICE WORKER ILI BACKGROUND SYNC) CU DEFINISATI DA SE FormData DIREKTNO SALJU SERVER-U
+
+- JA TO USTVARI RADIM, JER TAJ FALLBACK NECE BITI IZVRSEN, JER BROWSERI NA KOJIMA TESTIRAM APP, IMAJ USUPPORTED I SERVICE WORKER-A I BACKGROUND SYNC
+
+- CILJ MI JE DA U TOJ FUNKCIJI DO KRAJA POKAZEM, KAKO SE KORISTI FormData (ustvari konkretno me zanima, kako se Blob append-uje na FormData)
+
+**U CODE-U SERVICE WORKERA (ON sync), JA CU VADITI PODATKE I indexedDB-JA, I ONDA CU FORMIRATI FormData**
+
+**JA CU IPAK I DALJE PODNOSITI STRINGIFIED DATA, UMESTO FormData**
+
+**KONKRETNO ZELIM OVO DA URADIM, SAMO ZATO JER ZELIM DA IMAM SPREMNU FormData INSTANCU, ZA ONDA KADA BUDEM IZVRSIO REDEFINISANJE CLOUD FUNKCIJE (JER TEK KADA TO REDEFINISANJE ZAVRSIM, ZELIM DA U SERVICE WORKERU, DEFINISEM DA SE STRINGIFIED DATA VISE NE SALJE, VEC DA TO BUDE FormData INSTANCA)**
+
+>>>> ON OSTO HOCU DEFINISATI DODATNO JESTE ON submit POHRANJIVANJE Blob INSTANCE U indexedDB
+
+**UPRAVO KADA LJUDI GOVORE O POMENUTOM, ONI KAZU DA SAM *'FILE SKLADISTIO U indexedDB'*; A JA MISLIM DA TO *NIJE POTPUNO KOREKTNA UPOTREBA RECI***, JER JA MISLIM DA JA TAKO NE STORE-UJEM FAJL U indexedDB, VEC Blob INSTANCU, KOJA GA REPREZENTUJE (TAJ FAJL)
+
+>>>> I ONO STO ZELIM DA DEFINISEM, JESTE DA SE TAJ Blob, U SERVICE WORKER-U, ON sync IZVADI IZ indexedDB-JA, I DA SE ONDA APPENDUJE NA FormData, KOJI CU INSTTICIZIRATI
+
+>>>> KAO STO REKAOH, JA CU I DALJE SERVERU SLATI STRINGIFIED DATA, SA HARD CODED URL-OM SLIKE, KOJA PREDSTAVLJA DUMMY IMAGE (DAKLE, ZA SADA NEMAM NACIN DA ISKORISTIM SNAPSHOT KAMERE, USTVARI CANVASA)
+
+I KADA FORMIRAM FormData, ODNONO NAKO NSTO NA NJEGA APPEND-UJEM SVE PODATKE, JA CU KORISTITI I METODE, ZA CITANJE TIH PODATAKAK (KONKRETNO ME ZANIMA DA LI USPETI DA PROCITAM Blob INSTANCU SNAPSHOT-A)
+
+TO CE ZNACITI DA AKO USPEM, JA SAM DOBRO DEFINISAO FormData; I TEK NAKON TOGA POSVETICU SE REDEFINISANJEM I OTKLANJEM BUGG-OVA U CLOUD FUNKCIJI (VEZANIH ZA POGRESNO KORISCENJE PAKETA)
+
+A KADA TO USPEM, MOGU SE VRATITI NA CLIENT CODE, I DEFINISATI DA SE SALJE U BODY-JU Request-A, SADA SAMO NALAZI FormData (OTOM POTOM)
+
+**feed.js** FAJL:
 
 ```javascript
+
+// DOLE GDE POCINJU PRVI KOMENTARI, TO JE CODE, GDE POCINJEM POMENUTE PROMENE (ALI PRIKAZUJEM SAV RELATED CODE TAKODJE)
+
 const videoPlayer = document.querySelector('video#player');
 const canvasElement = document.querySelector('canvas#canvas');
 const captureButton = document.querySelector('button#capture-btn');
@@ -672,24 +705,67 @@ const sendData = function(){    // FALLBACK FUNKCIJA
         image: 'https://firebasestorage.googleapis.com/v0/b/instapwaclone.appspot.com/o/burgers_food.jpeg?alt=media&token=001349ec-8c02-4c16-87df-9db24b252256'
     } */
 
-    // PREDHODNI OBJEKAT JE COMMENTED OUT, JER CU KORISTITI FormData
+    // POMENUTI OBJEKAT MI DAKLE VISE NIJE POTREBAN, JER CU UMESTO NJEGA KORISTITI FormData
 
-    const postData = new FormData();
+    const postData = new FormData();   // INSTANTICIZIRAO SAM GA
 
+    // APPENDUJEM MU PRVO SVE PODATKE IZ TEKSTUALNIH INPUT-A (NARAVNO I id)
+
+    postData.append('id', new Date().toISOString());
+    postData.append('title', titleInput.value);
+    postData.append('location', locationInput.value);
+
+    // A SADA APPEND-UJEM I Blob (SKALDISTI GA picture GLOBALBNA VARIJABLA, KAO STO JE POZNATO);
+
+    // 1. ARGUMENT JE KLJUC, A KLJUC KOJI CE BITI NJEGOV (Blob-OV), U FORM DATA-U, NEKA SE ZOVE file, POSTO TAJ Blob REPREREZENTUJE FILE SLIKE
+    // A MOGA OSAM ZADATI BILO KOJI KLJUC
+
+    // 2. ARGUMENT, JESTE Blob INSTANCA naravno
+
+    // 3. ARGUMENT JE IME KOJE ZELIM DA IMA, FAJL, KOJI POMENUTI BLOB REPREZENTUJE 
+
+                // NEKA TO IME BUDE FORMIRANO OD ONIH PODATKAK KOJE SU FORMIARALI id
+
+                // PLUS MIME TYPE FAJLA, KOJEG REPREZENTUJE Blob (OVO SE ODNOSI NA FORMAT SLIKE (jpg, jpeg, png..))
+
+    postData.append(
+        'file',
+        picture,
+        postData.get('id') + "." + picture.type.match(/^(image\/)([a-z]+)/[3])
+    )
 
 
     fetch('https://us-central1-instapwaclone.cloudfunctions.net/storePostData', {
         method: "POST",
-        body: JSON.stringify(dataObject),
-        headers: {
-            "Content-Type": "application/json",
+        /* body: JSON.stringify(dataObject), */   // OVO DAKLE VISE NECU KORISTITI OVDE
+
+        // U BODY-JU, TREBA DA BUDE         FormData        INSTANCA
+
+        body: postData,
+
+        /* headers: {                                // OVO HEADERS-I MI VISE NE TREBAJU
+            "Content-Type": "application/json",      // JER NE SALJEM JSON STRING
             "Accept": "application/json"
-        }
+        } */
+
+        // STO SE TICE HEADERS-A, ONI POSTOJE ZA FormData
+
+        //  "Content-Type": "application/x-www-form-urlencoded"        // ALI NECU KORISTITI
+
     })
     .then(resp => {
         console.log("Send Data: ", resp);
         updateUI(dataObject)
     })
+
+
+    // ALI UPAMTI DA JE OVAJ FALLBACK DEFINISAN OVAKO, A CLOUD FUNCTION NIJE REDEFINISANA DA RECEIVE-UJE FormData
+
+    // ZATO OVO NECE FUNKCIONISATI, AKO BUDE POZVANO
+
+    // REKAO SAM VEC RANIJE, ZASTO SAM OVO ~~~NAMERNO~~~~ UERADIO
+
+
 };
 
 
@@ -713,6 +789,8 @@ form.addEventListener('submit', ev => {
 
     if('serviceWorker' in window.navigator && 'SyncManager' in window){
 
+        // OVDE CU POSLATI I SLIKU, ZAJEDNO SA OSTALIM PODACIMA
+
         navigator.serviceWorker.ready
         .then(swr => {
 
@@ -720,8 +798,16 @@ form.addEventListener('submit', ev => {
             let post = {
                 id: new Date().toISOString(),
                 title: titleInput.value,
-                location: locationInput.value
+                location: locationInput.value,
+
+                slika: picture    // DAKLE I blob INSATANCA SNAPSHOTA
+                                  // BITI POSLATA U indexedDB
             }
+
+                                // TO SAM URADIO ZBOG ONOG STO SAM VEC MNOGO PUTA OBJASNIO
+                                // ALI RECI CU OPET
+                                // ZELIM DA ISTATICIZIRAM       FormData    SA OVIM PODACIMA
+                                // ALI U SERVICE WORKERU (ON sync HANDLER)
 
             writeData('sync-posts', post)
 
@@ -751,5 +837,123 @@ form.addEventListener('submit', ev => {
         sendData();
     }
 
+})
+```
+
+SADA MOGU DA DEFINISEM FormData U OBIMU ON sync HANDLER-A
+
+**sw.js** FAJL: (ON sync HANDLER U SERVICE WORKER-U)
+
+```javascript
+self.addEventListener('sync', function(ev){
+
+    console.log('--+---+-- SyncEvent --+---+--+---+-   ', ev);
+
+    if(ev.tag === 'sync-new-post'){  // NARAVNO, AKO JE TRIGGER-OVAN sync EVENT, RELATED SA POMENUTOM REGISTRACIJOM
+                                     // MOGU OVAJ STRING NAZVATI I REGISTRATION TAG-OM, TU JE DOSTUPAN, DA BIH ZNAO
+                                     // STA DA VADIM IZ indexedDB-JA (SVE OBJASNJENO RANIJE)
+
+        ev.waitUntil(                       // SERVICE WORKER DAKLE CEKA DOK SE SLEDECE NE IZVRSI (SVE OBJASNJENO VEC)
+
+            readAllData('sync-posts')      // CITAM ONE PODATKE, KOJI SU POTREBNI ZA SLANJE SERVER-U (OBJASNJENO RANIJE)
+
+            .then(dataArray => {            // DAKLE POSTOJI MOGUCNOST DA JE VISE OBJEKATA UBACENO U OBJECT STORE       'sync-posts'
+                                            // A JA OVDE SALJEM POST REQUEST, ZA SVAKI POJEDINACNI OBJEKAT IZ OBJECT STORE-A
+                                            // JER SAM ACCESS-OVAO SVIM OBJEKTIMA IZ OBJECT STORE-A
+
+                for(let data of dataArray){
+
+
+                    // REKAO SAM RANIJE DA CU OVDE INSTATICIZIRATI I FormData INSTANCU, ALI JE NECU SLATI SERVERU
+
+                    const postData = new FormData();   // INSTANTICIZIRAO SAM GA (USTVARI BICE INSTATICIZIRAN U SVAKOJ ITERACIJI)
+                                                       // ZA SVAKI EXTRACTED OBJECT IZ OBJECT STORE-A
+
+                    // SADA IZ ODREDJENOG OBJEKTA (ODNOSNO OBJEKTA TRENUTNE ITERACIJE), KOJE JE OBJECT, OBJECT STORE-A  sync-posts
+                    // EXTAHUJEM PODATKE
+
+                    // FormData-I , PRVO APPEND-UJEM SVE PODATKE IZ TEKSTUALNIH INPUT-A (NARAVNO I id)
+
+                    postData.append('id', data.id);
+                    postData.append('title', data.title);
+                    postData.append('location', data.location);
+
+                    // A SADA APPEND-UJEM I Blob
+
+                    // 1. ARGUMENT JE KLJUC, A KLJUC KOJI CE BITI NJEGOV (Blob-OV), U FORM DATA-U, NEKA SE ZOVE file, POSTO TAJ Blob REPREREZENTUJE FILE SLIKE
+                    // A MOGA OSAM ZADATI BILO KOJI KLJUC (MEDJUTIM, POSTO SAM 'file' ZDAO I U FALLBACK-U, ONDA TO RADIM I OVDE (NE SME BITI RAZLIKE))
+
+                    // 2. ARGUMENT, JESTE Blob INSTANCA naravno
+
+                    // 3. ARGUMENT JE IME KOJE ZELIM DA IMA, FAJL, KOJI POMENUTI BLOB REPREZENTUJE
+
+                                // NEKA TO IME BUDE FORMIRANO OD ONIH PODATKAK KOJE SU FORMIARALI id
+
+                                // PLUS MIME TYPE FAJLA, KOJEG REPREZENTUJE Blob (OVO SE ODNOSI NA FORMAT SLIKE (jpg, jpeg, png..))
+
+                    postData.append(
+                        'file',
+
+                        data.slika,          // ~~~~~~  U SVAKOM OBJEKTU, IZ, POMENUTOG OBJECT STORE-A,
+                                             //         Blob     JE STORED KAO U PROPERTIJU slika ~~~~~~
+                                             // TO SMA OBJASNIO (URADIO) GORE U on submit HANDLERU (feed.js FAJL)
+
+                        postData.get('id') + "." + data.slika.type.match(/^(image\/)([a-z]+)/[3])
+                    )
+
+                    // ~~~~~~~~~~~~~~~~~~~ DAKLE NECU GORNJI OBJEKAT (postData) SLATI NA SERVER,
+                    // ~~~~~~~~~~~~~~~~~~~ ALI CU GA STAMPATI DA VIDIM OD CEGA SE SASTOJI
+                    // ~~~~~~~~~~~~~~~~~~~ ODNOSNO PRIMENJIVACU METODE FormData-INOG PROTOTIPA NA NJEMU
+                    // ~~~~~~~~~~~~~~~~~~~ GET-OVACU IZ NJEGA Blob   MOJE CAPTURED SLIKE (SNAPSHOT-A), UZ POMOC KLJUCA     file
+                    // ~~~~~~~~~~~~~~~~~~~ PA CU NAD Blob INSTANCOM PRIMENJIVATI NEKE METODE
+
+                                            // SVE CE TO BITI MOGUCE U CHROME KONZOLI, ZATO STO U CHROME KONZOLI
+                                            // JA MOGU DESNIM CLICK-OM IZABRATI DA SE ZELENI ODSTAMPANI OBJEKAT
+                                            // STORE-UJE U TRENUTNOJ VARIJABLI
+
+                    //-----------------------------------------------------------
+                            // DAKLE STAMPAM        FormData        INSTANCU
+                    console.log("-*-*-*-*-*-*-*", postData, "-*-*-*-*-*-*-*-*-");
+
+                    //-----------------------------------------------------------
+
+
+                    fetch('https://us-central1-instapwaclone.cloudfunctions.net/storePostData', {
+                        method: "POST",
+                        body: JSON.stringify({             // !!!! DAKLE OVO JE ONO STO CU MENJATI (ALI NE SADA, VEC TEK KAD DEFINISEM SERVER SIDE CODE)
+                            id: data.id,                   // !!!! POSTO ZELIM DA PODATKE SALJEM KROZ FormData INSTANCA (DAKLE, ZELIM DA ONA BUDE U BODY-JU)
+                            title: data.title,             // !!!! JA NE ZELIM STRINGIFIED OBJEKAT, KOJI JE SADA OVDE
+                            location: data.location,       // !!!! ZAELI FormData INSTANCU, SA ONIM BLOB-OM, KAO SASTAVNIM DELOM
+
+                                                           // ~~~~~~~  ALI JA CU OVO TEK MENJATI ONDA KADA BUDEM SREDIO SERVER SIDE CODE
+
+                            image: 'https://firebasestorage.googleapis.com/v0/b/instapwaclone.appspot.com/o/burgers_food.jpeg?alt=media&token=001349ec-8c02-4c16-87df-9db24b252256'
+
+                            // OVO JE BIO DUMMY IMAGE I ZATO JE OVO HARD CODED URL, KAKO GA NAZIVAJU
+                        }),
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        }
+                    })
+                    .then(resp => {
+                        console.log("Send Data: ", resp);
+
+                        if(resp.ok){
+
+                            deleteItemFromData('sync-posts', data.id)     // KADA SU PODACI USPESNO POSLATI DO CLOUD FUNKCIJE,
+                                                                          // ONI VISE NISU POTREBNI U indexedDB-JU  (OBJASNIO VEC RANIJE)
+                        }
+
+
+                    })
+                    .catch(function(err){
+                        console.log('Error, while sending data', err)
+                    })
+
+                }
+            })
+        );
+    }
 })
 ```
