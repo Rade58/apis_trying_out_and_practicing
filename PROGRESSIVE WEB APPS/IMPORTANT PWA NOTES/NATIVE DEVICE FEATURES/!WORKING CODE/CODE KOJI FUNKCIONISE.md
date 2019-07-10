@@ -927,7 +927,9 @@ self.addEventListener('sync', function(ev){
 
                     //              OVDE SAM BIO U PRAVU
 
-                    // ZATO CU STAMPATI GETTED      Blob        FROM FORM DATA
+                    // ZATO CU STAMPATI GETTED      Blob        FROM FORM DATA (ALI ONO STO NECE BITI GETTED JESTE Blob)
+                                                                            // (ONO STO CE BITI STAMPANO JESTE File INSTANCA)
+                                                                            // (MISLIM DA JE OPET U PITANJU MIXIN)
                     console.log("-*-*-*-*-*-*-*", postData.get('file'), "-*-*-*-*-*-*-*-*-");
                     //-----------------------------------------------------------
 
@@ -972,6 +974,10 @@ self.addEventListener('sync', function(ev){
 })
 ```
 
+## GORE SAM PREDPOSTAVIO DA KADA SE POKUSA GETTING Blob-A FROM THE FormData INTANCE, DA JE ONO STO SE GETT-UJE, ZAISTA Blob
+
+ALI NIJE, TO CE BITI File INSTANCA
+
 ## DAKLE, KAO STO SAM REKAO, JA CU SADA DEPLOY-OVATI SVE CHANGES, I NAPRAVICU ONDA JEDAN POSTING
 
 ZELIM DA VIDIM, OD CEGA SE SASTOJI FormData INSTANCA, KREIRANA U ON sync HNADLER-U
@@ -987,3 +993,278 @@ SAZNAJ OVDE VISE O [File](https://developer.mozilla.org/en-US/docs/Web/API/File)
 ## :star::star::star::star: DAKLE U SLUCAJU KADA SE Blob INSTANCA APPEND-UJE NA FormData INSTANCU, AKO POKUSAM DA OD FormData PROCITAM (get()) TU INSTANCU, ono sto ce proizici jeste File INSTANCA
 
 **File INSTANCA JE TAKODJE INSTANCA, KOJU DOBIJAS KADA PROCITAS value OD `<input type="file">`** (AKO SI KORISTIO multiple ATRIBUT, ONOS TO MOZES PROCITATI BICE [*FileList*](https://developer.mozilla.org/en-US/docs/Web/API/FileList) INSTANCA)
+
+**File** INSTANCA IMA RAZLICITE PROPERTIJE, OD KOJIH NEKI SLUZE DA SE GETT-UJE name, type (MIME type) ILI size FAJLA, KOJEG REPREZENTUJE
+
+CAK IMA I PROPERTI webkitRelativePath (KOJI NIJE SVEOPSTE PODRZAN (RADI U FIREFOX-U I CHROME-U))
+
+## STA JE USTVARI File INSTANCA
+
+**File** JESTE **SPECIJALNI TIP Blob-A**
+
+## File I Blob MOGU BITI ARGUMENTI SLEDECIM METODAMA
+
+- URL.createObjectURL() (I **MediaSource** MOZE BITI ARGUMENT OVE METODE)
+
+- new [FileReader](https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications)().readAsDataURL()
+
+## TREBALO BI DA PROCITAM MDN-OV CLANAK "Using files from web applications"
+
+[link](https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications)
+
+MOZDA U NJEMU NADJEM U CEMU SU SUSTINSKE RAZLIKE IZMEDJU File I Blob INSTANCI
+
+ALI NEMAM SADA VREMENA ZA TO
+
+U SUSTINI, U OBA OBJEKATA JE IMPLEMENTIRAN MIXIN (MISLIM TO JER OBE INSTANCE IMAJU PROPERTIJE size, type I name)
+
+## ONO STO MOGU DA ZAKLJUCIM JESTE DA, POSTO ONO STO SE NE SERVER STRANI MOZE EXTRAHOVATI IZ FormData, JESTE USTVARI TA File INSTANCA, A NE Blom, PREDPOSTAVLJAM DA JE File INSTANCA POGODNIJA ZA HANDLE-OVANJE U CLOUD FUNCTION-U
+
+## :cloud::cloud::cloud::cloud: SADA ONO STO ZELIM DA REDEFINISEM JESTE CLOUD FUNCTION FIREBASE-A :cloud::cloud::cloud::cloud:
+
+ODNOSNO ZELIM DA DEFINISEM, KAO DA SU SE SA CLIENT-A SLALI PODACI UGRADJENI U FormData, KOJI JE U BODY-JU REQUEST-A
+
+RANIJE SAM TO DEFINISAO I NIJE MI POSLO ZA RUKOM, JER SAM MOZDA UPOTREBIU OUTDATED SINTAKSU '@google-cloud/storage' PAKETA
+
+TA SINTAKSA NIJE KORISTILA NI Promise-E
+
+NECU POCINJATI OD NULE
+
+## OVO JE MOJ TRENUTNI WORKIKG CODE CLOUD FUNCTION-A (NE HANDLE-UJE FormData, VEC HANDLE-UJE JSON DATA)
+
+:white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark:
+
+functions/**index.js** FAJL:
+
+```javascript
+const privateVapidKey = "oC8DBLahIEnXnAMEzbmom6BtrF6z7_";    // OVO NISU PRAVI KLJUCEVI (SECURITY REASON) (PRAVI SU ONI U ACTUAL CODE-U)
+const publicVapidKey = "BMfwPHbn5_YXc0wZZu5xEIIhs40w8CDWGnf2HSq-vAGVOZMLh-vS_";
+
+const functions = require('firebase-functions');
+
+const admin = require('firebase-admin');
+const cors = require('cors')({
+    origin: true
+});
+
+const serviceAccount = require("./instaclone-fb-key.json");
+
+const webpush = require('web-push');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://instapwaclone.firebaseio.com/"
+});
+
+exports.storePostData = functions.https.onRequest(function (request, response) {
+	  
+	cors(request, response, function () {
+    	admin.database().ref('posts').push({
+      		id: request.body.id,
+      		title: request.body.title,
+      		location: request.body.location,
+      		image: request.body.image
+    	})
+		.then(function () {
+			webpush.setVapidDetails(
+				"mailto:bajic.rade2@gmail.com",
+				publicVapidKey,
+				privateVapidKey
+			);
+			return admin.database().ref('subscriptions').once('value');
+		})
+		.then(function (subscriptions) {
+			subscriptions.forEach(function (sub) {
+				var pushConfig = {
+					endpoint: sub.val().endpoint,
+					keys: {
+						auth: sub.val().keys.auth,
+						p256dh: sub.val().keys.p256dh
+					}
+				};
+
+				webpush.sendNotification(
+					pushConfig,
+					JSON.stringify({
+                        title: 'New Post',
+                        content: 'New Post added!',
+                        openUrl: '/help'
+                    })
+                )
+				.catch(function(err) {
+					console.log(err);
+				})
+
+			});
+			
+			return response.status(201).json({message: 'Data stored', id: request.body.id});
+		})
+		.catch(function (err) {
+			response.status(500).json({error: err});
+		});
+  
+	});
+});
+```
+
+:white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark::white_check_mark:
+
+## OVO JE CODE CLUD FUNCTION-A, KOJI IMA ERROR, A POKUSANO JE DA SE DEFINISE DA CLOUD FUNCTION HANDLE-UJE FormData
+
+:x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x:
+
+functions/**index.js** FAJL:
+
+```javascript
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const cors = require('cors')({
+    origin: true
+});
+const serviceAccount = require("./instaclone-fb-key.json");
+const webpush = require('web-push');
+
+// *****************************************************
+
+const formidable = require('formidable');
+
+const gcconfig = {
+    projectId: 'instapwaclone',
+    keyFilename: 'instaclone-fb-key.json'
+}
+
+const gcs = require('@google-cloud/storage')(gcconfig);  // OVO JE POGRESNO KORISCENJE PAKETE
+                                                         // ILI JE OUTDATED
+                                                         // ZBOG POMENUTE STVARI, NECE BITI MOGUC NI DEPLOYMENT
+const file_system = require('fs');
+
+const UUID = require('uuid-v4');
+
+// ******************************************************
+
+
+const privateVapidKey = "oC8DBLahIEnXnAMEzbmom6Bt"; // fake keys zbog sigurnosti
+const publicVapidKey = "BMfwPHbn5_YXc0wZZu5xEIIhs40w8CDWGnf2HSq-vAGVOZMLh-vS_m122NEF";
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://instapwaclone.firebaseio.com/"
+});
+
+exports.storePostData = functions.https.onRequest(function (request, response) {
+
+    cors(request, response, function () {
+
+        // **************************************************
+
+        const formData = new formidable.IncomingForm();   // OBRATI PANJU DA JE OVDE I KARAKTER NAPISAN VELIKIM
+
+        const uuid = UUID();
+
+        formData.parse(request, function(error, fields, files){             // PITANJE JE I DA LI SAM PRAVILNO KORISTIO formidable PAKET
+
+            if(!error){
+
+                file_system.rename(
+                    files.file.path,
+
+                    '/tmp/' + files.file.name
+                )
+
+                const bucket = gcs.bucket('instapwaclone.appspot.com');         // OVO NIJE TACNO, JER SAM PAKET
+                                                                                // JE NA POCETKU POGRESNO UPOTREBLJEN
+                bucket.upload(                                                  // STO SE ODNOSI I NA SLEDECU UPOTREBU BUCKET-A
+                    '/tmp/' + files.file.name,
+                    {
+                        uploadType: 'media',
+
+                        metadata: {
+
+                            metadata: {
+
+                                contentType: files.file.type,
+
+                                firebaseStorageDownloadTokens: uuid
+
+                            }
+                        }
+                    },
+
+                    function(err, file){
+
+                        if(!err){
+
+                            admin.database().ref('posts').push({
+
+                                id: fields.id,
+                                title: fields.title,
+                                location: fields.location,
+
+
+                                image: 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' +
+                                        file.name + '?alt=media&token=' + uuid
+
+                            })
+                            .then(function () {
+                                webpush.setVapidDetails(
+                                    "mailto:bajic.rade2@gmail.com",
+                                    publicVapidKey,
+                                    privateVapidKey
+                                );
+                                return admin.database().ref('subscriptions').once('value');
+                            })
+                            .then(function (subscriptions) {
+                                subscriptions.forEach(function (sub) {
+                                    var pushConfig = {
+                                        endpoint: sub.val().endpoint,
+                                        keys: {
+                                            auth: sub.val().keys.auth,
+                                            p256dh: sub.val().keys.p256dh
+                                        }
+                                    };
+
+                                    webpush.sendNotification(
+                                        pushConfig,
+                                        JSON.stringify({title: 'New Post', content: 'New Post added!', openUrl: '/help'}
+                                    ))
+                                    .catch(function(err) {
+                                        console.log(err);
+                                    })
+
+                                });
+
+                                return response.status(201).json({message: 'Data stored', id: fields.id});
+                            })
+                            .catch(function (err) {
+                                response.status(500).json({error: err});
+                            });
+
+                        }else{
+
+                            console.log(err);
+                        }
+
+                    }
+
+                )
+
+            }else{
+                console.log(error)
+            }
+
+
+        })
+
+    });
+});
+```
+
+:x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x::x
+
+## GRESKE U OVOM PROJEKTU SU VELIKE, MORACU SE DETALJNIJE POZABAVITI FIREBASE-OM, PA ONDA SE VRATITI OVDE
+
+U SUSTINI, DVA PAKETA KOJA SAM OVDE KORISTIO
+
+MISLIM NA @google-cloud/storage I formidable SU OVDE POGRESNO UPOTREBLJENI, ILI POSTOJI MOGUCNOST DA JE CODE OUTDATED
+
+U SUSTINI POZABAVICU SE FIREBASE-OM DETALJNIJE, I CLUD FUNKCIJAMA, NESTO DETALJNIJE, PA CU SE ONDA VRATITI OVDE DA NASTAVIM SA PROJEKTOM
