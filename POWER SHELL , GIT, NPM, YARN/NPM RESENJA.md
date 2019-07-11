@@ -9,3 +9,7 @@ npm update @latest --save
 2. UKLANJANJE GLOBALNIG PAKETA
 
 npm uninstall imePakeata -g
+
+**ILI BEZ --g FLAGA**
+
+npm uninstall imePakeata
