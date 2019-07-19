@@ -48,6 +48,8 @@ A PRONASAO SAM, I [SKORO ISTOVETAN ENTITY CONVERSION CALCULATOR](https://www.evo
 
 [EMOJY CHEATSHEET](https://www.webfx.com/tools/emoji-cheat-sheet/)
 
+[POGLEDAJ OVU](https://emojipedia.org)
+
 ## MARKDOWN CHEATSHEETS
 
 [md](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
