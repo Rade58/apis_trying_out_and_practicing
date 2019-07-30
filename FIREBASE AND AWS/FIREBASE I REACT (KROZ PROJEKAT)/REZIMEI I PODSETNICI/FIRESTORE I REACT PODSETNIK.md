@@ -29,3 +29,7 @@ ISPITACU OVO DODATNO
 [react in dept](https://developmentarc.gitbooks.io/react-indepth/content/)
 
 MOZDA CU BOLJE BARATITI SA REACT-OM, KADA BUDEM POMENUTO PROCITAO
+
+5. NAUCI CODE SPLITTING U React-U, I TO POCNI OD ZVANICNOG GUIDE-A
+
+[Code Splitting](https://reactjs.org/docs/code-splitting.html)
