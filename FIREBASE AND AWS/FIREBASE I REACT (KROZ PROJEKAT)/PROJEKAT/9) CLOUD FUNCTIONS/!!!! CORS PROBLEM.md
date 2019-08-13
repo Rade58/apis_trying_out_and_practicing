@@ -50,31 +50,128 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 //**************************************************
 
 
-// OVA FUNKCIJA JE BILA PROBLEMATICNA
+// OVA FUNKCIJA JE BILA PROBLEMATICNA, U POGLEDU CORS-A (ODNOSNO NISAM MOGAO GETT-OVATI DATA UZ POMOC fetch API-A)
 exports.getAllPosts = functions.https.onRequest(async (request, response) => {
     const querySnapshot = await firestore.collection('posts').get();
     const posts = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-    response.set('Access-Controll-Allow-Origin', '*');
+    // response.set('Access-Controll-Allow-Origin', '*');   // NI OVO JOJ NIJE POMOGLO
     response.json({posts});
 })
 
 
-// PRAVIM NOVU CLOUD FUNKCIJU, KOJA KORISTI onCall
+// PRAVIM NOVU CLOUD FUNKCIJU, KOJA BI TREBALA DA FETC-UJE SVE POSTOVE, KAO I GORNJA, AL IZELIM CORS DA BUDE DOPUSTEN
+// STO GORE NIJE BIO SLUCAJ
+// KORISTI onCall
 
-exports.getPostDocuments = functions.https.onCall((data, context) => {
+exports.getPostDocuments = functions.https.onCall(async (data, context) => {
 
     const {uid} = context.auth;
 
-    return Promise.resolve(uid);
+    const querySnapshot = await firestore.collection('posts').get()
+
+    const posts = querySnapshot.docs.map(document => ({id: document.id, ...document.data()}))
+
+    // POSLACU I data.text (BICE TI JASNO KASNIJE ZASTO SALJEM TO)
+
+    return {poruka: data.text, posts, uid}   // OVO BI TREBALO DA BUDE U ODGOVORU POSLATOM DO CLIENT-A
+                            // A KAKO DA 'FETCH-UJES' TE PODATKE, NARAVNO MORACES DA DEFINISES
+                            // NA CLIENTU, GDE CES MORATI INICIJALIZOVATI CLOUD FUNCTIONS
+                            // I KORISTICES POSEBAN API ZA FETCHING
 
 })
 
-// OVO NIJE FUNKCIONISALO, IPAK PRVO MORAM DA PRODJEM CEO KINNEY-JEV TUTORIJAL
+```
+
+DEPLOYUJ (firebase deploy --only functions)
+
+**SADA MOZDA MISLIS DA MOZES KORISTITI fetch API KAKO BI NAPRAVIO REQUEST I POSLAO GA NA NOVI ENDPOINT**
+
+>> NE MOZES KORISTITI fetch API
+
+>> VEC OPET , POSTOJI API, KOJI SE KORISTI NA CLIENT-U
+
+AKO ZELIS DA SVE FUNKCIONISE, URADICES SLEDECE U NEKOJ OD SVOJIH KOMPONENTI
+
+NA PRIMER  OBIMU componentDidMount, NEKE KOMPONENTE, MOZES NAPRAVITI REQUEST
+
+- PRE TOGA CES NARAVNO UVESTI **functions**, IZ 'firebase' PAKETA
+
+- POMENUTO JETE FUNKCIJA I TO MORAS POZVATI, KAKO BI IZ TOGA PROIZISAO OBJEKAT
+
+- ZATIM PRIMENJUJES **httpsCallable** METODU, TAK OSTO JOJ *KAO ARGUMENT DODAJES STRING IMENA, TVOJE CLOUD FUNKCIJE*
+
+>>> **PREDPOSTAVLJAM DA OVAJ PREDHODNI DEO ENABLE-UJE Access-Controll-Allow-Origin** (AKO ZELIM DA ZNAM KAK OTREBALO BI DA PROCITAM DOKUMENTACIJU, ALI SADA ZA TO NEMAM VREMENA)
+
+- SADA IZ PRIMENE POMENUTE METODE, PROIZILAZI FUNKCIJA, KOJU MOGU KORISTITI DA NACINIM NETWORK REQUEST (ARGUMENT TOG NETWORK REQUEST-A, JESTE OBJEKAT, SA text PROPERTIJEM, ZA KOJI SPECIFICIRAM NEKI ZELJENI MESSAGE)
+
+- TA PORUKA TREBA DA BUDE VREDNSOT text PROPERTIJA data PARAMETRA, CALLBACK-A, KOJI SAM DEFINISAO DA BUDE ARGUMENT onCall METODE (POGLEDAJ GORNJU CLOUD FUNKCIJU)
+
+- UGLAVNOM TA FUNKCIJA SA KOJOM BI TREBALO DA NACINIM NETWORK REQUEST JESTE FUNKCIJA KOJA TREBA DA RETURN-UJE Promise INSTANCU, KOJA TREBA DA BUDE RESOLVED SA ONIM PODACIMA POSLATIM DO CLIENTA, OD STRANE, MOJE CLOUD FUNKCIJE
+
+**SADA CU PRONACI NEKU KOMPONENTU IZ MOJE APLIKACIJE, KAKO BI SVE OVO ISTESTIRAO** (NACI CU NEKU KOMPONENTU, KOJA NEMA MNOGO CODE-A, NA PRIMER Comment (DAKLE OVO JE U CILJU, SAMO TESTIRANJA, A KSANIJE CU UKLONITI CODE))
+
+src/components/Comment.jsx
+
+```javascript
+import React from 'react';
+import moment from 'moment';
+
+// UVOZIM DAKLE functions IZ firebase-A
+
+const Comment = ({content, user, createdAt}) => {
+    
+    return (
+        <article className="comment">
+            <span className="comment_author">{user.displayName}</span>
+            <span className="comment_content">{content}</span>
+            <span className="comment_timestamp">{moment(createdAt).calendar()}</span>
+        </article>
+    );
+
+};
+
+Comment.defaultProps = {
+    title: 'Nesto sasvim sjajno',
+    content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus est aut dolorem, dolor voluptatem assumenda possimus officia blanditiis iusto porro eaque non ab autem nihil! Alias repudiandae itaque quo provident.',
+    user: {
+        displayName: 'Dasha Nekrasova',
+        email: 'dasha@mailnator.com',
+        photoURL: 'http://placekitten.com/200/300'
+    },
+    createdAt: new Date()
+};
+
+export default Comment;
+
+// OVDE STAO NASTAVLJAM SUTRA
+
+
+//******************************************** */
+import {functions as func} from 'firebase';
+
+const functions = func();
+
+//********************************************* */
+
+
+let getPosts = functions.httpsCallable('getPostDocuments');
+getPosts({text: "Ovaj tekst ide do cloud funkcije, pa se salje nazad, ako su uspesno poslati svi postovi"}).then(function(result) {
+  // Read result of the Cloud Function.
+  var sanitizedMessage = result.data.text;
+	console.log(sanitizedMessage, result.data)
+
+  // ...
+});
+
 
 ```
 
+OVO SDA MOGU ISTESTIRATI U localhost-U
+
 ## STO SE TICE DEPLOYMENT-A, MOGUC JE I PARCIJALNI DEPLOYMENT (TO ZNACI DEPLOYMENT, SAMO ZELJENE FUNKCIJE, KOJU NAVODIM)
+
+ALI NIJE USPELO
 
 ## NEKE OD DODATNIH STVARI CU OSTAVITI OVDE
 
