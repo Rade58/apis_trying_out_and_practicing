@@ -72,9 +72,9 @@ exports.getPostDocuments = functions.https.onCall(async (data, context) => {
 
     const posts = querySnapshot.docs.map(document => ({id: document.id, ...document.data()}))
 
-    // POSLACU I data.text (BICE TI JASNO KASNIJE ZASTO SALJEM TO)
+    // POSLACU I data.poruka (BICE TI JASNO KASNIJE ZASTO SALJEM TO I SHVATICU ODAKLE POTICE poruka PROPERTI)
 
-    return {poruka: data.text, posts, uid}   // OVO BI TREBALO DA BUDE U ODGOVORU POSLATOM DO CLIENT-A
+    return {poruka: data.poruka, posts, uid}   // OVO BI TREBALO DA BUDE U ODGOVORU POSLATOM DO CLIENT-A
                             // A KAKO DA 'FETCH-UJES' TE PODATKE, NARAVNO MORACES DA DEFINISES
                             // NA CLIENTU, GDE CES MORATI INICIJALIZOVATI CLOUD FUNCTIONS
                             // I KORISTICES POSEBAN API ZA FETCHING
@@ -117,10 +117,60 @@ src/components/Comment.jsx
 import React from 'react';
 import moment from 'moment';
 
-// UVOZIM DAKLE functions IZ firebase-A
+// UVOZIM DAKLE functions FUNKCIJU IZ firebase-A
+// ALI UVESCU GA POD NOVIM IMENOM, JER ZELIM DA DEKLARISEM VARIJABLU functions
+// I ZELIM DA ONA SKLADISTI ONO STO CE IZ IZVRSENJA UVEZENE FUNKCIJE PROIZICI
+import {functions as func} from 'firebase';
+const functions = func();        // MORAM POZVATI FUNKCIJU
+// OVO SAM SAMO URADIO, JER ZELIM DA function VSRIJABLA REFERENCIRA, TAJ OBJEKAT
+// NA KOJEM
+// (NEVAZNO ALI MENI ZNACI Z)
+
+// SADA JA USTVARI MOGU WRAPP-OVATI, TAJ API-I, KOJI CE UCINITI DA MOJ ENDPOINT
+// ODNOSNO CLOUD FUNCTION, POSTANE 'HTTPS CALLABLE'; NAKO NCEGA MOGU POSLATI
+
+// ODNOSNO ZELIM DA MOJ CODE WRAPP-UJEM U async FUNCTION
+
+const getPosts = async () => {
+
+    const getPosts = functions.httpsCallable('getPostDocuments');
+
+    // MOGU SA PREDHODNOM FUNKCIJOM SADA FETC-OVATI PODATKE
+    // GORNJA FUNKCIJA return-UJE Promise, KOJI JE RESOLVED SA DATA-OM
+
+
+    const result = await getPosts({poruka: "all posts are fetched"}); // REKAO SAM DA CE OVA PORUKA BITI 
+                                                                    // DOSTUPANA
+                                                                  // U OBIMU CLOUD FUNKCIJE
+                                                                  // JA SAM JE U CLOUD FUNKCIJI POSLAO NAZAD
+                                                                  // ZELIM DA JE STAMPAM, KADA PODACI STIGNU
+
+    // DAKLE DEFINISACU DA SE STAMPA TA PORUKA, AKO JE FETCHING USPESAN
+    console.log(result.data.poruka)
+
+    // !!!! NE ZABORAVI DA MORAS KORISTITI data PROPERTI NA OBJEKTU !!!
+    // !!!! KAKO BI RETREIVE-OVAO PODATKE !!!!
+
+
+    // RETURN-OVACU OBJEKAT, KOJI SE SASTOJI OD NIZA SVIH POST-OVA I UID-JA, USER-A,
+    // KOJI JE ZATRAZIO SVE OVE POST-OVE
+
+    const {uid, posts} = result.data;
+
+    return {uid, posts};
+
+}
+
+// MOGU OVU FUNKCIJU, POZVATI DOLE CISTO DA JE TESTIRAM
+
 
 const Comment = ({content, user, createdAt}) => {
-    
+
+    // POZVACU JE OVDE PA CU STAMPATI ONO STO JE FETCED
+    getPosts().then(postsAndUid => {console.log(postsAndUid)})
+    // I ZAISTA U KONZOLI CE BITI STAMPAN OBJEKAT KOJI U SEBI IMA UID USERA I NIZ SVIH POSTOVA
+
+
     return (
         <article className="comment">
             <span className="comment_author">{user.displayName}</span>
@@ -143,31 +193,11 @@ Comment.defaultProps = {
 };
 
 export default Comment;
-
-// OVDE STAO NASTAVLJAM SUTRA
-
-
-//******************************************** */
-import {functions as func} from 'firebase';
-
-const functions = func();
-
-//********************************************* */
-
-
-let getPosts = functions.httpsCallable('getPostDocuments');
-getPosts({text: "Ovaj tekst ide do cloud funkcije, pa se salje nazad, ako su uspesno poslati svi postovi"}).then(function(result) {
-  // Read result of the Cloud Function.
-  var sanitizedMessage = result.data.text;
-	console.log(sanitizedMessage, result.data)
-
-  // ...
-});
-
-
 ```
 
-OVO SDA MOGU ISTESTIRATI U localhost-U
+OVO SDA MOGU ISTESTIRATI U localhost-U (yarn start)
+
+**ZELIM SAM ODA NAPOMENEM DA context.auth IZ CLOUD FUNKCIJE, IMA INFO O email, displayName I photoURL-U** (ALI KAO STO SE SECAM OVI PODACI SU JEDINO POTPUNI KADA SE KORISTI NEKI OAuth)
 
 ## STO SE TICE DEPLOYMENT-A, MOGUC JE I PARCIJALNI DEPLOYMENT (TO ZNACI DEPLOYMENT, SAMO ZELJENE FUNKCIJE, KOJU NAVODIM)
 
