@@ -13,3 +13,11 @@ npm uninstall imePakeata -g
 **ILI BEZ --g FLAGA**
 
 npm uninstall imePakeata
+
+3. UKLANANJE LOKALNOG
+
+- npm uninstall --save imePaketa
+
+ILI AKO JE DEV DEPENDANCY
+
+- npm uninstall --save-dev imePaketa
