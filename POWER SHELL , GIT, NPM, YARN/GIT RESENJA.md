@@ -1,10 +1,34 @@
 # GIT RESENJA
 
+## KADA IMAS GIT REPO LOKALNO, IZELIS DA GA PUBLISH-UJES NA GIT HUB KAO PRIVETE REPO (KORISTI GIT BASH A NE POWER SHELL)
+
+ps. TADA KADA HOCES DA KREIRAS GITHUB REPO, NEMOJ DA KORISTIS README ILI LICENCE, JER CE TO ODMAH KREIRATI REPO, TI NE ZELIS DA GA ODMAH KREIRAS VEC ZELIS DA IMAS PRIKAZANE GIT KOMANDE
+
+[MORAS GENERISATI SSH KEY](https://github.com/facebookresearch/deepmask/issues/23)
+
+PRATI OVO
+
+> Generate SSH key using
+
+- ssh-keygen -t rsa -b 4096 -C "your_email@example.com".
+
+> Copy the output of id_rsa.pub (NALAZI SE SACUVAN U TVOJIM NA TVOM RACUNARU U ROOT FOLDERU C:/Rade)
+
+MORAS OTVORITI TAJ .pub FAJL SA TEXT EDITOROM, MOZES KORISTITI I CS CODE
+
+> Paste the above copied outpur into your Github profile -> Settings -> SSH and GPG Keys -> Add new SSH key
+
+**I SADA CES MOCI DA EXECUTE-UJES SLEDECE**
+
+- git remote add origin git@github.com:Rade58/blah-clone.git
+
+- git push -u origin master
+
 ## GIT HANDBOOK
 
 [ODLICAN CLANAK SA freecodecamp](https://medium.freecodecamp.org/the-essential-git-handbook-a1cf77ed11b5)
 
-##  REMOTE REPO SA VISE BRANCH-EVA
+## REMOTE REPO SA VISE BRANCH-EVA
 
 - FORKUJ OVAJ REPO (TO AKO NE ZELIM DA COMMITUJEM U NJEGOV REPO, VEC ZELIM DA GA IMAM U 'MOM VLASNISTVU I VRSIM IZMENE')
 
