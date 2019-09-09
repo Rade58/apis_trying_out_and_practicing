@@ -1,1 +1,128 @@
 # ODLUCIO SAM OPET DA OBJASNIM, KAKO JE Node.js CODE (U OVOM SLUCAJU WEBPACK-OV CODE) MOGUCE DEBUGGOVATI U SAMOM CHROME-U
+
+## STA ZNAM O WEBPACK-U
+
+PA DA BI SAGRADIO KONFIGURACIJU JA KORISTIM Node.js SINTAKSU; DAKLE U PITANJU JE Node.js CODE
+
+## SAZNAO SAM RANIJE DA MOGU DEBUGG-OVATI, MOJ WEBACK CODE RUNN-UJUCI, SLEDECI SCRIPT
+
+**"node --inspect --inspect-brk ./node_modules/webpack/bin/webpack.js"**
+
+I JA SAM ZADAO OVOM SCRIPTU IME **debug**
+
+NASRAVNO, JA MOGU COMPOSE-OVATI SCRIPT, PRI KOJEM CU KORISTITI I WEBPACK-OV MODE
+
+EVO POGLEDAJ OVE SCRIPT-OVE
+
+- "dev": "npm run webpack-dev-server -- --env.mode development --hot",
+
+- "prod": "npm run webpack -- --env.mode production",
+
+- "dev:debug": "npm run debug -- --env.mode development",
+
+-"prod:debug": "npm run debug -- --env.mode production"
+
+## POGLEDAJ SADA TVOJ PLUGIN, KOJI SI DELIMICNO DEFINISAO
+
+build_utils/MyFirstWebpackPlugin.js
+
+```javascript
+class MyFirstWebpackPlugin {
+
+    apply(compiler){
+
+        compiler.hooks.done.tapAsync("MyFirstWebpackPlugin", (stats, callback) => {
+
+            //
+            console.log(stats);
+
+            debugger;
+
+            //
+            callback();
+
+        })
+    }
+}
+
+module.exports = MyFirstWebpackPlugin;
+
+```
+
+**NARAVNO, TI SI OVAJ PLUGIN TAKODJE UVEZAO U SVOJ *webpack.config.js* I TAM OSI GA INSTATICIZIRAO U plugins NIZU**
+
+NARAVNO, TI SI GA MOGAO KORISTITI I U BILO KOJEM PRESET-U
+
+ALI BITNO JE DA ZNAS DA SADA POSTO MOZES DA DEBUGG-UJES WEBPACK-OV Node.js CODE
+
+TI MOZES, I DEBUGG-OVATI CODE SVOG PLUGINA, KOJEG SI INSTATICIZIRAO
+
+## RUNN-UJ SADA DEBUGGING SCRIPT
+
+NA PRIMER **dev:debug**
+
+## U TERMINALU CE TI ODMAH BITI PROVIDED URL, U OVAKVOM FORMATU
+
+`ws://127.0.0.1:9229/27f3718d-b399-4197-a7ce-80f64a59fdc5`
+
+PREDPOSTAVLJAM DA ws ZNACI **WINDOWS**
+
+## AKO UBACIS POMENUTI SCRIPT U CHROME ADRESS BAR, NA STRANICI CES VIDETI 'This site can’t be reached'
+
+RECI CE TI JOS DA JE U PITANJU *ERR_DISALLOWED_URL_SCHEME*
+
+## ALI KADA OTVORIS CHROME DEV TOOLS, NA GORNJOJ TRACI TOOL-OVA, VIDECES ODMAH MALO DUGME, U OBLIKU Node.js LOGO-A; E PA AKO PRITISNES TO DUGME OTVORICES `Dedicated DevTools FOR Node.js`
+
+CIM PRITISNES TO OTVARA SE NOVI WINDOW
+
+ON OSTO TE OVDE ZANIMA JESTE **Sources** TAB
+
+E PA TU MOZES DA SE IZRAZIM DEBUGG-OVATI CODE WEBPACK-A, ODNONO CODE, TVOG INSTATICIZIRANOG PLUGINA
+
+## MOZES PRITISNUTI DUGME KOJE LICI NA PLAY I KOJE ZNACI DA TREBAS NASTAVITI ILI POCETI SA EXECUTION-OM SCRIPT-A
+
+TI SI NA PRIMER POKRENUO DEVELOPMENT SCRIPT UZ DEBUGGING SCRIPT
+
+TO ZNACI DA CE SE CODE EXECUTE-OVATI TACNO DO ONOG MESTA GDE SI ZADAO debugger STATEMENT U TVOM PLUGIN-U
+
+POSTO SI TVOJ PLUGIN DEFINISAO OVAKO:
+
+build_utils/MyFirstWebpackPlugin.js
+
+```javascript
+class MyFirstWebpackPlugin {
+
+    apply(compiler){
+
+        compiler.hooks.done.tapAsync("MyFirstWebpackPlugin", (stats, callback) => {
+
+            
+            // ODNOSNO POSTO SI OVDE ZADAO STAMPANJE
+
+            console.log(stats);
+
+
+            // I POSTO SI OVDE ZADA O DEBUGGER
+            debugger;
+
+                    // U KONZOLI, POMENUTOG Node Dev Tools WINDOW-A
+                    // VIDECES ODSTAMPANE stats
+
+                    // NARAVNO, U TERMINALU U KOJEM SI POKRENUO DEBUGGING SCRIPT
+                    // OUTPUT-OVACE SE ISTO
+
+
+            
+            callback();
+
+        })
+    }
+}
+
+module.exports = MyFirstWebpackPlugin;
+
+```
+
+## SAM ODA ZANS DA SADA KADA POGLEDAS stats OUTPUTED U KONZOLI POMENUTOG Node Dev Tools WINDOW-A VIDECES DA OUTPUTED stats OBJEKAT, IMA I PROPERTI compilation, ALI O TOME CU NASTAVITI
+
+[OVDE]()
