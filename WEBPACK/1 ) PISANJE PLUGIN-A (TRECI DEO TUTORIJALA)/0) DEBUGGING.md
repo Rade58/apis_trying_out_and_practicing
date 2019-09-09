@@ -125,4 +125,4 @@ module.exports = MyFirstWebpackPlugin;
 
 ## SAM ODA ZANS DA SADA KADA POGLEDAS stats OUTPUTED U KONZOLI POMENUTOG Node Dev Tools WINDOW-A VIDECES DA OUTPUTED stats OBJEKAT, IMA I PROPERTI compilation, ALI O TOME CU NASTAVITI
 
-[OVDE]()
+[OVDE](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/1%20%29%20PISANJE%20PLUGIN-A%20(TRECI%20DEO%20TUTORIJALA)/2.%20KREIRANJE%20PLUGIN-A.md#posto-sada-zanas-kako-da-debugg-ujes-svoj-plugin-odnosno-posto-si-proucio-on-osto-sam-napisao-na-md-fajlu-do-kojeg-je-vodio-predhodni-link-mozes-uspesno-da-nastavis-definsianje-svog-pluggin-a)
