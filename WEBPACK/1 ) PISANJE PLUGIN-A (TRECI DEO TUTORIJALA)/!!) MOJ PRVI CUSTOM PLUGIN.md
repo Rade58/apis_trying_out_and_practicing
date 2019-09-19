@@ -1,0 +1,15 @@
+# OVDE CU OSTAVITI COMMENTED OUT CODE JEDNOG WEBPACK PLUGIN-A, KOJEG CU JA KREIRATI
+
+
+
+OVDE BI TREBALO DA STAVIM CODE, ALI PLUGIN NIJE JOS READY
+
+
+
+## OVO SE TICE PUBLISHING-A
+
+<https://zellwk.com/blog/publish-to-npm/>
+
+## A OVO JE RELEASE PROCESS VEZAN ZA WEBPACK PLUGIN
+
+<https://webpack.js.org/contribute/release-process/>
