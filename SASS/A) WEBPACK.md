@@ -745,7 +745,7 @@ SASS FAJLOVI KOJE SAM KORISTIO:
 }
 ```
 
-```javascript
+```scss
 //      src\styles\sass_modules\change_size.module.scss
 
 .shrink {
@@ -778,4 +778,4 @@ TI SI KORISTIO STATICKI SADA
 
 *OVO SE CISTO PODSECAM*
 
-["DINAMICKI" TI JE OBJASNJEN OVDE](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/0%29%20WEB%20PERFORMANCE%20%28DRUGI%20DEO%20TUTORIJALA%29/a%28%20%60%60DINAMICKI%60%60%20CODE%20SPLITTING.md#dinamicki-code-splitting) (VEC SI PISAO O TOME)
+["DINAMICKI" TI JE OBJASNJEN OVDE](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/WEBPACK/0)%20WEB%20PERFORMANCE%20(DRUGI%20DEO%20TUTORIJALA)/a)%20%60%60DINAMICKI%60%60%20CODE%20SPLITTING.md#dinamicki-code-splitting) (VEC SI PISAO O TOME)
