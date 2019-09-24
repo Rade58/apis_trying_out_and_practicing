@@ -782,4 +782,53 @@ TI SI KORISTIO STATICKI SADA
 
 ## STO SE TICE WEBPACK-A, POSTOJE PROBLEMI KOJI SE TICU RESOLVEMNT-A PATH-OVA, KOJI BI SE KORISTILI U SASS FAJLOVIMA
 
-[O TEMA SAM GOVORIO OVDE, PRILIKOM UPOAZNAVANJA SA @import U SASS-U](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/SASS/2.%20IMPORT.md#-problem-medjutim-moze-nastati-pri-resolvment-u-path-ova-kada-koristim-webpack-kao-build-sistem-a-ja-ga-koristim-)
+[SPOMENUO SAM OVAJ PROBLEM PRILIKOM UPOZNAVANJA SA @import DEKALRACIJOM U SASS-U](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/SASS/2.%20IMPORT.md#-problem-medjutim-moze-nastati-pri-resolvment-u-path-ova-kada-koristim-webpack-kao-build-sistem-a-ja-ga-koristim-)
+
+[U SUSTINI RESENJE JE PONUDJENO NA SAMOJ STRANICI "sass-loader"-A](https://github.com/webpack-contrib/sass-loader#resolving-import-at-rules)
+
+SUMIRACU STVARI U POGLEDU **@import**
+
+- *USTVARI JEDINI PROBLEM BI BIO UVOZENJE SASS FAJLOVA IZ node_modules*
+
+- MEDJUTIM TO I NIJE PROBLLEM JER KAO STO ZNAM WEBPACK NUDI SVOJ **ADVANCED MEHANIZAM ZA RESOLVEMENT FAJLOVA**
+
+- U SUSTINI SAMO JE POTREBNO DODATI **`~`** U PATH-U
+
+- STO NZACI DA BI NA PRIMER BOOTSTRAP LIBRARY IMPORTOVAO OVAKO
+
+```scss
+@import '~bootstrap';   // I LIBRARY BI BIO UVEZEN IZ node_modules
+```
+
+>>>>> MEDJUTIM STO SE TICE KORISCENJA **url()** POTREBNO JE NESTO VISE URADITI
+
+[PROBLEM SA NJIM](https://github.com/webpack-contrib/sass-loader#problems-with-url)
+
+**RESENJE SE OGLEDA U KORISCENJU, JEDNOG LOADER-A**
+
+- [**"resolve-url-loader"** ](https://github.com/bholloway/resolve-url-loader)
+
+POTREBNO GA JE STAVITI PRE "sass-loader"-A U KONFIGURACIJI
+
+MOGAO BIH TO SADA URADITI, ALI NECU
+
+:ballot_box_with_check::ballot_box_with_check::ballot_box_with_check::ballot_box_with_check:
+
+**NAIME POTREBNO JE SAMO SPECIFICIRATI PATH RELATIVAN NA SOURCE FOLDER**
+
+OVAKO
+
+```scss
+#app {
+
+    &::after {
+        content: url(/src/images/normal/image_18.jpg);          // EVO POGLEDAJ PATH
+        width: 38vw;
+    }
+
+}
+```
+
+USPESNO SAM LOAD-OVAO SLIKU U OVOM SLUCAJU, TAK ODA NEMA POTREBE ZA DODATNIM LOADER-OM
+
+:ballot_box_with_check::ballot_box_with_check::ballot_box_with_check::ballot_box_with_check:
