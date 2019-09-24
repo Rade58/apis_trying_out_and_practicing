@@ -782,4 +782,4 @@ TI SI KORISTIO STATICKI SADA
 
 ## STO SE TICE WEBPACK-A, POSTOJE PROBLEMI KOJI SE TICU RESOLVEMNT-A PATH-OVA, KOJI BI SE KORISTILI U SASS FAJLOVIMA
 
-[O TEMA SAM GOVORIO OVDE, PRILIKOM UPOAZNAVANJA SA @import U SASS-U]()
+[O TEMA SAM GOVORIO OVDE, PRILIKOM UPOAZNAVANJA SA @import U SASS-U](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/SASS/2.%20IMPORT.md#-problem-medjutim-moze-nastati-pri-resolvment-u-path-ova-kada-koristim-webpack-kao-build-sistem-a-ja-ga-koristim-)
