@@ -6,3 +6,6 @@
 
 [SVI SELEKTORI](https://estelle.github.io/cssmastery/selectors/selectors.html)
 
+3. DEFINSISANJE STILOVA ZA input type="range", [POSTOJI JEDAN TOOL](http://danielstern.ca/range.css/?ref=css-tricks#/) 
+
+AKO HOCES DA KOPAS PO SHADOW DOM-U, PROCITAJ [OVO](https://css-tricks.com/sliding-nightmare-understanding-range-input/)
