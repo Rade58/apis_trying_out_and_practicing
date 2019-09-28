@@ -1,7 +1,7 @@
-# ONE BIG MESS (MADE JUST FOR ME, SO SKIP IT)
+# ONE BIG MESS (MADE JUST FOR ME, FOR MY UNREGULATED, OFTEN HARD TO UNDERSTAND NOTES)
 ## repo made only for practicing and learning purposes
 ## for learning how various APIs work 
-## for learning syntax used inside .md files
+## for learning how to write syntax used inside .md files
 ## for practicing command line
 
 ### JAVASCRIPT FAJL     web_components/index.js (!PREMESTENO)
@@ -21,4 +21,4 @@ ONO STO KONKRETNO JESTE POKRIVENO U OVOM FAJLU JESU
 POKRIVA ONO NAJVAŽNIJE O FORMULARIMA I KONTROLAMA (KONKRETNO O SVIM EVENT-OVIMA VEZANIM ZA FORMULAR I KONTROLE FORMULARA)
 
  ### OBJAŠNJENJA VEZANA ZA      PAGE LIFECYCLE EVENT-OVE I RESOURCE LOADING NALAZE SE PO RAZNIM FAJLOVIMA, ALI MISLIM DA SU NAJPOTPUNIJA OBJASNJENJA U FAJLOVIMA
-pageLifecycleEventsSec.html 
+pageLifecycleEventsSec.html
