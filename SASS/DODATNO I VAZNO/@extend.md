@@ -185,3 +185,55 @@ NA PRIMER U SASS-U, ODNONO U BLOKU KOJI JE PODBLOK, ILI DA SE SLOBODNIJE IZRAZIM
 TADA CE DOCI DO OUTPUTINGA OGROMNOG BROJA GARBAGE CODE-A (POGLEDAJ 62 i 63 STRANICU [SLAJDOVA](https://drive.google.com/file/d/0B7LIdu29tPZRVmJVeXpvOHhaUW8/view))
 
 NEKI LJUDUI CAK IMAJU I LINTER KOJI SPRECAVA UPOTREBU @extend-A IZ POMENUTOG RAZLOGA (ALI JA CU GA KORISTITI, SAMO PAZLJIVO)
+
+## EVO I VEZBE
+
+```scss
+%bucket {
+    padding: 2px 10px;
+    border-radius: 2px;
+    border-style: solid;
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+.btn-primary {
+    @extend %bucket;
+    background-color: rgb(204, 68, 102);
+    color:rgb(255, 255, 255);
+}
+
+.btn-secondary {
+    @extend %bucket;
+    background-color:rgb(237, 188, 200);
+}
+```
+
+```html
+<p>
+    <button class='btn btn-primary'>Click Me!</button>
+    <label>Primary</label>
+</p>
+
+<p>
+    <button class='btn btn-secondary'>Click Me!</button>
+    <label>Secondary</label>
+</p>
+
+<p>
+    <button class='btn btn-primary' disabled>Click Me!</button>
+    <label>Primary Disabled</label>
+</p>
+
+<p>
+    <button class='btn btn-secondary' disabled>Click Me!</button>
+    <label>Secondary Disabled</label>
+</p>
+<p class='unstyled'>
+    <button class='no-style' disabled>Click Me!</button>
+    <button class='btn' disabled>Click Me!</button>
+    <label>These should remain unstyled</label>
+</p>
+```
