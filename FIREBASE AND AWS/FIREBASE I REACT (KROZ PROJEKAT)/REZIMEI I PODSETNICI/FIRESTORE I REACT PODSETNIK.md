@@ -33,3 +33,7 @@ MOZDA CU BOLJE BARATITI SA REACT-OM, KADA BUDEM POMENUTO PROCITAO
 5. NAUCI CODE SPLITTING U React-U, I TO POCNI OD ZVANICNOG GUIDE-A
 
 [Code Splitting](https://reactjs.org/docs/code-splitting.html)
+
+6. MOGUCE JE KORITITI [TYPESCRIPT U CLOUD FUNKCIJAMA](https://firebase.google.com/docs/functions/typescript)
+
+ISPITAJ TO
