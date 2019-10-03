@@ -109,3 +109,5 @@ makeBand()
 MISLIM DA JE I OVO JAKO VAZNO
 
 [Code-Splitting a TypeScript Application with import() and webpack](https://mariusschulz.com/blog/code-splitting-a-typescript-application-with-import-and-webpack)
+
+## KADA UVOZIS MODULE TI MOZES UVEK PRITISNUTI Alt + REFERENCA MODULA, I ETO TE U FAJLU KOJI JE ORIGIN FAJL MODULA, NA LINE-U GDE JE SAMI MODUL DECLARED
