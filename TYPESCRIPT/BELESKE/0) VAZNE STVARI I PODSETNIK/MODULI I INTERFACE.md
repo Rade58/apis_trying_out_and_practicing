@@ -101,3 +101,11 @@ async function makeBand(): Promise<{}> {        // OVO NIKAD RANIJE NISAM KORIST
   
 makeBand()
 ```
+
+## DALJE STO SE TICE MODULA (ODNOSNO DYNAMIC import EXPRESSION-A) I TYPESCRIPTA, DOBRO BI BILO DA PROCITAM SLEDECI CLANAK
+
+[CLANAK](https://mariusschulz.com/blog/dynamic-import-expressions-in-typescript)
+
+MISLIM DA JE I OVO JAKO VAZNO
+
+[Code-Splitting a TypeScript Application with import() and webpack](https://mariusschulz.com/blog/code-splitting-a-typescript-application-with-import-and-webpack)
