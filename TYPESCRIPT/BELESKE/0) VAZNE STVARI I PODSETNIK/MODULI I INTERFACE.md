@@ -79,7 +79,7 @@ async function makeBand(): Promise<{}> {        // OVO NIKAD RANIJE NISAM KORIST
     // JEDIN OJE UVEZEN ONAJ
 
     // ! DAKLE OVOGA NEMA             moduleViolina.Violina
-    // ALI OVOGA IMA        
+    // ALI OVOGA IMA
                     //              moduleViolina.instrument  (OBJEKAT KOJI SAM NAPRAVIO Violina INTERFACE-OM
                     //                                              U FAJLU MODULA)
     let instrument = moduleViolina.instrument;
