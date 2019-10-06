@@ -1,4 +1,4 @@
-# as OPERATOR
+# as OPERATOR I OVERLAPING OBJEKTI
 
 DA ZAISTA, JE MOGUCE I MENJANJE TYPE-A, USTVARI TACNIJE JE RECI **NADOGRADNJE TYPE-A**, PO POTREBI
 
@@ -230,7 +230,7 @@ rucak.alkoholno = false;
 ### PRVO MALI PODSETNIK ZA NIZOVE I TYPOVE
 
 ```typescript
-// EVO PAR INTERFACE-OVA
+// EVO PAR INTERFACE-OVA, KOJI NISU OVERLAPING, ODNSONU INSUFFICIENTLY
 interface Pice {
     alkoholno: boolean;
     ime: string,
@@ -263,10 +263,227 @@ let vecera: [Pice, Pice, Jelo] | [Jelo, Pice, Jelo] = [
     {alkoholno: false, ime: "kokta"},
     {alkoholno: true, ime: "wiskey", cena: 4800},
     {ime: "steak", kolicina: 200, poreklo: "french"}
-
 ];
 
 ```
 
-### NISTA NIJ SPORNO IZ GORNJEG CODE-A, ALI HAJDE DA SADA UPOTREBIM as OPERATOR
+## OVERLAPING TYPE-OVI I NIZ
 
+NIZ, KOJI PRIHVATA CLANOVE, KOJI SU DOZVOLJENOG TYPE-A ZA NIZ; MOZE DA PRIHVATI I CLANA KOJI JE OVERLAP-UJUCI TYPE (ODNOSNO, KOJI JE 'OVERLAPER' ODNOSNO KOJI OVERLAPUJE TRENUTNOG TYPE NIZA), POMENUTOG ZDATOG, ODNOSNO DOZVOLJENOG TYPE-A
+
+POSMATRAJ OVAJ PRIMER
+
+```typescript
+//////////////////////////////////////
+
+// OVO SU DVA OVERALP-UJUCA TYPE-A
+
+interface Ulica {
+    brojevi: boolean;
+    staniste: string;
+    populacija: number;
+}
+
+interface Avenija {
+    brojevi: boolean;
+    staniste: string;
+    populacija: number;
+    
+    transport: string;
+    gondola: boolean
+}
+
+
+/////////////////////////////////
+// OVO SU NEKI RANDOM OBJEKTI, KOJI NEMAJU APSOLUTNO NIKAKVE VEZE
+// SA GORNJIM INTERFACE-OVIMA
+let tetrebObjekat = {tetreb: true, balvan: "4 cola"};
+let blavorObjekat = {blavor: true, balvan: "8 cola"};
+
+/////////////////////////////////
+
+// KREIRACU DVA NIZA
+// JEDAN OD NJIH PRIHVATA TYPE-OVE, PRVOG OVERLAPUJUCEG TYPE-A
+// A DRUGI DRUGOG OVERLAP-UJJUCEG TYPE-A
+let ulicaNiz: Ulica[] = [];
+let avenijaNiz: Avenija[] = [];
+
+/////////////////////////////////
+
+// KREIRAM JEDAN OBJEKAT KOJI JE U SKLADU SA PRVIM OVERLAP-UJUCIM TYPE-OM
+let jednaUlica: Ulica = {
+    brojevi: true,
+    staniste: "ruralno",
+    populacija: 1000
+}
+// KREIRAM JOS JEDAN OBJEKAT KOJI JE U SKLADU SA DRUGIM OVERLAP-UJUCIM TYPE-OM
+let jednaAvenija: Avenija = {
+    brojevi: true,
+    staniste: "urbano",
+    populacija: 2000,
+    
+    transport: "electric cars",
+    gondola: true
+}
+//////////////////////////////////////////
+
+// ********  NIZ,, USTVARI PRIHVATA I ONE TYPE-OVE
+// *** KOJI OVERLAPUJU, TYPE, NJEGOVIH CLANOVA   ******
+
+ulicaNiz[0] = jednaAvenija;
+//************ DAKLE TYPESCRIPT ME NIJE NISTA UPOZORIO, DAKLE, GORE DEFINISANO JE SASVI MDOZVOLJENO
+
+// !!!!!!!!!!   ALI NIKAKO OBRNUTO
+// !!!!!!     NIZ NE MOZE PRIHVATITI ONE TYPE-OVE, KOJI SU TAKVI DA SU OVERLAPED BY TYPE
+// !!!!!!     CLANOVA
+
+// TO I IMA SMISLA, JER OVERLAPER IMA DODADTNE PROPERTIJE U ODNSU NA OVERLAPED BY-A
+
+avenijaNiz.push(jednaUlica);  // ---->    ERROR
+///////////////////////////////////////////////////////////////////////////////////
+```
+
+### SADA NISTA NE BI TREBAL ODA BUDE SPORNO IZ GORNJEG CODE-A, ALI HAJDE DA SADA UPOTREBIM as OPERATOR
+
+OPET CU KORISTITI PRIMER, A OVO CE BITI 'POSTAVKA' I U MNOGOME TOME CU PROVEZBATI, ONO STA SAM PRIKAZAO U PROSLOM PODNASLOVU
+
+```typescript
+// IMAM DVA OVRLLAPING INTERFACE-A
+////////////////////////////////////
+interface Gvanaka {
+    krzno: string;
+    tezina: number;
+
+    kandze?: boolean;
+}
+
+interface Alpaka {
+    krzno: string;
+    tezina: number;
+
+    poreklo: string;
+    tovarnost: string;
+    jestivost?: boolean    
+
+}
+///////////////////////////////////////////
+
+// NAPRAVICU NEKOLIKO OBJEKATA U SKLADU SA      Gvanaka         TYPE-OM
+
+var lama1: Gvanaka = {
+    krzno: "crveno barsunasto",
+    tezina: 58,
+    kandze: false
+};
+var lama2: Gvanaka = {
+    krzno: "sivo umerena",
+    tezina: 69,
+    kandze: true
+};
+var lama3: Gvanaka = {
+    krzno: "brown prolivska",
+    tezina: 54,
+    kandze: false
+};
+var lama4: Gvanaka = {
+    krzno: "providno sarena",
+    tezina: 68,
+    kandze: false
+};
+var lama5: Gvanaka = {
+    krzno: "zelenkaso bujna",
+    tezina: 42,
+    kandze: true
+};
+var lama6: Gvanaka = {
+    krzno: "farbana",
+    tezina: 62,
+    kandze: true
+};
+
+/////////////////////////////////////////////////
+
+// CISTO ZBOG DEMONSTRACIJE, KREIRACU I JEDAN OBJEKAT, KOJI JE U SKLADU SA INTERFACE-OM
+// Alpaka
+
+var lamaAl: Alpaka = {
+    krzno: "maslinasto bujno",
+    tezina: 128,
+    poreklo: "Chile",
+    tovarnost: "srednje do navise"
+}
+
+/////////////////////////////////////////////
+
+let lamaArray: Gvanaka[] = [];          // kreiram array koji jedino prima clanove koji su type 
+                                        //              Gvanaka
+
+for(let i = 0; i < 6; i++){
+
+    // DODAJEM SVE OBJEKTE (U SKALD USA Gvanaka INTERFACE-OM) U POMENUTI NIZ
+
+    lamaArray.push(window[`lama${i + 1}`])
+
+
+}
+
+////////////////////////////////////////////////////
+
+// MOGU DA DODAM I ONAJ JEDAN OBJEKAT U SKLADU SA Alpaka INTERFACE-OM
+// TO MI JE DOZVOLJENO ZA OVAJ NIZ JER JE Alpaka OVERLAPER U ODNOSU NA Gvanaka TYPE
+
+lamaArray.push(lamaAl);
+
+///////////////////////////////////////////////////
+```
+
+**SADA CU UPOTREBITI as NA TAKAV NACIN, *KAO DA IMAM DVE VERZIJE JEDNOG TE ISTOG NIZA***
+
+```typescript
+/ DAKLE JA MOGU KORISITI as, I KAKO BI DODAO JEDNOSJ VERZIJI, ONE OPCIONE CLANOVE
+
+// A U DRUGOJ VERZIJI, KOJU CU KORIRIRI U TYPE-U, KOJI JE OVERLAPED BY
+// KAKO BI DODAO NEDOSTAJAJUCE CLANOVE
+
+(lamaArray as Alpaka[]).forEach(lamaClan => {
+    lamaClan.poreklo = "Juzna Amerika"
+    lamaClan.tovarnost = "SREDNJA"
+});
+
+lamaArray.forEach(lamaClan => { 
+    lamaClan.kandze = true
+});
+
+
+
+///////////////////////////////////////////////////
+// OVDE MOGU PROVERITI DA L UISAM SVE DODAO 
+(lamaArray as Alpaka[]).forEach(lamaClan => {
+
+    //**** TYPESCRIPT NIJE DAO NIAKAKV ERROR, DAKLE SVE JE KOREKTNO
+    console.log(lamaClan.poreklo);          
+    console.log(lamaClan.tovarnost);
+
+});
+
+// !!!!!!!!!!! A OVO BI DA LO I ERROR JER SE NE RADI O PRAVOJ VERZIJI
+
+lamaArray.forEach(lamaClan => {
+
+    // !!!!!!!          ERROR
+    console.log(lamaClan.poreklo);      // --> ERROR          
+    console.log(lamaClan.tovarnost);    // eRROR
+
+})
+
+
+// ******* OVO JE KOREKTNO
+lamaArray.forEach(lamaClan => {
+    console.log(lamaClan.kandze)
+});
+
+// ****** ALI I OVO JE KOREKTNO, MADA JE SUVISNO
+(lamaArray as Gvanaka[]).forEach(lamaClan => {
+    console.log(lamaClan.kandze)
+})
+```
