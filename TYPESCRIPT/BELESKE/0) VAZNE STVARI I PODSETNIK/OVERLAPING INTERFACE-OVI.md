@@ -182,11 +182,11 @@ function stampajMore(x: More){
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 // Array ZA NON OVERLAPING TYPE
-let mocvarniNiz: Mocvara[]; 
+let mocvarniNiz: Mocvara[] = []; 
 // Array ZA OVERLAPPED BY TYPE
-let jezerskiNiz: Jezero[];
+let jezerskiNiz: Jezero[] = [];
 // ARRAY ZA OVERLAPER TYPE
-let morskiNiz: More[];
+let morskiNiz: More[] = [];
 
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
