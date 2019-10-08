@@ -261,7 +261,6 @@ let nekoJezero: Jezero = {
 function stampajVodu(y: Mocvara & Jezero){
     console.log(y)
 }
-
 ```
 
 *GORE PRIKAZANA FUNKCIJA JE UPRAVO TAKVA DA ZAHTEVA DA JOJ SE KAO ARGUMENT DODA NEKI OBJEKAT, KOJI IMA TYPE, KOJI JE OVERLAPPER DVEMA DEFINISANIM TYPE-OVIMA*
@@ -285,7 +284,7 @@ let okeanObjekat = {
 
     // OVO SU NJEGOVI, SAMO NJEMU SVOJSTVENI
 
-    brr_ajkula: 6800000,
+    br_ajkula: 6800000,
     br_zebri: 0
 
 }
@@ -295,6 +294,15 @@ let okeanObjekat = {
 //                                                                              Mocvara & Jezero
 // ***************** NEMA NIAKAVE GRESKE, SVE JE U REDU
 stampajVodu(okeanObjekat);
+
+// *****************
+```
+
+## CISTO DA NAPOMENEM, BEZ OBZIRA NA TYPECHECKING, null CE UVEK BITI VALIDNI TYPE, KOJI OVERLAP-UJE SVE MOGUCE
+
+```typescript
+// ***************** NEMA NIAKAVE GRESKE, SVE JE U REDU
+stampajVodu(null);
 
 // *****************
 ```
