@@ -2,6 +2,12 @@
 
 NA POCETKU DA KAZEM DA SAM JA ['KONCEPT OVERLAPING-A'](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/TYPESCRIPT/BELESKE/0%29%20VAZNE%20STVARI%20I%20PODSETNIK/OVERLAPING%20INTERFACE-OVI.md), BOLJE OBJASNIO U DRUGOM DOKUMENTU ,ALI MISLI MDA SAM I OVDE DAO KOREKTNE PRIMERE
 
+*NE ZNAM DA LI SU MOJI PRIMERI SUVISNI*
+
+*U SUSTINI U ZADNJEM NASLOVU SAM DAO PRIMER, KAKAVA JE I NA [ZVANICNO JSTRANICI](https://www.typescriptlang.org/docs/handbook/basic-types.html#type-assertions) (**TAM OSE KORISCENJE as-A NAZIVA "TYPE ASSERTION-OM"**)*
+
+## DA NASTAVIM
+
 DA ZAISTA, JE MOGUCE I MENJANJE TYPE-A, USTVARI TACNIJE JE RECI **NADOGRADNJE TYPE-A**, PO POTREBI
 
 PODELICU OVA OBJASNJENJA NA DVA DELA
@@ -68,6 +74,7 @@ let dzemOdVisanja: Visnja = {
 let dzemOdTresanja: Tresnja = {
     dzem: false,
     etiketa: "devojka drzi teglu",
+
     rok_upotrebe: 2019
     peteljka: true,
     boja: "bordo"
@@ -474,7 +481,7 @@ lamaArray.forEach(lamaClan => {
 
     // !!!!!!!          ERROR
     console.log(lamaClan.poreklo);      // --> ERROR          
-    console.log(lamaClan.tovarnost);    // eRROR
+    console.log(lamaClan.tovarnost);    // ERROR
 
 })
 
@@ -488,4 +495,29 @@ lamaArray.forEach(lamaClan => {
 (lamaArray as Gvanaka[]).forEach(lamaClan => {
     console.log(lamaClan.kandze)
 })
+```
+
+## STO SE TICE as OTKRIO SAM DA SE ON NA PRIMER TREBA KORITITI AKO IMAM VARIJABLU, KOJA JE DECLARED SA any
+
+POGLEDAJ PRIMER
+
+```typescript
+// IMAM NEKU OVAKVU VARIJABLU, KOJA IMA any TYPE ANNOTATION
+let nekakvoNesto: any;
+//
+//
+// ALI NEGDE SAM ODLUCIO DA JOJ DODELIM STRING KAO VREDNSOT
+//
+nekakvoNesto = "Neki tekst blah, blah";
+
+// A as PRVENSTVEN KORISTIM DA BIH IAMO SUGESTIJE OD TYPESCRIPTA, KADA NA PRIMER
+// ZELIM DA PRISTUPIM NEKOJ METODI String-OVOG PROTOTIPA
+let brojKaraktera: number = (nekakvoNesto as string).length;
+
+// NE BIH IMAO SUGESTIJE ZA         length      DA NISAM KORISTIO as KORISTECI VREDNOST KA OSTRING
+
+// UMESTO as MOZE SE UPOTREBITI I       <>
+
+let numberOfChars: number = (<string>nekakvoNesto).length
+
 ```
