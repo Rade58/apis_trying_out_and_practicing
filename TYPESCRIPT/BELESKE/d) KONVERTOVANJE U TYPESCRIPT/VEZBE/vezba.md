@@ -331,3 +331,36 @@ npm run test
 TEST JE BIO USPESAN: 14/14
 
 KADA SAM SVE RESIO I **OVO BI TREBALO DA BUDE COMMITED**
+
+**napomena:**
+
+>>>> POZABAVI SE I RESENJEM, KOJE JE DEFINISAO AUTOR WORKSHOP-A
+
+## :three: SLEDECA FAZA BI SE OGLEDALA U ENABLEING USTRICT MODE-A
+
+ALI TO BI BIO VEC NOOP, JER SAM SVE URADIO U SKALDU SA NEDOZVOLJAVANJEM IMPLICITNIH ANY-JA I SVE JE FUNKCIONISALO
+
+MEDJUTIM ZELIM DA DODAM 'STRICT MODE'
+
+DAKLE DODAVANJA SVIH ONIH 'STRICT' OPCIJA U COMPILER OPTION-U, JA CU ENABLE-OVATI STRICT MODE
+
+```json
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noImplicitAny": true,
+    // OVE OPCIJE
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true
+  },
+  "include": ["src"]
+
+}
+```
+
+ZA RAZLIKU OD AUTOROVOG RESENJA, CIJI TRECI STEP JE [NOOP](https://en.wikipedia.org/wiki/Noop), MOJ NIJE JER IMAM ERRORS
+
+ONE GRESKE KOJE SU JAVLJANE MOGU VIDETI U PROJEKTU
