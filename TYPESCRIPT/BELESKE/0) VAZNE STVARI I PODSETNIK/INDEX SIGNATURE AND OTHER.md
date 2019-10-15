@@ -43,22 +43,19 @@ let indexedOb1: IndSig;
 let indexedOb2: IndSig; 
 
 indexedOb1 = {};            // OBRATI PAZNJU NA OVO
-indexedOb2 = [];            // MOZES DA ASSIGN-UJES I CURLY (! ZABRINJAVAJUCE) 
+indexedOb2 = [];            // MOZES DA ASSIGN-UJES I CURLY (! ZABRINJAVAJUCE ZA MENE)
                             // I SQUARE BRACKETS
 
 // **** ovo nije sporno
-
 indexedOb1[8] = ["blah", 88]
 
-// !!!!! ali ovo za mene jeste sporno jer je dozvoljeno
-// !!!!! UPOTREBA INDEXED SIGNATURE-A NA {} NE DAJE NIKAKV ERROR
+// !!!!! ali ovo SLEDECE za mene jeste sporno jer je dozvoljeno
+// !!!!! UPOTREBA INDEXED SIGNATURE-A NA {}, NE DAJE NIKAKV ERROR
 // !!!!! PA CAK I NEMA NIKAKVE VEZE ZA TYPING
 // !!!!  RACUNAO SAM DA CE BITI ERROR I ZA INDEX, I ZA ASSIGNED BVALUE (ALI NEMA ERROR-A NIGDE)
 indexedOb2["blah"] = "nesto"
 
-// **         ALI MORAS ZNATI DA OBJEKTI DESCRIBED SA  
-
-// **       VODI RACUNA DA OBJEKTI DESCRIBED SA INDEX SIGNATURE-OM NE NASLEDJUJ UMETODE
+// **       VODI RACUNA DA OBJEKTI DESCRIBED SA INDEX SIGNATURE-OM ** NE NASLEDJUJU ** METODE
 // **       OD ARRAY-A
 
 // ZATO CES OVDE IAMTI ERROR
@@ -66,4 +63,21 @@ indexedOb2["blah"] = "nesto"
 // JER METODE ARRAY-EVOG PROTOTYPA SE NE NASLEDJU
 
 indexedOb1.push         // ! --->   ERROR
+```
+
+## A STO SE TICE DICTIONARY-JA, NI ON NE NASLEDJUJE METODE OD Object-OVOG PROTOTIPA, KAO STO NI OBJEKAT DESCRIBED SA INDEX SIGNATURE-OM, NE NASLEDJUJE ARRAY-EVE EMTODE
+
+```typescript
+
+interface Dickt {
+    [name: string]: {id: number}
+}
+
+let dickt: Dickt = {}       // OVO JE U REDU ZA POCETAK
+
+// ALI OVO NIJE DOZVOLJENO      let blah: Dickt = []
+
+// NECU IMATI NIKAKVIH SUGESTIJA TYPESCRIPTA ZA METODE I PROPERTIJE, STO 
+// ZNACI DA ZAISTA NE NASLEDJUJE OD Object  
+dickt.
 ```
