@@ -1,4 +1,4 @@
-# OVERLAPING INTERFACE-OVI (PRIMER IZ POSLEDNJEG NASLOVA JE MOZDA NAJVAZNIJI)
+# OVERLAPING INTERFACE-OVI (PRIMER IZ PREDPOSLEDNJEG NASLOVA JE MOZDA NAJVAZNIJI)
 
 POCECU OD POSTAVKE, MOG PRIMER-A
 
@@ -305,4 +305,26 @@ stampajVodu(okeanObjekat);
 stampajVodu(null);
 
 // *****************
+```
+
+## ZA KRAJ CU RECI DA INTERFACE MOZE BITI EXTENDED I SA type ALIAS-OM; ALI POD USLOVOM DA JE VREDNSOT TOG type ALIASE-A, USTVBARI INTERFACE
+
+```typescript
+
+type geometrijska_figura = {
+    crtaj()
+}
+
+interface Kruznica extends geometrijska_figura {
+    diameter: number
+}
+
+let krug: Kruznica = {
+    diameter: 8,
+    
+    crtaj(){
+
+    }
+}
+
 ```

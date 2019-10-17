@@ -6,9 +6,16 @@ EVO PRIMERA
 
 interface BlahInter {
 
-    nekaMetoda()
+    nekaMetoda(): void
 
 }
+
+// ILI SMAO OVAKO
+
+interface FooInter {
+    nekaFunkyMetoda()
+}
+
 
 ```
 
