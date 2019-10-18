@@ -4,7 +4,9 @@
 
 U OVOM PRIMERU CE SE KORISTITI *DICTIONARY*, KOJI SE JOS NAZIVAI [Associative array](https://en.wikipedia.org/wiki/Associative_array) (a collection of key-value pairs, that ensures key uniqueness)
 
-## U OVOM PRIMERU TREBAM DA NAPRAVIM map I reduce METODE, ALI DA OVE METODE BUDU METODE DICTIONARY-JA
+## U OVOM PRIMERU TREBAM DA NAPRAVIM map I reduce METODE, ALI DA OVE METODE BUDU METODE, KOJE CE SE KORISTITI ZA DICTIONARY TYPE
+
+***GENERIC TYPE* BI TREBAO DA DESCRIBE-UJE VALUE IZ KEY/VALUE PARA DICTIONARY-JA**
 
 NAJBOLJEJE POCETI OD INPUTA FUNKCIJE, KOJU CU NAZVATI **mapDict**
 
@@ -18,4 +20,39 @@ const fileEkstenzije = {
     html: ['html', 'htm']
 }
 
+```
+
+## :one: DA PREDSTAVIM MOJE RESENJE ZA mapDic
+
+```typescript
+function mapDict<T>(
+
+    dictionary: {[name: string]: T},
+    callback: (value: T) => any
+
+): {[name: string]: T} {
+
+    let output: {[name: string]: T};
+
+    output = {}
+
+    for(let name in dictionary){
+
+        let temp;
+
+        if(temp = callback(dictionary[name])){
+            Object.assign(output, {[name]: temp})
+        
+    }
+
+    return output;
+
+}
+
+const res = mapDict(fileEkstenzije, function(value){
+
+    return value.join("<=>");
+});
+
+console.log(res)
 ```
