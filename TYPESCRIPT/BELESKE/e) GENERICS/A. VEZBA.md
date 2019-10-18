@@ -4,6 +4,10 @@
 
 U OVOM PRIMERU CE SE KORISTITI *DICTIONARY*, KOJI SE JOS NAZIVAI [Associative array](https://en.wikipedia.org/wiki/Associative_array) (a collection of key-value pairs, that ensures key uniqueness)
 
+MORAS ZNATI OVO ZA DICTIONARY:
+
+**TYPE ANNOTATIO NZA SVAKI VALUE KOD DICTIONARY-JA JE ISTI TYPE ANNOTATION** (NARAVNO UZ IZUZETAK KORISCENJA `|`) (ALI U MOM SLEDECEM PRIMERU, IAMCI SAMO JEDAN TYPE ZA VALUE, A TO CE BITI TYPE PARAMETER)
+
 ## U OVOM PRIMERU TREBAM DA NAPRAVIM map I reduce METODE, ALI DA OVE METODE BUDU METODE, KOJE CE SE KORISTITI ZA DICTIONARY TYPE
 
 ***GENERIC TYPE* BI TREBAO DA DESCRIBE-UJE VALUE IZ KEY/VALUE PARA DICTIONARY-JA**
@@ -42,7 +46,7 @@ function mapDict<T>(
 
         if(temp = callback(dictionary[name])){
             Object.assign(output, {[name]: temp})
-        
+        } 
     }
 
     return output;
@@ -56,3 +60,4 @@ const res = mapDict(fileEkstenzije, function(value){
 
 console.log(res)
 ```
+
