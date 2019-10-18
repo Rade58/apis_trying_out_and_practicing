@@ -169,7 +169,6 @@ function mapDictFunc<T, S>(dict: DiktInte<T>, callback: (val: T, index: number) 
 
     return output;
 
-
 }
 ```
 
