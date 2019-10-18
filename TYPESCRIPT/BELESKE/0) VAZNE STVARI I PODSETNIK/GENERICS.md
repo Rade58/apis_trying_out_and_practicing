@@ -25,6 +25,5 @@ let diktOb2: Dictionary2<string> = {} // IMAJ NA UMU DA OVDE MORAS PROSLEDITI
 let diktOb1: dictionary1 = {};      // OVDE NE MORAS
 
 // I ZATO MOZES ZADATI ANY VALUE
-diktOb1.blah = ["blah"] 
-
+diktOb1.blah = ["blah"]
 ```
