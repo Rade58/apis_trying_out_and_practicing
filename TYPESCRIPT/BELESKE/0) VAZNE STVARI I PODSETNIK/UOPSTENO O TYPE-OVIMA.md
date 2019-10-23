@@ -95,6 +95,8 @@ type type3 = {nesto: string } & [number, boolean]       // OVAKO NESTO  **  **NI
 
 ## :two: TYPE SETS I INTERSECTION TYPES SHOWCASE
 
+**ONO STO TI JE OVDE VAZNO JESTE DA VIDIS KAKO KOMBINACIJA RAZLICITIH TYPE-OVA U TYPE SET-U MOZE BITI EVALUATED IZ RAZLOGA, KAO STO SU INTERSECTION I WIDER ILI NARROWER TYPE-OVI**
+
 ```typescript
 
 // DAKLE any I unknown SU OVERLAPPER TYPE-OVI ZA BILO STA
@@ -121,6 +123,24 @@ type nesto1 = "blah" | never | 48;                  // EVALUATED KAO            
 // SETA
 
 /////////////////////////////////////////////////////////////////////////
+
+
+// STO SE TICE OVAKVIH TYPE-OVA
+type TupArrInter = any[] | [unknown, any]
+// MISLIM DA JE SUVISNO ISTA GOVORITI
+// OVO JE ONOLIKO KOLIKO I JESTE            ILI any[]           ILI     [unknown, any]
+
+///////////////////////////////////////////////////////////////////////////
+
+
+// OBRATI PAZNJU I NA OVO
+
+type Stringlific = string | "foobar"     // OVO JE EVALUATED KAO        string
+
+// ILI 
+
+type Numberlific = 48 | number          // OVO JE EVALUATED KAO         number
+
 
 ```
 
@@ -150,7 +170,7 @@ interface HasLoft {
 
 //      - RAZLICIT DEO
 
-// POGLEDAJ PRIMER, MADA MISLI MDA INTERCEPTION TREBAS DA POSMATRAS KAO OBICNO OR IZJAVU
+// POGLEDAJ PRIMER, MADA MISLI MDA INTERSECTION TREBAS DA POSMATRAS KAO OBICNO OR IZJAVU
 
 type IntersectionTypeBlah = HasHouse | HasLoft;
 
@@ -164,7 +184,7 @@ let morgage: IntersectionTypeBlah = {
 
 // ILI OVAKO
 
-let loan: IntersectionTypeBlah = { 
+let loan: IntersectionTypeBlah = {
     name: "ejraldson",
     floors: true,
     tra: 68
@@ -175,6 +195,6 @@ let loan: IntersectionTypeBlah = {
 
 STA JE ZAKLUCAK
 
-**KAD BOLJE RAZMISLIM MOGU INTERCEPTION DA POSMATRAM KAO OBICNU OR IZJAVU**
+**KAD BOLJE RAZMISLIM MOGU INTERSECTION DA POSMATRAM KAO OBICNU OR IZJAVU**
 
-**ODNOSNO SAM OTREBAS DA ZNAS KOJE PROPERTIJE MOZES KOMBINOVATI A KOJE NE MOZES**
+**ODNOSNO SAM  TREBAS DA ZNAS KOJE PROPERTIJE MOZES KOMBINOVATI A KOJE NE MOZES**
