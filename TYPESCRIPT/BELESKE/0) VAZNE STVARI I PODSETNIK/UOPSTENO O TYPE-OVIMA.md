@@ -130,7 +130,21 @@ ZATO GA SE OPET PODSECAM
 
 ```typescript
 
-//  DVA INTERFACE KOJI IMAJU
+interface HasHouse {
+    name: string;
+    
+    floors: boolean;
+    tra: number
+}
+
+interface HasLoft {
+    name: string;
+    garden: boolean;
+    blah: number;
+}
+
+
+// GORNJA  DVA INTERFACE KOJI IMAJU
 
 //      - ZAJEDNICKI DEO
 
@@ -146,7 +160,6 @@ let morgage: IntersectionTypeBlah = {
     name: "blahson",
     garden: true,
     blah: 46
-    
 }
 
 // ILI OVAKO
