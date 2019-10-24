@@ -10,7 +10,7 @@ UZ TO, OVO NAM POMAŽE DA SHVATIMO KAKO MOŽEMO STAVITI MALE ISPRAVKE NA VRH BIB
 
 **MIKE NORTH KAZE DA SU ONI LES AND LESS POPULAR, I DA NISU VREDNI DA BIH IH POSEBNO COVER-OVAO, ODNOSNO NE TREBAM SE BAVITI NJIMA POSEBNO, A OVDE CES VIDETI STA ONI PREDSTAVLJAJU**
 
-## :one: IDETFIERS
+## :one: IDETIFIERS
 
 NA PRIMER, TO SU: *VARIJABLA*, *KLASA*, *FUNKCIJA*, *INTERFACE*
 
@@ -78,73 +78,174 @@ const y: Bar = {}
 
 KAO STO ZNAS, *NJIHOVI TYPE-OVI MOGU BITI EXTRACTED, KORISCENJEM SAMO [TYPE QUERIES](https://github.com/Rade58/apis_trying_out_and_practicing/blob/master/TYPESCRIPT/BELESKE/g%29%20ADVANCED%20TYPE-OVI/3.%20TYPE%20QUERIES.md#type-queries)*
 
+```typescript
+const blahA = 48;
+
+let fortyEight: typeof blahA;
+```
+
+## :three: INTERFACE-OVI SU PURELY, SAMO TYPES
 
 ```typescript
+//  NEMA ASSIGNMENTA
+
+interface Foo {
+
+}
+
+let foo = Foo;      // !!!! VALUE TEST FAILED
 
 ```
 
+## :four: KLASE SU OBOJE, I TYPE-OVI I VALUE-OVI
 
+**ONE CE DAKLE PASS, I VALUE I TYPE TEST-OVE**
 
 ```typescript
+class Kontaktiranje {
+
+    name: string
+
+    static blah = "foobarbaz"
+
+}
+
+let KlasaKontakt = Kontaktiranje;       // PROSLA VALUE TEST
+
+Kontaktiranje.blah      // SAMO SE PODSECAM DA POSTOJI I static (JAVASCRIPT-OV FEATURE)
+
+let KontaktKlasa: Kontaktiranje = new Kontaktiranje();      // PROSLA I TYPE TEST
+```
+
+EVO STA SE DESAVA:
+
+SA JEDNE STRANE KLASA JESTE FACTORY, KOJI PRODUCE-UJE INSTANCE (IMA KONSTRUKTOR, IMA PROTOTYPE)
+
+**A KORISCENJE KLASE KAO TYPE-A, DESCRIBE-UJE INSTANCES THEMSELF**
+
+>>>> SKORO DA SE KORISTITI, POPUT NEKOG INTERFACE ZA INSTANCU
+
+# :five: KADA DEKLARACIJE IMAJU ISTA IMENA; ONE SE ODPRILIKE STACK-UJU UP ON EACHOTHER
+
+DAKLE JA U TYPESCRIPT-U, NEMAM TAKVU SITUACIJU DA SE VALUES COLIDE WITH THE VALUES
+
+I AKO STVARI ARENGE-UJEM NA PRAVI NACIN, MOGU NAPRAVITI NESTO POPUT OVOGA
+
+```typescript
+class AudioPloca {
+
+    record_lable: AudioPloca = new AudioPloca() 
+
+}
+
+namespace AudioPloca {
+
+    export class AudioPloca {}
+
+}
+
+interface AudioPloca {
+    muzicar: string
+}
+```
+
+MOGU SADA SVE OVO DA ISTETIRAM SA VALUE, TYPE I NAMESPACE TESTOVIMA
+
+```typescript
+let audioObjekat: AudioPloca = {muzicar: "Hasim Hucuk Hoki", record_lable: new AudioPloca()  }   
+                    // ETO GA PRIMER TOG STACKINGA
+                    // MORAO SAM ZADATI I PROPERTI KLASE I PROPERTI INTERFACE-A
+                                                                // TYPE TEST PROSAO
+                                                                // (KORISCENO KAO INTERFACE)
+
+let AudioInstance: AudioPloca = new AudioPloca()            // TYPE TEST PROSAO
+                                                            // (KORISCENO KAO INTERFACE)
+
+const AudioKlasa = AudioPloca                   // VALUE TEST PROSAO
+                                                // ASSIGN-OVAO SAM KLASU
+
+// A KADA NAPISEM SLEDECE
+export {AudioPloca}
+// SVA TRI IDENTIFIKATORA SU EXPORTOVANI
+
+// HOVER-UJ I VIDECES DA JE SVE IZVEZENO
+
+// DAKLE SVE TRI IDENTIFIERA, SU STACKED NA ISTOM * SYMBOLU * I TAKO SU IZVEZENI
+
+// NE SMEM DA ZANEMARUJEM INFORMACIJE U TOOLTIP-U, JER MI ONE **  GOVORE MNOGO  **
 
 ```
 
+*MISLI MDA JE OVO VAZNO STO AUTOR TUTORIJALA KAZEM*
 
-[00:01:01]
->> Mike North: In TypeScript app, identifiers and just think of these as things that you could export, internally types script to call these symbols. Identifiers can be associated with up to three things. A value, a type or namespace. A namespace we haven't talked about yet, but it's pretty simple in that it's sort of like an object in that it has a type and it has a value.
+- AKO JE NE KO U NEKOM LIBRARY-JU ZABORAVIO NESTO, JA USTVARI MOGU THROW-OVATI INTERFACE TU, I ON CE SE STACKOVATI
 
-[00:01:28] So in this situation we could do baz.biz. It's just sort of a collection of stuff all merged together. Not really worth covering on its own, and increasingly less popular as a tool to describe things. So I'm gonna show you how, given a symbol, you can test whether it can be used as a type.
+BAS KAO STO SI VIDEO GORE NA PRIMERU KLASE I INTERFACE-A
 
-[00:01:56] And we've already been doing this. Sorry, we're gonna test for a value first, and this is very intuitive. You should be able to complete an assignment of some sort. If it's a value, a variable should be able to hold it. If you get a type error here, something is wrong.
+SVE BI SE TO APPLY-OVALO GLOBALNO KROZ CEO MOJ APP (POSTOJI JEDAN SCOPE U KOJEM SU TYPE INFORMATION HELD) (HOLISTICLY ALL THROUGH THE APP)
 
-[00:02:16] Let's try it with the interface.
->> Mike North: No good. Bar only refers to a type but it's used as a value here, so this is an effective test to see if something is a value. How to test if something is a type? Try to use it as a type, try to use it on the left-hand side of an equals, or if it's a left you don't even have to do that
+# :six: NAMESPACE-OVI, IMAJU SVOJ SOPSTVENI *SLOT*; I NAMESPACE-OVI SU VALUES
 
-[00:02:42]
->> Mike North: So if you can do that successfully, bar can be regarded as type. To test whether something is associated with a namespace, you're gonna have to rely on ToolTips for that.
->> Mike North: And just note that all three of these things are importable and exportable. There's our interface. There's our value,
+**ONI SE CAK MOGU MERGE-OVATI SA KLASAMA**
 
-[00:03:07]
->> Mike North: And there's our namespace. So now, we kind of have the tests we can apply to things, to figure out what's going on. So functions and variables, they are purely values. You can only extract the type of a value using a type query.
->> Mike North: Interfaces are only types.
+```typescript
+class Kontaktiranje {
 
-[00:03:32] If we try to complete an assignment here, we get the same error we were seeing above. Address only refers to a type, and is being used as a value here. Classes, this is where things get interesting, they pass both the value and the type tests, and here's what is going on.
+    name: string
 
-[00:03:54] On one hand, a class is a factory to produce instances, right? It has a constructor. It has a prototype. Recently I think JavaScript, you can even do this now.
->> Mike North: We can have static members, right? Where we can access this right off of the class.
->> Mike North: So this is all associated with the factory of instances.
+    static blah = "foobarbaz"
 
-[00:04:30] On the other hand, using this as a type describes the instances themselves. It can be used as almost like an interface for the instance. So we can see this symbol contact works in both positions. Up here we can capture the class itself. Down here we can use it as a type.
+}
 
-[00:04:57] So it kind of occupies both slots.
->> Mike North: When declarations have the same name they kinda all stack on top of each other, and if you arrange things just the right way, mainly you don't have values that collide with other values. You can end up with something that looks like this, where when we export album, and look at this tool tip, this is a value, a type, and a namespace, all stacked on top of each other, all riding along on the same symbol.
 
-[00:05:38] This is where, like I don't want you to gloss over the information in your ToolTips. This tells you a lot, this tells you, it's a class, there's an interface of the same name that augments that class and there's a namespace. So we could pass the type test here and that is to, we wouldn't even need the interface in order to do that cuz the class has a type in and of itself.
 
-[00:06:01] The interface just merges on top of the class, and that means that if we had another album here, a new album, and then al2 dot, we can see that the interface has added this property artist. This is what you do is if someone has forgotten t add something in type information for a library.
+class Adresar {
+    kontakti!: Kontaktiranje[]
+}
 
-[00:06:27] You could through an interface kind of stack on top of that, and it applies globally through your entire app. So there's only sort of one scope for where type information is held. It's not on a per module basis, it is holistically throughout the app.
->> Speaker 2: Even without importing or exporting it?
+namespace Adresar {
 
-[00:06:46]
->> Mike North: Even without importing or exporting, what is that?
->> Speaker 2: If you do an override in your level, but you imported from outside somewhere, you're saying it's still appwide?
->> Mike North: Yes, the modification you make will happen appwide. And this is important because you might wanna make all of your modifications in one file, and then have that, take a fact elsewhere.
+    export class OtherKontaktiranje extends Kontaktiranje {}        // UNUTRASNJA KALSA
 
-[00:07:14] There are certain things like types for globals, that would be really inconvenient to try to import and re-export because there's no concept of that. Good examples that would jQuery or Mocha, which it makes describe in it, those are global functions that you don't have to exclusively import.
->> Mike North: So namespaces, they have kind of their own spot in that we can see on this ToolTip a namespace is neither a class nor an interface, right?
+}
 
-[00:07:49] It's its own thing and it's part of this thing being exported. They can be merged with classes or functions. So here's an example of a class where we can see we've got address book. And what we're doing here, this is equivalent to what some languages would call an inner class where you've got sort of, you have a class that is namespace with respect to a parent class.
+// POGLEDAJ OVO (MALO KOMPLIKOVANO ALI MOGU DA SAGLEDAM STA JE STA)
 
-[00:08:17] So when we call our new, we're having to say addressBook.ABContact.
->> Mike North: The reason that this is allowed is because a namespace serves to sort of tack things onto something, right? It's just tacking AB contact onto address book. And there's not ambiguous syntax here. Address book is only something that can be invoked, right?
+let adresar1: Adresar = new Adresar()
 
-[00:08:45] Cuz the constructor is a function. So if we were to introduce a collision, we'd run into problems like this. So now we've got two things. Like addressbook.ABContact. Is it a string? Is it a class? Something's got to get resolved here. But it like, it is largely the static side of this class.
+adresar1.kontakti.push(new Adresar.OtherKontaktiranje())
 
-[00:09:17]
->> Mike North: Similarly, because it works with classes, we can expect that it will work for functions and classes are just functions, right? They're factories. We invoke classes by using the new keyword. And so similarly we can use format this way. But we've also stored this currency which is used inside format, right?.
+```
 
-[00:09:41] So it can kind of reference the namespace here. And there is no collision here. We either invoke the function or we use some of these things that we've tacked onto the function.
->> Mike North: In terms of the things I want you to takeaway with from my mental model perspective, knowing what's the type and knowing what's the value, will take you a long way.
+**A TAKODJE NAMESPACE-OVI SE MOGU MERGE-OVATI I SA FUNKCIJAMA**
 
-[00:10:05] And knowing what can be augmented interfaces versus knowing what you kinda have to leave alone when their defined in types, values. So once you have a value like it's hard, you can't overwrite that because that would conflict with the way JavaScript behaves, when interfaces are fair game.
+```typescript
+function dajNovci(par: number){
+
+    return `${dajNovci.valuta}${par.toFixed(2)}`
+}
+
+namespace dajNovci {
+
+    export const valuta: string = "$ " 
+
+}
+
+
+dajNovci(48.468);       // -->  $ 48.46
+
+dajNovci.valuta         // -->  $
+
+```
+
+>>>> OVO JE SVE DOZVOLJENO JER NAMESPACE USTVARI SLUZI DA TACK THINGS ON ITSELF
+
+## SUMIRANJE
+
+ŠTO SE TIČE STVARI KOJE TREBAS DA PONESES IZ MENTAL MODEL PERSPEKTIVE, JESTE KNOWING KOJI JE TIP I KNOWING KOJA JE VREDNOST (A TO MOGU PROVERAVATI TESTOVIMA)
+
+THAT WILL TAKE YOU A LONG WAY
+
+> I ZNAJUĆI ŠTA SE MOGU PROŠIRITI SUČELJA NASUPROT TOME ŠTO ZNATE ŠTA MORATE OSTAVITI NA MIRU, KAD SU DEFINISANI U TIPOVIMA, VREDNOSTIMA.
+ 
+DAKLE, JEDNOM KADA IMATE VREDNOST, NE MOZES JE OVERWRITE-OVATI JER BI TO BILO U SUKOBU SA NAČINOM NA KOJI SE PONAŠA JAVASCRIPT, A INTERFACE-EVI SU FAIR GAME POVODO MTOGA
