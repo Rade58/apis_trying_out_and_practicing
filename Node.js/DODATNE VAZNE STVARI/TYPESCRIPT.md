@@ -10,7 +10,7 @@ NEKI LINKOVI
 
 [youtube video o tome kako se koristi TypeScript U Nodejs APPLIKACIJAMA](https://www.youtube.com/watch?v=1UcLoOD1lRM)
 
-NISAM GLEDAO VIDEO, NIJE MI TREBALO
+NISAM GLEDAO VIDEO, NIJE MI TREBALO, A NI GORNJI ts-node PAKET NISAM KORISTIO
 
 ******
 
