@@ -7,3 +7,7 @@ ZA CURL FLAVIO IMA [TUTORIAL](https://flaviocopes.com/http-curl/)
 SCOT MOSS KORISTI <https://httpie.org/>
 
 VIDI DA LI NESTO ZNACI STO JE ON WRITTEN WITH PHYTON, PA GA NAUCI AKO CE TI KORISTITI
+
+## NUCICES HTTP U POTPUNOSTI
+
+[HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
