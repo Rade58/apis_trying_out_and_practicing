@@ -1,4 +1,8 @@
-## NAUCICES curl (SLANJE NETWORK REQUEST-OVA IZ TERMINALA)
+## NAUCICES Insomnia
+
+[Insomnia](https://insomnia.rest/)
+
+**OSTALI ALTI KOJE SAM DOLE SPOMENUO NE ZNAM DA L ICE MI BITI POTREBNI**
 
 [curl](https://curl.haxx.se/docs/manpage.html)
 
