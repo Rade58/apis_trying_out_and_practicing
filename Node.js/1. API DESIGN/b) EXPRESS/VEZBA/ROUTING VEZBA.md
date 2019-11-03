@@ -20,7 +20,7 @@ U SUSTINI KADA NAUCIM TESTIRANJE SA JEST-OM, TREBALO BI DA ZNAM STA RADIM, A ZA 
 │
 └───resources
     └───item
-            item.controllerss.
+            item.controllerss.js
             item.model.js
             item.router.js
 ```
