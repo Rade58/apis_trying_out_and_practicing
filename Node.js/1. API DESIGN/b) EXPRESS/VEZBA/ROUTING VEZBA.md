@@ -98,6 +98,18 @@ export const removeOne = (req, res) => {
   res.send({ message: 'ok' })
 }
 
+//
+
+export const getAll = (req, res) => {
+  console.log('updating')
+  res.send({ message: 'ok' })
+}
+
+export const createAll = (req, res) => {
+  console.log('removing')
+  res.send({ message: 'ok' })
+}
+
 ```
 
 item.router.js
@@ -117,8 +129,8 @@ const router = Router()
 
 router
   .route('/')
-  .get(controllers.getOne)
-  .post(controllers.createOne)
+  .get(controllers.getAll)
+  .post(controllers.createAll)
 
 router
   .route('/:id')
