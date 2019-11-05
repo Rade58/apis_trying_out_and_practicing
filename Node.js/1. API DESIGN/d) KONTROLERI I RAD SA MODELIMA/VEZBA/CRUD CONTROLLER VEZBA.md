@@ -56,9 +56,21 @@ SAZNACU KADA BUDEM UCIO AUTHENTICATION KAKO SE GENERISE ID, DA LI JE PRAKSA DA S
 
 ******
 
+******
+
+IAKO AUTOR WORKSHOPA TOKOM LIVE CODINGA, NIJE KORISTIO try catch BLOKOVE
+
+JA CU IH KORISTITI U SVOJIM PRIMERIMA
+
+digresija:
+
+U SOLUTION BRANCH-U SE NALAZI CODE SA try catch
+
+******
+
 ## DEFINISEM U crud.js FAJLU
 
-### CREATE ONE
+### CREATE ONE ('/')
 
 ```javascript
 
@@ -75,7 +87,7 @@ const createOne = model => async (req, res) => {
 }
 ```
 
-### GET ONE
+### GET ONE ('/:id')
 
 KAKO GETT-OVATI JEDAN DOKUMENT, AKO SAM SADA U OVU PRICU UVEO I ID, KOJ IJE USER SPECIFC
 
@@ -92,7 +104,7 @@ const getOne = model => async (req, res) => {
   const document = await model.findOne({
     _id: req.user._id,
     createdBy: req.param.id
-  })
+  }).exec()
 
   // AKO NISTA NIJE PRONADJENO END-UJ REQUEST I RETURNUJ CONTROLLER 
 
@@ -108,4 +120,42 @@ const getOne = model => async (req, res) => {
 
 }
 
+```
+
+## UPDATE ONE (':id/')
+
+```javascript
+const updateOne = model => async (req, res) => {
+
+  const _id = req.user._id;
+  const createdBy = req.param.id;
+
+  const document = await model.findOneAndUpdate({_id, createdBy}).exec()
+
+  if(!document){
+    return res.status(404).end()
+  }
+
+  res.status(200).send({data: document})
+
+}
+```
+
+## DELETE ONE ('/:id')
+
+```javascript
+const updateOne = model => async (req, res) => {
+
+  const _id = req.user._id;
+  const createdBy = req.param.id;
+
+  const document = await model.findOneAndRemove({_id, createdBy}).exec()
+
+  if(!document){
+    return res.status(404).end()
+  }
+
+  res.status(200).send({data: document})
+
+}
 ```
