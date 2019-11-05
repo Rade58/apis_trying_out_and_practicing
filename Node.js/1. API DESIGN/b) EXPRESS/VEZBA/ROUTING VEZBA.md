@@ -79,36 +79,32 @@ item.controllerss.js
 
 ```javascript
 export const getOne = (req, res) => {
-  console.log('getting')
+  console.log('reading one')
   res.send({ message: 'ok' })
 }
 
 export const createOne = (req, res) => {
-  console.log('creating')
+  console.log('creating one')
   res.send({ message: 'ok' })
 }
 
 export const updateOne = (req, res) => {
-  console.log('updating')
+  console.log('updating one')
   res.send({ message: 'ok' })
 }
 
 export const removeOne = (req, res) => {
-  console.log('removing')
+  console.log('deleting one')
   res.send({ message: 'ok' })
 }
 
 //
 
-export const getAll = (req, res) => {
-  console.log('updating')
+export const getMany = (req, res) => {
+  console.log('reading many')
   res.send({ message: 'ok' })
 }
 
-export const createAll = (req, res) => {
-  console.log('removing')
-  res.send({ message: 'ok' })
-}
 
 ```
 
@@ -129,8 +125,8 @@ const router = Router()
 
 router
   .route('/')
-  .get(controllers.getAll)
-  .post(controllers.createAll)
+  .get(controllers.getMany)
+  .post(controllers.createOne)
 
 router
   .route('/:id')
