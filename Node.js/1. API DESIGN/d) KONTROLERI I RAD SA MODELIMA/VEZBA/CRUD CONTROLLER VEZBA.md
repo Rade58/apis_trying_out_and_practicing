@@ -82,23 +82,33 @@ A TU SE DODAJE CURRENT DATE, ODNOSNO DATE U NEKOM FORMATU
 
 ******
 
-ZADATI JE USER SPECIFIC ID (ILI BOLJE RECI ID KOJI ZADAJEM JA, KADA DATA DODJE DO ENTPOINT-A); I OBICNO JE TO PROPERTI **createdBy** U JEDNOM DOKUMENTU
+******
 
-**U SUSTINI SE TREBA URADITI SLEDECE ZA createdBy**
+SAM AUTOR WORKSHOPA, REKAO JE OVO NA TEMU POSTOJANJA MULTIPLE ID-JEVA I ZASTO SU ONI NEOPHODNI
 
-- KADA REQUEST DODJE, PRE STAVLJANJA NOVOG DOKUMENTA U DATABASE, TREBA SE DODATI I **creadetBy** PROPERI
+>> What are the chances that two different users will have an item with the same id? Hopefully, none, cuz your database doesn't give out conflicting IDs. And that would be really bad. But we should still namespace our query with a user id anyway, just to guarantee that somebody isn't getting something that doesn't belong to them.
 
-- TO JE UVEK ID KOJI SE CITA OD ONOGA KOJE POSLAO REQUEST, DAKLE SA AUTHENTICATED CLIENT-A, JER AUTHENTICATED CLIENT IMA JEDINI MOC DA KREIRA DOKUMENTE (TAKVA JE PRAKSA SVUGDE)
+******
 
-- A TAJ USER ID TREBAL OBI DA BUDE GENERATED KADA SE AUTHENTICATE-UJE USER
+******
 
-VIDECES U OVOM WORKSHOPU DA JE MONGOOSE ODGOVORAN ZA KREIRANJE TAKVOG ID-JA
+DA SUMIRAM
+
+- *req.params.id* JESTE USTVARI *_id* DOKUMENTA
+
+- *req.user._id* JESTE USTVARI *createdBy* DOKUMENTA
+
+******
+
+******
+
+digresija VEZANA ZA SCHEMAS
+
+VIDECES U OVOM WORKSHOPU DA JE MONGOOSE ODGOVORAN ZA TYPING ID-JA, ODNOSNO U SCHEMI KOJU KORISTIM TYPING JE DEFINISAN SA Mongoos-OVIM TYPEOVIMA
 
 - ONO STO SAM VIDEO JESTE DA SE ZA TO UPOTREBLAJVA MONGOOSEOVA METODA KOJA GENERISE TAKAV ID (A TAKODJE SI VIDEO DA SE U MODELU DEFINISE I TACNO TAJ TYPE ID-JA, KOJI DOLAZI OD MONGOOSE-OVE METODE)
 
 - U PITANJU JE GENERISANJE ID-JA UZ POMOC **mongoose.Types.ObjectId()** (NJEGOV TYPE IZ SCHEMA-E JESTE **mongoose.SchemaTypes.ObjectId**)
-
-******
 
 SAZNACU KADA BUDEM UCIO AUTHENTICATION KAKO SE GENERISE ID, DA LI JE PRAKSA DA SE KORISTI, POMENUTI MONGOOSE-OV NACIN
 
@@ -114,7 +124,15 @@ digresija:
 
 U SOLUTION BRANCH-U SE NALAZI CODE SA try catch
 
-TAK ODA NISI POGRSIO STO SI GA DEFINISAO
+TAKO DA NISI POGRSIO STO SI GA DEFINISAO
+
+******
+
+******
+
+PRI KREIRANJU KONTROLERA ZA OVU VEZBU TREBA DA BUDE TAKVA SITUACIJA DA SAMO AUTHENTICATED USER MOZE GET-OVATI, DOKUMENT, KOJI JE ON I KREIRAO
+
+*TO SAM PRIMETIO*
 
 ******
 
@@ -140,12 +158,12 @@ const createOne = model => async (req, res) => {
   // STO SE TICE USEROVOG ID-JA, VIDI DA SE ON SA REQUEST MOZE PROCITATI KAKO SAM DOLE POKAZAO
 
   try {
+    // ONO STA SAM DODAO JESTE    createdBy
+    const document = await model.create({ ...req.body, createdBy: req.user._id }) // ZAPAMTI DA TI OVDE NE TREBA exec 
+                                                                  // (ON U STVARI OVDE I NE POSTOJI), JER JE POVRATNA 
+                                                                  // VREDNOST create METODE , VALIDNI Promise
 
-    const document = await model.create({ ...req.body, createdBy: req.user._id }) // ZAPAMTI DA TI OVDE NE TREBA exec (MISLIM DA NECE N IRADITI)
-
-    // JER TO NECE BITI FAKE PROMISE
-
-    res.status(201).json({data: document})    // STAUS CODE ZA KREIRANJE JE 201
+    res.status(201).json({data: document})    // STAUS CODE ZA KREIRAN JE 201
 
   }catch(error){
 
@@ -160,63 +178,49 @@ const createOne = model => async (req, res) => {
 
 ### GET ONE ('/:id')
 
-KAKO GETT-OVATI JEDAN DOKUMENT, AKO SAM SADA U OVU PRICU UVEO I ID, KOJ IJE USER SPECIFC
+KAKO GET-OVATI JEDAN DOKUMENT, AKO SAM SADA U OVU PRICU UVEO I ID, KOJI JE USER SPECIFC
 
 *MORAS SHVATITI DA SU U OBICAJENOJ PRAKSI DVA ID-JA O KOJIMA SAM GOVORIO ZISTA NEOPHODNA, KAKO NE BI DOSLO DO MOZDA NEKOG KONFLIKTA, ODNSONO POSTOJANJA DVA ISTA ID-JA*
 
 DAKLE U OVAKVOM SLUCAJU JA NECU MOCI KORISTIT model.findById, JER IMAM JOS JEDAN ID, KOJI MORA BITI VALIDATED
 
+ZATO MORAM KORISTITI METODU &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **`model.findOne`**
+
+**DAKLE :id-JU, IZ ROUTE-A, TREBA DA ODGOVARA _id DOKUMENTA, KOJEG ZELIM NAZAD**
+
 ```javascript
 
 const getOne = model => async (req, res) => {
 
-  // ZATO MORAM KORISTITI METODU        model.findOne
+  const _id = req.params.id     // OPET TI NAPOMINJEM DA TI JE OVO USTVARI ID IZ ROUTE-A (DAKLE :id IZ '/:id')
+
+  const createdBy = req.user._id    // ID USERA, KOJI JE KREIRAO SAM POST
+
+  // ****    digresija:       'ISTI USER ZAHTEVA ISTI POST'
 
   try{
 
     const document = await model.findOne({
-      _id: req.user._id,
-      createdBy: req.param.id
-    }).exec()
+      _id, createdBy
+    })
+    .lean()   // lean UKLANJA NEKE METODE SA QueryDocument (MORAM VISE SAZNATI O lean-U)
+    .exec()
 
     // AKO NISTA NIJE PRONADJENO END-UJ REQUEST I RETURNUJ CONTROLLER
 
     if(!document){
-      return res.status(404).end()      
+      return res.status(404).end()        // 404    JE STATUS CODE, KADA JE NUSPESAN QUERY-ING
     }
 
-    res.status(200).json({data: document})
+    res.status(200).json({data: document})      // 200 JE KAD JE NESTO USPESNO PRONADJENO
 
   }catch(error){
 
-    res.status(400).end()
+    res.status(400).end()           // BAD REQUEST
 
   }
 
 }
-
-
-
-export const getOne = model => async (req, res) => {
-  const createdBy = req.user._id
-  const _id = req.params.id
-
-  try {
-    const document = await model
-      .findOne({ createdBy, _id })
-      .lean()
-      .exec()
-
-    if (!document) {
-      return res.status(404).end()    // 404 JE STATUS CODE ZA 'NOT FOUND'
-    }
-
-    res.status(200).json({ data: document })
-  } catch (error) {
-    res.status(400).end()
-  }
-}
-
 
 ```
 
@@ -225,15 +229,18 @@ export const getOne = model => async (req, res) => {
 ```javascript
 const updateOne = model => async (req, res) => {
 
+  const _id = req.params.id
+  const createdBy = req.user._id
+
   try{
 
-    const _id = req.user._id;
-    const createdBy = req.param.id;
-
     const document = await model.findOneAndUpdate(
-      {_id, createdBy},
+      {_id, createdBy},   //PRONALAZIM GA OVAKO
+      req.body            // SA OVIM GA UPDATE-UJEM
       {new: true}             // ZELIM NOVI DOKUMENT
-    ).exec()
+    )
+    .lean()
+    .exec()
 
     if(!document){
       return res.status(404).end()
@@ -255,11 +262,11 @@ const updateOne = model => async (req, res) => {
 ```javascript
 const removeOne = model => async (req, res) => {
 
+  const _id = req.params.id
+
+  const createdBy = req.user._id
 
   try{
-
-    const _id = req.user._id;
-    const createdBy = req.param.id;
 
     const document = await model.findOneAndRemove({_id, createdBy}).exec()
 
@@ -267,7 +274,7 @@ const removeOne = model => async (req, res) => {
       return res.status(404).end()
     }
 
-    res.status(200).json({data: document})
+    res.status(200).json({data: document})      // SALJEM REMOVED DOKUMENT
 
 
   }catch(error){
@@ -281,13 +288,15 @@ const removeOne = model => async (req, res) => {
 
 ## GET MANY ('/')
 
-**KADA GETT-UJEM MANY, TREBAO BI DA KORISTIM find METODU I DA SAMO QUERY-UJEM UZ POMOC USER ID-JA**
+**KADA GETT-UJEM MANY, TREBAO BI DA KORISTIM find METODU I DA SAMO QUERY-UJEM UZ POMOC USER ID-JA** (NEMA :id -JA, JER NEMA NI TAKVOG ROUTE-A)
 
 ```javascript
 const getMany = model => async (req, res) => {
 
+  const createdBy = req.user._id
+
   try{
-    const documents = await model.find({createdBy: req.user._id}).exec()
+    const documents = await model.find({createdBy}).lean().exec()
 
     if(!documents){
 
@@ -320,125 +329,121 @@ export const crudControllers = model => ({
 
 ```javascript
 const createOne = model => async (req, res) => {
-  try {
-
-    const document = await model.create({ ...req.body, createdBy: req.user._id }).exec()
-    res.status(201).json({data: document})
   
-  }catch(error){
+  try {
+    // 
+    const document = await model.create({
+      ...req.body,
+      createdBy: req.user._id
+    }) 
 
+    res.status(201).json({ data: document }) 
+  } catch (error) {
     console.log(error)
+
     res.status(400).end()
-
   }
-
 }
 
 const getOne = model => async (req, res) => {
+  const _id = req.params.id 
 
-  try{
+  const createdBy = req.user._id
 
-    const document = await model.findOne({
-      _id: req.user._id,
-      createdBy: req.param.id
-    }).exec()
+  try {
+    const document = await model
+      .findOne({
+        _id,
+        createdBy
+      })
+      .lean()
+      .exec()
 
-    if(!document){
+    if (!document) {
       return res.status(404).end()
     }
 
-    res.status(200).json({data: document})
-
-  }catch(error){
-
+    res.status(200).json({ data: document })
+  } catch (error) {
     res.status(400).end()
-
   }
-
 }
 
-
 const updateOne = model => async (req, res) => {
+  const _id = req.params.id
+  const createdBy = req.user._id
 
-  try{
+  try {
+    const document = await model
+      .findOneAndUpdate(
+        { _id, createdBy },
+        req.body,
+        { new: true }
+      )
+      .lean()
+      .exec()
 
-    const _id = req.user._id;
-    const createdBy = req.param.id;
-
-    const document = await model.findOneAndUpdate(
-      {_id, createdBy},
-      {new: true}
-    ).exec()
-
-    if(!document){
+    if (!document) {
       return res.status(404).end()
     }
 
-    res.status(200).json({data: document})
-
-  }catch(error){
-
+    res.status(200).json({ data: document })
+  } catch (error) {
     res.status(400).end()
-
   }
-
 }
 
 const removeOne = model => async (req, res) => {
+  const _id = req.params.id
 
-  try{
+  const createdBy = req.user._id
 
-    const _id = req.user._id;
-    const createdBy = req.param.id;
+  try {
+    const document = await model.findOneAndRemove({ _id, createdBy }).exec()
 
-    const document = await model.findOneAndRemove({_id, createdBy}).exec()
-
-    if(!document){
+    if (!document) {
       return res.status(404).end()
     }
 
-    res.status(200).json({data: document})
-
-
-  }catch(error){
-
+    res.status(200).json({ data: document })
+  } catch (error) {
     res.status(400).end()
-
   }
-
 }
-
 
 const getMany = model => async (req, res) => {
+  const createdBy = req.user._id
 
-  try{
-    const documents = await model.find({createdBy: req.user._id}).exec()
+  try {
+    const documents = await model
+      .find({ createdBy })
+      .lean()
+      .exec()
 
-    if(!documents){
-
+    if (!documents) {
       return res.status(404).end()
-
     }
 
-    res.status(200).json({data: documents})
-
-  }catch(error){
+    res.status(200).json({ data: documents })
+  } catch (error) {
     res.status(400).end()
   }
-
 }
 
-
-
-////////////////////////
-
-
 export const crudControllers = model => ({
+  removeOne: removeOne(model),
+  updateOne: updateOne(model),
   getMany: getMany(model),
   getOne: getOne(model),
-  updateOne: updateOne(model),
-  removeOne: removeOne(model),
-  crateOne: createOne(model)
+  createOne: createOne(model)
 })
 
 ```
+
+******
+
+STO SE TICE TESTOVA, STALNO SU FAILOVALI (USTVARI I TEST SUITE JE FAILOVAO)
+
+TAK ODA SAM OD TESTOVA ODUSTAO
+
+******
