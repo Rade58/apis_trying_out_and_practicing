@@ -66,23 +66,46 @@ digresija:
 
 U SOLUTION BRANCH-U SE NALAZI CODE SA try catch
 
+TAK ODA NISI POGRSIO STO SI GA DEFINISAO
+
 ******
 
 ## DEFINISEM U crud.js FAJLU
+
+******
+
+digresija:
+
+[LISTA STATUS CODE-OVA](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)(DA TI SE NADJE)
+
+******
 
 ### CREATE ONE ('/')
 
 ```javascript
 
 const createOne = model => async (req, res) => {
-  // VIDIS DA OVDE KORISTIM ONAJ SPRED ZA OBJEKAT (STO BI TREBALO DA BUDE EKSPERIMENTALNO) A BABEL CE GA 
+  // VIDIS DA OVDE KORISTIM ONAJ EKSPERIMENTALNI SPREAD ZA OBJEKAT
+  // (STO BI TREBALO DA BUDE EKSPERIMENTALNO) A BABEL CE GA
   // TRANSPILE-OVATI U NESTO STO NODE MOZE DA CITA
 
-  // STO SE TICE USEROVOG ID-JA, VIDI DA SE ON SA REQUEST MOZE PROCITATI KAK OSAM DOLE POKAZAO
+  // STO SE TICE USEROVOG ID-JA, VIDI DA SE ON SA REQUEST MOZE PROCITATI KAKO SAM DOLE POKAZAO
 
-  const document = await model.create({ ...req.body, createdBy: req.user._id }).exec()
+  try {
 
-  res.status(200).json({data: document})
+    const document = await model.create({ ...req.body, createdBy: req.user._id }) // ZAPAMTI DA TI OVDE NE TREBA exec (MISLIM DA NECE N IRADITI)
+
+    // JER TO NECE BITI FAKE PROMISE
+
+    res.status(201).json({data: document})    // STAUS CODE ZA KREIRANJE JE 201
+
+  }catch(error){
+
+    console.log(error)
+
+    res.status(400).end()       // 400 JE BAD REQUEST
+
+  }
 
 }
 ```
@@ -101,24 +124,51 @@ const getOne = model => async (req, res) => {
 
   // ZATO MORAM KORISTITI METODU        model.findOne
 
-  const document = await model.findOne({
-    _id: req.user._id,
-    createdBy: req.param.id
-  }).exec()
+  try{
 
-  // AKO NISTA NIJE PRONADJENO END-UJ REQUEST I RETURNUJ CONTROLLER 
+    const document = await model.findOne({
+      _id: req.user._id,
+      createdBy: req.param.id
+    }).exec()
 
-  if(!document){
+    // AKO NISTA NIJE PRONADJENO END-UJ REQUEST I RETURNUJ CONTROLLER
 
-    return res.status(404).end()
+    if(!document){
+      return res.status(404).end()      
+    }
+
+    res.status(200).json({data: document})
+
+  }catch(error){
+
+    res.status(400).end()
 
   }
 
-  res.status(200).send({data: document})
-
-
-
 }
+
+
+
+export const getOne = model => async (req, res) => {
+  const createdBy = req.user._id
+  const _id = req.params.id
+
+  try {
+    const document = await model
+      .findOne({ createdBy, _id })
+      .lean()
+      .exec()
+
+    if (!document) {
+      return res.status(404).end()    // 404 JE STATUS CODE ZA 'NOT FOUND'
+    }
+
+    res.status(200).json({ data: document })
+  } catch (error) {
+    res.status(400).end()
+  }
+}
+
 
 ```
 
@@ -127,16 +177,27 @@ const getOne = model => async (req, res) => {
 ```javascript
 const updateOne = model => async (req, res) => {
 
-  const _id = req.user._id;
-  const createdBy = req.param.id;
+  try{
 
-  const document = await model.findOneAndUpdate({_id, createdBy}).exec()
+    const _id = req.user._id;
+    const createdBy = req.param.id;
 
-  if(!document){
-    return res.status(404).end()
+    const document = await model.findOneAndUpdate(
+      {_id, createdBy},
+      {new: true}             // ZELIM NOVI DOKUMENT
+    ).exec()
+
+    if(!document){
+      return res.status(404).end()
+    }
+
+    res.status(200).json({data: document})
+
+  }catch(error){
+
+    res.status(400).end()
+
   }
-
-  res.status(200).send({data: document})
 
 }
 ```
@@ -144,18 +205,192 @@ const updateOne = model => async (req, res) => {
 ## DELETE ONE ('/:id')
 
 ```javascript
-const updateOne = model => async (req, res) => {
+const removeOne = model => async (req, res) => {
 
-  const _id = req.user._id;
-  const createdBy = req.param.id;
 
-  const document = await model.findOneAndRemove({_id, createdBy}).exec()
+  try{
 
-  if(!document){
-    return res.status(404).end()
+    const _id = req.user._id;
+    const createdBy = req.param.id;
+
+    const document = await model.findOneAndRemove({_id, createdBy}).exec()
+
+    if(!document){
+      return res.status(404).end()
+    }
+
+    res.status(200).json({data: document})
+
+
+  }catch(error){
+
+    res.status(400).end()
+
   }
 
-  res.status(200).send({data: document})
+}
+```
+
+## GET MANY ('/')
+
+**KADA GETT-UJEM MANY, TREBAO BI DA KORISTIM find METODU I DA SAMO QUERY-UJEM UZ POMOC USER ID-JA**
+
+```javascript
+const getMany = model => async (req, res) => {
+
+  try{
+    const documents = await model.find({createdBy: req.user._id}).exec()
+
+    if(!documents){
+
+      return res.status(404).end()
+
+    }
+
+    res.status(200).json({data: documents})
+
+  }catch(error){
+    res.status(400).end()
+  }
 
 }
+```
+
+### REKAO SAM DA CU NAPRAVITI FUNKCIJU, KOJA UZIMA MODEL, A OUTPUTUJE OBJEKAT, SA CONTROLLERIMA
+
+```javascript
+export const crudControllers = model => ({
+  getMany: getMany(model),
+  getOne: getOne(model),
+  updateOne: updateOne(model),
+  removeOne: removeOne(model),
+  crateOne: createOne(model)
+})
+```
+
+## EVO POGLEDAJ SAV CODE FAJLA crud.js
+
+```javascript
+const createOne = model => async (req, res) => {
+  try {
+
+    const document = await model.create({ ...req.body, createdBy: req.user._id }).exec()
+    res.status(201).json({data: document})
+  
+  }catch(error){
+
+    console.log(error)
+    res.status(400).end()
+
+  }
+
+}
+
+const getOne = model => async (req, res) => {
+
+  try{
+
+    const document = await model.findOne({
+      _id: req.user._id,
+      createdBy: req.param.id
+    }).exec()
+
+    if(!document){
+      return res.status(404).end()
+    }
+
+    res.status(200).json({data: document})
+
+  }catch(error){
+
+    res.status(400).end()
+
+  }
+
+}
+
+
+const updateOne = model => async (req, res) => {
+
+  try{
+
+    const _id = req.user._id;
+    const createdBy = req.param.id;
+
+    const document = await model.findOneAndUpdate(
+      {_id, createdBy},
+      {new: true}
+    ).exec()
+
+    if(!document){
+      return res.status(404).end()
+    }
+
+    res.status(200).json({data: document})
+
+  }catch(error){
+
+    res.status(400).end()
+
+  }
+
+}
+
+const removeOne = model => async (req, res) => {
+
+  try{
+
+    const _id = req.user._id;
+    const createdBy = req.param.id;
+
+    const document = await model.findOneAndRemove({_id, createdBy}).exec()
+
+    if(!document){
+      return res.status(404).end()
+    }
+
+    res.status(200).json({data: document})
+
+
+  }catch(error){
+
+    res.status(400).end()
+
+  }
+
+}
+
+
+const getMany = model => async (req, res) => {
+
+  try{
+    const documents = await model.find({createdBy: req.user._id}).exec()
+
+    if(!documents){
+
+      return res.status(404).end()
+
+    }
+
+    res.status(200).json({data: documents})
+
+  }catch(error){
+    res.status(400).end()
+  }
+
+}
+
+
+
+////////////////////////
+
+
+export const crudControllers = model => ({
+  getMany: getMany(model),
+  getOne: getOne(model),
+  updateOne: updateOne(model),
+  removeOne: removeOne(model),
+  crateOne: createOne(model)
+})
+
 ```
