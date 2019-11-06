@@ -446,4 +446,183 @@ STO SE TICE TESTOVA, STALNO SU FAILOVALI (USTVARI I TEST SUITE JE FAILOVAO)
 
 TAK ODA SAM OD TESTOVA ODUSTAO
 
+PS. GLEDAJUCI VIDEO, SAZNAO SAM DA JE I TO U REDU, JER N ITESTOVI BAS NIZU NAPISANI DA RADE TACNO
+
+**ALI DAKLE TREBAO SAM CITATI TESTOVE I SVE BI SHVATIO**: I SE TRAZI, ALI I STA TREBAS POPRAVITI U NJIMA
+
 ******
+
+## KAKO BI SE GORNJA crudController FUNKCIJA KORISTILA NE MORAM PRETERANO OBJASNJAVATI
+
+SAMO BI JE DAKLE UVEZAO TAM OGDE JE ROUTER FAJL, I POZVAO JE SA ODGOVARAJUCIM MODELOM
+
+I ONDA BI SA OBJEKTA KOJI JE PROIZIDSAO MOGAO KORISTITI SVAKI INDIVIDUALNI KONTROLER, NA ODGOVARAJUCEM MESTU
+
+## DODATNE STVARI
+
+******
+
+KADA SALJES ODGOVOR NAZAD, I AKO JE U PITANJ U 200 STATUS, NE MORAS STALNO KORISTITI status METODU
+
+ONA JE DEFAULT UNDER THE HOOD
+
+TAK ODA MOZES SAMO NAPISATI
+
+- res.json(/**/)
+
+I TO CE BITI DOVOLJNO
+
+******
+
+******
+
+KADA SALJES DATA NAZAD, DOBRA JE PRAKSA POSLATI GA KAO DEO OBJEKTA
+
+ODNOSNO OVAKO `res.status(201).json({ data: someData })`
+
+AKO SALJES DIREKTNO someData MOZE SE DESITI DA TO NA PRIMER BUDE NIZ DOKUMENATA ,A NE SAM OJEDAN DOKUMENT
+
+U TOM SLUCAJU IMAS RAZLICITE DATA STRUCTURES; I FRONT END MORA PROVERAVATI DA VIDE KOJA JE STRUKTURA U PITANJU
+
+ZNACI UVEK SLATI DATA NAZAD SA NAMESPACE-OM
+
+ISTO TAKO MOZES PORED PODATKAKA SLATI I LISTU DEATILED ERROR MESSAGES, TAK ODA JE UVEK DOBRO SLATI OBJEKAT
+
+NA PRIMER {data: someData, errors: []}
+
+******
+
+## ONO STO CU SADA URADITI JESTE WIRING UP KONTROLER-A
+
+GORE SAM POKAZAO STRUKTURU PROJEKTA
+
+IDEM U item.controllers.js
+
+- TAMO CU DA UVEZEM Item MODEL IZ item.model.js FAJL
+
+- I UVESCU I crudControllers FUNKCIJU IZ crud.js FAJL
+
+- KREIRACU OBJEKAT SA KONTROLERIMA, TAK OSTO CU MODEL PROSLEDITI I crudController FUNKCIJU, KADA JE BUDEM POZVAO
+
+- I ONDA ZA DVA ROUTE-A '/:id' I '/', UZ KORISCENJE VERB-OVA DEFINISEM ROUTING
+
+*item.controllers.js* FAJL:
+
+```javascript
+import { Item } from './item.model'                 // UVEZAO SI MODEL
+import { crudControllers} from '../../utils/crud'  // EVO JE I FUNKCIJA, KAOAJ CE OUTPUT-OVATI OBJEKAT SA CONTROLLERIMA
+
+export const controllers = crudControllers(Item)
+```
+
+SADA CU DA UVEZEM KONTROLERE U item.router I TAMO IH ISKORISTIM
+
+*item.router.js* FAJL:
+
+```javascript
+import { Router } from 'express'
+import { controllers } from './item.controllers'
+
+const router = Router()
+
+// /api/item
+router
+  .route('/')
+  .get(controllers.getMany)
+  .post(controllers.createOne)
+
+// /api/item/:id
+router
+  .route('/:id')
+  .get(controllers.getOne)
+  .put(controllers.updateOne)
+  .delete(controllers.removeOne)
+
+export default router
+```
+
+NARAVNO, U server.js FAJL, OVAJ ROUTER JE UVEZEN, GDE CES GA KORISTITI NA app-U, ZA ROUTE `'api/item'`
+
+*server.js* FAJL:
+
+```javascript
+import express from 'express'
+import { json, urlencoded } from 'body-parser'
+import morgan from 'morgan'
+import config from './config'
+import cors from 'cors'
+import { connect } from './utils/db'
+
+// EVO OVDE SI UVEZAO ROUTER-A
+import itemRouter from './resources/item/item.router'
+
+
+export const app = express()
+
+app.disable('x-powered-by')
+
+app.use(cors())
+app.use(json())
+app.use(urlencoded({ extended: true }))
+app.use(morgan('dev'))
+
+// EVO OVDE SI
+app.use('/api/item', itemRouter)
+
+
+export const start = async () => {
+  try {
+    await connect()
+    app.listen(config.port, () => {
+      console.log(`REST API on http://localhost:${config.port}/api`)
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
+```
+
+index.js
+
+```javascript
+import { start } from './server'
+start()
+```
+
+MOGU SADA DA SAGRADIM CODE
+
+- rimraf dist
+
+- yarn build
+
+- node dist/index.js
+
+## AKO MI KONTROLERI TREBAJ UZA NEKE DRUGE RESURSE ODNSNO AK OTREBAJ UDA BUDU CUSTOM, MOGU IH OVERRIDE-OVATI NA SLEDECI NACIN
+
+U TVOM PROJEKTU, PORED item FOLDERA, TI IMAS I list FOLDER
+
+STA AKO NA PRIMER MODEL KAKAV JE TAMO KARAKTERISTICAN, JESTE TAKAV DA ZAHTEVA MAL ODRUGACIJE KONTROLERE
+
+E PA JA IH MOGU OVERRIDE-OVATI
+
+*resources/list/list.controllers.js* FAJL:
+
+```javascript
+import { List } from './item.model'                 // UVEZAO SI MODEL
+import { crudControllers} from  '../../utils/crud'  // EVO JE I FUNKCIJA, KAOAJ CE OUTPUT-OVATI OBJEKAT SA CONTROLLERIMA
+
+export const controllers = {
+  ...crudControllers(Item)        // ZADAO SAM DA SVI KONTROLERI BUDU PROPERIJI OVOG OBJEKTA
+  
+  // A SADA OVERRIDE-UJEM ZELEJENI KONTROLER
+  getOne(req, res) {    // OVERRIDE-OVAO SAM OVAJ
+
+    // DEFINISEM STA ZELIM
+
+  }
+}
+```
+
+DAKLE IMAO SAM SVE DEFAULT REST KONTROLERE; ALI AKO ZELIM DA IH OVERRIDE-UJEM DA URADI MSOMETHING SPECIFICALLY ZA KARAKTERISTICNI MODEL; MOGU TO URADITI KAK OSAM GORE POKAZAO
+
+SVE STO JE OUTSIDE OF THE RANGE OF REST MOGU DEFINISATI, NA PRIMER AKO SAM REST ZADAO ZA USERE, ONDA BI USER SAMOG SEBE MOGA ODA DELET-UJEM; E PA JA OVDE MOGU OVERRIDE-OVATI DELETING CONTROLER , KAKO BI TO SPRECIO, AKO IMAM USERE KAO RESURS, A ZELIM DA PRILAGODIM KONTROLERE
