@@ -162,33 +162,54 @@ const userSchema = new mongoose.Schema(
 
 // EVO VIDIS 
 
-// OVDE SE KORISTIO     pre     HOOK ZA DOKUMENT
+// OVDE SE KORISTI     pre     HOOK ZA DOKUMENT
 
-//  OVO MSAM PROCITAO IZ DOKUMENTACIJE
+//  OVO SAM PROCITAO IZ DOKUMENTACIJE
 
 // >>>>  Middleware (also called pre and post hooks) are functions which are passed control during 
 // >>>>  execution of asynchronous functions.
 
 
-userSchema.pre('save', function(next) {
+// OVU FUNKCIJU CE TRIGGEROVATI NE SAMO       find IL IfindOneAndUpdate..., VEC  I            model.create
 
-  // this   SE OVDE ODNOSI NA model 
 
-  if (!this.isModified('password')) {
+userSchema.pre('save', function(next) {         // OV FUNKCIJA KORISTI          this
+                                                // ZATO NE SME BITI ARROW FUNKCIJA      JER BI this BILO GLOBAL OBJECT
+                                                // OVAKO CE BITI Document INSTANCA STO MI JE I POTREBNO
+
+  // this   SE OVDE ODNOSI NA      Document     INSTANCU
+
+  if (!this.isModified('password')) {  // AKO PASSWORD PROPERTI NIJE MODIFIED         NASTAVLJAS DALJE   (next IS CALLED)
+                                            // DAKLE U TOM SLUCAJU SE IDE DALJE NA SLEDECI MIDDLEWARE MONGOOSE-A
 
     // >>>   Pre middleware functions are executed one after another, when each middleware calls next
     return next()
   }
 
+  // AKO JE         password      MODIFIKOVANO, ODNOSNO AKO JE PASSWORD PROMENJEN, ZELIM DA GA HASH-UJEM
+
   bcrypt.hash(this.password, 8, (err, hash) => {
-    if (err) {
+
+    if (err) {          // AKO JE HASHING BIO NEUSPESAN PRELAZIM NA SLEDECI MIDDLEWARE
       return next(err)
     }
+                    // ************** OVO JE MOZDA BITNO DA UOCIM  ************************ 
+
+    // AKO JE     password      MODIFIED,        HASHED password      SE KACI NA      Document INSTANCU
 
     this.password = hash
     next()
   })
 })
+
+// DAKLE, NA PRIMER PRI SVAKOM IZVRSENJU      model.findOneAndUpdate IL Imodel.create   IZVRSICE SE GORNJI MIDDLEWARE
+// AKO ERROR-UJE OUT, ERROR CE BITI PROSLEDEJEN A NECE SE IZVSITI NI JEDAN SLEDECI MIDDLEAWARE (A OVO JE JEDINI KOJI SAM 
+// ZADAO)
+
+
+// SLEDECA METODA       UZIMA ONAJ      HASHED PASSWORD         SA          Document      INSTANCE
+
+// I KORISTIM TAJ HASH      ZAJEDNO SA PASSED IN PASSWORD-OM, KAKO BIH PROVERIO DA LI HASH POTICE OD PASSED IN PASSWORD-A
 
 userSchema.methods.checkPassword = function(password) {
   const passwordHash = this.password
@@ -202,6 +223,15 @@ userSchema.methods.checkPassword = function(password) {
     })
   })
 }
+
+// DAKLE GORNJU METODU JA MOGU KORISTITI NA MODELU U OBIMU KONTROLERA-A
+
+
+
+// I NAPRAVLJEN JE SADA MODEL OD POMENUTE SCHEM-E
+
+// ONO STA JE INTERESANTNO JESTE DA CE SE PRI UPOTREBI BILO KAKVE METODENA      MODELU      (KOJA KREIRA DOKUMENT ILI 
+// RADI QUERY-ING)        POKRENUTI       GORNJI      'save'      HOOK
 
 export const User = mongoose.model('user', userSchema)
 
