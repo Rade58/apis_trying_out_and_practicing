@@ -100,18 +100,24 @@ export const protect = async (req, res, next) = {
 
 ```
 
-## ZELI MDA VIDIM KAKO IZGLEDA MODEL ZA USER-A
+## ZELIM DA VIDIM KAKO IZGLEDA MODEL ZA USER-A
 
 **MISLIM DA MI OVDE NECE BITI BAS NAJBOLJE RAZUMLIVO STA SU TO pre I post HOOKS U Mongoos-U (ONI PREDSTAVLJAJU MIDDLEWARE U POGLEDU MONGOOSE-A), ALI TO CU VALJDA SAZNATI KADA SE BUDE MBAVIO KONKRETNO MONGO DB-JEM I MONGOOSE-OM ,A TO JE DRUGI WORKSHOP**
 
 *JA CU IPAK DATI KRATKA OBJASNJENJA VEZNA ZA TO DOK BUDEM EXPLORE-OVAO CODE*
+
+******
+
+A STO SE TICE TYPEOVA MIDDLEWARE-A (IMA IH VISE VRSTA U MONGOOSE-U), [PROCITAJ OVO](https://mongoosejs.com/docs/middleware.html)
+
+******
 
 *resources/user/user.model.js* FAJL:
 
 ```javascript
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'     // OVDE SE DAKLE KORISTI PAKET I ZA CRYPTING
-                                // STO CE SE KORISTITI ZA HASHING
+                                // STO CE SE KORISTITI ZA HASHING PASSWORD-A
 
 // SA SCHEMA-OM NISTA NE VIDI MSPORNO
 
@@ -158,8 +164,19 @@ const userSchema = new mongoose.Schema(
 
 // OVDE SE KORISTIO     pre     HOOK ZA DOKUMENT
 
+//  OVO MSAM PROCITAO IZ DOKUMENTACIJE
+
+// >>>>  Middleware (also called pre and post hooks) are functions which are passed control during 
+// >>>>  execution of asynchronous functions.
+
+
 userSchema.pre('save', function(next) {
+
+  // this   SE OVDE ODNOSI NA model 
+
   if (!this.isModified('password')) {
+
+    // >>>   Pre middleware functions are executed one after another, when each middleware calls next
     return next()
   }
 
