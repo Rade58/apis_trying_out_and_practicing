@@ -65,6 +65,9 @@ const newToken = user => {
 
 }
 
+// TOKEN SE PRAVI SINHRONO
+// POVRATNA VREDNOST GORNJE METODE JESTE DAKLE SAM TOKEN
+
 // DAKLE SECRET SE KORISTI KAO KLJUC U SLEDECOJ METODI
 
 const verifyToken = token => {
@@ -226,6 +229,8 @@ userSchema.methods.checkPassword = function(password) {
 
 // DAKLE GORNJU METODU JA MOGU KORISTITI NA MODELU U OBIMU KONTROLERA-A
 
+// AKO IMAS DILEMU ZA GORNJI COLLBACK err CE BITI false, AKO NIJE undefined
+// A same CE BITI true AKO NIJE undefined
 
 
 // I NAPRAVLJEN JE SADA MODEL OD POMENUTE SCHEM-E
@@ -371,6 +376,53 @@ JOS JEDNA BITNA STVAR KOJU BI MOZDA TREBALO DA PRIMETIM JESTE, DA UZIMAJUCI U TO
 ## SLEDECI KONTROLER KOJIM CU SE POZABAVITI JESTE signIn
 
 ```javascript
+export const signIn = async (req, res) => {
 
+  if(!req.body.email || !req.body.password){
+    return res.status(400).send({ message: 'need email and password' })
+  }
+
+  const invalid = { message: 'invalid email password combination' }
+
+  try{
+    
+    // KADA TRAZIM OBJEKAT IZ BAZE, MOGU KORITITI select METODU, KOJOM SE SPECIFICIRA, KOJI FIELD-OVI
+    // DA BUDU INCLUDED U UZETOM DOKUMENTU
+
+    // ONO STO MI NIJE JASNO ZASTO SU SELECTED I email I password  (AKO JE MIDDLEWARE MONGOOSE-A (save HOOK, VEC UZEO 
+    // PASSWORD I ZAKACIO GA NA user DOKUMENT))
+    const user = await User.findOne({ email: req.body.email }).select('email password').exec()
+
+    if(!user) return res.status(401).send(invalid)    // 401 ZNACI UNAUTHORIZED
+
+    // PASSWORD, KOJI JE UZEO save HOOK MONGOOSA JE U OVOM TRENU ZAKACEN ZA DOKUMENT
+    // OVA METODA UNDER THE HOOD PROVERAVA DA LI JE PASSWORD ZAKAZEN ZA DOKUMENT I PASSWORD KOJI JE 
+
+    const isMatcing = await user.checkPassword(req.body.password)
+
+    if(!isMatching) return res.status(401).send(invalid)
+
+    // AKO JE AUTHORIZATION PROSAO SVE PROVERE OPET PRAVIM NOVI TOKEN
+    // I SALJEM GA CLIENT-U
+
+    const token = newToken(user)
+
+    return res.send(201).send({token})
+
+  }catch(error){
+    
+    console.log(error);
+
+    return res.status(500).end()
+
+  }
+
+}
 ```
+
+## SADA CU USE POZABAVITI SA protect MIDDLEWARE-OM
+
+*MOZDA IMAS ZABLUDU DA CES KORISTITI protect SAMO ZA signIn ILI signUp ,NE TO NIJE TAKO* 
+
+**protect TREBA DA SE POZIVA NA NIVOU CELOG API, ZA SVAKI ROUTE, ZA SVAKI PATH MOG API-A**
 
