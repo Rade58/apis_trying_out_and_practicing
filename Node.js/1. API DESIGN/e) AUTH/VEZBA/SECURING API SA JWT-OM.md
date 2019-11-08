@@ -415,7 +415,7 @@ export const signin = async (req, res) => {
 
   }catch(error){
     
-    console.log(error);
+    console.error(error);
 
     return res.status(500).end()
 
@@ -557,7 +557,11 @@ export const protect = async (req, res, next) => {
 
   const user = await User.findById(payload.id)
     .select('-password')        // PREDPOSTAVLJAM DA LI OVO ZNACI 'MINUS PASSWORD' (BEZ NJE DAKLE)
-    .lean().exec()
+    .lean()   // lean JE OVDE 'PRETVORILO' MONGOOSE Document U JSON Document (moram nauciti vise o ovome)
+
+                  // USTVARI POMENUTO SE KORISTIL ODA NE BIH MORAO RADITI   use.toJSON()
+
+    .exec()
     
   if(!user){
 
@@ -604,11 +608,13 @@ app.use(urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 // UPOTREBA DVA KONTROLERA ZA DVA POSEBNA ROUTE-A
+// KORISTIS post VERB NARAVNO
 app.post('/signup', signup)
 app.post('/signin', signin)
 
-// BITNO JE DA SE OVDE protect MOUNT-UJE, PRE SVIH DRUGIH ROUTE-RA, KOJI KORISTE '/api' ROUTE
+// BITNO JE DA SE OVDE protect MIDDLEWARE MOUNT-UJE, PRE SVIH DRUGIH ROUTE-RA, KOJI KORISTE '/api' ROUTE
 app.use('/api', protect)
+
 app.use('/api/user', userRouter)
 app.use('/api/item', itemRouter)
 app.use('/api/list', listRouter)
