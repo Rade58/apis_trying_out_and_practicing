@@ -24,11 +24,11 @@ FILE/FOLDER STRUKTURA PROJEKTA:
 │   └───user
 │           user.controllers.js       // (4) OVDE SE NALAZE FUNKCIJE
 │           user.model.js
-│           user.router.js      // (3) OVDE CU KORISTITI POMENUTE KONTROLERE ZA SIGNING IN AND UP, I MIDDLEWARE
+│           user.router.js      // (3) OVDE CU KORISTITI POMENUTE KONTROLERE ZA signinG IN AND UP, I MIDDLEWARE
 │
 ├───utils
 │   │   auth.js  // (1) OVDE SE NALAZE TVOJE FUNKCIJE ZA KREIRANJE NOVOG TOKENA I ZA VERIFIKACIJU TOKENA
-|   |           //U ISTOM FAJLU CES PRAVITI KONTROLERE, KOJE SLUZE ZA SIGNING IN I SIGNING UP
+|   |           //U ISTOM FAJLU CES PRAVITI KONTROLERE, KOJE SLUZE ZA signinG IN I signinG UP
 |   |             // AL ICES PRAVITI I MIDDLEWARE, PREDPOSTAVLJAM DA CE UPRAVO MIDDLEWARE BITI ODGOVORAN
 |   |             // ZA VERIFICATION TOKENA
 │   │   crud.js
@@ -91,8 +91,8 @@ const verifyToken = token => {
 //////////////////////////////////////////////////////////////////////////////
 //  U SLEDECIM KONTROLERIMA TREBA DA SE KORISTE, POMENUTE DVE METODE
 
-export const signIn = async (req, res) => {}
-export const signUp = async (req, res) => {}
+export const signin = async (req, res) => {}
+export const signup = async (req, res) => {}
 
 // MISLIM DA CE SE VERIFIKACIJA ODIGRAVATI U SLEDECEM MIDDLEWARE-U
 
@@ -132,16 +132,19 @@ import bcrypt from 'bcrypt'     // OVDE SE DAKLE KORISTI PAKET I ZA CRYPTING
 
 const userSchema = new mongoose.Schema(
   {
+
+    // ALI HAJDE DA KAZEM NESTO I O SCHEMA-I
+
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: true,     // EMAIL JE REQIORED
+      unique: true,       // MORA BITI JEDINSTVEN
       trim: true
     },
 
     password: {
       type: String,
-      required: true
+      required: true      // I PASSWORD JE REQUIRED
     },
     settings: {
       theme: {
@@ -255,7 +258,7 @@ export const User = mongoose.model('user', userSchema)
 
 - IMACU MATCH ILI NECU IMATI MATCH
 
-**OVDE MOZES ZAKLJUCITI DA SE, SVE POMENUTO TREBA UPOTREBLJAVATI, UPRAVO KOD *SIGNING IN*-A**
+**OVDE MOZES ZAKLJUCITI DA SE, SVE POMENUTO TREBA UPOTREBLJAVATI, UPRAVO KOD *signinG IN*-A**
 
 DAKLE NA OSNOVU TOGA USER CE SE IDENTIFIKOVATI ILI NE (PREDPOSTAVLJAM DA JE RIGHT TERM OVDE IDENTIFICATION)
 
@@ -263,10 +266,10 @@ JOS PAR ZAPAZANJA:
 
 - AKO JE PASSWORD PREDHODNO BIO MODIFIED, SIGURNO NECE BITI MATCH-A, JER CE TADA Document.password BITI undefined
 
-## HAJDE SADA DA SE VRATIM NA auth.js GDE CU DEFINISATI PRVO signUp KONTROLER
+## HAJDE SADA DA SE VRATIM NA auth.js GDE CU DEFINISATI PRVO signup KONTROLER
 
 ```javascript
-const signUp = async (req, res) => {
+export const signup = async (req, res) => {
 
   // AKO KORISNIK NIJE UNEO PASSWORD ILI MAIL, ENDUJ REQUEST I POSLAJI MI STATUS 400
 
@@ -280,7 +283,7 @@ const signUp = async (req, res) => {
   try{
     // User JE MODEL KOJI SI UVEZAO (CISTO DA ZNAS)
 
-    const user = await User.create(body)
+    const user = await User.create(req.body)
 
     // KREIRAS TOKEN OD PAYLAOD-A, KOJ ICE BITI OBJEKAT SA USER-OVIM ID-JEM
     const token = newToken(user)
@@ -316,7 +319,7 @@ NAROCITO POSTOJI JEDAN CLANAK, KOJ ICE TI POMOCI KADA NAUCIH GraphQl, AKONKRETN 
 
 ## VAZNE INFORMACIJE ZA protect MIDDLEWARE I authorization HEADER
 
-PRILIKOM SIGNUP-A, TOKEN JE KREIRAN I POSLAT DO CLIENT-A (TO TI JE JASNO)
+PRILIKOM signup-A, TOKEN JE KREIRAN I POSLAT DO CLIENT-A (TO TI JE JASNO)
 
 **AKO TOKEN NIJE KREIRAN I POSLAT NAZAD, ZNAJ DA TO TREBA DA ZNACI DA KORISNIK NIJE AUTHORIZED**
 
@@ -344,7 +347,7 @@ JOS JEDNA BITNA STVAR KOJU BI MOZDA TREBALO DA PRIMETIM JESTE, DA UZIMAJUCI U TO
 
 >> YOU NEED TO lock down the API routes.
 
-- TO ZNACI AKO VERIFIKACIJA TOKENA JESTE NEUSPESNA ONDA BI STVARNO I SIGNING IN ILI SIGNING UP, TREBAL IDA BUDU PREKINUTI
+- TO ZNACI AKO VERIFIKACIJA TOKENA JESTE NEUSPESNA ONDA BI STVARNO I signinG IN ILI signinG UP, TREBAL IDA BUDU PREKINUTI
 
 ******
 
@@ -370,14 +373,14 @@ JOS JEDNA BITNA STVAR KOJU BI MOZDA TREBALO DA PRIMETIM JESTE, DA UZIMAJUCI U TO
 
 >> YOU NEED TO lock down the API routes.
 
-- TO ZNACI AKO VERIFIKACIJA TOKENA JESTE NEUSPESNA ONDA BI STVARNO I SIGNING IN ILI SIGNING UP, TREBAL IDA BUDU PREKINUTI
+- TO ZNACI AKO VERIFIKACIJA TOKENA JESTE NEUSPESNA ONDA BI STVARNO I signinG IN ILI signinG UP, TREBAL IDA BUDU PREKINUTI
 
 ******
 
-## SLEDECI KONTROLER KOJIM CU SE POZABAVITI JESTE signIn
+## SLEDECI KONTROLER KOJIM CU SE POZABAVITI JESTE signin
 
 ```javascript
-export const signIn = async (req, res) => {
+export const signin = async (req, res) => {
 
   if(!req.body.email || !req.body.password){
     return res.status(400).send({ message: 'need email and password' })
@@ -399,7 +402,7 @@ export const signIn = async (req, res) => {
     // PASSWORD, KOJI JE UZEO save HOOK MONGOOSA JE U OVOM TRENU ZAKACEN ZA DOKUMENT
     // OVA METODA UNDER THE HOOD PROVERAVA DA LI JE PASSWORD ZAKAZEN ZA DOKUMENT I PASSWORD KOJI JE 
 
-    const isMatcing = await user.checkPassword(req.body.password)
+    const isMatching = await user.checkPassword(req.body.password)
 
     if(!isMatching) return res.status(401).send(invalid)
 
@@ -423,7 +426,7 @@ export const signIn = async (req, res) => {
 
 ## SADA CU USE POZABAVITI SA protect MIDDLEWARE-OM
 
-*MOZDA IMAS ZABLUDU DA CES KORISTITI protect SAMO ZA signIn ILI signUp ,NE TO NIJE TAKO* 
+*MOZDA IMAS ZABLUDU DA CES KORISTITI protect SAMO ZA signin ILI signup ,NE TO NIJE TAKO* 
 
 **protect TREBA DA SE POZIVA NA NIVOU CELOG API, ZA SVAKI ROUTE, ZA SVAKI PATH MOG API-A**
 
@@ -457,17 +460,17 @@ KADA UZMES TOKEN U OBIMU MIDDELWARE-A (protect), KORISTIS GA SA METODOM **verify
 
 >>>> Every route that's mounted at '/api' should use this
 
->>>> OSIM NARAVNO ROUTE-OVA ZA signIn I signUp ,JER TADA NE BI BIO MOGUC SIGNING IN AND SIGNING UP
+>>>> OSIM NARAVNO ROUTE-OVA ZA signin I signup ,JER TADA NE BI BIO MOGUC signinG IN AND signinG UP
 
 ******
 
 VAZNO
 
-KADA NAPRAVIS SVE KONTROLERE, TADA U server.js UVOZIS signIn, signUp ,I protect
+KADA NAPRAVIS SVE KONTROLERE, TADA U server.js UVOZIS signin, signup ,I protect
 
-- **signIn** TREBA DA IMA SVOJ ROUTE `'/signIn'`
+- **signin** TREBA DA IMA SVOJ ROUTE `'/signin'`
 
-- **signUp** TREBA DA IMA SVOJ ROUTE `'/signUp'`
+- **signup** TREBA DA IMA SVOJ ROUTE `'/signup'`
 
 - **protect** CE BITI MOUNTED ZA '/api'
 
@@ -527,7 +530,7 @@ COOL STORY:
 
 DAO SI JWT, KOJI NUISU EXPIRED YET ALI JE TAJ USER DELETE-OVAO NJEGOV PROFILE JUCE (ZATO SI PROVERAVAO DA LI USER POSTOJI)
 
-## KAD SAM SVE TO OBJASNIO, MOGU DEFINISATI protect MIDDLEWARE
+## KAD SAM SVE TO OBJASNIO, MOGU DEFINISATI protect MIDDLEWARE, I TO JE ON OSTO CE PROTECT-OVATI SVE ROUTES, MOG API-A
 
 ```javascript
 export const protect = async (req, res, next) => {
@@ -535,10 +538,10 @@ export const protect = async (req, res, next) => {
   const bearer = req.headers.authorization
 
   if(!bearer || !bearer.startsWith('Bearer ')){
-    return res.status(401).end()
+    return res.status(401).end()                    //  401 ZNACI Unauthorized
   }
 
-  const token = bearer.split('Bearer ')[1]
+  const token = bearer.split('Bearer ')[1].trim()
 
   let payload
 
@@ -552,9 +555,10 @@ export const protect = async (req, res, next) => {
 
   }
 
-  const user = await findById(payload.id)
+  const user = await User.findById(payload.id)
     .select('-password')        // PREDPOSTAVLJAM DA LI OVO ZNACI 'MINUS PASSWORD' (BEZ NJE DAKLE)
-
+    .lean().exec()
+    
   if(!user){
 
     return res.status(401).end()
@@ -568,6 +572,54 @@ export const protect = async (req, res, next) => {
 
   next()
 
+}
+
+```
+
+## POTREBNO JE SADA UVESTI signup, signin KONTROLERE U server.js; A TAKO DJE TREBA UVESTI I protect MIDDLEWARE
+
+TAMO ZELIM DA IH UPOTREBIM NA NACIN, KOJ ISAM VEC OBJASNIO
+
+```javascript
+import express from 'express'
+import { json, urlencoded } from 'body-parser'
+import morgan from 'morgan'
+import config from './config'
+import cors from 'cors'
+import { signup, signin, protect } from './utils/auth'      // EVO GA UVOZ
+import { connect } from './utils/db'
+import userRouter from './resources/user/user.router'
+import itemRouter from './resources/item/item.router'
+import listRouter from './resources/list/list.router'
+
+export const app = express()
+
+app.disable('x-powered-by')
+
+app.use(cors())
+app.use(json())
+app.use(urlencoded({ extended: true }))
+app.use(morgan('dev'))
+
+// UPOTREBA DVA KONTROLERA ZA DVA POSEBNA ROUTE-A
+app.post('/signup', signup)
+app.post('/signin', signin)
+
+// BITNO JE DA SE OVDE protect MOUNT-UJE, PRE SVIH DRUGIH ROUTE-RA, KOJI KORISTE '/api' ROUTE
+app.use('/api', protect)
+app.use('/api/user', userRouter)
+app.use('/api/item', itemRouter)
+app.use('/api/list', listRouter)
+
+export const start = async () => {
+  try {
+    await connect()
+    app.listen(config.port, () => {
+      console.log(`REST API on http://localhost:${config.port}/api`)
+    })
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 ```
