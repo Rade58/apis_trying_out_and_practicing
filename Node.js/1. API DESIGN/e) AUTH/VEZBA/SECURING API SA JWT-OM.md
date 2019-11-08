@@ -411,7 +411,7 @@ export const signin = async (req, res) => {
 
     const token = newToken(user)
 
-    return res.send(201).send({token})
+    return res.status(201).send({token})
 
   }catch(error){
     
@@ -565,9 +565,11 @@ export const protect = async (req, res, next) => {
 
   }
 
-  req.user = user       // KACIM user-A NA REQUEST, JER ZELI MDA BUDE PRIOSLEDJEN DALJE GDE CE GA MOCI KORISTITI
+  req.user = user       // KACIM user-A NA REQUEST, JER ZELIM DA BUDE PRIOSLEDJEN DALJE GDE CE GA MOCI KORISTITI
                         // KONTROLERI
 
+                        // DAKLE AKO POSMATRAS RANIJE VEZBE GDE SAM KORISTITO req.user._id U KONTROLERIMA
+                        // E PA TO POTICE ODAVDE JER SE OVDE KACI
   // I POZIVAM next
 
   next()
