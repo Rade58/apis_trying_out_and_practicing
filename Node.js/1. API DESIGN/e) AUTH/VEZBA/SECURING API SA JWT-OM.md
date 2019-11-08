@@ -65,7 +65,8 @@ const newToken = user => {
 
 }
 
-// TOKEN SE PRAVI SINHRONO
+// TOKEN SE PRAVI SINHRONO (** NEKA TI JE NA UMU DA SVUGDE GDE NEMA CALLBACKA (err, result) => {} , 
+// U PITANJU JE SINHRONO**)
 // POVRATNA VREDNOST GORNJE METODE JESTE DAKLE SAM TOKEN
 
 // DAKLE SECRET SE KORISTI KAO KLJUC U SLEDECOJ METODI
@@ -319,11 +320,11 @@ PRILIKOM SIGNUP-A, TOKEN JE KREIRAN I POSLAT DO CLIENT-A (TO TI JE JASNO)
 
 **AKO TOKEN NIJE KREIRAN I POSLAT NAZAD, ZNAJ DA TO TREBA DA ZNACI DA KORISNIK NIJE AUTHORIZED**
 
-RANIJE SAM REKA ODA CU KREIRATI protect MIDDLEWARE, KOJEM CE CILJ BITI DA PROVERAVA DA LI JE CLIENT AUTHORIZED
+RANIJE SAM REKA ODA CU KREIRATI protect MIDDLEWARE, KOJEM CE CILJ BITI DA PROVERAVA DA LI JE CLIENT AUTHORIZED (**I ON TO TREBA DA PROVERAVA ZA SVAKI ROUTE API-A**)
 
 - DAKLE TO ZNACI DA CU U TOM MIDDLEWARE-U DEFINISATI DA SE POZIVA FUNKCIJA **verifyToken**
 
-- A ON OCIME CE BITI HRANJENA TA FUNKCIJA JESTE UPRAVO TOKEN UZET OD CLIENT-A
+- A ONO CIME CE BITI HRANJENA TA FUNKCIJA JESTE UPRAVO TOKEN UZET OD CLIENT-A
 
 KAKO UZET?
 
@@ -426,3 +427,147 @@ export const signIn = async (req, res) => {
 
 **protect TREBA DA SE POZIVA NA NIVOU CELOG API, ZA SVAKI ROUTE, ZA SVAKI PATH MOG API-A**
 
+*DAKLE MORAM PROTECT-OVATI SVE API ROUTES*
+
+U SLUCAJU MOG PRIMERA TO SU SVI ROUTE-OVI, KOJI POCINJU SA `'/api'`
+
+DAKLE MIDDLEWARE protect, MORA SE RUN-OVATI ZA SVAKI POMENUTI ROUTE, I MORA DA TA TRAZI ADJACENT WEB TOKEN IZ **authorization** HEADER-A
+
+```javascript
+req.headers.authorization
+```
+
+******
+
+digresija (FRONT END)
+
+OVO ZNACI DA CE SE NA CLENTU MORATI POSLATI REQUEST SA HEADEROM (authorization)
+
+TOKE NJE CUVAN U LOCAL STORAGE-U BROWSER-A, ODAKLE SE SALJE NAZAD
+
+[link (stack overflow)](https://stackoverflow.com/questions/46379410/how-to-handle-jwt-token-on-the-client-site-in-node-js-application)
+
+******
+
+KADA UZMES TOKEN U OBIMU MIDDELWARE-A (protect), KORISTIS GA SA METODOM **verifyToken**, KOJ USI KREIRAO RANIJE
+
+**AKO JE REC O PRAVOM TOKENU, SVE JE U REDU**
+
+**AKO JE REC O POGRESNOM TOKENU, *NEKO POKUSAVA DA NAPADNE TVOJ WEB APP***
+
+>>>> Every route that's mounted at '/api' should use this
+
+>>>> OSIM NARAVNO ROUTE-OVA ZA signIn I signUp ,JER TADA NE BI BIO MOGUC SIGNING IN AND SIGNING UP
+
+******
+
+VAZNO
+
+KADA NAPRAVIS SVE KONTROLERE, TADA U server.js UVOZIS signIn, signUp ,I protect
+
+- **signIn** TREBA DA IMA SVOJ ROUTE `'/signIn'`
+
+- **signUp** TREBA DA IMA SVOJ ROUTE `'/signUp'`
+
+- **protect** CE BITI MOUNTED ZA '/api'
+
+TAKO DA CE SE ZA SVAKI ROUTER KOJI SAM KREIRAO TOKOM VEZBI (itemRouter, listRouter) UPRAVO KORISTITI MIDDLEWARE *protect*
+
+******
+
+### req.headers.authorization VREDNOST
+
+FORMAT U KOJEM TOKEN DOLAZI SA CLIENT-A, JE OVAKAV
+
+- `"Bearer 56FEHJJGETTRHFGFGFJ"`
+
+DAKLE STRING, KOJI SE SASTOJI OD WORDA `Bearer` I NAKON NJEGA JE TOKEN
+
+******
+
+VAZNO:
+
+AKO TOKEN DODJE SAMO KAO `'SDFSDFGGDFGHDFHG34543'`, **TO NIJE U REDU**
+
+******
+
+**ONO STO TAKODJE MOZES DEFINISATI NAKO NVERIFIKACIJE, U OBIMU ISTOG MIDDLEWARE-A, JESTE DA SE GET-UJE USER**
+
+*TO CES MOCI URADITI JER JE PAYLOAD, UPRAVO OBJEKAT SA USER-OVIM ID-JEM*
+
+******
+
+**OVDE SE KRIJE *`OTKROVERNJE`*** U POGLEDU RANIJEG KORISCENJA
+
+>>>> A STA MOGU SA MTIM USER OBJEKTOM KADA GA GETT-UJEM
+
+**ATTACH IT TO THEIR REQUEST OBJECT BEFORE CALLING next()**
+
+SECAS SE KAKO SI KORISTIO ROUTES U itemRouteru IL IlistRouter-U IZ PRIMER-A
+
+ACCESS-OVAO SI user-A OVAKO
+
+```javascript
+req.user
+```
+
+I IMAO SI DILEMU KAKO JE UOPSTE uesr NA Request OBJEKTU
+
+**E PA ZA TO JE ODGOVORAN *protect* MIDDLEWARE (ON JE KACIO USER-A ZA *req* PRE POZIVANJA next-A) I ZATO SU OSTALI KONTROLERI, MOGLI KORISTITI *`req.user`***
+
+SAMO JA TO TADA NISAM ZNAO
+
+******
+
+>>>> after you verify the token, you then need to do a database query to see if this user exists. So cool story you gave me a valid JWT, that hasn't been expired yet, but that user just deleted their profile yesterday.
+
+I ZISATA NAKON STO SE VERIFIKUJE TOKEN ,TREBA DA SE URADI DATBASE QUERY ZA USER-OM, DA BI SE PROVERIL ODA LI USER POSTOJI
+
+COOL STORY:
+
+DAO SI JWT, KOJI NUISU EXPIRED YET ALI JE TAJ USER DELETE-OVAO NJEGOV PROFILE JUCE (ZATO SI PROVERAVAO DA LI USER POSTOJI)
+
+## KAD SAM SVE TO OBJASNIO, MOGU DEFINISATI protect MIDDLEWARE
+
+```javascript
+export const protect = async (req, res, next) => {
+
+  const bearer = req.headers.authorization
+
+  if(!bearer || !bearer.startsWith('Bearer ')){
+    return res.status(401).end()
+  }
+
+  const token = bearer.split('Bearer ')[1]
+
+  let payload
+
+  try {
+
+    payload = await verifyToken(token)
+
+  }catch(error){
+
+    return res.status(401).end()
+
+  }
+
+  const user = await findById(payload.id)
+    .select('-password')        // PREDPOSTAVLJAM DA LI OVO ZNACI 'MINUS PASSWORD' (BEZ NJE DAKLE)
+
+  if(!user){
+
+    return res.status(401).end()
+
+  }
+
+  req.user = user       // KACIM user-A NA REQUEST, JER ZELI MDA BUDE PRIOSLEDJEN DALJE GDE CE GA MOCI KORISTITI
+                        // KONTROLERI
+
+  // I POZIVAM next
+
+  next()
+
+}
+
+```
