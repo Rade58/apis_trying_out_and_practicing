@@ -1,0 +1,9 @@
+# OVDE CU SAMO OSTAVITI CODE
+
+******
+
+digresija:
+
+DA LAKSE KORISTIS TESTOVE STAVI I --watch FLAG KAD IGH BUDES RUNN-OVAO
+
+******
