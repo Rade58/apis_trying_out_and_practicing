@@ -108,8 +108,9 @@ orgSchema.post('remove', function(doc, next){   // OVO JE DAKLE async FUNKCIJA
 module.exports = mongoose.model('org', orgSchema)
 ```
 
-PROSAO SAM SVE TESTOVE
+STO SE TICE MIDDLEWARE-A, AUTOR WORKSHOPA JE CAK NAPOMENUO DA SE MOZE RETURN-OVATI I PROMISE UMESTO next POZIVA (STO VAZI ZA SAMO NOVIJE VERZIJE MONGOOSE-A)
 
+PROSAO SAM SVE TESTOVE
 
 ******
 
