@@ -117,3 +117,91 @@ export const start = async () => {
 I UPRAVO TO JE DO APPOLO-A (**SAMO APPOLO DOZVOLJAVA DA SE OVO URADI**) (*DRUGI SERVERI OVO NE DOZVOLJAVAJU, USTVARI VECINA NJIH*)
 
 ## PREDSTAVICU OVDE SADA RESENJE VEZBE, UZ MOZDA NEKE KOMENTARE
+
+DAKLE ISPRED SEBE IMAM MONGOOSE-OVU SCHEMA-U, I PREMA NJEMU JA TREBA DA NAPRAVIM GRAPHQL SCHEMA-U
+
+product.model.js FAJL:
+
+```javascript
+import mongoose from 'mongoose'
+import validator from 'validator'
+
+export const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
+    price: {
+      type: Number,
+      required: true
+    },
+    image: {
+      type: String,
+      required: true,
+      default: 'https://via.placeholder.com/150',
+      validate: [v => validator.isURL(v), 'Not a valid image url']
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ['GAMING_PC', 'BIKE', 'DRONE']
+    },
+    description: String,
+    liquidCooled: {
+      type: Boolean,
+      required() {
+        return this.type === 'GAMING_PC'
+      }
+    },
+    bikeType: {
+      type: String,
+      enum: ['KIDS', 'MOUNTAIN', 'ELECTRIC', 'BEACH'],
+      required() {
+        return this.type === 'BIKE'
+      }
+    },
+    range: {
+      type: String,
+      required() {
+        return this.type === 'DRONE'
+      }
+    },
+    createdBy: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: 'user'
+    }
+  },
+  { timestamps: true }
+)
+
+export const Product = mongoose.model('product', productSchema)
+
+```
+
+******
+
+digresija:
+
+U SCHEMA-I VIDIN NEKE NOVE STVARI, SA KOJIMA SE RANIJE NISAM NI SUSRETAO, A TO JE enum PROPERTI KOD DEFINISANJA TYPE-OVA
+
+ZATIM NISAM ZNAO DA SE MOGU DEFINISATI FUNKCIJE ZA required PROPERTI (IMA SMISLA...DAKLE U ODNSU AN NESTO FIELD MOZE BITI REQUIRED, I OVO JE NACI NDA SE TO ODRADI)
+
+******
+
+******
+
+*POGLEDAJ JOS JEDNOM GORNJU MONGOOSE-OVU SCHEMA-U*
+
+POSMATRAJUCI GORNJU MONGOOSE SCHEMA-U, MOGU ZAKLJUCITI DA OBO enum BUKVALNO ODREDJUJE, KOJE SVE VREDNOSTI SMEJU BITI ODREDJENI FIELD-OVI
+
+- FIELD *type* MOZE BITI JEDNA OD OVE TRI VREDNOSTI: *'GAMING_PC', 'BIKE', 'DRONE'*
+
+- FIELD *bikeType* MOZE BITI JEDNA OD OVE TRI VREDNOSTI: *'KIDS', 'MOUNTAIN', 'ELECTRIC', 'BEACH'*
+
+
+
+******
