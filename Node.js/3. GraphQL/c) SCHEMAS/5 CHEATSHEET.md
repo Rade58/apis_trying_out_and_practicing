@@ -2,6 +2,8 @@
 
 [OVDE MOGU NACI CHEATSHEET](https://raw.githubusercontent.com/sogko/graphql-shorthand-notation-cheat-sheet/master/graphql-shorthand-notation-cheat-sheet.png)
 
+I [OVDE](https://wehavefaces.net/graphql-shorthand-notation-cheatsheet-17cd715861b6)
+
 TAKODJE SAM JE STAVIO NA MOJ GOOGLE DISK
 
 PREDSTAVLJEN OJE POPRILICNO SVE STO SE TICE KREIRANJA GRAPHQL-A SA SDL-OM
