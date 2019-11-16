@@ -98,12 +98,16 @@ ALI NE ZNAM KOLIKO JE OVO DOBRO
 
 ## DA UNSTAGE-UJES SVE I DA SE VRATIS NA ONO STO SI IMAO NAKON ZADNJEG COMMIT-A
 
-git add . (adding everything)
+- git add . (adding everything)
 
-git stash
+- git stash
 
 OVO JE KRUCIJALNO, NAKON POMENUTIH KOJE ISTO MORAM DA KUCAM
 
-git stash drop
+- git stash drop
 
 OVO MIZE BI TI I ONE LINER
+
+## AKO SAM APPLY-OVAO STASH, A ZELI MDA SE VRATIM NA STARO NAJBOLJE JE ODRADITI HARD RESET
+
+- git reset --hard
