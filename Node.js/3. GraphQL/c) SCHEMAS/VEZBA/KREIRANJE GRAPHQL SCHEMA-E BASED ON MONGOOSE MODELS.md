@@ -213,3 +213,290 @@ OVA FUNKCIJA JE PRUZILA DAKLE NEKI CUSTOM VALIDATION (SASVIM JE JASNO DA UZIMA S
 ZATO PREDPOSTAVLJAM DA SE OVA FUNKCIJA USTVARI RUNN-UJE ZA MODEL, ODNOSNO TEK ONDA KADA SE POKUSA PRIMENITI NEKA CRUD METODA NA MODELU
 
 ******
+
+******
+
+AKO POGLEDAS GORNJU MONGOOSE SCHEMA-U VIDECES DA TYPE-OVI NEKIH FIELD-OVA ZAVISE OD TYPE-OVA DRUGIH, ODNOSNO ZAVISI TO DA LI CE, POMENUTI FIELD-OVI BITI REQUIRED
+
+******
+
+## HAJDE SADA DA DEFINISEM TYPE-OVE, KOJI CE SE KORISTITI U QUERY I MUTATION TYPE-OVIMA
+
+- PRVI TYPE, KOJI CU KREIRATI CE BITI Product
+
+product.gql FAJL:
+
+```typescript
+enum ProductType {
+  GAMING_PC
+  BIKE
+  DRONE
+}
+
+enum BikeType {
+  KIDS
+  MOUNTAIN
+  ELECTRIC
+  BEACH
+}
+
+type Product {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  createdBy: User!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+```
+
+NEMOJ DA TE ZBUNJUJE User TYPE, ON JE KREIRAN NEGDE (POZABAVICU SE SA NJIM U DRUGIM VEZBAMA)
+
+U SUSTINI, GORNJI Product TYPE, TREBA DA BUDE TYPE, ONOGA STO JE QUERIED FROM DATBASE 
+
+SLEDECI TYPE CE PREDSTAVLJATI DATA, KOJI SE KORISTI KA OPAYLOAD
+
+U SUSTINI SVE JE ISTO OSIM STO IZOSTAVLJAM createdBy FIELD (JER SE TO TREBA DODAVATI U OBIMU RESOLVERA, KAO POSLEDICA AUTHENTICATION-A (CIME CU SE TEK BAVITI, KASNIJE U WORKSHOP-U))
+
+**ALI NAJVAZNIJA STVAR JE DA JE TO *input* TYPE (MORAM KORISTITI input KEYWORD)**
+
+```typescript
+enum ProductType {
+  GAMING_PC
+  BIKE
+  DRONE
+}
+
+enum BikeType {
+  KIDS
+  MOUNTAIN
+  ELECTRIC
+  BEACH
+}
+
+type Product {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  createdBy: User!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input NewProductInput {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+```
+
+**KAD JE REC O UPDATEING-U, TU NE TREBA NISTA DEFINISATI DA BUDE REQUIRED**
+
+I NECE SE MOCI UPDATE-OVATI FIELD type
+
+OPET JE input TYPE U PITANJU
+
+```typescript
+enum ProductType {
+  GAMING_PC
+  BIKE
+  DRONE
+}
+
+enum BikeType {
+  KIDS
+  MOUNTAIN
+  ELECTRIC
+  BEACH
+}
+
+type Product {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  createdBy: User!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input NewProductInput {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input UpdateProductInput {
+  name: String
+  price: Float
+  image: String
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+```
+
+ZASTO NISTA GORE NIJE REQUIRED
+
+>> KADA BI BILO REQUIRED MORAO BIH DA PORED TE JEDNE STVARI KOJU UPDATE-UJEM , ISTO TAKO DA UPDATE-UJEM I SVE OSTALO, STO MI NARAVNO NE ODGOVARA
+
+## SADA CU DEFINISATI PRODUCT QUERY TYPE
+
+PRIMER ZAHTEVA DA SE TAJ TYPE NAZIVA product (JASNO JE DA CE SE TAKO ZVATI I RESOLVER)
+
+A TAKODJE MORAM KREIRATI I QUERY ZA VISE PRODUCTOVA (TU MORAS KORISTITI ARRY TYPE)
+
+NE ZABORAVI DA SE QUERYING-UJE PREMA ID-JU
+
+```typescript
+enum ProductType {
+  GAMING_PC
+  BIKE
+  DRONE
+}
+
+enum BikeType {
+  KIDS
+  MOUNTAIN
+  ELECTRIC
+  BEACH
+}
+
+type Product {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  createdBy: User!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input NewProductInput {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input UpdateProductInput {
+  name: String
+  price: Float
+  image: String
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+extend type Query {
+  product(id: ID!): Product!
+  products: [Product]!
+}
+
+```
+
+## SADA KREIRAM MUTATION TYPE
+
+KADA UPATE-UJES NESTO TREBA TI ID ONOGA STO UPDAYTUJES I PAYLOAD SA KOJIM UPDATE-UJES, U SKLADU S TIM DEFINISSI I TYPE ZA UPDATE MUTATIO
+
+```typescript
+enum ProductType {
+  GAMING_PC
+  BIKE
+  DRONE
+}
+
+enum BikeType {
+  KIDS
+  MOUNTAIN
+  ELECTRIC
+  BEACH
+}
+
+type Product {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  createdBy: User!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input NewProductInput {
+  name: String!
+  price: Float!
+  image: String!
+  type: ProductType!
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+input UpdateProductInput {
+  name: String
+  price: Float
+  image: String
+  description: String
+  liquidCooled: Boolean
+  range: String
+  bikeType: BikeType
+}
+
+extend type Query {
+  product(id: ID!): Product!
+  products: [Product]!
+}
+
+extend type Mutation {
+  newProduct(input: NewProductInput!): Product!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
+  removeProduct(id: ID!): Product!
+}
+
+```
+
+## IMAO SAM PROBLEM DA MI TESTOVI PRODJU IAK OJE SVE DEFINISANO KAKO TREBA
+
+## AKO TE ZANIMA KAKO AUTOR WORKSHOPA KORISTI GRAPHQL U TESTOVIMA, A KAKO NA SERVER, POGLEDAJ POSLEDNJI VIDEO FOLDERA 'SCHEMAS'
+
+## DODATNE INFORMACIJE
+
+AKO JE REC O NEKOM PUBLIC API TI MOZES DEFINISATI DA SE NESTO VRACA NAKON REMOVE-A (ZATO JE I OVDE TAK OZADATO) 
+
+A U PRIVATE APIs TO SE NE RADI, MOZDA SE I NE TREBA RADITI
+
+SLEDECA STVAR: DATABASE MI USTVARI GOVORI KOJI FIELD MORA BITI NON NULL, SAMO TREBA POGLEDATI DATABASE, ODNOSNO MONGOOSE SCHEMA-U
+
+PS. VALIDACIJE MOGU BITI DODATE I U RESOLVERIMA
