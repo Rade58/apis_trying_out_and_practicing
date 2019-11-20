@@ -101,7 +101,8 @@ const product = (_, args) => {
 // O TOME CU DETALJNIJE KADA SE BUDEM BAVIO AUTHENTICATION-OM
 
 const newProduct = (_, args, context) => {
-  return Product.create({ ...args.input, createdBy: context.user._id })
+  return Product.create({ ...args.input, createdBy: context.user._id }) // SPRED JE OVDE DA BI SE MOGAO OVERRIDE-OVATI createdBy
+                                                                        // KOJI BI MOZDA POSTOJAO NA args.input
 }
 
 const updateProduct = (_, args) => {
