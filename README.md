@@ -1,4 +1,4 @@
-# ONE BIG MESS (MADE JUST FOR ME, FOR MY UNREGULATED, OFTEN HARD TO UNDERSTAND NOTES)
+# ONE BIG MESS (MADE JUST FOR ME, FOR MY UNREGULATED, OFTEN HARD TO UNDERSTAND NOTES, and language isn't english)
 ## repo made only for practicing and learning purposes
 ## for learning how various APIs work 
 ## for learning how to write syntax used inside .md files
