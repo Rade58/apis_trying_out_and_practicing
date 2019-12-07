@@ -1,0 +1,27 @@
+# OSTAVICU OVDE MALI PODSETNIK, JOS NEKIH STVARI KOJE BI TREBAO PROUCITI, USTVARI OVO CE BITI MUST
+
+## :one: COOKIES
+
+<https://javascript.info/cookie>
+
+JEN U OVOM CLANKU (DAKLE U NEKIM ZEMLJAMA JE KAZNJOVO AKO NE PONUDIS PROMPT DA LI KORISNIK ZELI DA KORISTI COOKIES ILI NE)
+
+OVAJ CLANAK IZMEDJU OSTALOG I TO OBJASNJAVA
+
+<https://www.privacypolicies.com/blog/browser-cookies-guide/>
+
+## :two: KAKO FUNKCIONISU JWT I GDE SE CUVAJU NA CLIENT STRANI
+
+<https://flaviocopes.com/jwt/>
+
+MISLIM DA JE I OVAJ CLANAK, MOZDA CAK I BOLJI (DETALJNIJE JE OBJASNJENO)
+
+<https://medium.com/dev-bits/a-guide-for-adding-jwt-token-based-authentication-to-your-single-page-nodejs-applications-c403f7cf04f4>
+
+## :three: UPOZNATI SE I SA localStorage I sessionStorage
+
+<https://javascript.info/localstorage>
+
+KONKRETNO ZELIM DA VIDIM DA LI SE U JEDNOM OD NJIH MOZE CUVATI JWT PA SLATI ON EVERY SUBSEQUENT REQUEST, NA MOJ SERVER
+
+JA MISLIM DA DA, O TOME GOVORI [OVAJ CLANAK](https://medium.com/dev-bits/a-guide-for-adding-jwt-token-based-authentication-to-your-single-page-nodejs-applications-c403f7cf04f4) (TO JE ISTI ONAJ DRUGI LINK IZ 'KAKO FUNKCIONISU JWT')
