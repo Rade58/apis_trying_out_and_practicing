@@ -358,7 +358,76 @@ A TICE SE PATH-OVA U EXPRESS-U
 
 ONI SU VIRTUELNI
 
-ODNOSNO KADA GLEDAM IZ UGLA OTVORENOG PORTA, TREBA DA KAZEM, DA ZA TAJ EXPRESS APP **PORT PREDSTAVLJA '/' MESTO**
+ODNOSNO KADA GLEDAM IZ UGLA OTVORENOG PORTA, TREBA DA KAZEM, DA ZA TAJ EXPRESS APP 
 
-TO GOVORIM JER SAM DEFINISAO SPECIFICNI location BLOK, SA ODGOVARAJUCOM RUTOM
+**PORT PREDSTAVLJA '/' MESTO U EXPRESS APLIKACIJI, ODNONO U BILO KAKVOM NODEJS SERVERU**
+
+TO GOVORIM JER SAM RANIJE DEFINISAO SPECIFICNI location BLOK, SA ODGOVARAJUCOM RUTOM, KAO STO SI VIDEO GORE
+
+EVO GA
+
+```linux
+location /app/ {
+        proxy_pass http://127.0.0.1:3000/;
+}
+```
+
+*GORE TI JE KAO STO VIDIS location*  **/app/**
+
+A OVAKOO SAM DEFINISAO www/app/app.js FAJL
+
+```javascript
+onst express = require('express')
+
+const app = express()
+
+app.get('/blah', (req, res) => {                // POGLEDAJ, OVDE TI JE ROUTE  /blah/
+
+
+  res.status(200).send('bableng is this ones teht blah')
+})
+
+
+app.listen(3000, () => {
+  
+})
+```
+
+**PA TO ZNACI DA MORAS REQUESTOVATI SA ROUTE-OM**
+
+app/blah/
+
+EVO POGLEDAJ SVOJAJAVSCRIPT FRONTEND CODE
+
+POGLEDAJ OVDE www/html/ui/js/main.js
+
+```javascript
+const button = document.createElement("button");
+
+button.textContent = "press"
+
+const responseArea = document.createElement('div')
+
+
+document.body.prepend(button, responseArea)
+
+button.addEventListener('mousedown', (e) => {
+  
+  // EVO POGLEDAJ PATH, ON JE VALIDAN
+  fetch('/app/blah')
+  .then((res) => {
+    return res.text()
+  })
+  .then(data => {
+    responseArea.textContent += `DATA: ${data}`
+  })
+  .catch(err => [
+    console.log(err)
+  ])
+})
+```
+
+## OVO ME DOVODI DO ZAKLJUCKA DA I NEMORAM IMATI MNOGO OTVORENIH PORTOVA, VEC SAMO MOZDA TREBAM IMATI: location / I U NJEMU JEDAN proxy_pass ZA NEKI ZELJENI PORT
+
+A SVE DRUGE ROUTE-OVE NEKA HANDKLE-UJE EXPRESS, VALJDA JE ZATO I POGOFDAN ZA KORISCENJE
 
