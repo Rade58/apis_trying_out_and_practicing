@@ -1,22 +1,165 @@
-# DAKLE ZELIM DA ENABLE-UJEM WEBSOCKET KONEKCIJU, ZA JEDAN PORT, KOJI IMAM; A NAKON TOGA ZELI I DA TESTIRAM KONEKCIJU
+# DAKLE ZELIM DA ENABLE-UJEM WEBSOCKET KONEKCIJU, ZA JEDAN PORT, KOJI IMAM; A NAKON TOGA ZELI I DA TESTIRAM KONEKCIJU; A NAKO NSTO TESTIRAM KONEKCIJU, MOGAO BI DA NAPRAVIM I KONKRETNU CHAT APPLIKACIJU
 
 - sudo cat /etc/nginx/sites-available/default
 
 POSAMTRAJ OVAJ location BLOK ZA ROUTE /socket/
 
-
+```linux
+location /socket/ {
+        proxy_pass http://127.0.0.1:3400/;
+}
+```
 
 UPRAVO NJEMU ZELIM DA DODAM ODREDJENE DIREKTIVE, KOJE IMAJ UVEZE SA HEADERISMA
 
-## RANIJE SAM MISLIO DA KORISCENJE WEBSOCKET-A, U SLUCAJU ENABLEING-A HTTP2/, NIJE MOGUCE; ALI SLEDECI CLANAK GOVORI DA JE MOGUCE
+## :one: CONFIGURING NGINX TO PROXY WEB SOCKET
+
+### RANIJE SAM MISLIO DA KORISCENJE WEBSOCKET-A, U SLUCAJU ENABLEING-A HTTP2/, NIJE MOGUCE; ALI SLEDECI CLANAK GOVORI DA JE MOGUCE
 
 <https://medium.com/@pgjones/http-2-websockets-81ae3aab36dd>
 
-# DODACU POMENUTE DIREKTIVE
+### MEDJUTIM NECU SAMO DODATI ONE UPGRADE DIREKTIVE, BICE IH JOS
+
+OVAJ CLANAK POKAZUJE, ALI I OBJASNJAVA SVAKU DIREKTIVU: [how to configure Nginx to proxy WEBSOCKET](https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-configure-nginx-for-websockets/)
+
+EVO TI OPET, PUNA [LISTA VARIJABLI](http://nginx.org/en/docs/varindex.html), POSTO CE I ONE UCESTVOVATI U OVOJ KONFIGURACIJI (DA LAKSE PRONADJES STA ZANACI STA)
+
+### OVO SU SVE DIREKTIVE, KOJE CU DODATI; A TU SU I NJIHOVA OBJASNJENJA
+
+- proxy_set_header X-Forwarded-For [$proxy_add_x_forwarded_for](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#var_proxy_add_x_forwarded_for);
+
+>> Ensure the IP of the client sending requests to the NGINX is stored in the request header. This allows connections to be traced back to an origin. Without adding this header, all requests to the upstream WebSocket servers will have the NGINX server’s IP address as the source.
+
+- proxy_set_header Host [$host](http://nginx.org/en/docs/http/ngx_http_core_module.html#var_host);
+
+>> Sets the Host header to be that of the NGINX server.
+
+- proxy_pass http://127.0.0.1:3400; (NJU VEC IMAMA ZADATU)
+
+**SLEDECE SU ONE DIREKTIVE, O KOJE CE OMOGUCITI WebSocket SUPPORT**
+
+*These must exist for the NGINX to correctly proxy WebSocket requests to upstream WebSocket servers.*
+
+- proxy_http_version 1.1; (**MISLIM DA JE OVO FALILO ONOJ KONFIGURACIJI IZ WORKSHOPA-A**)
+
+>> This directive converts the incoming connection to HTTP 1.1, which is required to support WebSockets. The older HTTP 1.0 spec does not provide support for WebSockets, and any requests using HTTP 1.0 will fail.(**MOGUCE DA JE OVO SUVISNO AKO VEC KORISTIM HTTP/2**, *A MOZDA SE VARAM, MOZDA JE IPAK POTREBNO* )
+
+- proxy_set_header Upgrade $http_upgrade;
+
+>> Converts the proxied connection to type Upgrade. WebSockets only communicate on Upgraded connections.
+
+- proxy_set_header Connection “upgrade”;
+
+>> Ensure the Connection header value is upgrade
+
+### EVO OVAKO BI TREBAO DA IZGLEDA, MOJ location BLOK, SA SVI MDEFINISANI MDIREKTIVAMA
 
 ```linux
+location /socket/ {
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_set_header Host $host;
+
+        proxy_pass http://127.0.0.1:3400/;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade $http_upgrade;
+
+        proxy_set_header Connection "upgrade";
+
+}
+```
+
+TESTIRAJ DA MOZDA NEMAS NEKU GRESKU, NAKON STO SI OVO GORE UNEO I WRITE-OVAI QUIT-OVAO VIM
+
+- sudo nginx -t
+
+SVE BI TREBAL ODA JE U REDU
+
+RELOAD-UJ Nginx SERVICE ZA SVAKI SLUCAJ
+
+- sudo service nginx reload
+
+## :two: PRIMER ZA WEB SOCKET
+
+ISPROBAO SAM ONAJ JEDAN EXAMPLE, KOJI MSAM MOGAO TESTIRATI DA LI FUNKCIONISE WEB SOCKET
+
+ALI SAM DOBIO I ODREDJENI UVID KAKO WEB SOCKET FUNKCIONISE
+
+### SETTUP PRIMERA
+
+IMACU DVA FAJLA
+
+- JEDAN CE BITI INSERTED U PAGE
+
+- DRUGI CU NARAVNO RUNN-OVATI, KAO NODE PROCESS
+
+### OVO JE FRONTEND FAJL
+
+```javascript
+// OVDE KORISTIM wss PROTOKOL, ODNOSNO I OVDE SE KORISTI ENCRYPTION (POSTOJI TAKODJE I SAMO ws:// PROTOKOL)
+
+const url = 'wss://www.mojsajt.com/socket/'     // EVO TI OVDE KORISTIS ROUTE (socket) (AKO SE SECAS ZA NJEGA TI JE OTVOREN PORT 3400)
+                                                // NA SERVER SIDE-U SI TAMO DEFINISAO proxy_pass UPRAVO ZA socket LOCATION
+
+const connection = new WebSocket(url)     // OVAK OSE SALJE TAJ POCETN IREQUEST, ODNOSNO POKUSAJ DA SE OSTVARI KONEKCIJA
+
+connection.addEventListener('open', () => {   //ONOG TRENUTKA KADA SE OSTVARI KONEKCIJA
+
+  connection.send('Tool is the best band')    // POSLACE SE MESSAGE DO SERVERA, KROZ      'PIPE KOJI JE OTVOREN', KROZ SOCKET
+
+  // OVDE SERVERU SAMO SALJEM JEDNU PORUKU AK OSE OSTVARI KONEKCIJA
+
+})
+
+connection.addEventListener('error', err => {   // AKO SE DESI BILO KAKAV ERROR NA KONEKCIJI ERROR NEKA BUDE OUTPUTED U KONZOLI
+  console.log(`WebSocket error: ${err}`)
+})
+
+connection.addEventListener('message', ev => {    // AKO SA SERVERA BUDE POSLAT A PORUKA ONA CE STICI OVDE
+  console.log({data: ev.data})
+})
 
 ```
+
+### OVO JE ONO STO CE BITI NODE PROCESS
+
+KORISTIO SAM PAKET [ws](https://github.com/websockets/ws)
+
+```javascript
+// EVO STA JE CONVINIENCE OVOG PAKETA
+
+// MOZE SE ZADATI DA KOM SE PORT-U SLUSA NA KONEKCIJE SA CLIENT-OVA
+
+// ODNOSNO KREIRA SE WEBSOCKET SERVER SA TOM INFORMACIJOM
+
+const WS = require('ws');
+const port = 3400;
+
+const wss = new WS.Server({port});
+
+// SVE OSTALE EVENTOVE, KOJI SU TU KADA SE OSTVARI KONEKCIJA SLUSAM U OBIMU ON connection HANDLER-A
+
+wss.addListener("connection", ws => {
+
+  ws.addEventListener('message', message => {       // EVO, PORUKA KOJA SE STAMPA JE 
+    console.log(`Received message: ${message}`)
+  })
+
+  ws.send('Hello')    // POSTO JE OVO SAMO TESTIRANJE, JA CU CLIENTU SAMO POSLATI PORUKI KADA ON OSTVARI KONEKCIJU
+
+})
+
+```
+
+### PROBAO SAM SVE I WEBSOCKET KONEKCIJA JE BILA USPESNO OSTVARENA IZMEDJU SERVERA I CLIENT-A
+
+
+
+
+
 
 
 # ZELIM DA DEFINISEM GOTOVO ISTI PRIMER KOJI JE AUTOR WORKSHOPA DEFINISAO, SAMO STO ZELIM DA, STO SE TICE NODE APLIKACIJE, JA NJU SERVIRAM SA RAZLICITOG PORT-A, KAKO BI BILE DOSTUPNE DVE APLIKACIJE; JEDNA NA JEDNOM A JEDNA NA DRUGOM PORTU
