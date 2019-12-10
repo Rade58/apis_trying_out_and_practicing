@@ -154,7 +154,51 @@ wss.addListener("connection", ws => {
 
 ```
 
-### PROBAO SAM SVE I WEBSOCKET KONEKCIJA JE BILA USPESNO OSTVARENA IZMEDJU SERVERA I CLIENT-A
+NE ZABORAVI DA KADA KREIRAS OVAKO SERVER, DA UVEK STARTUJES FILE SA PROCESS MANGER-OM
+
+### PROBAO SAM I WEBSOCKET KONEKCIJA JE BILA USPESNO OSTVARENA IZMEDJU SERVERA I CLIENT-A
+
+POGLEDAJ U BROWSER DEV TOOLS, U NETWORK SEKCIJU
+
+TAMO CES VIDETI NETWORK REQUEST, KOJI JE type-A websocet, PROTOCOLA websocket
+
+STATUS MU JE [101](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/101) STO JE "Switching Protocols"
+
+AKO KLIKENES NA OVAJ NETWORK REQUEST, MOCI CES DA PROCITAS HEADERS-E, OD KOJIH SU TI NEKI ONI, KOJE SAM PODESIO U NGINX KONFIGURACIJI
+
+MOZES VIDETI I Messages; KADA OTVORIS TAJ DEO BICE TI DOSTUPNE PORUKE, KOJE DOLAZE ILI ODLAZE SA CLIENTA KROZ SOCKET
+
+ZA SADA SI SAMO IMAO DVE, JEDNU KADA SE USPESNO IZVRSILA KONEKCIJA NA CLIENTU, I JEDNA PORUKA KOJU SAM SEND-OVAO BACK SA SERVER, KADA SE OSTVARILA KONEKCIJA
+
+*****
+
+OSTATAK OVOG DOLE NEMOJ DA CITAS JOS JE NESREDJENO, TU JE ONAJ PRIMER KOJ ISAM DEFINISAO KADA MI NIST NIJE FUNKCIONISALO
+
+*****
+
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+**************************
+
+
 
 
 
