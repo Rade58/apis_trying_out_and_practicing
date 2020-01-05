@@ -1,0 +1,23 @@
+{
+  "name": "apis_trying_out_and_practicing",
+  "version": "1.0.0",
+  "description": "practicing",
+  "main": "none",
+  "scripts": {
+    "test": "none",
+    "g": "git add -A && git commit -am 'notes' && git push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rade58/apis_trying_out_and_practicing.git"
+  },
+  "keywords": [
+    "practicing"
+  ],
+  "author": "Rade",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rade58/apis_trying_out_and_practicing/issues"
+  },
+  "homepage": "https://github.com/Rade58/apis_trying_out_and_practicing#readme"
+}
