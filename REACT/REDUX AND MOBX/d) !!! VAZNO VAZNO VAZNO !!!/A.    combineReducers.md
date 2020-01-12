@@ -16,12 +16,12 @@ import {
 
 ////////////////////////////////////////////////////////////////////////
 // REDUCER      ONE
-const appleReducer: Reducer = (state = {}, action) => {
+const appleReducer: Reducer = (state, action) => {
   return {porodica: "ajdared"}
 }
 
 // REDUCER      TWO
-const orangeReducer: Reducer = (state = {}, action) => {
+const orangeReducer: Reducer = (state, action) => {
   return {boja: "narandzasta"}
 }
 
