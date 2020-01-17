@@ -111,3 +111,10 @@ OVO MIZE BI TI I ONE LINER
 ## AKO SAM APPLY-OVAO STASH, A ZELI MDA SE VRATIM NA STARO NAJBOLJE JE ODRADITI HARD RESET
 
 - git reset --hard
+
+## PUBLISHING BRANCHA
+
+- git checkout neki_branch
+
+- git push -u origin neki_branch
+
