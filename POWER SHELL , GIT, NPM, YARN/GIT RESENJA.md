@@ -141,3 +141,8 @@ NA KRAJU SE SAMO VRATIS U SVOJ BRANCH
 
 - `git checkout <ime_brancha>`
 
+## AKO ZELIS DA UKLANJAS BRANCH-EVE (LOCAL OR REMOTE)
+
+- `git branch -D <ime_brancha>`
+
+- `git push -d origin <ime_remote_brancha>`
