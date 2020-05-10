@@ -19,7 +19,7 @@ AKO NEMA `~/.ssh`
 ## GITHUB RELATED
 
 - `cd ~/.ssh`
-- `ssh-keygen t rsa -b 4096 -C "your_email@example.com"`
+- `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
 
 AKO SI ZADO IME KOJE **NIJE** `id_rsa`, ONDA URADI I OVO
 
