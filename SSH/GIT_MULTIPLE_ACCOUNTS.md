@@ -9,13 +9,17 @@ YOU CREATE FILE LIKE THIS
 ONLY IMPORTANT THING IN THE FILE ARE PATHS TO THE KEYS IN THE .ssh FOLDER
 
 ```
+touch ~/.ssh/config 
+```
+
+```
 # Rade58
 Host github.com
   HostName github.com
   IdentityFile ~/.ssh/key1
 
-# RadeDevOne
-Host github.com-radedevone
+# Rade2
+Host github.com-radeother
   HostName github.com
   IdentityFile ~/.ssh/key2
 
@@ -23,4 +27,20 @@ Host github.com-radedevone
 
 **NOW COMS THEE IMPORTANT THING**
 
-**YOU **
+**YOU `NEED TO PAY ATTENTION HOW YOU'RE ADDING REMOTE ORIGIN OF YOUR REPO`**
+
+YOU NEED TO ADD REMOTE ORIGIN LIKE THIS IF YOU WANT TO BE ABLE TO PUSH TO THE THAT REPO IF IT IS OWNED BY OUTR SECONF GITHUB ACCOUNT
+
+SEE HOW I SPECIFIED `radeother` BELLOW (I JUST INSETED THAT ONE WORD "radeother" BECAUSE WE DID NAME IT LIKE THIS IN OUR)
+
+```
+git remote add origin git@github.com-radeother:Rade2/1_parrot_gif.git
+```
+
+NOW WHEN YOU TRY PUSHING, YOU WILL BE ALLOWED TO DO THIS, BECAUSE THE RIGHT SSH KEY IS GOING TO BE USED
+
+YOU CAN DO THIS AND THE RIGHT SSH IS GOING TO BE PICKED
+
+```
+git push -u origin main
+```
