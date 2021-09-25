@@ -44,3 +44,11 @@ YOU CAN DO THIS AND THE RIGHT SSH IS GOING TO BE PICKED
 ```
 git push -u origin main
 ```
+## I ENCURAGE YOU DO THE SME WHEN CLONING REPOS
+
+FOR EXAMPLE I USED `radeother` WHEN CLONING THIS REPO
+
+```
+git clone git@github.com-radeother:RadeDevOne/fancy_parrot.git
+
+```
