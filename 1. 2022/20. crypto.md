@@ -1,0 +1,609 @@
+# I WANT TO LEARN ABOUT CRYPTOGRAPHY IN NODEJS
+
+I AM FOLLOWING THIS TUTORIAL: <https://fireship.io/lessons/node-crypto-examples/>
+
+I WANT TO LEARN ABOUT `HASHING` `ENCRYPTION` AND `SIGNING` CRYPTOGRAPHIC CONCEPTS
+
+HERE ARE THE EXAMPLES:
+
+<https://github.com/fireship-io/node-crypto-examples>
+
+# 1. HASHING CONCEPT
+
+HASHING MEANS: "CHOP AND MIX" AND HA CULINARY ROOTS
+
+INPUT **CAN HAVE ANY LENGTH**
+
+INPUT GETS PASSED TO HASHING FUNCTION (OF YOUR CHOICE ("md5" (deprecated), "sha" (good one), "argon2"(even better, but can't be used in nodejs)))
+
+HASHING FUNCTION PRODUCES `ALWAYS THE SAME OUTPUT` (**WITH FIXED LENGTH**) `FOR GIVEN INPUT`
+
+FAST TO COMPUTE
+
+**HARD FOR COMPUTER TO REVERSE ENGINEER**
+
+EXAMPLE (NODEJS):
+
+`__NO_OPS/crypto-practice/1_hashing.js`
+
+```js
+const { createHash } = require("crypto");
+
+// CREATING CUSTOM FUCTION WHICH TAKES STRING
+// AS AN INPUT, AND CREATES HASHED STRING AS AAN OUTPUT
+
+// I WILL USE SECURE HASH ALGORYTHM 2 CREATED BY "SOME" AGENCY OF THE
+// USA
+
+// IT RETURNS 256-BIT DIGEST
+
+const hashIt = (input) => {
+  // PAY ATTENTION HOW I USED THESE METHODS
+  // BETTER TO SAY: LOOK HOW THEY ARE CHAINED
+  // update() TAKES INPUT
+  // AND digest() METHOD IS THE ONE THAT CREATES DIGEST
+  // A FIXED LENGTH STRING WE TALKED ABOUT
+
+  // BUT DIGEST ALSO CAN BE IN DIFFERENT FORMATS, LIKE hex OR base64
+  // OR base64 url
+  // IN THIS CASE WE DID CHOOSE TO CREATE DIGEST IN HEXADECIMAL FORMAT
+
+  return createHash("sha256").update(input).digest("hex");
+};
+
+// CREATE TWO HASHES WITH SAME INPUT
+
+const hashOne = hashIt("hedera");
+
+const hashTwo = hashIt("hedera");
+
+console.log({ hashOne, hashTwo });
+
+// THIS NEEDS TO BE EQUAL, LIKE I SAID, SAME VALUE CREATES SAME HASH
+
+console.log(hashOne === hashTwo); // ---> true
+```
+
+WHEN WE DID THIS
+
+```
+node __NO_OPS/crypto-practice/1_hashing.js
+```
+
+WE GOT THIS OUTPUT
+
+```bash
+{
+  hashOne: '6b4afa07ed23a29bcb2f13db87045e613cf9421a92de91aebd1eea13a618e5d6',
+  hashTwo: '6b4afa07ed23a29bcb2f13db87045e613cf9421a92de91aebd1eea13a618e5d6'
+}
+true
+```
+
+**I THINK YOU ALREADY TOOK TO YOUR MIND (IN A MOMENT YOU COMPARED TWO HASHES), WHERE WOULD `SECRET` BE INTRODUCED** (BUT DON'T SWEAT IT, THAT ALSO WOULDN'T BE GOOD ENOUGH)
+
+# 2. WE INTRODUCE `SALT` (RANDOMLY GENEATED DATA), BECAUSE HASHING BY ITSELF IS NOT GOOD ENOUGH FOR STORING PASSWORD IN A DATABASE FOR EXAMPLE 
+
+HASHING IS NOT GOOD ENOUGH BECAUSE IT ALWAYS RETURNS THE SAME VALUE, LIKE YOU SAW
+
+WE NEED RANDOMLY GENERATED THING CALLED SALT
+
+SEE EXAMPLE
+
+```
+__NO_OPS/crypto-practice/2_salting.js
+```
+
+```js
+// I WILL USE ONE FUNCTION CALLED scryptSync
+// I WILL USE IT FOR HASHING, WHEN WE CREATE signUp FUNCTION
+
+// I WILL USE IT BECAUSE:
+
+//     `Scrypt is a password-based key derivation function
+// that is designed to be expensive computationally and memory-wise
+//  in order to make brute-force attacks unrewarding.`
+
+// AND I AM GOING TO USE FUNCTION CALLED    randomBytes
+
+// randomBytes generates cryptographically strong pseudorandom data.
+//  The size argument is a number indicating the number
+//  of bytes to generate.
+
+// ---------------
+// ALSO FOR CHECKING EQUALITY (WHEN WE BUILD logIn FUNCTION)
+//  I AM GOING TO USE timingSafeEqual
+// BECAUSE:
+//          `This function is based on a constant-time algorithm.
+//             Returns true if a is equal to b, without leaking
+//             timing information that would allow an attacker
+//             to guess one of the values.
+//            This is suitable for comparing HMAC digests or secret
+//             values like authentication cookies or capability urls.`
+
+const { scryptSync, randomBytes, timingSafeEqual } = require("crypto");
+
+// THIS IS GOING TO SIMULATE A DATBASE OF USER
+//
+const users = {};
+
+// NOW I WILL CREATE SIGNUP FUNCTION
+// AS YOU KNOW RGUMENTS ARE email AND password THAT USER PROVIDED
+// WHEN HE WANTED TO OPEN ACCOUNT IN OUR PPLICATION
+const signup = (email, password) => {
+  //  WHEN USERS SIGNUP WE GENERATE SALT
+  // SO THIS IS HOW WE USE SALTING
+  // WE CREATE RANDOM TRING
+  const salt = randomBytes(16).toString("hex");
+
+  // WE CREATE HASHED PASSWORD WITH scryptSync METHOD
+
+  // WE SET IT KEYLEN 64
+  // THIS METHOD MAKES MUCH HARDER FOR BRUTE FORCE TO CRACK IT
+  // BECAUSE IT IS COMPUTATIONALLY INTENSIVE
+
+  // scryptSync
+  // IT IS ALSO USED PROOF OF WOORK ALGORYTHM USED
+  // IN CRYPTOCURRENCY MINING
+
+  // BUT FROM THE METHOD WE ARE GOING TO GET Buffer
+  // WE NEED TO TURN THAT BUFFER TO HEX STRING
+
+  const hashedPasswordBuffer = scryptSync(password, salt, 64);
+
+  const hashedPasswordHex = hashedPasswordBuffer.toString("hex");
+
+  // THIS IS WHAT WE WOULD STORE IN A DATBASE
+
+  const user = {
+    // AN EMAIL
+    email,
+    // AND PREPENDED SALT ON A HASHED PASSWORD
+
+    password: `${salt}:${hashedPasswordHex}`,
+  };
+
+  users[email] = user;
+};
+
+// LETS CREATE login FUNCTION
+
+// IT TAKES
+const login = (email, password) => {
+  // FIRST LETS TAKE A USER FROM THE DATABASE
+
+  const user = users[email];
+  // THEN WE CAN GET A SALT AND A HASH FROM OUR PASSWORD
+
+  const [salt, hashHex] = user.password.split(":");
+
+  // LETS RUN AGAIN HSHING ALGORYTHM
+  // UF USER DID MAKE A MISTAKE HERE AND PROVIDED AN OLD
+  // PASSWORD, WE WOULD HAVE COMPLETELLY DIIFFERENT HASH
+
+  // DON'T FORGET THAT scryptSync RETURNS Buffer
+
+  // BUT THIS TIME WE DON'T NEED HEX BECAUSE WE WILL COMPARE BUFFERS
+
+  // AND WHAT IS IMPORTANT IS THAT WE USE password ARGUMENT OF THE FUNCTION
+  // AND THIS TIME WE ARE USING salt THAT WE READ FROM THE DATBASE
+
+  const passBufferOne = scryptSync(password, salt, 64);
+
+  // LETS CREATE Buffer FROM THE HEX THAAT WE READ FROM THE DATBASE
+  const passBufferTwo = Buffer.from(hashHex, "hex");
+
+  // LETS NOW COMPARE
+  // WE ARE GOING TO USE THIS TIME SENSITIVE COMPARE FUNCTION
+  const booleanValue = timingSafeEqual(passBufferOne, passBufferTwo);
+
+  return booleanValue;
+};
+
+// MOZEMO DA ISPROBAMO OVE DVE FUNKCIJE
+
+// USER SIGNING UP
+signup("someone@mail.com", "foobarpass");
+
+// USER LOGGING IN BUT HE FORGOT HIS PASSWORD
+// AND HW PUT THE WRONG ONE
+
+// THIS SHOULD BE false
+const signedInOne = login("someone@mail.com", "bazquxpass");
+
+// USER LOGGING IN WITH THE RIGHT PASSWORD
+// THIS SHOULD BE true
+const signedInTwo = login("someone@mail.com", "foobarpass");
+
+console.log({ signedInOne, signedInTwo }); // --> { signedInOne: false, signedInTwo: true }
+
+```
+
+OK, WE LEARNED WHAT SALT IS
+
+# 3. `HMAC`, A HASH-BASED MESSAGE AUTHENTICATION CODE
+
+**QUICK DEFFINITION WOULD BE THAT IT'S A HASH THAT ALSO REQUIRES A PASSWORD**
+
+SAM PERSON THAT CREATES SIGNATURE, MUST HAVE CORRESPONDING PASSWORD OR A KEY
+
+GOOD EXAMPLE FOR THIS IS **JWT** OR `JSON WEB TOKEN`, YOU USED BEFORE
+
+LETS NOW PLAY A LITTLE BIT WITH HMAC
+
+FILE: `__NO_OPS/crypto-practice/3_hmac.js`
+
+```js
+// A SIMILAR METHOD LIKE createHash WE USED EARLIER
+// BUT THIS METHOD REQUIRES A KEY (A SECRET) WHEN CREATING HASH
+const { createHmac } = require("crypto");
+
+// HERE IS A SECRET
+const secretKey = "safemoon";
+
+// HERE IS A VALUE WE WANT TO HASH
+const message = "🤌 Hello my name is Paulie Waluts";
+
+// WE CREATE HMAC LIKE THIS (CHAINING LIKE WITH createHash)
+const hmac =
+  // FIRST WE PICK ALGORYTHM AND GIVE THE SECRET
+  createHmac("sha256", secretKey)
+    // THEN WE CHAIN VALUE WE WANT TO HASH
+    .update(message)
+    // THEN CREATE ACTUAL HMAC IN FORMAT WE WANT, I CHOOSE HEX
+    .digest("hex");
+
+// IMPORTANT THING TO NOTICE:
+//    WE WOULD CREATE SAME HASH IF WE USED SAME SECRET KEY
+
+// IF WE WOULD CHANGE SECRET KEY, WE WOULD CREATE A COMPLETELLY DIFFERENT
+// HASH
+
+// THIS IS A DIFFERENT HASH THAN ONE ABOVE
+
+const otherSecretKey = "hedera";
+
+const differentHmac = createHmac("sha256", otherSecretKey)
+  .update(message)
+  .digest("hex");
+
+// THIS SHOULD PRODUCE false
+
+console.log(hmac === differentHmac);
+```
+
+YOU NOTICED IN ABOVE EXAMPLE IS HOW WE ARE NOT ABLE TO READ ORIGINAL MESSAGE, WE WERENT DOING THAT AT ALL, WE WERE JUST HASHING AND COMPARING HASHES; WELL NEXT THING WE ARE GOING TO DO IS LEARN HOW WE CAN SHARE A SECRET WITH SOMEONE, AND ALLOW THEM TO READ ORIGINAL MESSAGE
+
+# 4. SYMETRIC ENCRYPTION
+
+ENRYPTION MEANS EXACTLY THIS: 
+
+- `WE TAKE A MESSAGE, WE SCRAMBLE UP BYTIES OF THAT MESSAGE IN SOME MANNER, TO MAKE IT UNREADABLE`, THAT UNREADABLE THING IS CALLED **CIPHER TEXT**
+
+- `BUT WE ALSO CREATE SHARED KEY, WE CAN GIVE SOMEONE TO DECRYT THE CIPHER TEXT`
+
+**IMPORTANT THING TO TAKE TO MIND IS THAT CREATION OF `CIPHER TEXT` IS `RANDOMIZED`; WE SHOULD ALWAYS GET DIFFERENT CIPHER THEXT WHEN ENCRYPTING**
+
+WHAT IS THEN SYMETRIC ENCRYPTION?
+
+**SYMETRIC ENCRYPTION** MEANS THAT SHARED PASSWORD (SHARED KEY) SHOULD BE PRODUCED AND SHARED BETWEN A SENDER AND RECEIVER OF THE MESSAGE
+
+LETS DO SOME PRACTICE WITH SYMETRIC ENCRYPTION
+
+FILE: `__NO_OPS/crypto-practice/4_symetric_encryption.js`
+
+```js
+// WE ARE GOING TO USE METHODS FOR CREATING CIPHER, ALSO FOR
+// CREATING DECRYPTER
+
+// `iv` IN THEIR NAMES MEAN "INITIAL VECTOR"
+const { createCipheriv, createDecipheriv, randomBytes } = require("crypto");
+
+// OK, FIRST WE HAVE INITIAL MESSAGEE IN HERE
+// A MESSAGE WE WANT TO SHARE, LIKE I SAID
+const message = "I'm walking here!";
+
+// WE DEFINE A KAY THAT IS GOING TO BE THE SHARED KEY
+// WE TALKED ABOUT
+
+const key = randomBytes(32);
+
+// WE ALSO CREATED `INITIAL VECTOR`
+// THIS IS GOING TO RANDOMIZE OUTPUT WHEN IT'S ENCYPTED, SO IDENTICAL
+// SEQUENCE OF TEXT WILL NEVER PRODUCE EXACTLY SAME CIPHER TEXT
+// THIS WILL MAKE MORE DIFFICULT FOR A HACKEER TO BREAK THE ENCRYPTION
+const iv = randomBytes(16); // 16 random bytes
+
+// LETS CREATE THE CIPHER
+// LIKE YOU SEE IT USES DIFFERENT ALGORYTHM THAN PREVIOUS METHODS
+// ALSO I USED ALGORYTHM THAT TYPSCRIPT DIDN'T SHOW ME THAT EXIST (I USED ALGORYTHM TUTORIAL TOLD ME TO DO)
+const cipher = createCipheriv("aes256", key, iv);
+
+// LETS DO ENCRYPTION
+// THIS IS GOING TO BE STRING
+const encryptedMessage =
+  // DONT USE utf-8, USE utf8 INSTEAD
+  cipher.update(message, "utf8", "hex") +
+  //  BUT THIS CONCATNATION IS WHAT IS STRANGE TO ME, BECAUSE
+  // THIS REPRESENTS END OF THE cipher AND cipher CAN'T BE
+  // USED ANYMORE
+  cipher.final("hex");
+// TO BE CLEAR, I KNOW WHAT final DOES, BUT WHY DO CONCATENATE?
+// IT DOESN'T METTER AFTER ALL FOR ME, IT MATTER THAT IT WORKS
+
+// IF I TRIED USING cipher TO ENCRYPT ANOTHER MESSAGE, IT WOULD FAIL
+// ERROR WOULD BE THROWN BECAUSE WE USED FINAL
+
+// YOU CAN USE CIPHER TO ENCRYPT THE MESSAGE OR YOU CAN ENCRYPT
+// MULTIPLE MESSAGES IF YOU WANT
+// MESSAGES AS YOU WANT; BUT I'M NOT GOING TO USE THAT, SINCE
+// IT WOULD THROW ERROR
+
+// BUT IF YOU WANT TO USE IT IN FUTER, TRY ENCRYPTING, MULTIPLE
+// MESSEGES, THAT;S MEANS YOU WILL USE update METHOD MULTIPLE TIMES
+// TO CREATE ENCRYPTED MESSAGES WITH SAME CIPHER
+// AND ONLY THEN AFTER WE FINISH YOU CAN CALL AND APPEND final METHOD
+
+// YOU'LL GET SOMETHING LIKE THIS   // --> ff13e5aee9ce55f037413eb565ee7cfb4f
+console.log(encryptedMessage);
+
+// LET CREATE
+// DECYPHER
+// SAME ARGUMENTS AS WHN WE WERE CREATING cipher
+const decipher = createDecipheriv("aes256", key, iv);
+
+// LETS DECRYPT
+// PAT ATTENTION THAT WE USE final HERE TOO TO DISABLE
+// DECYPHER, SAME SO IT CAN'T BE USED AFTER THIS, SAME AS WE DID WITH cypher
+
+// BUT THIS TIME YOU CALL final WITH "utf8" ARGUMENT
+
+const decryptedMessage =
+  decipher.update(encryptedMessage, "hex", "utf-8") + decipher.final("utf8");
+
+// decipher.final("utf8");
+
+console.log(decryptedMessage); // --> I'm walking here!
+
+```
+
+**BUT THIS APPROACH IS NOT VERY PRACTICAL SINCE SENDER AND RECEIVER NEED TO SHARE A MESSAGE**; THAT IS WHY PUBLIC KEY CRYPTO SYSTEM IS INVENTED; WE ARE GOING TO GET FAMILIAR WITH THAT NEXT
+
+# 5. KEYPAIRS
+
+INSTEAD OF USING ONE KEY, WWITH THIS APPROACH WE ARE USING MATEMATICALLY LINKED PUBLIC KKEY AND THE PRIVATE KEY
+
+PRIVATE KEY SHOULD BE ALWAYS KEPT SECRET, WHILE PUBLIC ONE CAN BE SHARED WITH OTHER PEOPLE
+
+OK, LETS DO AN EXAMPLE
+
+```
+__NO_OPS/crypto-practice/5_keypairs.js
+```
+
+```js
+const { generateKeyPairSync } = require("crypto");
+
+// WE USE METHOD ABOVE FOR GENERATING KEY PAIRS
+// WE PICKED RSA WHICH MEANS RIVEST-SHAMIR-ADLEMAN
+const { publicKey, privateKey } = generateKeyPairSync("rsa", {
+  // YOU CAN DEFINE BUNCH OF SETTING
+  // LIKE LENGHTOF KEY IN BITS
+  modulusLength: 2048,
+  publicKeyEncoding: {
+    type: "spki", // RECOMMENDED BY NODJS DOCS
+    // WE WANT THIS KEY TO BE IN FORMAT pem (PRIVACY ENHANCED MAIL)
+    format: "pem", // IT IS A BASE64 FORMAT
+  },
+  privateKeyEncoding: {
+    type: "pkcs8",
+    format: "pem",
+    // WE CAN ADD passphrase AND cipher FOR OUR PRIVATE
+    // KEY, TO ENHANCE SECURITY
+    // cipher: "aes-256-cbc",
+    // passphrase: "satoshi nakamoto",
+  },
+});
+
+// OK, LETS SEE HOW OUR KEYS LOOK
+
+console.log(privateKey);
+console.log(publicKey);
+
+// WE WILL GET SOMETHING LIKE THIS
+
+/**
+ * 
+ * -----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9UtjB9+UFRrMw
+UIZPuqeLO5whIk8mnEmWi7MXWL/Gt1kUJBHCpK7gyaNcr6o/JB6vjZlRcJx87tmm
+QuN8Rmw3To4AAnrGc6gBpnwbLjL97ONrCi4Mv1DB1f1KDrpPDKtq6u7VEmm/a9+u
+O9k0Ih26I7/FH76P/oaXCCGW5cgQ0NJnZ3sZd5QxRqi+5JATScJ2ozCoC3DcmjRU
+TbMqMETfgvZr6B+hTSdVlykn/EEd6vTAn55HeOwfao0SOhz114tfDL+lduoXzPF6
+n4SfDy/810KvfMij57LCsouRuhrYw3fWzruOR7D6ok8iTXhQzSo4x/uftfuUEGg1
+B3rG0dXRAgMBAAECggEBAI20XdNJFZ1OXr6R9wXkIpV/R4wxXub6YcYRyDl4TwqQ
+n1cI7FYw50gPBHxSa24ZPfKOXKxtSmPkbvoX5KdXGpaG8JgnQvgZBy49C3VYrggL
+b+jlVLRr2ilLXus4fNDAHenH8H2A66/AMUr7NsbjpjZ1nYsRCJREoT6YcnO8h3O1
+Xb4e7eMSRpd7pGaKZP7KJNn7FZ7c1H7frb7kQU2Hv9CCFkNt3DZnijdVe4O3SFrB
+KLmf4HFFhMTExHg1rbKXJZFl69eAmlZnAr87OechU/pYQBNnJdGTIihUapJH8dpz
+zLVIZvnsoDujB2Uh9kGEIvBjL/igTitD581CvNgX3GUCgYEA9gGcqLAbZne0vuhM
+jrtMZLMS3dqouE8O81siI8j/sB585BQx7GAUYVifPz4aK6hTnXC1ED9bNbuPxyGs
+ex5Ip0dE4/ZDzbEXwKi/t1HUzqOp/CC76oG10HQjkazZNcOj8opwVI/TZWxev8YK
+ie9QfGDZkyaZ0p2EKeVzd+W2j5MCgYEAxQPAtS+fhjuHRy0k5/KmQqlsQ2gvRYv4
+4KwWeurs3WDLQFFlchfv0OAVa/9cGEb+oUOrcBB3Zz//ke3D/1S8+k/YHRRarQPv
+ISl6V3lU0CrBCNoQvFp6+FlOa2fPuAwJ9021nPMsV5Qc5La5GXW6l9Phe/9tDEb+
+9V8UnmLZO4sCgYEA4n2lcCGDeJmpjUJuidKjiOrd6egRAm+3QhKbofrCfbH0JkD5
+nbjvypg/NYjFq4A0S3WjHixWm2ft/dZg6JF/LpONN5xZ3Jy5U6WJrQvoM7+3FuxE
+VqnJbPwga1SKPte6r+kJdrFcXbqimUmKFmiA36KDbtlRMfnX3oLkBnU12YUCgYA/
+sQXkzV+SIr6KGSMcRUrQtDsG07CsmCK+Z4Pg+v/WVct/oJDeQLTL3xWt02EvjAwX
+kGvlD726SGtT/vzlF7z8Y0GnrQPfeS0emG0vyE7N+XRsaysL6Whlz2FVwbracjHq
+nFnBQrAsI/rvSc8vVusa2GnGD35ugKk+JB3jUmuOHwKBgEBqkgGaJUWxtblwHSui
+JNNWT1eoprSFr8EeqnTbiYCfMlHoriplrsY5RrYumVl+8ayg970K7aqWX4LHKcWe
+xfeqzf4XQGWFkbGRThd5H248vNE3LeJ18jP6ReyUTi6BaRv3tB4hudUO6u3GPrYT
+XnIea2UO+GS17S9XLQtC+KAC
+-----END PRIVATE KEY-----
+
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvVLYwfflBUazMFCGT7qn
+izucISJPJpxJlouzF1i/xrdZFCQRwqSu4MmjXK+qPyQer42ZUXCcfO7ZpkLjfEZs
+N06OAAJ6xnOoAaZ8Gy4y/ezjawouDL9QwdX9Sg66Twyrauru1RJpv2vfrjvZNCId
+uiO/xR++j/6GlwghluXIENDSZ2d7GXeUMUaovuSQE0nCdqMwqAtw3Jo0VE2zKjBE
+34L2a+gfoU0nVZcpJ/xBHer0wJ+eR3jsH2qNEjoc9deLXwy/pXbqF8zxep+Enw8v
+/NdCr3zIo+eywrKLkboa2MN31s67jkew+qJPIk14UM0qOMf7n7X7lBBoNQd6xtHV
+0QIDAQAB
+-----END PUBLIC KEY-----
+ * 
+ * 
+ */
+
+
+// WE WANT TO EXPORT OUR KEYS
+
+module.exports = {
+  privateKey,
+  publicKey,
+};
+
+// BECAUSE WE NEED TO PUT THEM IN USE, WE WILL USE THEM IN
+// SOMETHING CALLED
+//                    ASYMETRIC ENCRIPTION
+
+```
+
+# 6. ASYMETRIC ENCRIPTION
+
+HERE IS A GOOD DIAGRAM THAT SOWS HOW ASYMETRIC ENCRIOTION WORKS
+
+![asymetric encription](/__NO_OPS/asymetricencription.png)
+
+SO WE ENCRYPT BY USING PUBLIC KEY, AND THEN WE USE PRIVATE KEY TO DECRYPT
+
+**GOOD EXPALE OF THIS IS HTTPS PROTOCOL OR SSL CERTIFICATE**
+
+LETS SEE HOW ASYMETRIC ENCRIPTION CAN BE USED INSIDE NODEJS
+
+FILE: `__NO_OPS/crypto-practice/6_asymetric_encription.js`
+
+```js
+// WE WILL USE THESE METHODS
+const { publicEncrypt, privateDecrypt } = require("crypto");
+// WE IMPORT OUR KEYS (REMEBER HOW WE MADE THEM) (CHECK FILE IF YOU WANT)
+const { privateKey, publicKey } = require("./5_keypairs");
+
+// LETS CREATE MESSAGE WE WANT TO ENCRYPT
+const message = "Doge Coin is ponzi scheme!";
+
+// console.log({ privateKey, publicKey });
+
+// LETS NOW USE PUBLIC KEY TO ENCRYPT
+
+// BUT WE NEED TO MAKE A BUFFER OF OUR MESSAGE FIRST
+
+const encryptedMessageBuffer = publicEncrypt(publicKey, Buffer.from(message));
+
+// LETS READ HEXADECIMAL VALUE FROM THE BUFFER
+
+// JUST TO SEE HOW IT LOOKS, AND MAYBE WE CAN IMAGINE THAT WE ARE SENDING
+// ENCRYPTED MESSAGE SOMEWHERE
+const encryptedMessageHex = encryptedMessageBuffer.toString("hex");
+// IMAGINE YOU WANT TO SEND THIS ENCRYPTION MESSAGE TO SOMEONE
+
+console.log(`We are sending ${encryptedMessageHex} encrypted message BUFFER`);
+
+// IMAGINE ENCRYPTED  CAME TO SOMEONE (CAME TO OTHER SERVER) WHO HAS PRIVATE KEY
+
+// THEY WOULD FIRST MAKE A BUFFER FROM MENTIONED HEX
+const bufferOfRecievedEncryptedMessage = Buffer.from(
+  encryptedMessageHex,
+  "hex"
+);
+
+// AND THEY WOULD THEN DECRYPT
+
+const decryptedMessageBuffer = privateDecrypt(
+  privateKey,
+  bufferOfRecievedEncryptedMessage
+);
+
+// LETS READ THE BUFFER
+// IT IS DECRYPTED
+console.log(decryptedMessageBuffer.toString("utf-8")); // --> Doge Coin is ponzi scheme!
+
+```
+
+**ENCRYPTION IS FUN BUT IN MANY CASES, YOU DON'T NEED TO ACTUALLTY ENCRYPT DATA; INSTEAD YOU WANT TO VALIDATE THAT MESSAGE CAME FROM TRUSTED PART, `FOR THAT YOU NEED SIGNING` WHICH WE WILL EXPLORE BELLOW**
+
+# 7. SIGNING
+
+WHAT IS A DIGITAL SIGNATURE?
+
+LETS SAY YOU ARE EXPRCTING LETTER WITH SOME SENSITIVE INFORMATIONS IN THE MAIL
+
+YOU NEED TO ABLE TO REAST THAT THAT MESSAGE CAME FROM THE RIGHT PERSON; SO YOU REQUIRE FROM THEM TO SIGN THE LETTER IN BLOOD, AND IT ALSO CAN'T BE TEMPERED WITH SO THEY NEED TO PUT SPECIAL SEAL ON IT; AND IF A SEAL IS BROKEN, WE KNOW THAT LETTER WAS TEMPERED WITH
+
+**DIGITAL SIGNATURES BASICALLY WORK INA A SIMILAR WAY I MENTIONED IN A STORY ABOVE**
+
+- SENDER OF A MESSAGE WILL USE THEIR PRIVATE KEY TO SIGN A HASH OF THE ORIGINAL MESSAGE
+
+- PRIVATE KEY GUARANTEES AUTHENTICITY (LIKE BLOOD)
+
+- HASH GUARANTEES THAT MESSAGE CAN'T BE TEMPERED WITH; BECAUSE IT WOULD PRODUCE ENTIRELY DIFFERENT SIGNATURE
+
+- RECIPIENT CAN THEN USE PRIVATE KEY TO VALIDATE AUTHETICITY OF THE MESSAGE
+
+**LETS CREATE SIGNATURE IN NODEJS**
+
+FILE: `__NO_OPS/crypto-practice/7_signing.js`
+
+```js
+// WE WILL USE THESE FUNCTIONS
+const { createSign, createVerify } = require("crypto");
+// WE NEED OUR KEYS
+const { privateKey, publicKey } = require("./5_keypairs");
+
+// THIS IS A MESSAGE SOMEONE WANTS TO SEND TO US
+const message = "Satoshi is the king, or he was";
+
+// YTHEY WILL CREATE SIGNER
+const signer = createSign("rsa-sha256"); // rsa algorythm + sha hashing algorythm
+
+// THEY WILL JUST ADD THE MESSAGE TO THE SIGNER
+signer.update(message);
+
+// THAN THEY CREATE SIGNATURE WITH THEIR PRIVATE KEY
+// SIGNATURE WILL BE IN HEX FORMAT
+const signature = signer.sign(privateKey, "hex");
+
+// IMAGINE NOW THAT THEY SENT MENTIONED HEX TO SOME OTHER PARTY,
+// FOR EXMPLE TO US
+// AND SINCE THEY TRUSTED US BEFORE, THEY GAVA TO US THEIR publicKey
+
+console.log(
+  `They are sending signature: ${signature} to you together with message: ${message}`
+);
+
+// RECEIVER. LIKE ME, SHOULD HAVE publicKey THEY PROVIDED TO ME
+
+
+// I WILL CREATE VERIFIER
+const verifier = createVerify("rsa-sha256");
+
+// MESSAGE WE RECEIVE, NOW WE GIVE TO THE VERIFIER
+verifier.update(message);
+
+// USING PUBLIC KEY THEY PROVIDED TO US BEFORE (THEY TRUSST US LIKE I SAID),
+//  AND A SIGNTURE WE JUST RECEIVED,
+//  AND WE ASUME FORMAT OF THE SIGNATURE
+// WE VERIFY, IF PARTY WE TRUST SENDED US A MESSAGE
+const isVerified = verifier.verify(publicKey, signature, "hex");
+
+// IF THIS IS TRUE (SHOULD BE true WITH DATE WE USED)
+// WE CAN VERIFY THAT THE PARTY WE EXPECTED ACTUALLY SENT US A MESSAGE
+console.log(isVerified);
+
+//  ------ PAY ATTENTION THAT SIGNATURE IS HERE THE IMPORTANT THING
+// ------ IF SIGNATURE WAS TAMPERED OR FORGD, VERIFICATION WOULD FAIL, 
+
+// ---- OR IF message WAS TAMPERED WITH, VERIFICATION WOULD FAIL 
+
+```
